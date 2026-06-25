@@ -552,10 +552,13 @@ async function taLocationSearch(query, category) {
       + (category ? '&category=' + encodeURIComponent(category) : '')
       + '&language=en';
     var res = await fetch(url, { headers: { 'accept': 'application/json' } });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      var errBody = await res.text();
+      console.error('Duffel flight search failed — proxy returned ' + res.status + ':', errBody);
+      return null;
+    }
     var data = await res.json();
-    if (!data || !data.data || !data.data.length) return null;
-    return data.data[0]; // top match
+    var offers = (data && data.data && data.data.offers) || []; // top match
   } catch (e) {
     console.error('TripAdvisor search failed (falling back to plain links):', e);
     return null;
