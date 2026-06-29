@@ -718,26 +718,22 @@ async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, tra
       return null;
     }
     var data = await res.json();
-    var offers = (data && data.data && data.data.offers) || [];
+    var offers = (data && data.offers) || []; // function already sorted + trimmed to top 3
     if (!offers.length) return null;
 
-    // Keep the 3 cheapest offers — that's plenty to show without overwhelming the UI
-    offers.sort(function(a, b) { return parseFloat(a.total_amount) - parseFloat(b.total_amount); });
-    return offers.slice(0, 3).map(function(o) {
-      var firstSlice = o.slices[0];
-      var firstSeg = firstSlice.segments[0];
-      var lastSeg = firstSlice.segments[firstSlice.segments.length - 1];
+    return offers.map(function(o) {
       return {
-        airline: firstSeg.operating_carrier ? firstSeg.operating_carrier.name : 'Airline',
-        from: firstSeg.origin.iata_code,
-        to: lastSeg.destination.iata_code,
-        dep: (firstSeg.departing_at || '').slice(11, 16),
-        arr: (lastSeg.arriving_at || '').slice(11, 16),
-        dur: firstSlice.duration ? firstSlice.duration.replace('PT','').replace('H','h ').replace('M','m').toLowerCase() : '',
-        stops: firstSlice.segments.length > 1 ? (firstSlice.segments.length - 1) + ' stop(s)' : 'Direct',
+        airline: o.airline,
+        from: o.from,
+        to: o.to,
+        depDateOnly: (o.dep || '').slice(0, 10), // YYYY-MM-DD, kept for building accurate search links
+        dep: (o.dep || '').slice(11, 16),
+        arr: (o.arr || '').slice(11, 16),
+        dur: o.dur ? o.dur.replace('PT','').replace('H','h ').replace('M','m').toLowerCase() : '',
+        stops: o.stopCount > 0 ? o.stopCount + ' stop(s)' : 'Direct',
         class: 'Economy',
-        price: Math.round(parseFloat(o.total_amount)),
-        currency: o.total_currency,
+        price: Math.round(parseFloat(o.price)),
+        currency: o.currency,
         type: 'outbound',
         isReal: true // flags this as a live Duffel offer, not an AI estimate
       };
@@ -1305,7 +1301,22 @@ function renderFlights(flights, from, dest) {
     h += '<div class="fmid"><div class="fdur">'+(f.dur||'—')+' · '+(f.stops||'')+'</div><div class="fline"></div></div>';
     h += '<div><div class="fcity">'+(f.to||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.arr||'—')+'</div></div></div>';
     h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">'+(f.currency==='USD'||!f.currency?'$':f.currency+' ')+(f.price||0).toLocaleString()+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
-    h += '<div class="bls"><a href="https://www.skyscanner.com" target="_blank" class="bl bl-sk">Search</a></div></div></div>';
+    var searchUrl;
+    if (f.from && f.to) {
+      if (f.depDateOnly) {
+        // Real Duffel offer with a known date — build an exact dated deep link.
+        // Skyscanner's path format wants YYMMDD.
+        var dateParts = f.depDateOnly.split('-'); // [YYYY, MM, DD]
+        var yymmdd = dateParts.length === 3 ? dateParts[0].slice(2) + dateParts[1] + dateParts[2] : '';
+        searchUrl = 'https://www.skyscanner.net/transport/flights/' + f.from.toLowerCase() + '/' + f.to.toLowerCase() + (yymmdd ? '/' + yymmdd + '/' : '/');
+      } else {
+        // AI-estimated offer — no exact date to anchor to, but the route itself is still useful.
+        searchUrl = 'https://www.skyscanner.net/transport/flights/' + f.from.toLowerCase() + '/' + f.to.toLowerCase() + '/';
+      }
+    } else {
+      searchUrl = 'https://www.skyscanner.com'; // last-resort fallback if we somehow have no route at all
+    }
+    h += '<div class="bls"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a></div></div></div>';
   });
   document.getElementById('flightsContent').innerHTML = h;
 }
