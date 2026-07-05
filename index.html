@@ -195,7 +195,13 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 
 <nav>
   <div class="logo">Zen<span>voy</span></div>
-  <button onclick="showKeyChanger()" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif">🔑 Change key</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <select id="langSelect" onchange="setLang(this.value)" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none">
+      <option value="en" style="color:#000">🇺🇸 English</option>
+      <option value="pt" style="color:#000">🇧🇷 Português</option>
+    </select>
+    <button onclick="showKeyChanger()" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif">🔑 Change key</button>
+  </div>
 </nav>
 
 <section class="hero">
@@ -306,6 +312,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Rooftops &amp; views</button>
       <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Water sports</button>
       <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Hidden gems</button>
+      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Theme parks</button>
     </div>
 
     <span class="section-title">Your travel rhythm</span>
@@ -561,6 +568,11 @@ function setBT(t) {
   document.getElementById('btP').classList.toggle('on', t==='person');
 }
 var rhythm = 'balanced';
+var appLang = localStorage.getItem('zenvoy_lang') || 'en';
+function setLang(l) {
+  appLang = l;
+  localStorage.setItem('zenvoy_lang', l);
+}
 function pickRhythm(el, r) {
   rhythm = r;
   document.querySelectorAll('.rcard').forEach(function(c) { c.classList.remove('on'); });
@@ -758,8 +770,29 @@ async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, tra
       return null;
     }
     var data = await res.json();
-    var offers = (data && data.offers) || []; // function already sorted + trimmed to top 3
+    var offers = (data && data.offers) || []; // function already sorted by price, up to 5
     if (!offers.length) return null;
+
+    // If flying from Brazil, gently prioritize Brazilian carriers among
+    // competitively-priced options — a fare within 15% of the cheapest
+    // available is "competitive enough" to prefer the traveler's home
+    // carrier, but a much cheaper foreign option is still shown first.
+    var isFromBrazil = /brazil|brasil/i.test(fromCity || '');
+    if (isFromBrazil && offers.length > 1) {
+      var brazilianCarriers = ['latam', 'gol', 'azul'];
+      var cheapestPrice = parseFloat(offers[0].price);
+      offers = offers.slice().sort(function(a, b) {
+        var aIsBR = brazilianCarriers.some(function(c) { return (a.airline || '').toLowerCase().indexOf(c) !== -1; });
+        var bIsBR = brazilianCarriers.some(function(c) { return (b.airline || '').toLowerCase().indexOf(c) !== -1; });
+        var aPrice = parseFloat(a.price), bPrice = parseFloat(b.price);
+        var aCompetitive = aPrice <= cheapestPrice * 1.15;
+        var bCompetitive = bPrice <= cheapestPrice * 1.15;
+        if (aIsBR && aCompetitive && !(bIsBR && bCompetitive)) return -1;
+        if (bIsBR && bCompetitive && !(aIsBR && aCompetitive)) return 1;
+        return aPrice - bPrice; // otherwise keep price order
+      });
+    }
+    offers = offers.slice(0, 3); // cap to the 3 shown in the UI, as before
 
     return offers.map(function(o) {
       return {
@@ -1022,18 +1055,25 @@ async function generatePlan() {
   hideErrorBanner();
 
   var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travelers+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
+  var langInstruction = appLang === 'pt' ? 'Write the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions) in natural, fluent Brazilian Portuguese. Keep JSON keys in English exactly as specified, but ALL values must be in Portuguese.' : 'Write the entire response in English.';
+  // When the trip originates from Brazil, Brazilian carriers (LATAM, GOL, Azul)
+  // are usually the most relevant and often cheapest options for that traveler
+  // — prioritize them in the AI-estimated flights when it's plausible they fly the route.
+  var isFromBrazil = /brazil|brasil/i.test(from);
 
   try {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
     // separately (below) so long trips never get cut off by the token limit.
-    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"}],"street_food":[{"name":"item","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
+    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"}],"street_food":[{"name":"item","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
       'Quality bar:\n'+
       '- Use REAL, specifically named places — real restaurant names, real neighborhoods, real hotel names. Never generic ("a local restaurant", "a boutique hotel").\n'+
       '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
       '- "transport" must account for a group of '+travelers+' traveler(s) specifically — note when a larger group changes the best transport choice (e.g. private transport becoming cost-competitive with public transport at this group size).\n'+
       '- "gems" should be the kind of specific, non-obvious tips a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
-      '- Recommend a nearby day-trip destination only inside the itinerary days (handled separately) if one genuinely fits this trip\'s length and interests — do not contradict it here.\n\n'+
+      '- Recommend a nearby day-trip destination only inside the itinerary days (handled separately) if one genuinely fits this trip\'s length and interests — do not contradict it here.\n'+
+      '- If "Theme parks" is among the traveler\'s interests AND the destination is genuinely famous for theme parks (e.g. Orlando -> Walt Disney World/Universal Studios, Anaheim -> Disneyland, Tokyo -> Tokyo Disneyland/DisneySea, Paris -> Disneyland Paris, Osaka -> Universal Studios Japan), treat the relevant park(s) as a headline activity for this trip — reflect that in the tagline and gems, and make sure the itinerary (handled separately) dedicates at least one full day per major park.\n'+
+      (isFromBrazil ? '- The traveler is flying from Brazil. For the "flights" field, prioritize Brazilian carriers (LATAM, GOL, Azul) whenever they plausibly serve this route (directly or with a codeshare/connection) — Brazilian travelers usually get better fares and service on these airlines for international trips.\n' : '')+'\n'+
       'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
 
     var overviewText = await callAI([{role:'user',content:overviewPrompt}], 3000);
@@ -1065,7 +1105,7 @@ async function generatePlan() {
       var rangeStart = ranges[ci][0], rangeEnd = ranges[ci][1];
       document.getElementById('planTxt').textContent = 'Building days '+rangeStart+'–'+rangeEnd+' of '+days+'...';
 
-      var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in '+overview.destination+'. Return ONLY a valid JSON array, no markdown, no explanation.\n\n'+
+      var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in '+overview.destination+'. Return ONLY a valid JSON array, no markdown, no explanation.\n\n'+langInstruction+'\n\n'+
         'Trip: '+tripBrief+'\nDestination: '+overview.destination+'\n\n'+
         'Generate the full detailed itinerary for days '+rangeStart+' through '+rangeEnd+' ONLY (this is part of a longer '+days+'-day trip — do not summarize or skip days).\n\n'+
         'Quality bar — write like a knowledgeable local friend, not a generic travel brochure:\n'+
@@ -1074,7 +1114,8 @@ async function generatePlan() {
         '- If a nearby town, beach, or day-trip destination is famous and reachable in this destination (a short drive or train ride away) and fits the traveler\'s interests, use ONE of the days for it — call this out explicitly in the theme (e.g. "Day Trip to [town]").\n'+
         '- Vary activity TYPES across days (culture one day, nature or parks another, food-and-markets another, nightlife/rooftops another) rather than repeating "museum then restaurant" every day.\n'+
         '- Where relevant, weave in one practical local detail per day that a generic guide would miss — a specific dish to order at that specific spot, the best time of day to arrive to avoid crowds, or a transport tip suited to '+travelers+' traveler(s).\n'+
-        '- Match the chosen rhythm ('+(rMap[rhythm]||'Balanced')+') in pacing — relaxed rhythms get 1-2 anchor activities per day with breathing room, packed rhythms get back-to-back activities.\n\n'+
+        '- Match the chosen rhythm ('+(rMap[rhythm]||'Balanced')+') in pacing — relaxed rhythms get 1-2 anchor activities per day with breathing room, packed rhythms get back-to-back activities.\n'+
+        (interests.toLowerCase().indexOf('theme park') !== -1 ? '- Theme parks is one of this traveler\'s selected interests. If '+overview.destination+' is home to a major theme park (Disney, Universal, or similar), dedicate at least one FULL day (morning through night) entirely to that park — do not split it across a partial afternoon only, and do not water it down with unrelated stops that day.\n' : '')+'\n'+
         'Return an array, one object per day, in this exact shape:\n'+
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
         '"early_bird":{"morning":"7am activity at a specific named place","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"specific activity at a named place","dinner":"specific restaurant name — signature dish — $X","night":"specific evening suggestion at a named place"},'+
@@ -1477,6 +1518,8 @@ function subEmail() {
 }
 
 // ── DEFAULT DATES ─────────────────────────────────────────────
+document.getElementById('langSelect').value = appLang;
+
 var today = new Date();
 var next = new Date(today); next.setDate(today.getDate()+7);
 document.getElementById('depDate').value = today.toISOString().split('T')[0];
