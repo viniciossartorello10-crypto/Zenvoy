@@ -141,6 +141,20 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 .flogo{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff}.flogo span{color:var(--gold)}
 .fcopy{font-size:12px;color:var(--muted)}
 @media(max-width:640px){.grid4{grid-template-columns:1fr 1fr}.rhythm{grid-template-columns:1fr 1fr}.card{padding:20px 16px}.chat{width:calc(100vw - 32px);right:16px}nav{padding:12px 16px}}
+/* PDF export (via the browser's print-to-PDF) */
+#printArea{display:none}
+@media print{
+  body.printing nav,body.printing .hero,body.printing .planner,body.printing .cap,body.printing footer{display:none!important}
+  body.printing #printArea{display:block!important;font-family:'Inter',sans-serif;color:#0B0F1A}
+  #printArea h1{font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:4px}
+  #printArea .p-meta{font-size:12px;color:#5A6478;margin-bottom:18px}
+  #printArea .p-day{page-break-inside:avoid;margin-bottom:16px;border:1px solid #ddd;border-radius:8px;padding:12px}
+  #printArea .p-day h2{font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:8px}
+  #printArea .p-slot{font-size:12px;margin:4px 0;line-height:1.5}
+  #printArea .p-slot b{text-transform:uppercase;font-size:10px;color:#8B6914;letter-spacing:.05em}
+  #printArea .p-section{margin-top:14px;font-size:12px}
+  #printArea .p-section h3{font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:6px}
+}
 </style>
 </head>
 <body>
@@ -319,6 +333,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <div class="rhero-dest" id="rDest">Rome, Italy</div>
           <div class="rhero-tag" id="rTag">Discover Rome — where every street tells a story</div>
           <div class="rmeta" id="rMeta"><span class="rmpill">21 days</span><span class="rmpill">5 travelers</span><span class="rmpill">$20</span></div>
+          <button onclick="printItinerary()" style="margin-top:12px;padding:8px 18px;background:rgba(201,169,110,.25);border:1px solid rgba(201,169,110,.5);color:#E2C99A;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📄 Save as PDF</button>
         </div>
       </div>
 
@@ -371,6 +386,8 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   <div class="flogo">Zen<span>voy</span></div>
   <div class="fcopy">© 2025 Zenvoy. All rights reserved.</div>
 </footer>
+
+<div id="printArea"></div>
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────
@@ -572,6 +589,29 @@ var IMG = {
   'london':'460672','miami':'1370704','tokyo':'2506923','seoul':'237211',
   'havana':'3889841','cancun':'1287460','sydney':'995764','vienna':'3889835',
 };
+// Real city photos via Wikipedia's free REST API (no key needed, CORS open).
+// Returns the city's main photo URL, or null on any failure — callers keep
+// the existing Pexels image as fallback, so this only ever upgrades the UI.
+var cityImgCache = {};
+async function getCityImage(dest) {
+  var city = (dest || '').split(',')[0].trim();
+  if (!city) return null;
+  var key = city.toLowerCase();
+  if (key in cityImgCache) return cityImgCache[key];
+  try {
+    var res = await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(city));
+    if (!res.ok) { cityImgCache[key] = null; return null; }
+    var data = await res.json();
+    var url = (data.originalimage && data.originalimage.source) || (data.thumbnail && data.thumbnail.source) || null;
+    if (data.type && data.type.indexOf('disambiguation') !== -1) url = null; // ambiguous page — don't risk a wrong photo
+    cityImgCache[key] = url;
+    return url;
+  } catch (e) {
+    cityImgCache[key] = null;
+    return null;
+  }
+}
+
 function getImg(dest, w, h) {
   var k = (dest||'').toLowerCase();
   var id = null;
@@ -1090,6 +1130,10 @@ async function generatePlan() {
 // ── RENDER RESULT ─────────────────────────────────────────────
 function renderResult(p, travelers, budget, days, from) {
   document.getElementById('rBg').style.backgroundImage = "url('"+getImg(p.destination,1600,900)+"')";
+  // Upgrade to the real city photo from Wikipedia once available (async, non-blocking)
+  getCityImage(p.destination).then(function(url) {
+    if (url) document.getElementById('rBg').style.backgroundImage = "url('" + url + "')";
+  });
   document.getElementById('rDest').textContent = p.destination;
   document.getElementById('rTag').textContent = p.tagline || '';
   document.getElementById('rMeta').innerHTML = [days+' days', travelers+' traveler'+(travelers>1?'s':''), '$'+budget.toLocaleString()].map(function(t){return '<span class="rmpill">'+t+'</span>';}).join('');
@@ -1375,6 +1419,53 @@ function renderFallback(dest, travelers, budget, days, from) {
     gems:[{title:'Eat where locals eat',tip:'Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus.'},{title:'Visit attractions at opening time',tip:'Arrive right when they open — you\'ll have them almost to yourself and the light is perfect for photos.'},{title:'Download offline maps',tip:'Download Google Maps offline for '+d+' before you land. Works without signal.'}],
     practical:{best_time:'Research the best season for '+d,weather:'Check weather.com for current forecasts',currency:'Check Google for current exchange rates',language:'Download Google Translate and use camera mode for signs',transport:'Search "how to get around '+d+'" for local options',safety:'Check your government\'s travel advisory before departing',visa:'Check visa requirements at iVisa.com',packing:'Pack layers, comfortable shoes, portable charger, light rain jacket'}
   }, travelers, budget, days, from);
+}
+
+// ── PDF EXPORT (via browser print-to-PDF) ─────────────────────
+// Builds ALL days of the trip (not just the one on screen) plus stays and
+// tips into the hidden print area, then opens the browser's print dialog —
+// the person chooses "Save as PDF" there. No libraries, works offline.
+function printItinerary() {
+  if (!planData || !planData.days || !planData.days.length) {
+    alert('Generate a travel plan first, then save it as PDF.');
+    return;
+  }
+  var rk = window._rk || 'balanced';
+  var h = '<h1>' + (planData.destination || 'Your Trip') + '</h1>';
+  h += '<div class="p-meta">' + (planData.tagline || '') + '</div>';
+
+  planData.days.forEach(function(d) {
+    var r = d[rk] || d.balanced || d.early_bird || {};
+    h += '<div class="p-day"><h2>Day ' + d.day + ' — ' + (d.theme || '') + '</h2>';
+    [['Morning', r.morning], ['Breakfast', r.breakfast], ['Lunch', r.lunch], ['Afternoon', r.afternoon], ['Dinner', r.dinner], ['Night', r.night]].forEach(function(s) {
+      if (s[1]) h += '<div class="p-slot"><b>' + s[0] + '</b> — ' + s[1] + '</div>';
+    });
+    h += '</div>';
+  });
+
+  if (planData.accommodations && planData.accommodations.length) {
+    h += '<div class="p-section"><h3>Where to stay</h3>';
+    planData.accommodations.forEach(function(a) {
+      h += '<div class="p-slot"><b>' + a.type + '</b> — ' + a.name + ' (' + a.area + ') · $' + (a.price_night || 0) + '/night</div>';
+    });
+    h += '</div>';
+  }
+
+  if (planData.gems && planData.gems.length) {
+    h += '<div class="p-section"><h3>Insider tips</h3>';
+    planData.gems.forEach(function(g) {
+      h += '<div class="p-slot">• ' + (g.tip || g) + '</div>';
+    });
+    h += '</div>';
+  }
+
+  h += '<div class="p-meta" style="margin-top:16px">Generated by Zenvoy — AI Travel Planner</div>';
+
+  document.getElementById('printArea').innerHTML = h;
+  document.body.classList.add('printing');
+  window.print();
+  // Clean up after the print dialog closes
+  setTimeout(function() { document.body.classList.remove('printing'); }, 500);
 }
 
 // ── EMAIL ─────────────────────────────────────────────────────
