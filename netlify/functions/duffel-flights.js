@@ -77,7 +77,7 @@ exports.handler = async function (event) {
     }
 
     offers.sort(function (a, b) { return parseFloat(a.total_amount) - parseFloat(b.total_amount); });
-    const trimmed = offers.slice(0, 3).map(function (o) {
+    const trimmed = offers.slice(0, 5).map(function (o) {
       const firstSlice = o.slices[0];
       const firstSeg = firstSlice.segments[0];
       const lastSeg = firstSlice.segments[firstSlice.segments.length - 1];
