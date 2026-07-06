@@ -25,7 +25,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .ac-wrap{position:relative}
-input,select{width:100%;padding:11px 14px;border:1px solid rgba(11,15,26,.15);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;transition:border-color .2s}
+input,select{width:100%;padding:11px 14px;border:1px solid rgba(11,15,26,.15);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:#fff}
 input::placeholder{color:#aaa}
 .dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid rgba(11,15,26,.12);border-radius:10px;z-index:500;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
@@ -140,7 +140,7 @@ input::placeholder{color:#aaa}
 footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid rgba(255,255,255,.06)}
 .flogo{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff}.flogo span{color:var(--gold)}
 .fcopy{font-size:12px;color:var(--muted)}
-@media(max-width:640px){.grid4{grid-template-columns:1fr 1fr}.rhythm{grid-template-columns:1fr 1fr}.card{padding:20px 16px}.chat{width:calc(100vw - 32px);right:16px}nav{padding:12px 16px}}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.rhythm{grid-template-columns:1fr 1fr}.card{padding:20px 16px}.chat{width:calc(100vw - 32px);right:16px}nav{padding:12px 16px;flex-wrap:wrap;gap:8px}nav select,nav button{font-size:10px!important;padding:5px 8px!important}}
 /* PDF export (via the browser's print-to-PDF) */
 #printArea{display:none}
 @media print{
@@ -199,6 +199,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
     <select id="langSelect" onchange="setLang(this.value)" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none">
       <option value="en" style="color:#000">🇺🇸 English</option>
       <option value="pt" style="color:#000">🇧🇷 Português</option>
+      <option value="es" style="color:#000">🇪🇸 Español</option>
+      <option value="fr" style="color:#000">🇫🇷 Français</option>
+      <option value="it" style="color:#000">🇮🇹 Italiano</option>
     </select>
     <button onclick="showKeyChanger()" data-i18n="change_key_btn" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif">🔑 Change key</button>
   </div>
@@ -651,6 +654,123 @@ var TRANSLATIONS = {
     cap_title: 'Seja o primeiro a viajar de forma mais inteligente', cap_subtitle: 'Grátis para sempre para membros fundadores. Sem cartão de crédito.',
     ph_email: 'seu@email.com', cap_btn: 'Garantir acesso antecipado', cap_success: '🎉 Você está na lista!',
     change_key_btn: '🔑 Trocar chave'
+  },
+  es: {
+    hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
+    hero_subtitle: 'Planificación completa de viajes en segundos — vuelos, hoteles, comida, actividades y secretos locales.',
+    hero_cta: 'Planear mi viaje gratis →',
+    planner_title: '¿A dónde quieres ir?',
+    planner_subtitle: 'Completa tus datos y obtén un plan de viaje completo y personalizado.',
+    label_from: 'Saliendo de', ph_from: 'Tu ciudad...',
+    label_destination: 'Destino', ph_to: '¿A dónde?',
+    surprise_btn: '✨ ¡Sorpréndeme!',
+    label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros',
+    label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
+    label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
+    label_budgetlevel: 'Nivel de presupuesto',
+    bl_budget: 'Económico — mochilero', bl_moderate: 'Moderado — comodidad y valor', bl_premium: 'Premium — calidad primero', bl_luxury: 'Lujo — sin límites',
+    style_title: 'Estilo de viaje (elige uno)',
+    style_adventure: 'Aventura', style_luxury: 'Lujo', style_backpacking: 'Mochilero', style_romantic: 'Pareja romántica',
+    style_family: 'Familia', style_solo: 'Viajero solo', style_group: 'Grupo de amigos', style_wellness: 'Bienestar y spa',
+    style_nomad: 'Nómada digital', style_party: 'Fiesta y vida nocturna', style_honeymoon: 'Luna de miel', style_cultural: 'Inmersión cultural',
+    interests_title: 'Intereses (elige los que quieras)',
+    int_food: 'Comida y gastronomía', int_beaches: 'Playas', int_museums: 'Museos y arte', int_nightlife: 'Vida nocturna',
+    int_hiking: 'Senderismo', int_shopping: 'Compras', int_photography: 'Fotografía', int_history: 'Historia',
+    int_nature: 'Naturaleza', int_streetfood: 'Comida callejera', int_architecture: 'Arquitectura', int_wine: 'Vino y cerveza',
+    int_rooftops: 'Azoteas y vistas', int_watersports: 'Deportes acuáticos', int_hiddengems: 'Joyas escondidas', int_themeparks: 'Parques temáticos',
+    rhythm_title: 'Tu ritmo de viaje',
+    rh_early_t: 'Madrugador', rh_early_d: 'Levanta a las 7am, mañanas activas',
+    rh_balanced_t: 'Equilibrado', rh_balanced_d: 'Mezcla de comienzos temprano y relajados',
+    rh_night_t: 'Ave nocturna', rh_night_d: 'Comienza tarde, enfoque en vida nocturna',
+    rh_slow_t: 'Mañanas tranquilas', rh_slow_d: 'Café primero, sin prisa',
+    rh_packed_t: 'Agenda llena', rh_packed_d: 'Máximo de actividades cada hora',
+    rh_relaxed_t: 'Muy relajado', rh_relaxed_d: '1–2 cosas al día, tranquilo',
+    generate_btn: 'Generar mi plan de viaje completo →',
+    pdf_btn: '📄 Guardar como PDF',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos',
+    tab_budget: '💰 Presupuesto', tab_tips: '💎 Consejos', tab_info: '📋 Info',
+    rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Ave nocturna',
+    cap_title: 'Sé el primero en viajar de forma más inteligente', cap_subtitle: 'Gratis para siempre para miembros fundadores. Sin tarjeta de crédito.',
+    ph_email: 'tu@email.com', cap_btn: 'Obtener acceso anticipado', cap_success: '🎉 ¡Estás en la lista!',
+    change_key_btn: '🔑 Cambiar clave'
+  },
+  fr: {
+    hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
+    hero_subtitle: 'Planification complète de voyage en quelques secondes — vols, hôtels, nourriture, activités et secrets locaux.',
+    hero_cta: 'Planifier mon voyage gratuitement →',
+    planner_title: 'Où voulez-vous aller ?',
+    planner_subtitle: 'Remplissez vos informations et obtenez un plan de voyage complet et personnalisé.',
+    label_from: 'Départ de', ph_from: 'Votre ville...',
+    label_destination: 'Destination', ph_to: 'Où aller ?',
+    surprise_btn: '✨ Surprenez-moi !',
+    label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs',
+    label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
+    label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
+    label_budgetlevel: 'Niveau de budget',
+    bl_budget: 'Économique — routard', bl_moderate: 'Modéré — confort et valeur', bl_premium: "Premium — qualité d'abord", bl_luxury: 'Luxe — sans limites',
+    style_title: 'Style de voyage (choisissez-en un)',
+    style_adventure: 'Aventure', style_luxury: 'Luxe', style_backpacking: 'Routard', style_romantic: 'Couple romantique',
+    style_family: 'Famille', style_solo: 'Voyageur solo', style_group: "Groupe d'amis", style_wellness: 'Bien-être et spa',
+    style_nomad: 'Nomade numérique', style_party: 'Fête et vie nocturne', style_honeymoon: 'Lune de miel', style_cultural: 'Immersion culturelle',
+    interests_title: 'Intérêts (choisissez tout ce qui s\'applique)',
+    int_food: 'Gastronomie', int_beaches: 'Plages', int_museums: 'Musées et art', int_nightlife: 'Vie nocturne',
+    int_hiking: 'Randonnée', int_shopping: 'Shopping', int_photography: 'Photographie', int_history: 'Histoire',
+    int_nature: 'Nature', int_streetfood: 'Cuisine de rue', int_architecture: 'Architecture', int_wine: 'Vin et bière',
+    int_rooftops: 'Rooftops et vues', int_watersports: 'Sports nautiques', int_hiddengems: 'Trésors cachés', int_themeparks: "Parcs d'attractions",
+    rhythm_title: 'Votre rythme de voyage',
+    rh_early_t: 'Lève-tôt', rh_early_d: 'Debout à 7h, matinées chargées',
+    rh_balanced_t: 'Équilibré', rh_balanced_d: 'Mélange de débuts tôt et tranquilles',
+    rh_night_t: 'Couche-tard', rh_night_d: 'Débuts tardifs, focus vie nocturne',
+    rh_slow_t: 'Matinées tranquilles', rh_slow_d: "Café d'abord, sans hâte",
+    rh_packed_t: 'Programme chargé', rh_packed_d: "Maximum d'activités chaque heure",
+    rh_relaxed_t: 'Très détendu', rh_relaxed_d: '1–2 choses par jour, tranquille',
+    generate_btn: 'Générer mon plan de voyage complet →',
+    pdf_btn: '📄 Enregistrer en PDF',
+    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols',
+    tab_budget: '💰 Budget', tab_tips: '💎 Conseils', tab_info: '📋 Infos',
+    rt_early: '🌅 Lève-tôt', rt_balanced: '☀️ Équilibré', rt_night: '🌙 Couche-tard',
+    cap_title: 'Soyez le premier à voyager plus intelligemment', cap_subtitle: 'Gratuit pour toujours pour les membres fondateurs. Aucune carte de crédit requise.',
+    ph_email: 'votre@email.com', cap_btn: 'Obtenir un accès anticipé', cap_success: '🎉 Vous êtes sur la liste !',
+    change_key_btn: '🔑 Changer la clé'
+  },
+  it: {
+    hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
+    hero_subtitle: 'Pianificazione completa del viaggio in pochi secondi — voli, hotel, cibo, attività e segreti locali.',
+    hero_cta: 'Pianifica il mio viaggio gratis →',
+    planner_title: 'Dove vuoi andare?',
+    planner_subtitle: 'Inserisci i tuoi dati e ottieni un piano di viaggio completo e personalizzato.',
+    label_from: 'Partenza da', ph_from: 'La tua città...',
+    label_destination: 'Destinazione', ph_to: 'Dove andare?',
+    surprise_btn: '✨ Sorprendimi!',
+    label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori',
+    label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
+    label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
+    label_budgetlevel: 'Livello di budget',
+    bl_budget: 'Economico — zaino in spalla', bl_moderate: 'Moderato — comfort e valore', bl_premium: 'Premium — qualità prima di tutto', bl_luxury: 'Lusso — senza limiti',
+    style_title: 'Stile di viaggio (scegline uno)',
+    style_adventure: 'Avventura', style_luxury: 'Lusso', style_backpacking: 'Zaino in spalla', style_romantic: 'Coppia romantica',
+    style_family: 'Famiglia', style_solo: 'Viaggiatore singolo', style_group: 'Gruppo di amici', style_wellness: 'Benessere e spa',
+    style_nomad: 'Nomade digitale', style_party: 'Festa e vita notturna', style_honeymoon: 'Luna di miele', style_cultural: 'Immersione culturale',
+    interests_title: 'Interessi (scegli quanti vuoi)',
+    int_food: 'Cibo e gastronomia', int_beaches: 'Spiagge', int_museums: 'Musei e arte', int_nightlife: 'Vita notturna',
+    int_hiking: 'Escursionismo', int_shopping: 'Shopping', int_photography: 'Fotografia', int_history: 'Storia',
+    int_nature: 'Natura', int_streetfood: 'Cibo di strada', int_architecture: 'Architettura', int_wine: 'Vino e birra',
+    int_rooftops: 'Rooftop e viste', int_watersports: 'Sport acquatici', int_hiddengems: 'Gemme nascoste', int_themeparks: 'Parchi a tema',
+    rhythm_title: 'Il tuo ritmo di viaggio',
+    rh_early_t: 'Mattiniero', rh_early_d: 'Sveglia alle 7, mattine intense',
+    rh_balanced_t: 'Equilibrato', rh_balanced_d: 'Mix di inizi presto e rilassati',
+    rh_night_t: 'Nottambulo', rh_night_d: 'Inizio tardivo, focus sulla vita notturna',
+    rh_slow_t: 'Mattine tranquille', rh_slow_d: 'Prima il caffè, senza fretta',
+    rh_packed_t: 'Agenda piena', rh_packed_d: 'Massime attività ogni ora',
+    rh_relaxed_t: 'Molto rilassato', rh_relaxed_d: '1–2 cose al giorno, tranquillo',
+    generate_btn: 'Genera il mio piano di viaggio completo →',
+    pdf_btn: '📄 Salva come PDF',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli',
+    tab_budget: '💰 Budget', tab_tips: '💎 Consigli', tab_info: '📋 Info',
+    rt_early: '🌅 Mattiniero', rt_balanced: '☀️ Equilibrato', rt_night: '🌙 Nottambulo',
+    cap_title: 'Sii il primo a viaggiare in modo più intelligente', cap_subtitle: 'Gratis per sempre per i membri fondatori. Nessuna carta di credito richiesta.',
+    ph_email: 'tua@email.com', cap_btn: 'Ottieni accesso anticipato', cap_success: '🎉 Sei nella lista!',
+    change_key_btn: '🔑 Cambia chiave'
   }
 };
 
@@ -898,7 +1018,7 @@ async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, tra
         return aPrice - bPrice; // otherwise keep price order
       });
     }
-    offers = offers.slice(0, 3); // cap to the 3 shown in the UI, as before
+    offers = offers.slice(0, 5); // show 5 options instead of 3 — feedback said too few choices
 
     return offers.map(function(o) {
       return {
@@ -1161,7 +1281,10 @@ async function generatePlan() {
   hideErrorBanner();
 
   var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travelers+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
-  var langInstruction = appLang === 'pt' ? 'Write the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions) in natural, fluent Brazilian Portuguese. Keep JSON keys in English exactly as specified, but ALL values must be in Portuguese.' : 'Write the entire response in English.';
+  var langNames = { pt: 'natural, fluent Brazilian Portuguese', es: 'natural, fluent Spanish', fr: 'natural, fluent French', it: 'natural, fluent Italian' };
+  var langInstruction = langNames[appLang]
+    ? 'Write the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions) in ' + langNames[appLang] + '. Keep JSON keys in English exactly as specified, but ALL values must be in that language.'
+    : 'Write the entire response in English.';
   // When the trip originates from Brazil, Brazilian carriers (LATAM, GOL, Azul)
   // are usually the most relevant and often cheapest options for that traveler
   // — prioritize them in the AI-estimated flights when it's plausible they fly the route.
@@ -1454,10 +1577,24 @@ function renderFood(fg, dest) {
   enrichSlotsWithTripAdvisor(foodSlotMeta);
 }
 
+var staySortOrder = 'default'; // 'default' | 'price_asc' | 'price_desc'
 function renderStays(accs, dest) {
-  var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p>';
+  window._stays = accs; // keep original list so sort controls can re-render without regenerating
+  window._staysDest = dest;
+  var sorted = (accs||[]).slice();
+  if (staySortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price_night||0)-(b.price_night||0); });
+  else if (staySortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price_night||0)-(a.price_night||0); });
+
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
+  h += '<p style="font-size:13px;color:#5A6478;margin:0">All prices estimated per night. Click to find real-time availability.</p>';
+  h += '<select onchange="staySortOrder=this.value;renderStays(window._stays,window._staysDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
+  h += '<option value="default"'+(staySortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
+  h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
+  h += '<option value="price_desc"'+(staySortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
+  h += '</select></div>';
+
   var staySlotMeta = [];
-  (accs||[]).forEach(function(a, idx) {
+  sorted.forEach(function(a, idx) {
     var stars = '★'.repeat(Math.min(a.stars||3,5))+'☆'.repeat(Math.max(0,5-(a.stars||3)));
     var isHostel = a.type==='Hostel';
     var slotId = 'ta-badge-stay-'+idx;
@@ -1480,11 +1617,25 @@ function renderStays(accs, dest) {
   enrichSlotsWithTripAdvisor(staySlotMeta);
 }
 
+var flightSortOrder = 'default'; // 'default' | 'price_asc' | 'price_desc'
 function renderFlights(flights, from, dest) {
-  var hasReal = (flights||[]).some(function(f){ return f.isReal; });
-  var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">'+(hasReal ? 'Live prices from Duffel:' : 'Prices are estimates. Compare real deals:')+'</p>';
+  window._flights = flights;
+  window._flightsFrom = from;
+  window._flightsDest = dest;
+  var sorted = (flights||[]).slice();
+  if (flightSortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price||0)-(b.price||0); });
+  else if (flightSortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price||0)-(a.price||0); });
+
+  var hasReal = sorted.some(function(f){ return f.isReal; });
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
+  h += '<p style="font-size:13px;color:#5A6478;margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'Prices are estimates. Compare real deals:')+'</p>';
+  h += '<select onchange="flightSortOrder=this.value;renderFlights(window._flights,window._flightsFrom,window._flightsDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
+  h += '<option value="default"'+(flightSortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
+  h += '<option value="price_asc"'+(flightSortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
+  h += '<option value="price_desc"'+(flightSortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
+  h += '</select></div>';
   h += '<div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
-  (flights||[]).forEach(function(f) {
+  sorted.forEach(function(f) {
     h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ '+f.airline+'</strong>';
     if (f.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px;margin-right:6px">● LIVE</span>';
     h += '<span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+f.class+'</span></div>';
