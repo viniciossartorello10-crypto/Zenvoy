@@ -200,134 +200,134 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <option value="en" style="color:#000">🇺🇸 English</option>
       <option value="pt" style="color:#000">🇧🇷 Português</option>
     </select>
-    <button onclick="showKeyChanger()" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif">🔑 Change key</button>
+    <button onclick="showKeyChanger()" data-i18n="change_key_btn" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif">🔑 Change key</button>
   </div>
 </nav>
 
 <section class="hero">
-  <h1>Your next<br><em>journey</em>,<br>designed by AI</h1>
-  <p>Complete trip planning in seconds — flights, hotels, food, activities, and local secrets.</p>
-  <button class="hero-btn" onclick="document.getElementById(&#39;planner&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">Plan my trip free →</button>
+  <h1 data-i18n="hero_title">Your next<br><em>journey</em>,<br>designed by AI</h1>
+  <p data-i18n="hero_subtitle">Complete trip planning in seconds — flights, hotels, food, activities, and local secrets.</p>
+  <button class="hero-btn" data-i18n="hero_cta" onclick="document.getElementById(&#39;planner&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">Plan my trip free →</button>
 </section>
 
 <section class="planner" id="planner">
-  <h2>Where do you want to go?</h2>
-  <p>Fill in your details and get a complete personalized travel plan.</p>
+  <h2 data-i18n="planner_title">Where do you want to go?</h2>
+  <p data-i18n="planner_subtitle">Fill in your details and get a complete personalized travel plan.</p>
 
   <div class="card">
 
     <div class="grid2" style="margin-bottom:16px">
       <div class="field">
-        <label>Flying from</label>
+        <label data-i18n="label_from">Flying from</label>
         <div class="ac-wrap">
-          <input id="fromCity" type="text" placeholder="Your city..." autocomplete="off">
+          <input id="fromCity" type="text" data-i18n-placeholder="ph_from" placeholder="Your city..." autocomplete="off">
           <div class="dropdown" id="dropFrom"><div class="drop-item"><span class="drop-flag">🇩🇰</span><div><div class="drop-city">Copenhagen</div><div class="drop-ctry">Denmark · CPH</div></div></div><div class="drop-item"><span class="drop-flag">🇲🇦</span><div><div class="drop-city">Marrakech</div><div class="drop-ctry">Morocco · RAK</div></div></div></div>
         </div>
       </div>
       <div class="field">
-        <label>Destination</label>
+        <label data-i18n="label_destination">Destination</label>
         <div class="dest-row">
           <div class="ac-wrap">
-            <input id="toCity" type="text" placeholder="Where to?" autocomplete="off">
+            <input id="toCity" type="text" data-i18n-placeholder="ph_to" placeholder="Where to?" autocomplete="off">
             <div class="dropdown" id="dropTo"><div class="drop-item"><span class="drop-flag">🇮🇹</span><div><div class="drop-city">Rome</div><div class="drop-ctry">Italy · FCO</div></div></div><div class="drop-item"><span class="drop-flag">🇲🇽</span><div><div class="drop-city">Cancún</div><div class="drop-ctry">Mexico · CUN</div></div></div><div class="drop-item"><span class="drop-flag">🇲🇽</span><div><div class="drop-city">Mexico City</div><div class="drop-ctry">Mexico · MEX</div></div></div><div class="drop-item"><span class="drop-flag">🇲🇽</span><div><div class="drop-city">Tulum</div><div class="drop-ctry">Mexico · CUN</div></div></div><div class="drop-item"><span class="drop-flag">🇨🇴</span><div><div class="drop-city">Medellín</div><div class="drop-ctry">Colombia · MDE</div></div></div><div class="drop-item"><span class="drop-flag">🇦🇺</span><div><div class="drop-city">Melbourne</div><div class="drop-ctry">Australia · MEL</div></div></div></div>
           </div>
-          <button class="surprise" id="surpriseBtn" onclick="toggleSurprise()">✨ Surprise!</button>
+          <button class="surprise" id="surpriseBtn" data-i18n="surprise_btn" onclick="toggleSurprise()">✨ Surprise!</button>
         </div>
       </div>
     </div>
 
     <div class="grid4" style="margin-bottom:16px">
       <div class="field">
-        <label>Departure</label>
+        <label data-i18n="label_departure">Departure</label>
         <input type="date" id="depDate">
       </div>
       <div class="field">
-        <label>Return</label>
+        <label data-i18n="label_return">Return</label>
         <input type="date" id="retDate">
       </div>
       <div class="field">
-        <label>Travelers</label>
+        <label data-i18n="label_travelers">Travelers</label>
         <input type="number" id="travelers" value="2" min="1" max="20">
       </div>
       <div class="field">
-        <label>Stay type</label>
+        <label data-i18n="label_staytype">Stay type</label>
         <select id="stayType">
-          <option>Any</option>
-          <option>Hotel</option>
-          <option>Airbnb</option>
-          <option>Hostel</option>
-          <option>Resort</option>
-          <option>Villa</option>
+          <option data-i18n="stay_any">Any</option>
+          <option data-i18n="stay_hotel">Hotel</option>
+          <option data-i18n="stay_airbnb">Airbnb</option>
+          <option data-i18n="stay_hostel">Hostel</option>
+          <option data-i18n="stay_resort">Resort</option>
+          <option data-i18n="stay_villa">Villa</option>
         </select>
       </div>
     </div>
 
     <div class="grid2" style="margin-bottom:16px">
       <div class="field">
-        <label>Budget</label>
-        <div class="btog"><button id="btT" class="on" onclick="setBT(&#39;total&#39;)">Total trip</button><button id="btP" onclick="setBT(&#39;person&#39;)">Per person</button></div>
-        <input type="number" id="budget" placeholder="e.g. 3000">
+        <label data-i18n="label_budget">Budget</label>
+        <div class="btog"><button id="btT" class="on" data-i18n="budget_total" onclick="setBT(&#39;total&#39;)">Total trip</button><button id="btP" data-i18n="budget_person" onclick="setBT(&#39;person&#39;)">Per person</button></div>
+        <input type="number" id="budget" data-i18n-placeholder="ph_budget" placeholder="e.g. 3000">
       </div>
       <div class="field">
-        <label>Budget level</label>
+        <label data-i18n="label_budgetlevel">Budget level</label>
         <select id="budgetLevel">
-          <option value="budget">Budget — backpacker</option>
-          <option value="moderate" selected="">Moderate — comfort &amp; value</option>
-          <option value="premium">Premium — quality first</option>
-          <option value="luxury">Luxury — no limits</option>
+          <option value="budget" data-i18n="bl_budget">Budget — backpacker</option>
+          <option value="moderate" selected="" data-i18n="bl_moderate">Moderate — comfort &amp; value</option>
+          <option value="premium" data-i18n="bl_premium">Premium — quality first</option>
+          <option value="luxury" data-i18n="bl_luxury">Luxury — no limits</option>
         </select>
       </div>
     </div>
 
-    <span class="section-title">Travel style (pick one)</span>
+    <span class="section-title" data-i18n="style_title">Travel style (pick one)</span>
     <div class="pills" id="stylePills">
-      <button class="pill" onclick="pickStyle(this)">Adventure</button>
-      <button class="pill" onclick="pickStyle(this)">Luxury</button>
-      <button class="pill" onclick="pickStyle(this)">Backpacking</button>
-      <button class="pill" onclick="pickStyle(this)">Romantic couple</button>
-      <button class="pill on" onclick="pickStyle(this)">Family</button>
-      <button class="pill" onclick="pickStyle(this)">Solo traveler</button>
-      <button class="pill" onclick="pickStyle(this)">Group of friends</button>
-      <button class="pill" onclick="pickStyle(this)">Wellness &amp; spa</button>
-      <button class="pill" onclick="pickStyle(this)">Digital nomad</button>
-      <button class="pill" onclick="pickStyle(this)">Party &amp; nightlife</button>
-      <button class="pill" onclick="pickStyle(this)">Honeymoon</button>
-      <button class="pill" onclick="pickStyle(this)">Cultural immersion</button>
+      <button class="pill" data-i18n="style_adventure" onclick="pickStyle(this)">Adventure</button>
+      <button class="pill" data-i18n="style_luxury" onclick="pickStyle(this)">Luxury</button>
+      <button class="pill" data-i18n="style_backpacking" onclick="pickStyle(this)">Backpacking</button>
+      <button class="pill" data-i18n="style_romantic" onclick="pickStyle(this)">Romantic couple</button>
+      <button class="pill on" data-i18n="style_family" onclick="pickStyle(this)">Family</button>
+      <button class="pill" data-i18n="style_solo" onclick="pickStyle(this)">Solo traveler</button>
+      <button class="pill" data-i18n="style_group" onclick="pickStyle(this)">Group of friends</button>
+      <button class="pill" data-i18n="style_wellness" onclick="pickStyle(this)">Wellness &amp; spa</button>
+      <button class="pill" data-i18n="style_nomad" onclick="pickStyle(this)">Digital nomad</button>
+      <button class="pill" data-i18n="style_party" onclick="pickStyle(this)">Party &amp; nightlife</button>
+      <button class="pill" data-i18n="style_honeymoon" onclick="pickStyle(this)">Honeymoon</button>
+      <button class="pill" data-i18n="style_cultural" onclick="pickStyle(this)">Cultural immersion</button>
     </div>
 
-    <span class="section-title">Interests (pick all that apply)</span>
+    <span class="section-title" data-i18n="interests_title">Interests (pick all that apply)</span>
     <div class="pills" id="interestPills">
-      <button class="pill on" onclick="this.classList.toggle(&#39;on&#39;)">Food &amp; dining</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Beaches</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Museums &amp; art</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Nightlife</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Hiking</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Shopping</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Photography</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">History</button>
-      <button class="pill on" onclick="this.classList.toggle(&#39;on&#39;)">Nature</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Street food</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Architecture</button>
-      <button class="pill on" onclick="this.classList.toggle(&#39;on&#39;)">Wine &amp; beer</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Rooftops &amp; views</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Water sports</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Hidden gems</button>
-      <button class="pill" onclick="this.classList.toggle(&#39;on&#39;)">Theme parks</button>
+      <button class="pill on" data-i18n="int_food" onclick="this.classList.toggle(&#39;on&#39;)">Food &amp; dining</button>
+      <button class="pill" data-i18n="int_beaches" onclick="this.classList.toggle(&#39;on&#39;)">Beaches</button>
+      <button class="pill" data-i18n="int_museums" onclick="this.classList.toggle(&#39;on&#39;)">Museums &amp; art</button>
+      <button class="pill" data-i18n="int_nightlife" onclick="this.classList.toggle(&#39;on&#39;)">Nightlife</button>
+      <button class="pill" data-i18n="int_hiking" onclick="this.classList.toggle(&#39;on&#39;)">Hiking</button>
+      <button class="pill" data-i18n="int_shopping" onclick="this.classList.toggle(&#39;on&#39;)">Shopping</button>
+      <button class="pill" data-i18n="int_photography" onclick="this.classList.toggle(&#39;on&#39;)">Photography</button>
+      <button class="pill" data-i18n="int_history" onclick="this.classList.toggle(&#39;on&#39;)">History</button>
+      <button class="pill on" data-i18n="int_nature" onclick="this.classList.toggle(&#39;on&#39;)">Nature</button>
+      <button class="pill" data-i18n="int_streetfood" onclick="this.classList.toggle(&#39;on&#39;)">Street food</button>
+      <button class="pill" data-i18n="int_architecture" onclick="this.classList.toggle(&#39;on&#39;)">Architecture</button>
+      <button class="pill on" data-i18n="int_wine" onclick="this.classList.toggle(&#39;on&#39;)">Wine &amp; beer</button>
+      <button class="pill" data-i18n="int_rooftops" onclick="this.classList.toggle(&#39;on&#39;)">Rooftops &amp; views</button>
+      <button class="pill" data-i18n="int_watersports" onclick="this.classList.toggle(&#39;on&#39;)">Water sports</button>
+      <button class="pill" data-i18n="int_hiddengems" onclick="this.classList.toggle(&#39;on&#39;)">Hidden gems</button>
+      <button class="pill" data-i18n="int_themeparks" onclick="this.classList.toggle(&#39;on&#39;)">Theme parks</button>
     </div>
 
-    <span class="section-title">Your travel rhythm</span>
+    <span class="section-title" data-i18n="rhythm_title">Your travel rhythm</span>
     <div class="rhythm" id="rhythmGrid">
-      <div class="rcard" onclick="pickRhythm(this,&#39;early_bird&#39;)"><div class="ri">🌅</div><div class="rt">Early bird</div><div class="rd">Up at 7am, packed mornings</div></div>
-      <div class="rcard" onclick="pickRhythm(this,&#39;balanced&#39;)"><div class="ri">☀️</div><div class="rt">Balanced</div><div class="rd">Mix of early &amp; lazy starts</div></div>
-      <div class="rcard" onclick="pickRhythm(this,&#39;night_owl&#39;)"><div class="ri">🌙</div><div class="rt">Night owl</div><div class="rd">Late starts, nightlife focus</div></div>
-      <div class="rcard" onclick="pickRhythm(this,&#39;slow&#39;)"><div class="ri">☕</div><div class="rt">Slow mornings</div><div class="rd">Coffee first, no rush</div></div>
-      <div class="rcard" onclick="pickRhythm(this,&#39;packed&#39;)"><div class="ri">⚡</div><div class="rt">Pack it in</div><div class="rd">Max activities every hour</div></div>
-      <div class="rcard on" onclick="pickRhythm(this,&#39;relaxed&#39;)"><div class="ri">🌊</div><div class="rt">Very relaxed</div><div class="rd">1–2 things a day, chill</div></div>
+      <div class="rcard" onclick="pickRhythm(this,&#39;early_bird&#39;)"><div class="ri">🌅</div><div class="rt" data-i18n="rh_early_t">Early bird</div><div class="rd" data-i18n="rh_early_d">Up at 7am, packed mornings</div></div>
+      <div class="rcard" onclick="pickRhythm(this,&#39;balanced&#39;)"><div class="ri">☀️</div><div class="rt" data-i18n="rh_balanced_t">Balanced</div><div class="rd" data-i18n="rh_balanced_d">Mix of early &amp; lazy starts</div></div>
+      <div class="rcard" onclick="pickRhythm(this,&#39;night_owl&#39;)"><div class="ri">🌙</div><div class="rt" data-i18n="rh_night_t">Night owl</div><div class="rd" data-i18n="rh_night_d">Late starts, nightlife focus</div></div>
+      <div class="rcard" onclick="pickRhythm(this,&#39;slow&#39;)"><div class="ri">☕</div><div class="rt" data-i18n="rh_slow_t">Slow mornings</div><div class="rd" data-i18n="rh_slow_d">Coffee first, no rush</div></div>
+      <div class="rcard" onclick="pickRhythm(this,&#39;packed&#39;)"><div class="ri">⚡</div><div class="rt" data-i18n="rh_packed_t">Pack it in</div><div class="rd" data-i18n="rh_packed_d">Max activities every hour</div></div>
+      <div class="rcard on" onclick="pickRhythm(this,&#39;relaxed&#39;)"><div class="ri">🌊</div><div class="rt" data-i18n="rh_relaxed_t">Very relaxed</div><div class="rd" data-i18n="rh_relaxed_d">1–2 things a day, chill</div></div>
     </div>
 
     <button class="submit" id="planBtn" onclick="generatePlan()">
       <span class="spin" id="planSpin" style="display: none;"></span>
-      <span id="planTxt">Generate my complete travel plan →</span>
+      <span id="planTxt" data-i18n="generate_btn">Generate my complete travel plan →</span>
     </button>
 
     <div id="errorBanner" style="display:none;margin-top:14px;padding:14px 16px;background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.3);border-radius:10px;color:#a33;font-size:13px;line-height:1.5"></div>
@@ -340,25 +340,26 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <div class="rhero-dest" id="rDest">Rome, Italy</div>
           <div class="rhero-tag" id="rTag">Discover Rome — where every street tells a story</div>
           <div class="rmeta" id="rMeta"><span class="rmpill">21 days</span><span class="rmpill">5 travelers</span><span class="rmpill">$20</span></div>
-          <button onclick="printItinerary()" style="margin-top:12px;padding:8px 18px;background:rgba(201,169,110,.25);border:1px solid rgba(201,169,110,.5);color:#E2C99A;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📄 Save as PDF</button>
+          <button onclick="printItinerary()" data-i18n="pdf_btn" style="margin-top:12px;padding:8px 18px;background:rgba(201,169,110,.25);border:1px solid rgba(201,169,110,.5);color:#E2C99A;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📄 Save as PDF</button>
         </div>
       </div>
 
+
       <div class="tabs">
-        <button class="tab on" onclick="showTab(&#39;itin&#39;,this)">📅 Itinerary</button>
-        <button class="tab" onclick="showTab(&#39;food&#39;,this)">🍽️ Food</button>
-        <button class="tab" onclick="showTab(&#39;stays&#39;,this)">🏨 Stays</button>
-        <button class="tab" onclick="showTab(&#39;flights&#39;,this)">✈️ Flights</button>
-        <button class="tab" onclick="showTab(&#39;budget&#39;,this)">💰 Budget</button>
-        <button class="tab" onclick="showTab(&#39;tips&#39;,this)">💎 Tips</button>
-        <button class="tab" onclick="showTab(&#39;info&#39;,this)">📋 Info</button>
+        <button class="tab on" data-i18n="tab_itin" onclick="showTab(&#39;itin&#39;,this)">📅 Itinerary</button>
+        <button class="tab" data-i18n="tab_food" onclick="showTab(&#39;food&#39;,this)">🍽️ Food</button>
+        <button class="tab" data-i18n="tab_stays" onclick="showTab(&#39;stays&#39;,this)">🏨 Stays</button>
+        <button class="tab" data-i18n="tab_flights" onclick="showTab(&#39;flights&#39;,this)">✈️ Flights</button>
+        <button class="tab" data-i18n="tab_budget" onclick="showTab(&#39;budget&#39;,this)">💰 Budget</button>
+        <button class="tab" data-i18n="tab_tips" onclick="showTab(&#39;tips&#39;,this)">💎 Tips</button>
+        <button class="tab" data-i18n="tab_info" onclick="showTab(&#39;info&#39;,this)">📋 Info</button>
       </div>
 
       <div class="tp on" id="tab-itin">
         <div class="rtabs">
-          <button class="rtab" onclick="switchR(&#39;early_bird&#39;,this)">🌅 Early bird</button>
-          <button class="rtab on" onclick="switchR(&#39;balanced&#39;,this)">☀️ Balanced</button>
-          <button class="rtab" onclick="switchR(&#39;night_owl&#39;,this)">🌙 Night owl</button>
+          <button class="rtab" data-i18n="rt_early" onclick="switchR(&#39;early_bird&#39;,this)">🌅 Early bird</button>
+          <button class="rtab on" data-i18n="rt_balanced" onclick="switchR(&#39;balanced&#39;,this)">☀️ Balanced</button>
+          <button class="rtab" data-i18n="rt_night" onclick="switchR(&#39;night_owl&#39;,this)">🌙 Night owl</button>
         </div>
         <div id="dayNav" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
           <button id="dayPrevBtn" onclick="goToDay(-1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:#fff;font-size:16px;cursor:pointer;flex-shrink:0">←</button>
@@ -380,13 +381,13 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 </section>
 
 <section class="cap" id="capture">
-  <h2>Be first to travel smarter</h2>
-  <p>Free forever for founding members. No credit card needed.</p>
+  <h2 data-i18n="cap_title">Be first to travel smarter</h2>
+  <p data-i18n="cap_subtitle">Free forever for founding members. No credit card needed.</p>
   <div class="cap-form">
-    <input class="cap-em" id="capEmail" type="email" placeholder="your@email.com">
-    <button class="cap-go" onclick="subEmail()">Get early access</button>
+    <input class="cap-em" id="capEmail" type="email" data-i18n-placeholder="ph_email" placeholder="your@email.com">
+    <button class="cap-go" data-i18n="cap_btn" onclick="subEmail()">Get early access</button>
   </div>
-  <div class="cap-ok" id="capOk">🎉 You're on the list!</div>
+  <div class="cap-ok" id="capOk" data-i18n="cap_success">🎉 You're on the list!</div>
 </section>
 
 <footer>
@@ -569,9 +570,114 @@ function setBT(t) {
 }
 var rhythm = 'balanced';
 var appLang = localStorage.getItem('zenvoy_lang') || 'en';
+
+// ── UI TRANSLATIONS (static interface text — separate from the AI-generated
+// trip content, which is translated by instructing the AI directly) ──
+var TRANSLATIONS = {
+  en: {
+    hero_title: 'Your next<br><em>journey</em>,<br>designed by AI',
+    hero_subtitle: 'Complete trip planning in seconds — flights, hotels, food, activities, and local secrets.',
+    hero_cta: 'Plan my trip free →',
+    planner_title: 'Where do you want to go?',
+    planner_subtitle: 'Fill in your details and get a complete personalized travel plan.',
+    label_from: 'Flying from', ph_from: 'Your city...',
+    label_destination: 'Destination', ph_to: 'Where to?',
+    surprise_btn: '✨ Surprise!',
+    label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers',
+    label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
+    label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
+    label_budgetlevel: 'Budget level',
+    bl_budget: 'Budget — backpacker', bl_moderate: 'Moderate — comfort & value', bl_premium: 'Premium — quality first', bl_luxury: 'Luxury — no limits',
+    style_title: 'Travel style (pick one)',
+    style_adventure: 'Adventure', style_luxury: 'Luxury', style_backpacking: 'Backpacking', style_romantic: 'Romantic couple',
+    style_family: 'Family', style_solo: 'Solo traveler', style_group: 'Group of friends', style_wellness: 'Wellness & spa',
+    style_nomad: 'Digital nomad', style_party: 'Party & nightlife', style_honeymoon: 'Honeymoon', style_cultural: 'Cultural immersion',
+    interests_title: 'Interests (pick all that apply)',
+    int_food: 'Food & dining', int_beaches: 'Beaches', int_museums: 'Museums & art', int_nightlife: 'Nightlife',
+    int_hiking: 'Hiking', int_shopping: 'Shopping', int_photography: 'Photography', int_history: 'History',
+    int_nature: 'Nature', int_streetfood: 'Street food', int_architecture: 'Architecture', int_wine: 'Wine & beer',
+    int_rooftops: 'Rooftops & views', int_watersports: 'Water sports', int_hiddengems: 'Hidden gems', int_themeparks: 'Theme parks',
+    rhythm_title: 'Your travel rhythm',
+    rh_early_t: 'Early bird', rh_early_d: 'Up at 7am, packed mornings',
+    rh_balanced_t: 'Balanced', rh_balanced_d: 'Mix of early & lazy starts',
+    rh_night_t: 'Night owl', rh_night_d: 'Late starts, nightlife focus',
+    rh_slow_t: 'Slow mornings', rh_slow_d: 'Coffee first, no rush',
+    rh_packed_t: 'Pack it in', rh_packed_d: 'Max activities every hour',
+    rh_relaxed_t: 'Very relaxed', rh_relaxed_d: '1–2 things a day, chill',
+    generate_btn: 'Generate my complete travel plan →',
+    pdf_btn: '📄 Save as PDF',
+    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights',
+    tab_budget: '💰 Budget', tab_tips: '💎 Tips', tab_info: '📋 Info',
+    rt_early: '🌅 Early bird', rt_balanced: '☀️ Balanced', rt_night: '🌙 Night owl',
+    cap_title: 'Be first to travel smarter', cap_subtitle: 'Free forever for founding members. No credit card needed.',
+    ph_email: 'your@email.com', cap_btn: 'Get early access', cap_success: "🎉 You're on the list!",
+    change_key_btn: '🔑 Change key'
+  },
+  pt: {
+    hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
+    hero_subtitle: 'Planejamento completo de viagem em segundos — voos, hotéis, comida, atividades e segredos locais.',
+    hero_cta: 'Planejar minha viagem grátis →',
+    planner_title: 'Para onde você quer ir?',
+    planner_subtitle: 'Preencha seus dados e receba um plano de viagem completo e personalizado.',
+    label_from: 'Saindo de', ph_from: 'Sua cidade...',
+    label_destination: 'Destino', ph_to: 'Para onde?',
+    surprise_btn: '✨ Surpreenda-me!',
+    label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
+    label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
+    label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
+    label_budgetlevel: 'Nível de orçamento',
+    bl_budget: 'Econômico — mochileiro', bl_moderate: 'Moderado — conforto e custo-benefício', bl_premium: 'Premium — qualidade em primeiro lugar', bl_luxury: 'Luxo — sem limites',
+    style_title: 'Estilo de viagem (escolha um)',
+    style_adventure: 'Aventura', style_luxury: 'Luxo', style_backpacking: 'Mochilão', style_romantic: 'Casal romântico',
+    style_family: 'Família', style_solo: 'Viajante solo', style_group: 'Grupo de amigos', style_wellness: 'Bem-estar e spa',
+    style_nomad: 'Nômade digital', style_party: 'Festa e vida noturna', style_honeymoon: 'Lua de mel', style_cultural: 'Imersão cultural',
+    interests_title: 'Interesses (escolha quantos quiser)',
+    int_food: 'Comida e gastronomia', int_beaches: 'Praias', int_museums: 'Museus e arte', int_nightlife: 'Vida noturna',
+    int_hiking: 'Trilhas', int_shopping: 'Compras', int_photography: 'Fotografia', int_history: 'História',
+    int_nature: 'Natureza', int_streetfood: 'Comida de rua', int_architecture: 'Arquitetura', int_wine: 'Vinho e cerveja',
+    int_rooftops: 'Rooftops e vistas', int_watersports: 'Esportes aquáticos', int_hiddengems: 'Joias escondidas', int_themeparks: 'Parques temáticos',
+    rhythm_title: 'Seu ritmo de viagem',
+    rh_early_t: 'Madrugador', rh_early_d: 'Acorda às 7h, manhãs cheias',
+    rh_balanced_t: 'Equilibrado', rh_balanced_d: 'Mistura de começos cedo e tranquilos',
+    rh_night_t: 'Coruja noturna', rh_night_d: 'Começa tarde, foco na vida noturna',
+    rh_slow_t: 'Manhãs tranquilas', rh_slow_d: 'Café primeiro, sem pressa',
+    rh_packed_t: 'Agenda cheia', rh_packed_d: 'Máximo de atividades a cada hora',
+    rh_relaxed_t: 'Bem tranquilo', rh_relaxed_d: '1–2 coisas por dia, sem correria',
+    generate_btn: 'Gerar meu plano de viagem completo →',
+    pdf_btn: '📄 Salvar como PDF',
+    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos',
+    tab_budget: '💰 Orçamento', tab_tips: '💎 Dicas', tab_info: '📋 Info',
+    rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Coruja noturna',
+    cap_title: 'Seja o primeiro a viajar de forma mais inteligente', cap_subtitle: 'Grátis para sempre para membros fundadores. Sem cartão de crédito.',
+    ph_email: 'seu@email.com', cap_btn: 'Garantir acesso antecipado', cap_success: '🎉 Você está na lista!',
+    change_key_btn: '🔑 Trocar chave'
+  }
+};
+
+// Applies the current language to every element carrying a data-i18n or
+// data-i18n-placeholder attribute. Falls back to the English string (and
+// logs a note) if a key is somehow missing from the active language, so a
+// translation gap never leaves a blank label on screen.
+function translatePage() {
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    var text = dict[key] !== undefined ? dict[key] : TRANSLATIONS.en[key];
+    if (text === undefined) { console.warn('Missing i18n key:', key); return; }
+    el.innerHTML = text;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    var text = dict[key] !== undefined ? dict[key] : TRANSLATIONS.en[key];
+    if (text === undefined) { console.warn('Missing i18n placeholder key:', key); return; }
+    el.setAttribute('placeholder', text);
+  });
+}
+
 function setLang(l) {
   appLang = l;
   localStorage.setItem('zenvoy_lang', l);
+  translatePage();
 }
 function pickRhythm(el, r) {
   rhythm = r;
@@ -1519,6 +1625,7 @@ function subEmail() {
 
 // ── DEFAULT DATES ─────────────────────────────────────────────
 document.getElementById('langSelect').value = appLang;
+translatePage();
 
 var today = new Date();
 var next = new Date(today); next.setDate(today.getDate()+7);
