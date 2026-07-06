@@ -12,14 +12,18 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--navy)}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)}
 .logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:.04em}.logo span{color:var(--gold)}
 .hero{position:relative;overflow:hidden;min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px}
-.hero-bg-anim{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.35}
+.hero-bg-anim{position:absolute;inset:0;z-index:0;pointer-events:none}
 .hero-bg-anim svg{width:100%;height:100%}
-.hero-globe{transform-origin:center;animation:hero-spin 60s linear infinite}
-.hero-plane{animation:hero-orbit 22s linear infinite}
-@keyframes hero-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes hero-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.hero-glow{animation:hero-glow-pulse 8s ease-in-out infinite}
+.hero-route{stroke-dasharray:6 10;animation:hero-dash 3s linear infinite}
+.hero-pin{transform-box:fill-box;transform-origin:center;animation:hero-pin-pulse 2.4s ease-in-out infinite}
+.hero-pin.p2{animation-delay:.8s}
+.hero-pin.p3{animation-delay:1.6s}
+@keyframes hero-glow-pulse{0%,100%{opacity:.5}50%{opacity:.85}}
+@keyframes hero-dash{to{stroke-dashoffset:-32}}
+@keyframes hero-pin-pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
 .hero > *{position:relative;z-index:1}
-@media(prefers-reduced-motion: reduce){.hero-globe,.hero-plane{animation:none}}
+@media(prefers-reduced-motion: reduce){.hero-glow,.hero-route,.hero-pin,.hero-plane-anim{animation:none!important}}
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,7vw,80px);font-weight:300;color:#fff;line-height:1.1;margin-bottom:16px}
 h1 em{font-style:italic;color:var(--gold)}
 .hero p{font-size:18px;color:var(--muted);max-width:480px;line-height:1.7;margin-bottom:40px}
@@ -102,6 +106,7 @@ input::placeholder{color:#aaa}
 .bl-sk{background:#00B2F5;color:#fff}.bl-ky{background:#FF690F;color:#fff}
 .bl-gf{background:#1A73E8;color:#fff}.bl-vi{background:#FF8000;color:#fff}
 .acc-card{background:var(--cream);border-radius:14px;padding:18px;border:1px solid rgba(11,15,26,.07);margin-bottom:10px}
+.acc-photo{width:100%;height:150px;background-size:cover;background-position:center;border-radius:10px;margin-bottom:12px;display:none;background-color:rgba(11,15,26,.05)}
 .acc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:3px}
 .acc-loc{font-size:12px;color:var(--muted);margin-bottom:6px}
 .acc-stars{color:var(--gold);font-size:13px;margin-bottom:8px}
@@ -217,17 +222,34 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 
 <section class="hero">
   <div class="hero-bg-anim" aria-hidden="true">
-    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-      <g class="hero-globe" style="transform-box:view-box;transform-origin:200px 200px">
-        <circle cx="200" cy="200" r="140" fill="none" stroke="#C9A96E" stroke-width="1"/>
-        <ellipse cx="200" cy="200" rx="140" ry="42" fill="none" stroke="#C9A96E" stroke-width="0.7"/>
-        <ellipse cx="200" cy="200" rx="140" ry="90" fill="none" stroke="#C9A96E" stroke-width="0.7"/>
-        <ellipse cx="200" cy="200" rx="42" ry="140" fill="none" stroke="#C9A96E" stroke-width="0.7"/>
-        <ellipse cx="200" cy="200" rx="90" ry="140" fill="none" stroke="#C9A96E" stroke-width="0.7"/>
-      </g>
-      <g class="hero-plane" style="transform-box:view-box;transform-origin:200px 200px">
-        <text x="192" y="46" font-size="22">✈️</text>
-      </g>
+    <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="heroGlowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#E2C99A" stop-opacity="0.30"/>
+          <stop offset="100%" stop-color="#E2C99A" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="heroGlowGrad2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C9A96E" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#C9A96E" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Warm "golden hour" glows — evoke a sunny vacation feeling -->
+      <circle class="hero-glow" cx="160" cy="400" r="260" fill="url(#heroGlowGrad)"/>
+      <circle class="hero-glow" cx="640" cy="110" r="200" fill="url(#heroGlowGrad2)" style="animation-delay:2.5s"/>
+
+      <!-- The flight route: a gentle upward arc, like a journey from here to somewhere new -->
+      <path id="heroFlightPath" d="M100,420 C250,150 550,150 700,80" fill="none" stroke="#E2C99A" stroke-width="1.5" stroke-linecap="round" class="hero-route" opacity="0.55"/>
+
+      <!-- Destination pins glowing along the route -->
+      <circle class="hero-pin p1" cx="177" cy="316" r="5" fill="#E2C99A"/>
+      <circle class="hero-pin p2" cx="400" cy="175" r="5" fill="#E2C99A"/>
+      <circle class="hero-pin p3" cx="623" cy="108" r="5" fill="#E2C99A"/>
+
+      <!-- A small paper plane, actually flying along the route -->
+      <path d="M0,-6 L15,0 L0,6 L4,0 Z" fill="#F5E9CE">
+        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto" path="M100,420 C250,150 550,150 700,80"/>
+      </path>
     </svg>
   </div>
   <h1 data-i18n="hero_title">Your next<br><em>journey</em>,<br>designed by AI</h1>
@@ -989,6 +1011,207 @@ function cityToIata(cityName) {
   return loose ? loose.iata : null;
 }
 
+var CITY_COORDS={
+  'São Paulo':[-23.55,-46.63],
+  'Rio de Janeiro':[-22.91,-43.17],
+  'Brasília':[-15.79,-47.88],
+  'Fortaleza':[-3.73,-38.52],
+  'Salvador':[-12.97,-38.51],
+  'Florianópolis':[-27.6,-48.55],
+  'Recife':[-8.05,-34.9],
+  'Manaus':[-3.12,-60.02],
+  'Porto Alegre':[-30.03,-51.23],
+  'Curitiba':[-25.43,-49.27],
+  'Natal':[-5.79,-35.21],
+  'Maceió':[-9.65,-35.72],
+  'Foz do Iguaçu':[-25.55,-54.59],
+  'New York':[40.71,-74.01],
+  'Los Angeles':[34.05,-118.24],
+  'Miami':[25.76,-80.19],
+  'Chicago':[41.88,-87.63],
+  'Las Vegas':[36.17,-115.14],
+  'San Francisco':[37.77,-122.42],
+  'Orlando':[28.54,-81.38],
+  'Hawaii':[21.31,-157.86],
+  'London':[51.51,-0.13],
+  'Paris':[48.86,2.35],
+  'Nice':[43.7,7.27],
+  'Barcelona':[41.39,2.17],
+  'Madrid':[40.42,-3.7],
+  'Ibiza':[38.91,1.43],
+  'Rome':[41.9,12.5],
+  'Milan':[45.46,9.19],
+  'Venice':[45.44,12.34],
+  'Florence':[43.77,11.26],
+  'Amalfi Coast':[40.63,14.6],
+  'Amsterdam':[52.37,4.9],
+  'Berlin':[52.52,13.4],
+  'Munich':[48.14,11.58],
+  'Vienna':[48.21,16.37],
+  'Zurich':[47.38,8.54],
+  'Prague':[50.08,14.44],
+  'Budapest':[47.5,19.04],
+  'Lisbon':[38.72,-9.14],
+  'Porto':[41.15,-8.61],
+  'Athens':[37.98,23.73],
+  'Santorini':[36.39,25.46],
+  'Mykonos':[37.45,25.33],
+  'Reykjavik':[64.15,-21.94],
+  'Copenhagen':[55.68,12.57],
+  'Stockholm':[59.33,18.07],
+  'Oslo':[59.91,10.75],
+  'Dublin':[53.35,-6.26],
+  'Dubrovnik':[42.65,18.09],
+  'Tokyo':[35.68,139.69],
+  'Kyoto':[35.01,135.77],
+  'Osaka':[34.69,135.5],
+  'Seoul':[37.57,126.98],
+  'Bangkok':[13.76,100.5],
+  'Phuket':[7.89,98.4],
+  'Chiang Mai':[18.79,98.99],
+  'Bali':[-8.34,115.09],
+  'Singapore':[1.35,103.82],
+  'Hong Kong':[22.32,114.17],
+  'Beijing':[39.9,116.41],
+  'Shanghai':[31.23,121.47],
+  'Mumbai':[19.08,72.88],
+  'Delhi':[28.7,77.1],
+  'Goa':[15.3,74.12],
+  'Ho Chi Minh City':[10.82,106.63],
+  'Hanoi':[21.03,105.85],
+  'Hoi An':[15.88,108.34],
+  'Kuala Lumpur':[3.14,101.69],
+  'Maldives':[4.18,73.51],
+  'Dubai':[25.2,55.27],
+  'Abu Dhabi':[24.45,54.38],
+  'Istanbul':[41.01,28.98],
+  'Cappadocia':[38.64,34.83],
+  'Cairo':[30.04,31.24],
+  'Marrakech':[31.63,-7.99],
+  'Cape Town':[-33.92,18.42],
+  'Nairobi':[-1.29,36.82],
+  'Zanzibar':[-6.16,39.2],
+  'Tel Aviv':[32.08,34.78],
+  'Cancún':[21.16,-86.85],
+  'Mexico City':[19.43,-99.13],
+  'Tulum':[20.21,-87.47],
+  'Buenos Aires':[-34.6,-58.38],
+  'Patagonia':[-49.33,-72.86],
+  'Lima':[-12.05,-77.04],
+  'Cusco':[-13.53,-71.97],
+  'Bogotá':[4.71,-74.07],
+  'Cartagena':[10.39,-75.51],
+  'Medellín':[6.24,-75.58],
+  'Santiago':[-33.45,-70.67],
+  'Havana':[23.11,-82.37],
+  'Punta Cana':[18.58,-68.4],
+  'Sydney':[-33.87,151.21],
+  'Melbourne':[-37.81,144.96],
+  'Auckland':[-36.85,174.76],
+  'Queenstown':[-45.03,168.66],
+  'Fiji':[-17.71,178.07],
+  'Toronto':[43.65,-79.38],
+  'Vancouver':[49.28,-123.12],
+  'Montreal':[45.5,-73.57],
+  'Calgary':[51.05,-114.07],
+  'Quebec City':[46.81,-71.21],
+  'Ottawa':[45.42,-75.7],
+  'Seattle':[47.61,-122.33],
+  'Boston':[42.36,-71.06],
+  'Washington DC':[38.91,-77.04],
+  'Denver':[39.74,-104.99],
+  'Austin':[30.27,-97.74],
+  'New Orleans':[29.95,-90.07],
+  'Nashville':[36.16,-86.78],
+  'Portland':[45.52,-122.68],
+  'Quito':[-0.18,-78.47],
+  'Guayaquil':[-2.19,-79.89],
+  'La Paz':[-16.5,-68.15],
+  'Montevideo':[-34.9,-56.16],
+  'Asuncion':[-25.28,-57.63],
+  'Caracas':[10.48,-66.9],
+  'San Jose':[9.93,-84.08],
+  'Panama City':[8.98,-79.52],
+  'Guatemala City':[14.63,-90.51],
+  'San Salvador':[13.69,-89.19],
+  'Managua':[12.11,-86.24],
+  'Belize City':[17.5,-88.2],
+  'Nassau':[25.06,-77.35],
+  'Bridgetown':[13.1,-59.62],
+  'Aruba':[12.52,-69.97],
+  'Curacao':[12.17,-68.99],
+  'Montego Bay':[18.47,-77.92],
+  'San Juan':[18.47,-66.11],
+  'St. Lucia':[13.91,-60.98],
+  'Port of Spain':[10.66,-61.52],
+  'Lagos':[6.52,3.38],
+  'Accra':[5.6,-0.19],
+  'Addis Ababa':[9.03,38.75],
+  'Casablanca':[33.57,-7.59],
+  'Tunis':[36.81,10.18],
+  'Algiers':[36.75,3.06],
+  'Johannesburg':[-26.2,28.05],
+  'Victoria Falls':[-17.93,25.83],
+  'Seychelles':[-4.68,55.49],
+  'Mauritius':[-20.35,57.55],
+  'Windhoek':[-22.56,17.08],
+  'Kigali':[-1.94,30.06],
+  'Doha':[25.29,51.53],
+  'Riyadh':[24.71,46.68],
+  'Jeddah':[21.54,39.17],
+  'Muscat':[23.59,58.38],
+  'Amman':[31.95,35.93],
+  'Beirut':[33.89,35.5],
+  'Brussels':[50.85,4.35],
+  'Warsaw':[52.23,21.01],
+  'Krakow':[50.06,19.94],
+  'Helsinki':[60.17,24.94],
+  'Ljubljana':[46.06,14.51],
+  'Bratislava':[48.15,17.11],
+  'Bucharest':[44.43,26.1],
+  'Sofia':[42.7,23.32],
+  'Belgrade':[44.79,20.45],
+  'Edinburgh':[55.95,-3.19],
+  'Bilbao':[43.26,-2.93],
+  'Seville':[37.39,-5.99],
+  'Naples':[40.85,14.27],
+  'Palermo':[38.12,13.36],
+  'Taipei':[25.03,121.57],
+  'Manila':[14.6,120.98],
+  'Cebu':[10.32,123.9],
+  'Boracay':[11.97,121.93],
+  'Yangon':[16.87,96.2],
+  'Phnom Penh':[11.56,104.92],
+  'Siem Reap':[13.36,103.86],
+  'Vientiane':[17.97,102.6],
+  'Colombo':[6.93,79.85],
+  'Kathmandu':[27.72,85.32],
+  'Port Moresby':[-9.44,147.18],
+  'Tahiti':[-17.65,-149.43]
+};
+
+
+// Same normalization logic as cityToIata (strip accents, drop "city", loose
+// substring match) so a destination lookup succeeds under the same
+// conditions as the flight IATA lookup — keeps both lookups consistent.
+function cityToCoords(cityName) {
+  if (!cityName) return null;
+  var rawName = cityName.split(',')[0].trim();
+  if (CITY_COORDS[rawName]) return CITY_COORDS[rawName];
+
+  function normalize(s) {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\bcity\b/gi, '').replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+  var normName = normalize(rawName);
+  var matchKey = Object.keys(CITY_COORDS).find(function(k) {
+    var normK = normalize(k);
+    return normK === normName || normName.indexOf(normK) !== -1 || normK.indexOf(normName) !== -1;
+  });
+  return matchKey ? CITY_COORDS[matchKey] : null;
+}
+
+
 async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, travelers) {
   var token = window.DUFFEL_KEY;
   if (!token) return null;
@@ -1061,6 +1284,66 @@ async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, tra
     });
   } catch (e) {
     console.error('Duffel flight search failed (falling back to plain links):', e);
+    return null;
+  }
+}
+
+// ── DUFFEL STAYS (optional — real hotel prices, photos, ratings) ───────
+// If no token is configured, the destination has no known coordinates, or
+// the call fails for any reason, this returns null and callers keep the
+// AI-estimated accommodations — the app must never break just because this
+// enrichment is missing.
+async function searchDuffelStays(destCity, checkInDate, checkOutDate, travelers) {
+  var token = window.DUFFEL_KEY;
+  if (!token) return null;
+
+  var coords = cityToCoords(destCity);
+  if (!coords) return null; // can't map to coordinates — fall back silently
+
+  if (!checkInDate || !checkOutDate || checkInDate === checkOutDate) return null; // Stays needs a real date range
+
+  try {
+    // Routed through our own Netlify Function proxy — same CORS reason as flights.
+    var res = await fetch('/.netlify/functions/duffel-stays', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: token,
+        latitude: coords[0],
+        longitude: coords[1],
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        guests: travelers,
+        radius: 8
+      })
+    });
+
+    if (!res.ok) {
+      var errBody = await res.text();
+      console.error('Duffel stays search failed — proxy returned ' + res.status + ':', errBody);
+      return null;
+    }
+    var data = await res.json();
+    var stays = (data && data.stays) || [];
+    if (!stays.length) return null;
+
+    // Map to the same shape renderStays() already expects for AI-estimated
+    // accommodations, so no rendering changes are needed downstream.
+    return stays.map(function(s, idx) {
+      return {
+        name: s.name,
+        type: idx === 0 ? 'Top Pick' : (idx === stays.length - 1 ? 'Budget Option' : 'Recommended'),
+        stars: s.rating || 3,
+        area: '', // Duffel Stays search results don't include a neighborhood name at this stage
+        price_night: Math.round(parseFloat(s.price)),
+        highlights: s.reviewScore ? ['Rated ' + s.reviewScore + '/10 (' + (s.reviewCount || 0) + ' reviews)'] : [],
+        why: '',
+        photoUrl: s.photoUrl || null, // used directly, skipping the TripAdvisor photo lookup for real Duffel results
+        isReal: true // flags this as a live Duffel result, not an AI estimate
+      };
+    });
+  } catch (e) {
+    console.error('Duffel stays search failed (falling back to AI estimates):', e);
     return null;
   }
 }
@@ -1321,6 +1604,8 @@ async function generatePlan() {
       '- Use REAL, specifically named places — real restaurant names, real neighborhoods, real hotel names. Never generic ("a local restaurant", "a boutique hotel").\n'+
       '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
       '- "transport" must account for a group of '+travelers+' traveler(s) specifically — note when a larger group changes the best transport choice (e.g. private transport becoming cost-competitive with public transport at this group size).\n'+
+      '- "accommodations" prices (price_night) MUST reflect REAL, current market rates for '+dest+' specifically — a hostel in an expensive city like Zurich or Tokyo costs more than one in Bangkok or Lisbon; a luxury hotel in a budget-friendly destination costs less than one in a famously expensive city. Do not anchor to generic example numbers — research typical local rates for each accommodation type in this specific destination. The four options must have a clear, consistent price hierarchy: Luxury Hotel > Boutique Hotel and Apartment > Hostel, with realistic gaps between them (not arbitrarily close together, not wildly random).\n'+
+      '- Calibrate the ENTIRE accommodations price range to the traveler\'s selected budget level ('+bl+'): a "budget" level trip should show realistically affordable options even at the "luxury hotel" slot (a nice-but-attainable option, not an ultra-premium one), while a "luxury" level trip can show genuinely high-end properties throughout.\n'+
       '- "gems" should be the kind of specific, non-obvious tips a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
       '- Recommend a nearby day-trip destination only inside the itinerary days (handled separately) if one genuinely fits this trip\'s length and interests — do not contradict it here.\n'+
       '- If "Theme parks" is among the traveler\'s interests AND the destination is genuinely famous for theme parks (e.g. Orlando -> Walt Disney World/Universal Studios, Anaheim -> Disneyland, Tokyo -> Tokyo Disneyland/DisneySea, Paris -> Disneyland Paris, Osaka -> Universal Studios Japan), treat the relevant park(s) as a headline activity for this trip — reflect that in the tagline and gems, and make sure the itinerary (handled separately) dedicates at least one full day per major park.\n'+
@@ -1407,6 +1692,15 @@ async function generatePlan() {
       console.error('Duffel enrichment skipped:', flightErr);
     }
 
+    // Same pattern for real hotel data — optional, never blocks the trip.
+    try {
+      var stayDestQuery = to || planData.destination;
+      var realStays = await searchDuffelStays(stayDestQuery, dep, ret, travelers);
+      if (realStays && realStays.length) planData.accommodations = realStays;
+    } catch (stayErr) {
+      console.error('Duffel Stays enrichment skipped:', stayErr);
+    }
+
     renderResult(planData, travelers, total, days, from);
   } catch(e) {
     console.error(e);
@@ -1458,6 +1752,16 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
     getTripAdvisorInfo(meta.placeName + ' ' + meta.dest, meta.category).then(function(info) {
       var badge = document.getElementById(meta.slotId);
       if (!badge || !info) return; // element may no longer be on screen (user navigated away)
+
+      // Populate the photo, if this slot has a photo container and TripAdvisor returned one
+      if (meta.photoSlotId && info.photoUrl) {
+        var photoEl = document.getElementById(meta.photoSlotId);
+        if (photoEl) {
+          photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
+          photoEl.style.display = 'block';
+        }
+      }
+
       if (!info.rating && !info.address && !info.priceLevel) return; // nothing useful to show
 
       var parts = [];
@@ -1607,8 +1911,9 @@ function renderStays(accs, dest) {
   if (staySortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price_night||0)-(b.price_night||0); });
   else if (staySortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price_night||0)-(a.price_night||0); });
 
+  var hasReal = sorted.some(function(a){ return a.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h += '<p style="font-size:13px;color:#5A6478;margin:0">All prices estimated per night. Click to find real-time availability.</p>';
+  h += '<p style="font-size:13px;color:#5A6478;margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'All prices estimated per night. Click to find real-time availability.')+'</p>';
   h += '<select onchange="staySortOrder=this.value;renderStays(window._stays,window._staysDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
   h += '<option value="default"'+(staySortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
   h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
@@ -1620,11 +1925,18 @@ function renderStays(accs, dest) {
     var stars = '★'.repeat(Math.min(a.stars||3,5))+'☆'.repeat(Math.max(0,5-(a.stars||3)));
     var isHostel = a.type==='Hostel';
     var slotId = 'ta-badge-stay-'+idx;
+    var photoSlotId = 'ta-photo-stay-'+idx;
     h += '<div class="acc-card">';
-    h += '<div class="acc-name">'+a.name+' <span id="'+slotId+'" class="ta-badge"></span></div>';
-    h += '<div class="acc-loc">📍 '+a.area+' · <em style="color:var(--gold)">'+a.type+'</em></div>';
+    // Real Duffel results already have a photo — show it immediately.
+    // AI-estimated results get an empty container that TripAdvisor may fill in below.
+    h += '<div id="'+photoSlotId+'" class="acc-photo"'+(a.isReal && a.photoUrl ? " style=\"display:block;background-image:url('"+a.photoUrl+"')\"" : '')+'></div>';
+    h += '<div class="acc-name">'+a.name+' ';
+    if (a.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:2px 8px;border-radius:20px">● LIVE</span> ';
+    h += '<span id="'+slotId+'" class="ta-badge"></span></div>';
+    if (a.area) h += '<div class="acc-loc">📍 '+a.area+' · <em style="color:var(--gold)">'+a.type+'</em></div>';
+    else h += '<div class="acc-loc"><em style="color:var(--gold)">'+a.type+'</em></div>';
     h += '<div class="acc-stars">'+stars+'</div>';
-    h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">'+(a.why||'')+'</p>';
+    if (a.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">'+a.why+'</p>';
     h += '<div class="acc-tags">'+(a.highlights||[]).map(function(t){return '<span class="acc-tag">'+t+'</span>';}).join('')+'</div>';
     h += '<div class="acc-foot"><div><span class="acc-price">$'+(a.price_night||0)+'</span><span style="font-size:12px;color:var(--muted)">/night</span></div>';
     h += '<div class="bls">';
@@ -1633,7 +1945,10 @@ function renderStays(accs, dest) {
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
     h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a>';
     h += '</div></div></div>';
-    staySlotMeta.push({ slotId: slotId, placeName: a.name, dest: dest, category: 'hotels' });
+    // Only queue TripAdvisor enrichment for AI-estimated results — real
+    // Duffel results already have their own photo/rating data, no need to
+    // spend a TripAdvisor lookup on them.
+    if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: dest, category: 'hotels' });
   });
   document.getElementById('staysContent').innerHTML = h;
   enrichSlotsWithTripAdvisor(staySlotMeta);
