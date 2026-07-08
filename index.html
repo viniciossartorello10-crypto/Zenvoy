@@ -103,6 +103,10 @@ input::placeholder{color:#aaa}
 .food-cat-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
 .food-cat-chip{padding:3px 10px;border-radius:20px;border:1px solid rgba(11,15,26,.12);font-size:10px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
 .food-cat-chip:hover,.food-cat-chip.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
+.leg-row{display:flex;gap:8px;align-items:center;margin-top:8px;position:relative}
+.leg-row .ac-wrap{flex:1}
+.leg-days{width:70px;flex-shrink:0}
+.leg-remove{width:26px;height:26px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:#fff;color:#c33;font-size:13px;cursor:pointer;flex-shrink:0}
 .bls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .bl{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;text-decoration:none;white-space:nowrap}
 .bl:hover{opacity:.85}
@@ -270,6 +274,8 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <button class="surprise" id="surpriseBtn" data-i18n="surprise_btn" onclick="toggleSurprise()">✨ Surprise!</button>
         </div>
         <div id="toAirportPicker" style="display:none;margin-top:6px"></div>
+        <button type="button" onclick="addDestinationLeg()" data-i18n="add_destination_btn" style="margin-top:8px;background:transparent;border:1px dashed rgba(11,15,26,.25);color:#5A6478;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">+ Add another destination</button>
+        <div id="extraLegsContainer"></div>
       </div>
 
     </div>
@@ -550,14 +556,14 @@ var selectedToAirport = null;
 function setupAC(inpId, dropId) {
   var inp = document.getElementById(inpId);
   var drop = document.getElementById(dropId);
-  var pickerId = inpId === 'fromCity' ? 'fromAirportPicker' : 'toAirportPicker';
+  var pickerId = inpId === 'fromCity' ? 'fromAirportPicker' : (inpId === 'toCity' ? 'toAirportPicker' : null);
   var picker = document.getElementById(pickerId);
 
   inp.addEventListener('input', function() {
     var q = this.value.trim().toLowerCase();
     // Clear any airport override from a previous selection — it only applies
     // if the user picks a fresh suggestion for whatever they're typing now.
-    if (inpId === 'fromCity') selectedFromAirport = null; else selectedToAirport = null;
+    if (inpId === 'fromCity') selectedFromAirport = null; else if (inpId === 'toCity') selectedToAirport = null;
     if (picker) { picker.style.display = 'none'; picker.innerHTML = ''; }
     if (q.length < 2) { drop.classList.remove('show'); return; }
     var matches = CITIES.filter(function(c) {
@@ -577,7 +583,7 @@ function setupAC(inpId, dropId) {
 
         // Show an airport picker if this city has more than one relevant airport
         var airports = getCityAirports(c.city);
-        if (inpId === 'fromCity') selectedFromAirport = null; else selectedToAirport = null;
+        if (inpId === 'fromCity') selectedFromAirport = null; else if (inpId === 'toCity') selectedToAirport = null;
         if (airports.length > 1 && picker) {
           var pickerHtml = '<div style="font-size:11px;color:#5A6478;margin-bottom:4px">Which airport?</div><select style="width:100%;padding:8px 10px;font-size:13px;border-radius:8px" onchange="'+(inpId==='fromCity'?'selectedFromAirport':'selectedToAirport')+'=this.value">';
           airports.forEach(function(a, idx) {
@@ -604,6 +610,56 @@ function setupAC(inpId, dropId) {
 
 setupAC('fromCity', 'dropFrom');
 setupAC('toCity', 'dropTo');
+
+// ── MULTI-DESTINATION LEGS ──────────────────────────────────────
+// Each extra leg is { city: '', days: 3 }. The main "Destination" field
+// above is always the FIRST leg — extraLegs holds only the ones after it.
+// generatePlan() checks extraLegs.length to decide whether to use the
+// existing (unchanged) single-destination path or the new multi-leg path,
+// so single-destination trips are completely unaffected by this feature.
+var extraLegs = [];
+var MAX_LEGS = 6; // main destination + up to 5 extra legs
+
+function addDestinationLeg() {
+  if (extraLegs.length >= MAX_LEGS - 1) return;
+  var legIndex = extraLegs.length;
+  extraLegs.push({ city: '', days: 3 });
+  renderExtraLegs();
+  // Wire up autocomplete for the newly-created input
+  setupAC('legCity' + legIndex, 'legDrop' + legIndex);
+}
+
+function removeDestinationLeg(idx) {
+  extraLegs.splice(idx, 1);
+  renderExtraLegs();
+  // Re-wire autocomplete for all remaining legs (their DOM ids shift down)
+  extraLegs.forEach(function(leg, i) { setupAC('legCity' + i, 'legDrop' + i); });
+}
+
+function updateLegDays(idx, value) {
+  extraLegs[idx].days = Math.max(1, parseInt(value) || 1);
+}
+
+function renderExtraLegs() {
+  var container = document.getElementById('extraLegsContainer');
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var h = '';
+  extraLegs.forEach(function(leg, idx) {
+    h += '<div class="leg-row">';
+    h += '<div class="ac-wrap"><input id="legCity' + idx + '" type="text" placeholder="Next city..." autocomplete="off" value="' + (leg.city || '') + '"><div class="dropdown" id="legDrop' + idx + '"></div></div>';
+    h += '<input class="leg-days" type="number" min="1" max="60" value="' + leg.days + '" onchange="updateLegDays(' + idx + ',this.value)" title="' + (dict.leg_days_label || 'days') + '">';
+    h += '<button type="button" class="leg-remove" onclick="removeDestinationLeg(' + idx + ')">✕</button>';
+    h += '</div>';
+  });
+  container.innerHTML = h;
+  // Re-attach the value into our state whenever the city input changes —
+  // setupAC's dropdown selection already writes into the input directly,
+  // so we sync extraLegs[idx].city from the input's current value here.
+  extraLegs.forEach(function(leg, idx) {
+    var inp = document.getElementById('legCity' + idx);
+    if (inp) inp.addEventListener('input', function() { extraLegs[idx].city = this.value; });
+  });
+}
 
 // ── SURPRISE ─────────────────────────────────────────────────
 var surpriseMode = false;
@@ -648,7 +704,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Fill in your details and get a complete personalized travel plan.',
     label_from: 'Flying from', ph_from: 'Your city...',
     label_destination: 'Destination', ph_to: 'Where to?',
-    surprise_btn: '✨ Surprise!',
+    surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days',
     label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers',
     label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
@@ -690,7 +746,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Preencha seus dados e receba um plano de viagem completo e personalizado.',
     label_from: 'Saindo de', ph_from: 'Sua cidade...',
     label_destination: 'Destino', ph_to: 'Para onde?',
-    surprise_btn: '✨ Surpreenda-me!',
+    surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias',
     label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
     label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
@@ -732,7 +788,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Completa tus datos y obtén un plan de viaje completo y personalizado.',
     label_from: 'Saliendo de', ph_from: 'Tu ciudad...',
     label_destination: 'Destino', ph_to: '¿A dónde?',
-    surprise_btn: '✨ ¡Sorpréndeme!',
+    surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días',
     label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros',
     label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
@@ -774,7 +830,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Remplissez vos informations et obtenez un plan de voyage complet et personnalisé.',
     label_from: 'Départ de', ph_from: 'Votre ville...',
     label_destination: 'Destination', ph_to: 'Où aller ?',
-    surprise_btn: '✨ Surprenez-moi !',
+    surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours',
     label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs',
     label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
@@ -816,7 +872,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Inserisci i tuoi dati e ottieni un piano di viaggio completo e personalizzato.',
     label_from: 'Partenza da', ph_from: 'La tua città...',
     label_destination: 'Destinazione', ph_to: 'Dove andare?',
-    surprise_btn: '✨ Sorprendimi!',
+    surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni',
     label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori',
     label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
@@ -886,6 +942,7 @@ async function fetchExchangeRate(targetCurrency) {
   if (targetCurrency === 'USD') return 1;
   if (rateCache[targetCurrency] !== undefined) return rateCache[targetCurrency];
   try {
+    // Frankfurter's /latest endpoint returns { amount, base, date, rates: { <TARGET>: number } }
     var res = await fetch('https://api.frankfurter.app/latest?from=USD&to=' + targetCurrency);
     if (!res.ok) return null;
     var data = await res.json();
@@ -1741,10 +1798,249 @@ function getLangInstructionText(fieldsDescription) {
     : 'Write ' + (fieldsDescription || 'the entire response') + ' in English.';
 }
 
+// ── MULTI-DESTINATION FLIGHTS (home -> leg1 -> leg2 -> ... -> home) ────
+// Reuses the existing duffel-flights.js proxy unchanged (it already accepts
+// an arbitrary slices array). The proxy's per-offer summary only reflects
+// the FIRST slice's route/time details (a known v1 simplification), so we
+// override the display fields with our own route summary and only trust
+// the response for airline name and total price.
+async function searchDuffelFlightsMultiCity(fromCity, legCities, departDate, legDaysArr, travelers, originOverride) {
+  var token = window.DUFFEL_KEY;
+  if (!token) return null;
+
+  var originIata = originOverride || cityToIata(fromCity);
+  if (!originIata) return null;
+  var legIatas = legCities.map(function(c) { return cityToIata(c); });
+  if (legIatas.some(function(code) { return !code; })) return null; // any unmapped city — fall back to estimate
+
+  var slices = [];
+  var cursor = departDate ? new Date(departDate) : new Date();
+  var prevIata = originIata;
+  for (var i = 0; i < legIatas.length; i++) {
+    slices.push({ origin: prevIata, destination: legIatas[i], departure_date: cursor.toISOString().slice(0,10) });
+    cursor.setDate(cursor.getDate() + (legDaysArr[i] || 3));
+    prevIata = legIatas[i];
+  }
+  slices.push({ origin: prevIata, destination: originIata, departure_date: cursor.toISOString().slice(0,10) });
+
+  var passengers = [];
+  for (var p = 0; p < Math.max(1, travelers || 1); p++) passengers.push({ type: 'adult' });
+
+  try {
+    var res = await fetch('/.netlify/functions/duffel-flights', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token, slices: slices, passengers: passengers, cabin_class: 'economy' })
+    });
+    if (!res.ok) return null;
+    var data = await res.json();
+    var offers = (data && data.offers) || [];
+    if (!offers.length) return null;
+
+    var routeSummary = [fromCity.split(',')[0]].concat(legCities.map(function(c){return c.split(',')[0];})).concat([fromCity.split(',')[0]]).join(' → ');
+    return offers.slice(0, 3).map(function(o) {
+      return {
+        airline: o.airline, from: originIata, to: originIata, routeSummary: routeSummary,
+        dep: '', arr: '', dur: '', stops: (legIatas.length + 1) + ' flights',
+        class: 'Economy', price: Math.round(parseFloat(o.price)), currency: o.currency,
+        type: 'multi-city', isReal: true, isMultiCity: true
+      };
+    });
+  } catch (e) {
+    console.error('Multi-city Duffel search failed (falling back to estimate):', e);
+    return null;
+  }
+}
+
+// AI-estimate fallback for multi-city flights when no Duffel token is
+// configured or the real search fails — keeps the Flights tab useful either way.
+function estimateMultiCityFlights(fromCity, legCities, totalBudget) {
+  var routeSummary = [fromCity.split(',')[0]].concat(legCities.map(function(c){return c.split(',')[0];})).concat([fromCity.split(',')[0]]).join(' → ');
+  return [{
+    airline: 'Search on Skyscanner', from: fromCity.split(',')[0].substring(0,3).toUpperCase(), to: fromCity.split(',')[0].substring(0,3).toUpperCase(),
+    routeSummary: routeSummary, dep: '', arr: '', dur: '', stops: (legCities.length + 1) + ' flights',
+    class: 'Economy', price: Math.round(totalBudget * 0.35), currency: 'USD', type: 'multi-city', isMultiCity: true
+  }];
+}
+
+function estimateMultiDestBudget(total, numCities) {
+  return {
+    flights: Math.round(total * 0.32), accommodation: Math.round(total * 0.28), food: Math.round(total * 0.18),
+    activities: Math.round(total * 0.12), transport: Math.round(total * 0.07), shopping: Math.round(total * 0.03)
+  };
+}
+
+// Handles trips spanning multiple destinations (e.g. a European backpacking
+// route through several countries). Runs the same per-destination AI
+// generation used for single-destination trips, once per leg, then merges
+// everything into a planData shape the existing render functions already
+// understand — city-tagged accommodations/food items instead of separate
+// per-city sections. This is a deliberate v1 scoping choice to keep the
+// feature reliable; dedicated per-city sections could be a future refinement.
+async function generateMultiDestPlan(from) {
+  var dep = document.getElementById('depDate').value;
+  var ret = document.getElementById('retDate').value;
+  var travelers = parseInt(document.getElementById('travelers').value) || 2;
+  var budget = parseInt(document.getElementById('budget').value) || 3000;
+  var bl = document.getElementById('budgetLevel').value;
+  var style = getStyle();
+  var interests = getInterests();
+  var total = budgetType === 'person' ? budget * travelers : budget;
+  var langInstruction = getLangInstructionText('the ENTIRE response') + ' Keep JSON keys in English exactly as specified, but ALL values must be in that language.';
+  var isFromBrazil = /brazil|brasil/i.test(from);
+
+  var mainCity = document.getElementById('toCity').value || 'a great destination';
+  var legs = [{ city: mainCity, days: null }].concat(extraLegs.map(function(l) { return { city: l.city || 'a great destination', days: l.days }; }));
+
+  var totalTripDays = (dep && ret) ? Math.max(legs.length, Math.round((new Date(ret) - new Date(dep)) / 86400000)) : (legs.length * 3);
+  var extraDaysSum = legs.slice(1).reduce(function(s, l) { return s + (l.days || 3); }, 0);
+  legs[0].days = Math.max(1, totalTripDays - extraDaysSum);
+
+  var btn = document.getElementById('planBtn');
+  btn.disabled = true;
+  document.getElementById('planSpin').style.display = 'block';
+  hideErrorBanner();
+
+  try {
+    var allDays = [];
+    var dayOffset = 0;
+    var foodGuides = [], accommodationsAll = [], gemsAll = [], practicalFirst = null;
+    var chunkWarnings = [];
+    var resolvedCities = [];
+
+    for (var li = 0; li < legs.length; li++) {
+      var leg = legs[li];
+      document.getElementById('planTxt').textContent = 'Planning ' + leg.city + ' (' + (li + 1) + '/' + legs.length + ')...';
+
+      var legOverviewPrompt = 'You are Zenvoy, a local travel expert for ' + leg.city + '. Return ONLY valid JSON, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
+        'Give recommendations for a ' + leg.days + '-day stay in ' + leg.city + ' for ' + travelers + ' traveler(s). Style: ' + style + '. Interests: ' + interests + '. Budget level: ' + bl + '.\n\n' +
+        'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"$X"},{"name":"dish2","desc":"desc","where":"where","price":"$X"},{"name":"dish3","desc":"desc","where":"where","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"$X"},{"name":"item2","where":"where","price":"$X"},{"name":"item3","where":"where","price":"$X"}]},"accommodations":[{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"}],"gems":[{"title":"title","tip":"tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
+        'Provide AT LEAST 3 different options for each food_guide category (except street_food). "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop, distinct from lunch and dinner.\n\n' +
+        'Use REAL, specifically named, currently-operating places only — never generic placeholders.\n\n' +
+        'JSON formatting rules: use straight double quotes only, plain hyphens instead of em-dashes, no literal line breaks inside string values.';
+
+      var legOverviewText = await callAI([{ role: 'user', content: legOverviewPrompt }], 2000);
+      var legOverview;
+      try {
+        legOverview = extractJSONObject(legOverviewText);
+      } catch (e) {
+        try {
+          var fixPrompt = 'The following text was supposed to be valid JSON but failed with error: "' + e.message + '". Return ONLY the corrected JSON, no explanation.\n\n' + legOverviewText;
+          legOverview = extractJSONObject(await callAI([{ role: 'user', content: fixPrompt }], 2000));
+        } catch (e2) {
+          legOverview = { destination: leg.city, food_guide: {}, accommodations: [], gems: [], practical: {} };
+        }
+      }
+
+      var resolvedCity = legOverview.destination || leg.city;
+      resolvedCities.push(resolvedCity);
+      foodGuides.push({ city: resolvedCity, food_guide: legOverview.food_guide || {} });
+      (legOverview.accommodations || []).forEach(function(a) {
+        a.area = (a.area ? a.area + ' · ' : '') + resolvedCity;
+        accommodationsAll.push(a);
+      });
+      (legOverview.gems || []).forEach(function(g) {
+        gemsAll.push({ title: (g.title || 'Tip') + ' (' + resolvedCity + ')', tip: g.tip });
+      });
+      if (!practicalFirst) practicalFirst = legOverview.practical || {};
+
+      var legRanges = chunkDayRanges(leg.days, 6);
+      for (var ri = 0; ri < legRanges.length; ri++) {
+        var localStart = legRanges[ri][0], localEnd = legRanges[ri][1];
+        var globalStart = dayOffset + localStart, globalEnd = dayOffset + localEnd;
+        document.getElementById('planTxt').textContent = 'Building ' + resolvedCity + ' days ' + globalStart + '–' + globalEnd + '...';
+
+        var legDayPrompt = 'You are Zenvoy, a local expert in ' + resolvedCity + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
+          'Generate a detailed itinerary for days ' + localStart + ' through ' + localEnd + ' of a ' + leg.days + '-day stay in ' + resolvedCity + ' (part of a longer multi-city trip). Traveler style: ' + style + '. Interests: ' + interests + '.\n\n' +
+          'Use REAL, specifically named, currently-operating places only. Vary neighborhoods and activity types across days. Morning/afternoon/night entries must be a compound suggestion — the main activity at a named place, then a natural follow-up at another named spot (e.g. "Spend the afternoon at Ipanema Beach, then grab a caipirinha at Zazá Bistrô as the sun sets") — not a single terse activity.\n\n' +
+          'Return an array, one object per day, using LOCAL day numbers ' + localStart + ' to ' + localEnd + ', in this exact shape:\n' +
+          '[{"day":' + localStart + ',"theme":"specific theme naming the area","img_kw":"keyword",' +
+          '"early_bird":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — $X","night":"compound suggestion, then a follow-up"},' +
+          '"balanced":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — $X","night":"compound suggestion, then a follow-up"},' +
+          '"night_owl":{"morning":"brunch","breakfast":"brunch — dish — $X","lunch":"restaurant — dish — $X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — $X","night":"nightlife spot, then a late-night follow-up"}}]\n\n' +
+          'JSON formatting rules: use straight double quotes only, plain hyphens instead of em-dashes, no literal line breaks inside string values.';
+
+        var parsedLegDays = await generateDayChunk(legDayPrompt, localStart, localEnd);
+        if (parsedLegDays) {
+          parsedLegDays.forEach(function(d) {
+            d.day = d.day + dayOffset;
+            d.theme = '📍 ' + resolvedCity + ' — ' + (d.theme || '');
+            d.city = resolvedCity;
+            allDays.push(d);
+          });
+        } else {
+          chunkWarnings.push(resolvedCity + ' days ' + globalStart + '–' + globalEnd);
+          var placeholders = placeholderDaysFor(localStart, localEnd, resolvedCity);
+          placeholders.forEach(function(d) { d.day = d.day + dayOffset; d.city = resolvedCity; allDays.push(d); });
+        }
+      }
+
+      dayOffset += leg.days;
+    }
+
+    if (chunkWarnings.length) {
+      showErrorBanner('Most of your trip generated successfully, but ' + chunkWarnings.join(', ') + ' hit a temporary error and use a placeholder below — try regenerating.');
+    }
+
+    var mergedFoodGuide = { must_try: [], breakfast: [], lunch: [], afternoon_snack: [], dinner: [], street_food: [] };
+    foodGuides.forEach(function(fg) {
+      var g = fg.food_guide || {};
+      ['must_try', 'breakfast', 'lunch', 'afternoon_snack', 'dinner', 'street_food'].forEach(function(section) {
+        (g[section] || []).forEach(function(item) {
+          var tagged = Object.assign({}, item);
+          if (tagged.name) tagged.name = tagged.name + ' (' + fg.city + ')';
+          mergedFoodGuide[section].push(tagged);
+        });
+      });
+    });
+
+    var destinationLabel = resolvedCities.join(' → ');
+    planData = {
+      destination: destinationLabel,
+      tagline: legs.length + '-city adventure: ' + destinationLabel,
+      days: allDays,
+      food_guide: mergedFoodGuide,
+      accommodations: accommodationsAll,
+      gems: gemsAll,
+      practical: practicalFirst || {},
+      isMultiDest: true,
+      legCities: resolvedCities
+    };
+
+    try {
+      var realFlights = await searchDuffelFlightsMultiCity(from, resolvedCities, dep, legs.map(function(l){ return l.days; }), travelers, selectedFromAirport);
+      planData.flights = realFlights || estimateMultiCityFlights(from, resolvedCities, total);
+    } catch (flightErr) {
+      console.error('Multi-city flight enrichment skipped:', flightErr);
+      planData.flights = estimateMultiCityFlights(from, resolvedCities, total);
+    }
+
+    planData.budget = estimateMultiDestBudget(total, legs.length);
+
+    renderResult(planData, travelers, total, dayOffset, from);
+  } catch (e) {
+    console.error(e);
+    showErrorBanner('Multi-destination generation failed: ' + (e && e.message ? e.message : 'unknown error') + '. Try regenerating, or reduce the number of destinations.');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('planSpin').style.display = 'none';
+    document.getElementById('planTxt').textContent = 'Generate my complete travel plan →';
+  }
+}
+
 // ── GENERATE PLAN ─────────────────────────────────────────────
 var planData = null;
 async function generatePlan() {
   var from = document.getElementById('fromCity').value || 'your city';
+
+  // Multi-destination trips are handled by a completely separate function —
+  // this keeps the single-destination path below 100% unchanged and
+  // isolates all the new complexity, so existing trips can't regress.
+  if (extraLegs.length > 0) {
+    await generateMultiDestPlan(from);
+    return;
+  }
+
   var to = surpriseMode ? surpriseDests[Math.floor(Math.random()*surpriseDests.length)] : (document.getElementById('toCity').value || '');
   var dep = document.getElementById('depDate').value;
   var ret = document.getElementById('retDate').value;
@@ -1777,11 +2073,13 @@ async function generatePlan() {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
     // separately (below) so long trips never get cut off by the token limit.
-    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"}],"street_food":[{"name":"item","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
+    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish2","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish3","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place2","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place3","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry/snack item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"market/street","price":"$X"},{"name":"item2","where":"market/street","price":"$X"},{"name":"item3","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
       'Quality bar:\n'+
       '- Use REAL, specifically named places — real restaurant names, real neighborhoods, real hotel names. Never generic ("a local restaurant", "a boutique hotel").\n'+
       '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
       '- "transport" must account for a group of '+travelers+' traveler(s) specifically — note when a larger group changes the best transport choice (e.g. private transport becoming cost-competitive with public transport at this group size).\n'+
+      '- Provide AT LEAST 3 different options for each food_guide category (must_try, breakfast, lunch, afternoon_snack, dinner) — never just one. Travelers want real choices, not a single dictated recommendation per meal.\n'+
+      '- "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop (like a European café culture break) — distinct from lunch and dinner, at a real named café or bakery.\n'+
       '- "accommodations" prices (price_night) MUST reflect REAL, current market rates for '+dest+' specifically — a hostel in an expensive city like Zurich or Tokyo costs more than one in Bangkok or Lisbon; a luxury hotel in a budget-friendly destination costs less than one in a famously expensive city. Do not anchor to generic example numbers — research typical local rates for each accommodation type in this specific destination. The four options must have a clear, consistent price hierarchy: Luxury Hotel > Boutique Hotel and Apartment > Hostel, with realistic gaps between them (not arbitrarily close together, not wildly random).\n'+
       '- Calibrate the ENTIRE accommodations price range to the traveler\'s selected budget level ('+bl+'): a "budget" level trip should show realistically affordable options even at the "luxury hotel" slot (a nice-but-attainable option, not an ultra-premium one), while a "luxury" level trip can show genuinely high-end properties throughout.\n'+
       '- "gems" should be the kind of specific, non-obvious tips a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
@@ -1829,12 +2127,13 @@ async function generatePlan() {
         '- Vary activity TYPES across days (culture one day, nature or parks another, food-and-markets another, nightlife/rooftops another) rather than repeating "museum then restaurant" every day.\n'+
         '- Where relevant, weave in one practical local detail per day that a generic guide would miss — a specific dish to order at that specific spot, the best time of day to arrive to avoid crowds, or a transport tip suited to '+travelers+' traveler(s).\n'+
         '- Match the chosen rhythm ('+(rMap[rhythm]||'Balanced')+') in pacing — relaxed rhythms get 1-2 anchor activities per day with breathing room, packed rhythms get back-to-back activities.\n'+
+        '- Morning, afternoon, and night entries must be a compound suggestion, not a single terse activity: describe the MAIN activity at a specific named place, then a natural follow-up (a nearby spot to relax, grab a coffee, or watch the sunset). For example: "Spend the afternoon at Ipanema Beach with the family, then walk over to Zazá Bistrô for a caipirinha as the sun sets" — not just "Ipanema Beach".\n'+
         (interests.toLowerCase().indexOf('theme park') !== -1 ? '- Theme parks is one of this traveler\'s selected interests. If '+overview.destination+' is home to a major theme park (Disney, Universal, or similar), dedicate at least one FULL day (morning through night) entirely to that park — do not split it across a partial afternoon only, and do not water it down with unrelated stops that day.\n' : '')+'\n'+
         'Return an array, one object per day, in this exact shape:\n'+
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
-        '"early_bird":{"morning":"7am activity at a specific named place","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"specific activity at a named place","dinner":"specific restaurant name — signature dish — $X","night":"specific evening suggestion at a named place"},'+
-        '"balanced":{"morning":"activity at a named place","breakfast":"cafe name — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"activity at a named place","dinner":"restaurant name — signature dish — $X","night":"suggestion at a named place"},'+
-        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"activity at a named place","dinner":"restaurant name — signature dish — $X","night":"named nightlife spot"}}]\n\n'+
+        '"early_bird":{"morning":"7am compound activity — main activity at a specific named place, then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — $X","night":"compound evening suggestion at a named place, then a follow-up"},'+
+        '"balanced":{"morning":"compound activity — main activity at a named place, then a natural follow-up","breakfast":"cafe name — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"compound suggestion at a named place, then a follow-up"},'+
+        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"named nightlife spot, then a late-night follow-up"}}]\n\n'+
         'Continue this pattern for every day from '+rangeStart+' to '+rangeEnd+' inclusive.\n\n'+
         'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
 
@@ -1918,7 +2217,7 @@ function renderResult(p, travelers, budget, days, from) {
   // Domestic/international is purely informational — computed automatically
   // from the origin/destination countries, no effect on search behavior.
   var fromCountry = getCountryFromLocation(from);
-  var toCountry = getCountryFromLocation(p.destination);
+  var toCountry = p.isMultiDest ? '' : getCountryFromLocation(p.destination);
   var tripTypeLabel = '';
   if (fromCountry && toCountry) {
     var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
@@ -2173,15 +2472,10 @@ function renderCurrentDay() {
 
   var d = days[currentDayIndex];
   var r = d[rk] || d.balanced || d.early_bird || {};
-  var imgUrl = getImg(d.img_kw || dest.split(',')[0], 800, 320);
 
   window._slotOptions = {}; // fresh per day render — alternatives don't carry over between days
 
-  var html = '<div class="dc">';
-  html += '<div class="dc-img" style="background-image:url(\''+imgUrl+'\')">';
-  html += '<div class="dc-img-ov"></div>';
-  html += '<div class="dc-img-lbl">Day '+d.day+' · '+(d.theme||'')+'</div>';
-  html += '</div><div class="dc-body">';
+  var html = '<div class="dc"><div class="dc-body">';
   html += '<div class="dlabel">Day '+d.day+'</div>';
   html += '<div class="dth">'+(d.theme||'Exploration')+'</div>';
   var slots = [['Breakfast',r.breakfast],['Morning',r.morning],['Lunch',r.lunch],['Afternoon',r.afternoon],['Dinner',r.dinner],['Night',r.night]];
@@ -2242,6 +2536,15 @@ function renderFood(fg, dest) {
     fg.lunch.forEach(function(s, idx) {
       var slotId = 'ta-badge-lunch-'+idx;
       h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.dish+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
+    });
+    h += '</div>';
+  }
+  if (fg.afternoon_snack && fg.afternoon_snack.length) {
+    h += '<div class="info-box"><div class="info-t">🥐 Afternoon coffee &amp; snack</div>';
+    fg.afternoon_snack.forEach(function(s, idx) {
+      var slotId = 'ta-badge-snack-'+idx;
+      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.specialty+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
     });
     h += '</div>';
@@ -2339,12 +2642,18 @@ function renderFlights(flights, from, dest) {
     h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ '+f.airline+'</strong>';
     if (f.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px;margin-right:6px">● LIVE</span>';
     h += '<span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+f.class+'</span></div>';
-    h += '<div class="fr"><div><div class="fcity">'+(f.from||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.dep||'—')+'</div></div>';
-    h += '<div class="fmid"><div class="fdur">'+(f.dur||'—')+' · '+(f.stops||'')+'</div><div class="fline"></div></div>';
-    h += '<div><div class="fcity">'+(f.to||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.arr||'—')+'</div></div></div>';
+    if (f.isMultiCity) {
+      h += '<div style="padding:14px 0;text-align:center"><div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;color:var(--navy);margin-bottom:6px">'+(f.routeSummary||'')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.stops||'')+'</div></div>';
+    } else {
+      h += '<div class="fr"><div><div class="fcity">'+(f.from||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.dep||'—')+'</div></div>';
+      h += '<div class="fmid"><div class="fdur">'+(f.dur||'—')+' · '+(f.stops||'')+'</div><div class="fline"></div></div>';
+      h += '<div><div class="fcity">'+(f.to||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.arr||'—')+'</div></div></div>';
+    }
     h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
     var searchUrl;
-    if (f.from && f.to) {
+    if (f.isMultiCity) {
+      searchUrl = 'https://www.skyscanner.com'; // multi-city routes can't be expressed in a simple two-airport URL
+    } else if (f.from && f.to) {
       if (f.depDateOnly) {
         // Real Duffel offer with a known date — build an exact dated deep link.
         // Skyscanner's path format wants YYMMDD.
@@ -2506,6 +2815,15 @@ function subEmail() {
 // ── DEFAULT DATES ─────────────────────────────────────────────
 document.getElementById('langSelect').value = appLang;
 translatePage();
+// Also apply the currency for the saved language on load — translatePage()
+// only updates text, so without this the currency would stay stuck on USD
+// until the person manually re-selects a language from the dropdown.
+fetchExchangeRate(LANG_CURRENCY[appLang] || 'USD').then(function(rate) {
+  if (rate !== null) {
+    currentCurrencyCode = LANG_CURRENCY[appLang] || 'USD';
+    currentRate = rate;
+  }
+});
 
 var today = new Date();
 var next = new Date(today); next.setDate(today.getDate()+7);
