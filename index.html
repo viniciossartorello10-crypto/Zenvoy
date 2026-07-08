@@ -94,6 +94,15 @@ input::placeholder{color:#aaa}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
 .td{font-size:13px;color:#3A4557;line-height:1.6}
+.slot-swap-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.slot-arrow{width:22px;height:22px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#5A6478;transition:opacity .15s}
+.slot-arrow:disabled{opacity:.3;cursor:default}
+.slot-arrow.loading{animation:slot-spin .8s linear infinite}
+@keyframes slot-spin{to{transform:rotate(360deg)}}
+.slot-dots{font-size:10px;color:var(--muted)}
+.food-cat-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.food-cat-chip{padding:3px 10px;border-radius:20px;border:1px solid rgba(11,15,26,.12);font-size:10px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
+.food-cat-chip:hover,.food-cat-chip.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
 .bls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .bl{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;text-decoration:none;white-space:nowrap}
 .bl:hover{opacity:.85}
@@ -249,6 +258,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <input id="fromCity" type="text" data-i18n-placeholder="ph_from" placeholder="Your city..." autocomplete="off">
           <div class="dropdown" id="dropFrom"><div class="drop-item"><span class="drop-flag">🇩🇰</span><div><div class="drop-city">Copenhagen</div><div class="drop-ctry">Denmark · CPH</div></div></div><div class="drop-item"><span class="drop-flag">🇲🇦</span><div><div class="drop-city">Marrakech</div><div class="drop-ctry">Morocco · RAK</div></div></div></div>
         </div>
+        <div id="fromAirportPicker" style="display:none;margin-top:6px"></div>
       </div>
       <div class="field">
         <label data-i18n="label_destination">Destination</label>
@@ -259,7 +269,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           </div>
           <button class="surprise" id="surpriseBtn" data-i18n="surprise_btn" onclick="toggleSurprise()">✨ Surprise!</button>
         </div>
+        <div id="toAirportPicker" style="display:none;margin-top:6px"></div>
       </div>
+
     </div>
 
     <div class="grid4" style="margin-bottom:16px">
@@ -311,7 +323,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button class="pill" data-i18n="style_luxury" onclick="pickStyle(this)">Luxury</button>
       <button class="pill" data-i18n="style_backpacking" onclick="pickStyle(this)">Backpacking</button>
       <button class="pill" data-i18n="style_romantic" onclick="pickStyle(this)">Romantic couple</button>
-      <button class="pill on" data-i18n="style_family" onclick="pickStyle(this)">Family</button>
+      <button class="pill" data-i18n="style_family" onclick="pickStyle(this)">Family</button>
       <button class="pill" data-i18n="style_solo" onclick="pickStyle(this)">Solo traveler</button>
       <button class="pill" data-i18n="style_group" onclick="pickStyle(this)">Group of friends</button>
       <button class="pill" data-i18n="style_wellness" onclick="pickStyle(this)">Wellness &amp; spa</button>
@@ -323,7 +335,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 
     <span class="section-title" data-i18n="interests_title">Interests (pick all that apply)</span>
     <div class="pills" id="interestPills">
-      <button class="pill on" data-i18n="int_food" onclick="this.classList.toggle(&#39;on&#39;)">Food &amp; dining</button>
+      <button class="pill" data-i18n="int_food" onclick="this.classList.toggle(&#39;on&#39;)">Food &amp; dining</button>
       <button class="pill" data-i18n="int_beaches" onclick="this.classList.toggle(&#39;on&#39;)">Beaches</button>
       <button class="pill" data-i18n="int_museums" onclick="this.classList.toggle(&#39;on&#39;)">Museums &amp; art</button>
       <button class="pill" data-i18n="int_nightlife" onclick="this.classList.toggle(&#39;on&#39;)">Nightlife</button>
@@ -331,10 +343,10 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button class="pill" data-i18n="int_shopping" onclick="this.classList.toggle(&#39;on&#39;)">Shopping</button>
       <button class="pill" data-i18n="int_photography" onclick="this.classList.toggle(&#39;on&#39;)">Photography</button>
       <button class="pill" data-i18n="int_history" onclick="this.classList.toggle(&#39;on&#39;)">History</button>
-      <button class="pill on" data-i18n="int_nature" onclick="this.classList.toggle(&#39;on&#39;)">Nature</button>
+      <button class="pill" data-i18n="int_nature" onclick="this.classList.toggle(&#39;on&#39;)">Nature</button>
       <button class="pill" data-i18n="int_streetfood" onclick="this.classList.toggle(&#39;on&#39;)">Street food</button>
       <button class="pill" data-i18n="int_architecture" onclick="this.classList.toggle(&#39;on&#39;)">Architecture</button>
-      <button class="pill on" data-i18n="int_wine" onclick="this.classList.toggle(&#39;on&#39;)">Wine &amp; beer</button>
+      <button class="pill" data-i18n="int_wine" onclick="this.classList.toggle(&#39;on&#39;)">Wine &amp; beer</button>
       <button class="pill" data-i18n="int_rooftops" onclick="this.classList.toggle(&#39;on&#39;)">Rooftops &amp; views</button>
       <button class="pill" data-i18n="int_watersports" onclick="this.classList.toggle(&#39;on&#39;)">Water sports</button>
       <button class="pill" data-i18n="int_hiddengems" onclick="this.classList.toggle(&#39;on&#39;)">Hidden gems</button>
@@ -376,6 +388,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         <button class="tab" data-i18n="tab_food" onclick="showTab(&#39;food&#39;,this)">🍽️ Food</button>
         <button class="tab" data-i18n="tab_stays" onclick="showTab(&#39;stays&#39;,this)">🏨 Stays</button>
         <button class="tab" data-i18n="tab_flights" onclick="showTab(&#39;flights&#39;,this)">✈️ Flights</button>
+        <button class="tab" data-i18n="tab_cars" onclick="showTab(&#39;cars&#39;,this)">🚗 Cars</button>
         <button class="tab" data-i18n="tab_budget" onclick="showTab(&#39;budget&#39;,this)">💰 Budget</button>
         <button class="tab" data-i18n="tab_tips" onclick="showTab(&#39;tips&#39;,this)">💎 Tips</button>
         <button class="tab" data-i18n="tab_info" onclick="showTab(&#39;info&#39;,this)">📋 Info</button>
@@ -399,6 +412,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <div class="tp" id="tab-food"><div id="foodContent"><div class="info-box"><div class="info-t">🍜 Must-try regional dishes</div><div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">Local specialty</div><div class="info-val">Ask locals what not to miss · 📍 Local markets · <strong style="color:var(--gold)">$5–$20</strong></div></div></div></div><div class="info-box"><div class="info-t">☕ Best breakfast spots</div><div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">Local café · City center</div><div class="info-val">Regional breakfast · $5–$12</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌞 Best lunch spots</div><div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">Market lunch · Central market</div><div class="info-val">Fresh local food · $8–$15</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌙 Best dinner spots</div><div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">Top rated restaurant · Old town · Local</div><div class="info-val">House specialty · $20–$40 pp · 💡 Reserve in advance</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🛺 Street food</div><div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">Local street food</div><div class="info-val">Rome main market · $2–$5</div><div class="bls"><a href="https://www.google.com/maps/search/Rome%20main%20market%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div></div>
       <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:#5A6478;margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
       <div class="tp" id="tab-flights"><div id="flightsContent"><p style="font-size:13px;color:#5A6478;margin-bottom:10px">Prices are estimates. Compare real deals:</p><div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/Marrakech/Rome/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com/" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/Marrakech-Rome/" target="_blank" class="bl bl-ky">Kayak</a></div><div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ Search on Skyscanner</strong><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">Economy</span></div><div class="fr"><div><div class="fcity">MAR</div><div style="font-size:12px;color:var(--muted)">Varies</div></div><div class="fmid"><div class="fdur">Check routes · Multiple options</div><div class="fline"></div></div><div><div class="fcity">ROM</div><div style="font-size:12px;color:var(--muted)">Varies</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:24px">$1</span><span style="font-size:11px;color:var(--muted)"> /person</span></div><div class="bls"><a href="https://www.skyscanner.com/" target="_blank" class="bl bl-sk">Search</a></div></div></div></div></div>
+      <div class="tp" id="tab-cars"><div id="carsContent"></div></div>
       <div class="tp" id="tab-budget"><div class="bbd" id="budgetBreak"><div class="bbi"><div class="bba">$7</div><div class="bbl">✈️ Flights</div><div class="bbar" style="width:35%"></div></div><div class="bbi"><div class="bba">$6</div><div class="bbl">🏨 Accommodation</div><div class="bbar" style="width:30%"></div></div><div class="bbi"><div class="bba">$3</div><div class="bbl">🍽️ Food</div><div class="bbar" style="width:15%"></div></div><div class="bbi"><div class="bba">$2</div><div class="bbl">🎭 Activities</div><div class="bbar" style="width:10%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🚌 Transport</div><div class="bbar" style="width:5%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🛍️ Shopping</div><div class="bbar" style="width:5%"></div></div></div><div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between"><span style="font-size:14px;color:#5A6478">Estimated total</span><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:28px" id="budgetTotal">$20</span></div></div>
       <div class="tp" id="tab-tips"><div id="tipsContent"><div class="gem"><div class="gem-t">Eat where locals eat</div><div class="gem-d">"Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus."</div></div><div class="gem"><div class="gem-t">Visit attractions at opening time</div><div class="gem-d">"Arrive right when they open — you'll have them almost to yourself and the light is perfect for photos."</div></div><div class="gem"><div class="gem-t">Download offline maps</div><div class="gem-d">"Download Google Maps offline for Rome before you land. Works without signal."</div></div><div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q=Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.viator.com/searchResults/all?text=Rome%2C%20Italy" target="_blank" class="bl bl-vi">Viator tours</a><a href="https://www.getyourguide.com/s/?q=Rome%2C%20Italy" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div></div></div>
       <div class="tp" id="tab-info"><div id="infoContent"><div class="info-box"><div class="info-t">📋 Need to know — Rome, Italy</div><div class="info-row"><div class="info-icon">🗓️</div><div><div class="info-lbl">Best time</div><div class="info-val">Research the best season for Rome</div></div></div><div class="info-row"><div class="info-icon">🌤️</div><div><div class="info-lbl">Weather</div><div class="info-val">Check weather.com for current forecasts</div></div></div><div class="info-row"><div class="info-icon">💵</div><div><div class="info-lbl">Currency</div><div class="info-val">Check Google for current exchange rates</div></div></div><div class="info-row"><div class="info-icon">🗣️</div><div><div class="info-lbl">Language</div><div class="info-val">Download Google Translate and use camera mode for signs</div></div></div><div class="info-row"><div class="info-icon">🚌</div><div><div class="info-lbl">Getting around</div><div class="info-val">Search "how to get around Rome" for local options</div></div></div><div class="info-row"><div class="info-icon">🔒</div><div><div class="info-lbl">Safety</div><div class="info-val">Check your government's travel advisory before departing</div></div></div><div class="info-row"><div class="info-icon">🛂</div><div><div class="info-lbl">Visa &amp; entry</div><div class="info-val">Check visa requirements at iVisa.com</div></div></div><div class="info-row"><div class="info-icon">🎒</div><div><div class="info-lbl">What to pack</div><div class="info-val">Pack layers, comfortable shoes, portable charger, light rain jacket</div></div></div></div></div></div>
@@ -530,12 +544,21 @@ const CITIES=[
 ];
 
 // ── AUTOCOMPLETE ──────────────────────────────────────────────
+var selectedFromAirport = null; // null means "use the default/primary airport"
+var selectedToAirport = null;
+
 function setupAC(inpId, dropId) {
   var inp = document.getElementById(inpId);
   var drop = document.getElementById(dropId);
+  var pickerId = inpId === 'fromCity' ? 'fromAirportPicker' : 'toAirportPicker';
+  var picker = document.getElementById(pickerId);
 
   inp.addEventListener('input', function() {
     var q = this.value.trim().toLowerCase();
+    // Clear any airport override from a previous selection — it only applies
+    // if the user picks a fresh suggestion for whatever they're typing now.
+    if (inpId === 'fromCity') selectedFromAirport = null; else selectedToAirport = null;
+    if (picker) { picker.style.display = 'none'; picker.innerHTML = ''; }
     if (q.length < 2) { drop.classList.remove('show'); return; }
     var matches = CITIES.filter(function(c) {
       return c.city.toLowerCase().indexOf(q) >= 0 || c.country.toLowerCase().indexOf(q) >= 0;
@@ -551,6 +574,23 @@ function setupAC(inpId, dropId) {
         inp.value = c.city + ', ' + c.country;
         drop.classList.remove('show');
         if (inpId === 'toCity') { surpriseMode = false; document.getElementById('surpriseBtn').classList.remove('active'); }
+
+        // Show an airport picker if this city has more than one relevant airport
+        var airports = getCityAirports(c.city);
+        if (inpId === 'fromCity') selectedFromAirport = null; else selectedToAirport = null;
+        if (airports.length > 1 && picker) {
+          var pickerHtml = '<div style="font-size:11px;color:#5A6478;margin-bottom:4px">Which airport?</div><select style="width:100%;padding:8px 10px;font-size:13px;border-radius:8px" onchange="'+(inpId==='fromCity'?'selectedFromAirport':'selectedToAirport')+'=this.value">';
+          airports.forEach(function(a, idx) {
+            pickerHtml += '<option value="'+a.code+'">'+a.code+' — '+a.label+'</option>';
+          });
+          pickerHtml += '</select>';
+          picker.innerHTML = pickerHtml;
+          picker.style.display = 'block';
+          if (inpId === 'fromCity') selectedFromAirport = airports[0].code; else selectedToAirport = airports[0].code;
+        } else if (picker) {
+          picker.style.display = 'none';
+          picker.innerHTML = '';
+        }
       });
       drop.appendChild(item);
     });
@@ -632,12 +672,15 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Very relaxed', rh_relaxed_d: '1–2 things a day, chill',
     generate_btn: 'Generate my complete travel plan →',
     pdf_btn: '📄 Save as PDF',
-    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights',
+    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars',
     tab_budget: '💰 Budget', tab_tips: '💎 Tips', tab_info: '📋 Info',
     rt_early: '🌅 Early bird', rt_balanced: '☀️ Balanced', rt_night: '🌙 Night owl',
     cap_title: 'Be first to travel smarter', cap_subtitle: 'Free forever for founding members. No credit card needed.',
     ph_email: 'your@email.com', cap_btn: 'Get early access', cap_success: "🎉 You're on the list!",
-    change_key_btn: '🔑 Change key'
+    change_key_btn: '🔑 Change key',
+    trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
+    cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
+    show_another: '🔄 Show another option', loading_option: 'Finding another option...'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -671,12 +714,15 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Bem tranquilo', rh_relaxed_d: '1–2 coisas por dia, sem correria',
     generate_btn: 'Gerar meu plano de viagem completo →',
     pdf_btn: '📄 Salvar como PDF',
-    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos',
+    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros',
     tab_budget: '💰 Orçamento', tab_tips: '💎 Dicas', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Coruja noturna',
     cap_title: 'Seja o primeiro a viajar de forma mais inteligente', cap_subtitle: 'Grátis para sempre para membros fundadores. Sem cartão de crédito.',
     ph_email: 'seu@email.com', cap_btn: 'Garantir acesso antecipado', cap_success: '🎉 Você está na lista!',
-    change_key_btn: '🔑 Trocar chave'
+    change_key_btn: '🔑 Trocar chave',
+    trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
+    cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
+    show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -710,12 +756,15 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Muy relajado', rh_relaxed_d: '1–2 cosas al día, tranquilo',
     generate_btn: 'Generar mi plan de viaje completo →',
     pdf_btn: '📄 Guardar como PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos',
     tab_budget: '💰 Presupuesto', tab_tips: '💎 Consejos', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Ave nocturna',
     cap_title: 'Sé el primero en viajar de forma más inteligente', cap_subtitle: 'Gratis para siempre para miembros fundadores. Sin tarjeta de crédito.',
     ph_email: 'tu@email.com', cap_btn: 'Obtener acceso anticipado', cap_success: '🎉 ¡Estás en la lista!',
-    change_key_btn: '🔑 Cambiar clave'
+    change_key_btn: '🔑 Cambiar clave',
+    trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
+    cat_local: 'Especialidad local', cat_seafood: 'Mariscos', cat_meat: 'Carnes', cat_burger: 'Hamburguesas y casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorpréndeme',
+    show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...'
   },
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
@@ -749,12 +798,15 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Très détendu', rh_relaxed_d: '1–2 choses par jour, tranquille',
     generate_btn: 'Générer mon plan de voyage complet →',
     pdf_btn: '📄 Enregistrer en PDF',
-    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols',
+    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures',
     tab_budget: '💰 Budget', tab_tips: '💎 Conseils', tab_info: '📋 Infos',
     rt_early: '🌅 Lève-tôt', rt_balanced: '☀️ Équilibré', rt_night: '🌙 Couche-tard',
     cap_title: 'Soyez le premier à voyager plus intelligemment', cap_subtitle: 'Gratuit pour toujours pour les membres fondateurs. Aucune carte de crédit requise.',
     ph_email: 'votre@email.com', cap_btn: 'Obtenir un accès anticipé', cap_success: '🎉 Vous êtes sur la liste !',
-    change_key_btn: '🔑 Changer la clé'
+    change_key_btn: '🔑 Changer la clé',
+    trip_domestic: '🏠 National', trip_international: '🌍 International',
+    cat_local: 'Spécialité locale', cat_seafood: 'Fruits de mer', cat_meat: 'Viande', cat_burger: 'Burgers et décontracté', cat_veg: 'Végétarien', cat_surprise: 'Surprenez-moi',
+    show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option..."
   },
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
@@ -788,12 +840,15 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Molto rilassato', rh_relaxed_d: '1–2 cose al giorno, tranquillo',
     generate_btn: 'Genera il mio piano di viaggio completo →',
     pdf_btn: '📄 Salva come PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto',
     tab_budget: '💰 Budget', tab_tips: '💎 Consigli', tab_info: '📋 Info',
     rt_early: '🌅 Mattiniero', rt_balanced: '☀️ Equilibrato', rt_night: '🌙 Nottambulo',
     cap_title: 'Sii il primo a viaggiare in modo più intelligente', cap_subtitle: 'Gratis per sempre per i membri fondatori. Nessuna carta di credito richiesta.',
     ph_email: 'tua@email.com', cap_btn: 'Ottieni accesso anticipato', cap_success: '🎉 Sei nella lista!',
-    change_key_btn: '🔑 Cambia chiave'
+    change_key_btn: '🔑 Cambia chiave',
+    trip_domestic: '🏠 Nazionale', trip_international: '🌍 Internazionale',
+    cat_local: 'Specialità locale', cat_seafood: 'Pesce', cat_meat: 'Carne', cat_burger: 'Burger e casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorprendimi',
+    show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...'
   }
 };
 
@@ -817,10 +872,61 @@ function translatePage() {
   });
 }
 
+// ── CURRENCY (follows the selected language, using real exchange rates) ──
+// All prices in this app are generated in USD (the AI is explicitly asked
+// for USD, and Duffel's sandbox returns USD) — formatPrice() converts that
+// USD amount to the currency associated with the current language.
+var LANG_CURRENCY = { en: 'USD', pt: 'BRL', es: 'EUR', fr: 'EUR', it: 'EUR' };
+var CURRENCY_SYMBOLS = { USD: '$', BRL: 'R$', EUR: '€' };
+var currentCurrencyCode = 'USD';
+var currentRate = 1; // USD -> currentCurrencyCode
+var rateCache = { USD: 1 }; // avoid re-fetching the same currency repeatedly in a session
+
+async function fetchExchangeRate(targetCurrency) {
+  if (targetCurrency === 'USD') return 1;
+  if (rateCache[targetCurrency] !== undefined) return rateCache[targetCurrency];
+  try {
+    var res = await fetch('https://api.frankfurter.app/latest?from=USD&to=' + targetCurrency);
+    if (!res.ok) return null;
+    var data = await res.json();
+    var rate = data && data.rates && data.rates[targetCurrency];
+    if (typeof rate !== 'number') return null;
+    rateCache[targetCurrency] = rate;
+    return rate;
+  } catch (e) {
+    console.error('Exchange rate fetch failed (keeping USD):', e);
+    return null;
+  }
+}
+
+// Formats a USD amount in the currently selected currency. Falls back to
+// USD formatting if the rate isn't available yet or the fetch failed —
+// never blocks rendering or shows a broken/missing price.
+function formatPrice(usdAmount) {
+  var amount = Math.round((usdAmount || 0) * currentRate);
+  var symbol = CURRENCY_SYMBOLS[currentCurrencyCode] || '$';
+  return symbol + amount.toLocaleString();
+}
+
 function setLang(l) {
   appLang = l;
   localStorage.setItem('zenvoy_lang', l);
   translatePage();
+
+  // Update currency to match the new language, then re-render any
+  // currently-visible prices so the change is reflected immediately
+  // instead of only affecting the next generated trip.
+  var targetCurrency = LANG_CURRENCY[l] || 'USD';
+  fetchExchangeRate(targetCurrency).then(function(rate) {
+    if (rate === null) return; // fetch failed — keep showing the previous currency rather than guessing
+    currentCurrencyCode = targetCurrency;
+    currentRate = rate;
+    if (window.planData) {
+      renderBudget(window.planData.budget, window._lastBudgetTotal);
+      renderFlights(window.planData.flights, window._flightsFrom, window._flightsDest);
+      renderStays(window.planData.accommodations, window._staysDest);
+    }
+  });
 }
 function pickRhythm(el, r) {
   rhythm = r;
@@ -965,6 +1071,43 @@ async function getTripAdvisorInfo(query, category) {
 // the app must never break or show an error just because this is missing.
 // IATA airport/city code lookup for common cities mentioned in Zenvoy's
 // destination list — Duffel's offer request needs IATA codes, not city names.
+// Cities where travelers realistically choose between 2+ commercial
+// airports — not an exhaustive list of every airport, just the ones a
+// traveler would actually consider. Cities not listed here have exactly
+// one relevant airport, already covered by cityToIata() below.
+var CITY_AIRPORTS = {
+  'São Paulo': [{code:'GRU',label:'Guarulhos (main, international)'},{code:'CGH',label:'Congonhas (domestic, closer to center)'}],
+  'Rio de Janeiro': [{code:'GIG',label:'Galeão (main, international)'},{code:'SDU',label:'Santos Dumont (domestic, downtown)'}],
+  'New York': [{code:'JFK',label:'JFK (main international)'},{code:'LGA',label:'LaGuardia (domestic)'},{code:'EWR',label:'Newark (international, New Jersey side)'}],
+  'Miami': [{code:'MIA',label:'Miami International (main)'},{code:'FLL',label:'Fort Lauderdale (often cheaper)'}],
+  'Chicago': [{code:'ORD',label:"O'Hare (main)"},{code:'MDW',label:'Midway (often cheaper)'}],
+  'Washington DC': [{code:'IAD',label:'Dulles (main international)'},{code:'DCA',label:'Reagan National (closer to downtown)'},{code:'BWI',label:'Baltimore (often cheaper)'}],
+  'London': [{code:'LHR',label:'Heathrow (main)'},{code:'LGW',label:'Gatwick'},{code:'STN',label:'Stansted (budget airlines)'},{code:'LTN',label:'Luton (budget airlines)'},{code:'LCY',label:'City Airport (closer to downtown)'}],
+  'Paris': [{code:'CDG',label:'Charles de Gaulle (main)'},{code:'ORY',label:'Orly (closer to center)'}],
+  'Milan': [{code:'MXP',label:'Malpensa (main international)'},{code:'LIN',label:'Linate (closer to center)'},{code:'BGY',label:'Bergamo (budget airlines)'}],
+  'Rome': [{code:'FCO',label:'Fiumicino (main)'},{code:'CIA',label:'Ciampino (budget airlines)'}],
+  'Tokyo': [{code:'NRT',label:'Narita (main international)'},{code:'HND',label:'Haneda (closer to center)'}],
+  'Osaka': [{code:'KIX',label:'Kansai (international)'},{code:'ITM',label:'Itami (domestic)'}],
+  'Seoul': [{code:'ICN',label:'Incheon (main international)'},{code:'GMP',label:'Gimpo (domestic, some regional)'}],
+  'Shanghai': [{code:'PVG',label:'Pudong (main international)'},{code:'SHA',label:'Hongqiao (domestic, some regional)'}],
+  'Beijing': [{code:'PEK',label:'Capital (main)'},{code:'PKX',label:'Daxing (newer)'}],
+  'Bangkok': [{code:'BKK',label:'Suvarnabhumi (main)'},{code:'DMK',label:'Don Mueang (budget airlines)'}],
+  'Buenos Aires': [{code:'EZE',label:'Ezeiza (main international)'},{code:'AEP',label:'Aeroparque (domestic, closer to center)'}],
+  'Toronto': [{code:'YYZ',label:'Pearson (main)'},{code:'YTZ',label:'Billy Bishop (closer to downtown)'}],
+  'Istanbul': [{code:'IST',label:'Istanbul Airport (main)'},{code:'SAW',label:'Sabiha Gökçen (Asian side, often cheaper)'}],
+  'Dubai': [{code:'DXB',label:'Dubai International (main)'},{code:'DWC',label:'Al Maktoum (limited routes)'}]
+};
+
+// Returns every relevant airport for a city, or a single-entry fallback
+// using the default IATA code for cities not in the multi-airport table —
+// keeps calling code uniform regardless of whether a city has 1 or several.
+function getCityAirports(cityName) {
+  var city = (cityName || '').split(',')[0].trim();
+  if (CITY_AIRPORTS[city]) return CITY_AIRPORTS[city];
+  var defaultCode = cityToIata(cityName);
+  return defaultCode ? [{code: defaultCode, label: 'Main airport'}] : [];
+}
+
 function cityToIata(cityName) {
   if (!cityName) return null;
   var rawName = cityName.split(',')[0].trim().toLowerCase();
@@ -1191,12 +1334,12 @@ function cityToCoords(cityName) {
 }
 
 
-async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, travelers) {
+async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, travelers, originOverride, destOverride) {
   var token = window.DUFFEL_KEY;
   if (!token) return null;
 
-  var originIata = cityToIata(fromCity);
-  var destIata = cityToIata(toCity);
+  var originIata = originOverride || cityToIata(fromCity);
+  var destIata = destOverride || cityToIata(toCity);
   if (!originIata || !destIata) return null; // can't map to an airport code — fall back silently
 
   var slices = [{ origin: originIata, destination: destIata, departure_date: departDate }];
@@ -1323,6 +1466,56 @@ async function searchDuffelStays(destCity, checkInDate, checkOutDate, travelers)
     });
   } catch (e) {
     console.error('Duffel stays search failed (falling back to AI estimates):', e);
+    return null;
+  }
+}
+
+// ── DUFFEL CARS (optional — real car rental prices) ─────────────────────
+// Same graceful-fallback philosophy as flights/stays: if there's no token,
+// no coordinates for the destination, or the call fails for any reason,
+// this returns null and the UI falls back to external car rental search
+// links. NOTE: unlike flights/stays, the exact Duffel Cars API schema
+// wasn't confirmable from public docs at the time this was written — this
+// is a best-effort implementation, safe to fail silently if the real
+// schema differs (see duffel-cars.js for details).
+async function searchDuffelCars(destCity, pickupDate, dropoffDate) {
+  var token = window.DUFFEL_KEY;
+  if (!token) return null;
+
+  var coords = cityToCoords(destCity);
+  if (!coords) return null;
+
+  if (!pickupDate || !dropoffDate || pickupDate === dropoffDate) return null;
+
+  try {
+    var res = await fetch('/.netlify/functions/duffel-cars', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token, latitude: coords[0], longitude: coords[1], pickupDate: pickupDate, dropoffDate: dropoffDate })
+    });
+
+    if (!res.ok) {
+      var errBody = await res.text();
+      console.error('Duffel cars search failed — proxy returned ' + res.status + ':', errBody);
+      return null;
+    }
+    var data = await res.json();
+    var cars = (data && data.cars) || [];
+    if (!cars.length) return null;
+
+    return cars.map(function(c) {
+      return {
+        name: c.name,
+        supplier: c.supplier || '',
+        category: c.category || '',
+        photoUrl: c.photoUrl || null,
+        price: Math.round(parseFloat(c.price)),
+        currency: c.currency,
+        isReal: true
+      };
+    });
+  } catch (e) {
+    console.error('Duffel cars search failed (falling back to external links):', e);
     return null;
   }
 }
@@ -1539,6 +1732,15 @@ function placeholderDaysFor(rangeStart, rangeEnd, destination) {
   return out;
 }
 
+// Shared language instruction, reused by the main plan generation and by
+// on-demand alternative-option fetches, so both respect the selected language.
+var LANG_NAMES_FOR_AI = { pt: 'natural, fluent Brazilian Portuguese', es: 'natural, fluent Spanish', fr: 'natural, fluent French', it: 'natural, fluent Italian' };
+function getLangInstructionText(fieldsDescription) {
+  return LANG_NAMES_FOR_AI[appLang]
+    ? 'Write ' + (fieldsDescription || 'the entire response') + ' in ' + LANG_NAMES_FOR_AI[appLang] + '.'
+    : 'Write ' + (fieldsDescription || 'the entire response') + ' in English.';
+}
+
 // ── GENERATE PLAN ─────────────────────────────────────────────
 var planData = null;
 async function generatePlan() {
@@ -1565,10 +1767,7 @@ async function generatePlan() {
   hideErrorBanner();
 
   var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travelers+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
-  var langNames = { pt: 'natural, fluent Brazilian Portuguese', es: 'natural, fluent Spanish', fr: 'natural, fluent French', it: 'natural, fluent Italian' };
-  var langInstruction = langNames[appLang]
-    ? 'Write the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions) in ' + langNames[appLang] + '. Keep JSON keys in English exactly as specified, but ALL values must be in that language.'
-    : 'Write the entire response in English.';
+  var langInstruction = getLangInstructionText('the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions)') + ' Keep JSON keys in English exactly as specified, but ALL values must be in that language.';
   // When the trip originates from Brazil, Brazilian carriers (LATAM, GOL, Azul)
   // are usually the most relevant and often cheapest options for that traveler
   // — prioritize them in the AI-estimated flights when it's plausible they fly the route.
@@ -1665,7 +1864,7 @@ async function generatePlan() {
     // of "New York, USA"), which would silently fail to match.
     try {
       var flightDestQuery = to || planData.destination;
-      var realFlights = await searchDuffelFlights(from, flightDestQuery, dep, ret, travelers);
+      var realFlights = await searchDuffelFlights(from, flightDestQuery, dep, ret, travelers, selectedFromAirport, selectedToAirport);
       if (realFlights && realFlights.length) planData.flights = realFlights;
     } catch (flightErr) {
       console.error('Duffel enrichment skipped:', flightErr);
@@ -1678,6 +1877,16 @@ async function generatePlan() {
       if (realStays && realStays.length) planData.accommodations = realStays;
     } catch (stayErr) {
       console.error('Duffel Stays enrichment skipped:', stayErr);
+    }
+
+    // Same pattern for real car rental data — optional, never blocks the trip.
+    // If unavailable, renderCars() falls back to external search links.
+    try {
+      var carDestQuery = to || planData.destination;
+      var realCars = await searchDuffelCars(carDestQuery, dep, ret);
+      if (realCars && realCars.length) planData.cars = realCars;
+    } catch (carErr) {
+      console.error('Duffel Cars enrichment skipped:', carErr);
     }
 
     renderResult(planData, travelers, total, days, from);
@@ -1693,6 +1902,11 @@ async function generatePlan() {
 }
 
 // ── RENDER RESULT ─────────────────────────────────────────────
+function getCountryFromLocation(location) {
+  var parts = (location || '').split(',');
+  return parts.length > 1 ? parts[parts.length - 1].trim().toLowerCase() : '';
+}
+
 function renderResult(p, travelers, budget, days, from) {
   document.getElementById('rBg').style.backgroundImage = "url('"+getImg(p.destination,1600,900)+"')";
   // Upgrade to the real city photo from Wikipedia once available (async, non-blocking)
@@ -1701,12 +1915,25 @@ function renderResult(p, travelers, budget, days, from) {
   });
   document.getElementById('rDest').textContent = p.destination;
   document.getElementById('rTag').textContent = p.tagline || '';
-  document.getElementById('rMeta').innerHTML = [days+' days', travelers+' traveler'+(travelers>1?'s':''), '$'+budget.toLocaleString()].map(function(t){return '<span class="rmpill">'+t+'</span>';}).join('');
+  // Domestic/international is purely informational — computed automatically
+  // from the origin/destination countries, no effect on search behavior.
+  var fromCountry = getCountryFromLocation(from);
+  var toCountry = getCountryFromLocation(p.destination);
+  var tripTypeLabel = '';
+  if (fromCountry && toCountry) {
+    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+    tripTypeLabel = fromCountry === toCountry ? dict.trip_domestic : dict.trip_international;
+  }
+  var metaItems = [days+' days', travelers+' traveler'+(travelers>1?'s':''), formatPrice(budget)];
+  if (tripTypeLabel) metaItems.push(tripTypeLabel);
+  document.getElementById('rMeta').innerHTML = metaItems.map(function(t){return '<span class="rmpill">'+t+'</span>';}).join('');
   currentDayIndex = 0;
   renderDays(p.days, 'balanced', p.destination);
   renderFood(p.food_guide, p.destination);
   renderStays(p.accommodations, p.destination);
   renderFlights(p.flights, from, p.destination);
+  renderCars(p.cars, p.destination);
+  window._lastBudgetTotal = budget;
   renderBudget(p.budget, budget);
   renderTips(p.gems, p.destination);
   renderInfo(p.practical, p.destination);
@@ -1772,6 +1999,167 @@ function renderDays(days, rk, dest) {
   renderCurrentDay();
 }
 
+// ── SLOT ALTERNATIVES (swap breakfast/lunch/dinner/activity for another option) ──
+// Alternatives are fetched on demand (not all upfront) to keep the main trip
+// generation fast and its response small — the same lesson learned from the
+// Duffel response-size issue earlier. window._slotOptions holds, per slot,
+// every option seen so far plus which one is currently showing, so the
+// left/right arrows can page through history without re-fetching.
+var FOOD_CATEGORIES = ['local', 'seafood', 'meat', 'burger', 'veg', 'surprise'];
+
+function slotKeyFor(day, idx) { return 'd' + day + '-' + idx; }
+
+async function fetchAlternativeOption(slotLabel, dest, category, existingTexts, dayTheme) {
+  var isFood = slotLabel === 'Breakfast' || slotLabel === 'Lunch' || slotLabel === 'Dinner';
+  var categoryText = '';
+  if (isFood && category && category !== 'surprise') {
+    var catMap = { local: 'a local specialty dish', seafood: 'seafood/fish', meat: 'meat or steak', burger: 'burgers or casual comfort food', veg: 'vegetarian food' };
+    categoryText = ' The recommendation should specifically serve ' + (catMap[category] || category) + '.';
+  }
+  var formatHint = isFood
+    ? 'Reply in this exact format: "Place Name — signature dish — $X" (one line, nothing else).'
+    : 'Reply in this exact format: "activity description at a specific named place" (one line, nothing else, matching the style of a travel itinerary entry).';
+
+  var prompt = 'You are Zenvoy, a local travel expert for ' + dest + '. Suggest ONE specific, real, currently-operating recommendation for "' + slotLabel + '" on a day themed "' + (dayTheme || '') + '".' + categoryText + '\n\n' +
+    (existingTexts.length ? 'Do NOT repeat or closely resemble any of these already-suggested options:\n' + existingTexts.map(function(t){return '- ' + t;}).join('\n') + '\n\n' : '') +
+    formatHint + '\n\n' + getLangInstructionText('the recommendation') + '\n\n' +
+    'JSON formatting rules do not apply here — reply with plain text only, no markdown, no quotes around it.';
+
+  var raw = await callAI([{ role: 'user', content: prompt }], 150);
+  return raw.replace(/```[\s\S]*?```/g, '').replace(/^["'\s]+|["'\s]+$/g, '').trim();
+}
+
+// Rebuilds just one slot's inner content (text + links + badge) from its
+// current option, without touching the rest of the day card — keeps swaps
+// fast and avoids disrupting other slots' already-loaded TripAdvisor data.
+function refreshSlotDom(day, idx, slotLabel, dest) {
+  var key = slotKeyFor(day, idx);
+  var state = window._slotOptions[key];
+  var text = state.texts[state.index];
+  var wrap = document.getElementById('slot-content-' + key);
+  if (!wrap) return;
+
+  var placeName = (text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60);
+  var isFood = slotLabel === 'Breakfast' || slotLabel === 'Lunch' || slotLabel === 'Dinner';
+  var taCategory = isFood ? 'restaurants' : 'attractions';
+  var slotId = 'ta-badge-' + key;
+
+  var h = text + ' <span id="' + slotId + '" class="ta-badge"></span>';
+  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 Maps</a>';
+  if (isFood) h += '<a id="' + slotId + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-ta">Reviews</a>';
+  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName) + '" target="_blank" class="bl bl-vi">Book</a>';
+  h += '</div>';
+  wrap.innerHTML = h;
+  enrichSlotsWithTripAdvisor([{ slotId: slotId, placeName: placeName, dest: dest, category: taCategory }]);
+
+  // Update the arrow-enabled state and dot counter
+  var leftBtn = document.getElementById('slot-left-' + key);
+  var rightBtn = document.getElementById('slot-right-' + key);
+  var dots = document.getElementById('slot-dots-' + key);
+  if (leftBtn) leftBtn.disabled = state.index === 0;
+  if (rightBtn) { rightBtn.disabled = false; rightBtn.classList.remove('loading'); rightBtn.textContent = '→'; }
+  if (dots) dots.textContent = (state.index + 1) + '/' + state.texts.length;
+}
+
+async function cycleSlotOption(day, idx, slotLabel, dest, dayTheme, direction, category) {
+  var key = slotKeyFor(day, idx);
+  var state = window._slotOptions[key];
+  if (!state) return;
+
+  if (direction === -1) {
+    // Move left through already-seen options — no fetch needed.
+    if (state.index > 0) { state.index--; refreshSlotDom(day, idx, slotLabel, dest); }
+    return;
+  }
+
+  if (state.index < state.texts.length - 1) {
+    // Already have a next option cached (e.g. after going back) — just move forward.
+    state.index++;
+    refreshSlotDom(day, idx, slotLabel, dest);
+    return;
+  }
+
+  // Need a brand new option from the AI.
+  var rightBtn = document.getElementById('slot-right-' + key);
+  if (rightBtn) { rightBtn.disabled = true; rightBtn.classList.add('loading'); rightBtn.textContent = '⟳'; }
+  try {
+    var newText = await fetchAlternativeOption(slotLabel, dest, category, state.texts, dayTheme);
+    if (newText) {
+      state.texts.push(newText);
+      state.index = state.texts.length - 1;
+    }
+  } catch (e) {
+    console.error('Failed to fetch alternative option:', e);
+  }
+  refreshSlotDom(day, idx, slotLabel, dest);
+}
+
+function pickFoodCategory(day, idx, slotLabel, dest, dayTheme, category, chipEl) {
+  var key = slotKeyFor(day, idx);
+  window._slotOptions[key].category = category;
+  // A category pick always fetches something new matching that category,
+  // rather than paging through the existing (uncategorized) history.
+  var container = chipEl.parentElement;
+  Array.from(container.children).forEach(function(c) { c.classList.remove('on'); });
+  chipEl.classList.add('on');
+  var state = window._slotOptions[key];
+  state.index = state.texts.length - 1; // ensure the forced-fetch branch below triggers
+  cycleSlotOptionForceNew(day, idx, slotLabel, dest, dayTheme, category);
+}
+
+async function cycleSlotOptionForceNew(day, idx, slotLabel, dest, dayTheme, category) {
+  var key = slotKeyFor(day, idx);
+  var state = window._slotOptions[key];
+  var rightBtn = document.getElementById('slot-right-' + key);
+  if (rightBtn) { rightBtn.disabled = true; rightBtn.classList.add('loading'); rightBtn.textContent = '⟳'; }
+  try {
+    var newText = await fetchAlternativeOption(slotLabel, dest, category, state.texts, dayTheme);
+    if (newText) {
+      state.texts.push(newText);
+      state.index = state.texts.length - 1;
+    }
+  } catch (e) {
+    console.error('Failed to fetch category-specific option:', e);
+  }
+  refreshSlotDom(day, idx, slotLabel, dest);
+}
+
+function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme) {
+  var key = slotKeyFor(day, idx);
+  window._slotOptions[key] = { texts: [text], index: 0, category: null };
+
+  var isFood = slotLabel === 'Breakfast' || slotLabel === 'Lunch' || slotLabel === 'Dinner';
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+
+  var h = '<div class="ts"><div class="tt">' + slotLabel + '</div><div class="td">';
+  h += '<div id="slot-content-' + key + '">' + text + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
+  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 Maps</a>';
+  if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">Reviews</a>';
+  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="https://www.getyourguide.com/s/?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60)) + '" target="_blank" class="bl bl-vi">Book</a>';
+  h += '</div></div>';
+
+  // Swap arrows — let the traveler page through alternatives or fetch a new one
+  var destEsc = dest.replace(/'/g, "\\'");
+  var themeEsc = (dayTheme || '').replace(/'/g, "\\'");
+  h += '<div class="slot-swap-row">';
+  h += '<button class="slot-arrow" id="slot-left-' + key + '" disabled onclick="cycleSlotOption(' + day + ',' + idx + ',\'' + slotLabel + '\',\'' + destEsc + '\',\'' + themeEsc + '\',-1,null)">←</button>';
+  h += '<span class="slot-dots" id="slot-dots-' + key + '">1/1</span>';
+  h += '<button class="slot-arrow" id="slot-right-' + key + '" onclick="cycleSlotOption(' + day + ',' + idx + ',\'' + slotLabel + '\',\'' + destEsc + '\',\'' + themeEsc + '\',1,null)">→</button>';
+  h += '</div>';
+
+  // Food slots also get a category picker for a targeted new suggestion
+  if (isFood) {
+    h += '<div class="food-cat-row">';
+    FOOD_CATEGORIES.forEach(function(cat) {
+      h += '<button type="button" class="food-cat-chip" onclick="pickFoodCategory(' + day + ',' + idx + ',\'' + slotLabel + '\',\'' + destEsc + '\',\'' + themeEsc + '\',\'' + cat + '\',this)">' + (dict['cat_' + cat] || cat) + '</button>';
+    });
+    h += '</div>';
+  }
+
+  h += '</div></div>';
+  return h;
+}
+
 function renderCurrentDay() {
   var days = window._days || [];
   var rk = window._rk || 'balanced';
@@ -1787,6 +2175,8 @@ function renderCurrentDay() {
   var r = d[rk] || d.balanced || d.early_bird || {};
   var imgUrl = getImg(d.img_kw || dest.split(',')[0], 800, 320);
 
+  window._slotOptions = {}; // fresh per day render — alternatives don't carry over between days
+
   var html = '<div class="dc">';
   html += '<div class="dc-img" style="background-image:url(\''+imgUrl+'\')">';
   html += '<div class="dc-img-ov"></div>';
@@ -1794,21 +2184,15 @@ function renderCurrentDay() {
   html += '</div><div class="dc-body">';
   html += '<div class="dlabel">Day '+d.day+'</div>';
   html += '<div class="dth">'+(d.theme||'Exploration')+'</div>';
-  var slots = [['Morning',r.morning],['Breakfast',r.breakfast],['Lunch',r.lunch],['Afternoon',r.afternoon],['Dinner',r.dinner],['Night',r.night]];
+  var slots = [['Breakfast',r.breakfast],['Morning',r.morning],['Lunch',r.lunch],['Afternoon',r.afternoon],['Dinner',r.dinner],['Night',r.night]];
   var slotMeta = []; // collected so we can enrich with TripAdvisor data after the initial render
   slots.forEach(function(s, idx) {
     if (!s[1]) return;
+    html += buildSlotHtml(d.day, s[0], s[1], idx, dest, d.theme);
     var placeName = (s[1].split(' at ')[1] || s[1].split('—')[0] || s[1]).split('.')[0].trim().slice(0,60);
-    var slotId = 'ta-badge-d'+d.day+'-'+idx;
     var isFood = s[0]==='Dinner'||s[0]==='Lunch'||s[0]==='Breakfast';
     var taCategory = isFood ? 'restaurants' : 'attractions';
-    html += '<div class="ts"><div class="tt">'+s[0]+'</div><div class="td">'+s[1];
-    html += ' <span id="'+slotId+'" class="ta-badge"></span>';
-    html += '<div class="bls"><a href="https://www.google.com/maps/search/'+encodeURIComponent(placeName+' '+dest)+'" target="_blank" class="bl bl-gm">📍 Maps</a>';
-    if(isFood) html += '<a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(placeName+' '+dest)+'" target="_blank" class="bl bl-ta">Reviews</a>';
-    if(s[0]==='Afternoon'||s[0]==='Morning') html += '<a href="https://www.getyourguide.com/s/?q='+encodeURIComponent(placeName)+'" target="_blank" class="bl bl-vi">Book</a>';
-    html += '</div></div></div>';
-    slotMeta.push({ slotId: slotId, placeName: placeName, dest: dest, category: taCategory });
+    slotMeta.push({ slotId: 'ta-badge-'+slotKeyFor(d.day, idx), placeName: placeName, dest: dest, category: taCategory });
   });
   html += '</div></div>';
   dc.innerHTML = html;
@@ -1917,7 +2301,7 @@ function renderStays(accs, dest) {
     h += '<div class="acc-stars">'+stars+'</div>';
     if (a.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">'+a.why+'</p>';
     h += '<div class="acc-tags">'+(a.highlights||[]).map(function(t){return '<span class="acc-tag">'+t+'</span>';}).join('')+'</div>';
-    h += '<div class="acc-foot"><div><span class="acc-price">$'+(a.price_night||0)+'</span><span style="font-size:12px;color:var(--muted)">/night</span></div>';
+    h += '<div class="acc-foot"><div><span class="acc-price">'+formatPrice(a.price_night)+'</span><span style="font-size:12px;color:var(--muted)">/night</span></div>';
     h += '<div class="bls">';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
     h += '<a href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+dest)+'" target="_blank" class="bl bl-bk">Booking</a>';
@@ -1958,7 +2342,7 @@ function renderFlights(flights, from, dest) {
     h += '<div class="fr"><div><div class="fcity">'+(f.from||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.dep||'—')+'</div></div>';
     h += '<div class="fmid"><div class="fdur">'+(f.dur||'—')+' · '+(f.stops||'')+'</div><div class="fline"></div></div>';
     h += '<div><div class="fcity">'+(f.to||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.arr||'—')+'</div></div></div>';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">'+(f.currency==='USD'||!f.currency?'$':f.currency+' ')+(f.price||0).toLocaleString()+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
     var searchUrl;
     if (f.from && f.to) {
       if (f.depDateOnly) {
@@ -1979,16 +2363,45 @@ function renderFlights(flights, from, dest) {
   document.getElementById('flightsContent').innerHTML = h;
 }
 
+function renderCars(cars, dest) {
+  var container = document.getElementById('carsContent');
+  var destShort = (dest || '').split(',')[0];
+  var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
+    + '<a href="https://www.kayak.com/cars/' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-ky">Kayak</a>'
+    + '<a href="https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-bk">RentalCars</a>'
+    + '<a href="https://www.discovercars.com/search?location=' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-gm">DiscoverCars</a>'
+    + '</div>';
+
+  if (!cars || !cars.length) {
+    // No real Duffel data (no token, no coverage, or the call failed) —
+    // show a simple, always-useful fallback rather than an empty tab.
+    container.innerHTML = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">Compare car rental deals for ' + destShort + ':</p>' + fallbackLinks;
+    return;
+  }
+
+  var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">Live prices from Duffel:</p>' + fallbackLinks;
+  cars.forEach(function(c) {
+    h += '<div class="fc">';
+    if (c.photoUrl) h += '<div style="width:100%;height:120px;background-size:cover;background-position:center;border-radius:10px;margin-bottom:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>🚗 ' + c.name + '</strong>';
+    h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px">● LIVE</span></div>';
+    if (c.supplier || c.category) h += '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">' + [c.supplier, c.category].filter(Boolean).join(' · ') + '</div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> total</span></div></div>';
+    h += '</div>';
+  });
+  container.innerHTML = h;
+}
+
 function renderBudget(bb, total) {
   var labels = {flights:'✈️ Flights',accommodation:'🏨 Accommodation',food:'🍽️ Food',activities:'🎭 Activities',transport:'🚌 Transport',shopping:'🛍️ Shopping'};
   var sum = Object.values(bb||{}).reduce(function(a,b){return a+b;},0) || total;
   var h = '';
   Object.entries(bb||{}).forEach(function(e) {
     var pct = Math.min(100, Math.round(e[1]/sum*100));
-    h += '<div class="bbi"><div class="bba">$'+e[1].toLocaleString()+'</div><div class="bbl">'+(labels[e[0]]||e[0])+'</div><div class="bbar" style="width:'+pct+'%"></div></div>';
+    h += '<div class="bbi"><div class="bba">'+formatPrice(e[1])+'</div><div class="bbl">'+(labels[e[0]]||e[0])+'</div><div class="bbar" style="width:'+pct+'%"></div></div>';
   });
   document.getElementById('budgetBreak').innerHTML = h;
-  document.getElementById('budgetTotal').textContent = '$'+sum.toLocaleString();
+  document.getElementById('budgetTotal').textContent = formatPrice(sum);
 }
 
 function renderTips(gems, dest) {
@@ -2051,7 +2464,7 @@ function printItinerary() {
   planData.days.forEach(function(d) {
     var r = d[rk] || d.balanced || d.early_bird || {};
     h += '<div class="p-day"><h2>Day ' + d.day + ' — ' + (d.theme || '') + '</h2>';
-    [['Morning', r.morning], ['Breakfast', r.breakfast], ['Lunch', r.lunch], ['Afternoon', r.afternoon], ['Dinner', r.dinner], ['Night', r.night]].forEach(function(s) {
+    [['Breakfast', r.breakfast], ['Morning', r.morning], ['Lunch', r.lunch], ['Afternoon', r.afternoon], ['Dinner', r.dinner], ['Night', r.night]].forEach(function(s) {
       if (s[1]) h += '<div class="p-slot"><b>' + s[0] + '</b> — ' + s[1] + '</div>';
     });
     h += '</div>';
