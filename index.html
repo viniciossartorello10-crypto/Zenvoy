@@ -97,8 +97,10 @@ input::placeholder{color:#aaa}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
 .td{font-size:13px;color:#3A4557;line-height:1.6}
-.slot-swap-row{display:flex;align-items:center;gap:6px;margin-top:6px}
-.slot-arrow{width:22px;height:22px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#5A6478;transition:opacity .15s}
+.slot-swap-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(201,169,110,.08);border-radius:20px;width:fit-content}
+.slot-swap-label{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.slot-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);background:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);transition:all .15s;font-weight:700}
+.slot-arrow:hover:not(:disabled){background:var(--gold);color:#fff}
 .slot-arrow:disabled{opacity:.3;cursor:default}
 .slot-arrow.loading{animation:slot-spin .8s linear infinite}
 @keyframes slot-spin{to{transform:rotate(360deg)}}
@@ -106,10 +108,16 @@ input::placeholder{color:#aaa}
 .food-cat-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
 .food-cat-chip{padding:3px 10px;border-radius:20px;border:1px solid rgba(11,15,26,.12);font-size:10px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
 .food-cat-chip:hover,.food-cat-chip.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
-.leg-row{display:flex;gap:8px;align-items:center;margin-top:8px;position:relative}
+.leg-row{display:block;margin-top:10px;padding:12px;border:1px solid rgba(11,15,26,.1);border-radius:10px;background:rgba(11,15,26,.02);position:relative}
+.leg-row .ac-wrap{width:100%;margin-bottom:8px}
+.leg-row .ac-wrap input{width:100%}
+.leg-dates-row{display:flex;gap:10px;align-items:flex-end}
+.leg-date-field{display:flex;flex-direction:column;gap:2px;flex:1}
+.leg-date-field label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.leg-date-field input{width:100%;padding:6px 8px;font-size:12px;border-radius:6px}
+.leg-days-badge{font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;padding-bottom:7px}
 .leg-row .ac-wrap{flex:1}
-.leg-days{width:70px;flex-shrink:0}
-.leg-remove{width:26px;height:26px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:#fff;color:#c33;font-size:13px;cursor:pointer;flex-shrink:0}
+.leg-remove{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:#fff;color:#c33;font-size:12px;cursor:pointer;flex-shrink:0}
 .bls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .bl{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;text-decoration:none;white-space:nowrap}
 .bl:hover{opacity:.85}
@@ -292,9 +300,14 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <button class="surprise" id="surpriseBtn" data-i18n="surprise_btn" onclick="toggleSurprise()">✨ Surprise!</button>
         </div>
         <div id="toAirportPicker" style="display:none;margin-top:6px"></div>
-        <div id="mainDestDaysRow" style="display:none;margin-top:8px;align-items:center;gap:8px">
-          <label data-i18n="label_days_here" style="font-size:11px;color:#5A6478;text-transform:none;font-weight:400;margin:0">Days here:</label>
-          <input id="mainDestDays" type="number" min="1" max="90" value="3" onchange="mainDestDaysOverride=parseInt(this.value)||3" style="width:70px;padding:6px 10px;font-size:13px;border-radius:8px">
+        <div id="mainDestDaysRow" class="leg-row" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:var(--muted)" id="mainDestDateRangeLabel"></span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <label data-i18n="label_days_here" style="font-size:11px;color:#5A6478;text-transform:none;font-weight:400;margin:0">Days here:</label>
+              <input id="mainDestDays" type="number" min="1" max="90" value="3" onchange="mainDestDaysOverride=parseInt(this.value)||3;updateMainDestDateLabel()" style="width:60px;padding:6px 8px;font-size:13px;border-radius:8px">
+            </div>
+          </div>
         </div>
         <button type="button" onclick="addDestinationLeg()" data-i18n="add_destination_btn" style="margin-top:8px;background:transparent;border:1px dashed rgba(11,15,26,.25);color:#5A6478;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">+ Add another destination</button>
         <div id="extraLegsContainer"></div>
@@ -666,7 +679,22 @@ function addDestinationLeg() {
   renderExtraLegs();
   // Wire up autocomplete for the newly-created input
   setupAC('legCity' + legIndex, 'legDrop' + legIndex);
-  document.getElementById('mainDestDaysRow').style.display = 'flex';
+  document.getElementById('mainDestDaysRow').style.display = 'block';
+  updateMainDestDateLabel();
+}
+
+// Shows a computed, read-only date range for the main destination — it's
+// always the FIRST stop, so its arrival is the trip's overall departure
+// date, and its length comes from the (editable) days-here field.
+function updateMainDestDateLabel() {
+  var depInput = document.getElementById('depDate');
+  var label = document.getElementById('mainDestDateRangeLabel');
+  if (!depInput || !depInput.value || !label) return;
+  var start = new Date(depInput.value);
+  var end = new Date(start);
+  end.setDate(end.getDate() + (mainDestDaysOverride || 3));
+  var fmt = function(d) { return (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getDate().toString().padStart(2,'0') + '/' + d.getFullYear(); };
+  label.textContent = fmt(start) + ' → ' + fmt(end);
 }
 
 function removeDestinationLeg(idx) {
@@ -690,11 +718,13 @@ function renderExtraLegs() {
   var h = '';
   extraLegs.forEach(function(leg, idx) {
     h += '<div class="leg-row">';
-    h += '<div class="ac-wrap"><input id="legCity' + idx + '" type="text" placeholder="Next city..." autocomplete="off" value="' + (leg.city || '') + '"><div class="dropdown" id="legDrop' + idx + '"></div></div>';
-    h += '<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--muted);text-transform:uppercase">'+(dict.leg_arrive_label||'Arrive')+'</label><input type="date" style="width:130px;padding:6px 8px;font-size:12px;border-radius:6px" value="' + (leg.arriveDate || '') + '" onchange="updateLegDate(' + idx + ',\'arriveDate\',this.value)"></div>';
-    h += '<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--muted);text-transform:uppercase">'+(dict.leg_leave_label||'Leave')+'</label><input type="date" style="width:130px;padding:6px 8px;font-size:12px;border-radius:6px" value="' + (leg.departDate || '') + '" onchange="updateLegDate(' + idx + ',\'departDate\',this.value)"></div>';
-    h += '<span style="font-size:11px;color:var(--muted);white-space:nowrap">' + leg.days + ' ' + (dict.leg_days_label||'days') + '</span>';
     h += '<button type="button" class="leg-remove" onclick="removeDestinationLeg(' + idx + ')">✕</button>';
+    h += '<div class="ac-wrap"><input id="legCity' + idx + '" type="text" placeholder="Next city..." autocomplete="off" value="' + (leg.city || '') + '"><div class="dropdown" id="legDrop' + idx + '"></div></div>';
+    h += '<div class="leg-dates-row">';
+    h += '<div class="leg-date-field"><label>'+(dict.leg_arrive_label||'Arrive')+'</label><input type="date" value="' + (leg.arriveDate || '') + '" onchange="updateLegDate(' + idx + ',\'arriveDate\',this.value)"></div>';
+    h += '<div class="leg-date-field"><label>'+(dict.leg_leave_label||'Leave')+'</label><input type="date" value="' + (leg.departDate || '') + '" onchange="updateLegDate(' + idx + ',\'departDate\',this.value)"></div>';
+    h += '<span class="leg-days-badge">' + leg.days + ' ' + (dict.leg_days_label||'days') + '</span>';
+    h += '</div>';
     h += '</div>';
   });
   container.innerHTML = h;
@@ -728,7 +758,7 @@ function updateLegDate(idx, field, value) {
 function suggestLegDates(legIndex) {
   var depInput = document.getElementById('depDate');
   var base = depInput && depInput.value ? new Date(depInput.value) : new Date();
-  var cumulativeDays = 0;
+  var cumulativeDays = mainDestDaysOverride || 3; // start after the main destination's stay
   for (var i = 0; i < legIndex; i++) cumulativeDays += (extraLegs[i].days || 3);
   var arrive = new Date(base); arrive.setDate(arrive.getDate() + cumulativeDays);
   var depart = new Date(arrive); depart.setDate(depart.getDate() + 3);
@@ -779,7 +809,7 @@ var TRANSLATIONS = {
     label_from: 'Flying from', ph_from: 'Your city...',
     label_destination: 'Destination', ph_to: 'Where to?',
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
-    flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest',
+    flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers',
@@ -826,7 +856,7 @@ var TRANSLATIONS = {
     label_from: 'Saindo de', ph_from: 'Sua cidade...',
     label_destination: 'Destino', ph_to: 'Para onde?',
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
-    flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato',
+    flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
@@ -873,7 +903,7 @@ var TRANSLATIONS = {
     label_from: 'Saliendo de', ph_from: 'Tu ciudad...',
     label_destination: 'Destino', ph_to: '¿A dónde?',
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
-    flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato',
+    flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros',
@@ -920,7 +950,7 @@ var TRANSLATIONS = {
     label_from: 'Départ de', ph_from: 'Votre ville...',
     label_destination: 'Destination', ph_to: 'Où aller ?',
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
-    flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher',
+    flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs',
@@ -967,7 +997,7 @@ var TRANSLATIONS = {
     label_from: 'Partenza da', ph_from: 'La tua città...',
     label_destination: 'Destinazione', ph_to: 'Dove andare?',
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
-    flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico',
+    flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori',
@@ -2834,6 +2864,7 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
   var destEsc = dest.replace(/'/g, "\\'");
   var themeEsc = (dayTheme || '').replace(/'/g, "\\'");
   h += '<div class="slot-swap-row">';
+  h += '<span class="slot-swap-label">↻ ' + (dict.swap_label || 'Try another') + '</span>';
   h += '<button class="slot-arrow" id="slot-left-' + key + '" disabled onclick="cycleSlotOption(' + day + ',' + idx + ',\'' + slotLabel + '\',\'' + destEsc + '\',\'' + themeEsc + '\',-1,null)">←</button>';
   h += '<span class="slot-dots" id="slot-dots-' + key + '">1/1</span>';
   h += '<button class="slot-arrow" id="slot-right-' + key + '" onclick="cycleSlotOption(' + day + ',' + idx + ',\'' + slotLabel + '\',\'' + destEsc + '\',\'' + themeEsc + '\',1,null)">→</button>';
