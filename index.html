@@ -76,6 +76,9 @@ input::placeholder{color:#aaa}
 .rhero-tag{font-size:13px;color:rgba(232,226,213,.8);margin-top:4px}
 .rmeta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .rmpill{background:rgba(201,169,110,.2);border:1px solid rgba(201,169,110,.35);color:var(--gold2);padding:3px 12px;border-radius:40px;font-size:12px}
+.city-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin-bottom:6px;border-bottom:1px solid rgba(11,15,26,.08)}
+.city-tab-btn{padding:8px 18px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;font-weight:500;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
+.city-tab-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .tabs{display:flex;border-bottom:1px solid rgba(11,15,26,.1);margin-bottom:20px;overflow-x:auto}
 .tab{padding:11px 18px;font-size:13px;font-weight:500;color:#5A6478;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:all .2s}
 .tab.on{color:var(--navy);border-bottom-color:var(--gold)}
@@ -274,6 +277,10 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <button class="surprise" id="surpriseBtn" data-i18n="surprise_btn" onclick="toggleSurprise()">✨ Surprise!</button>
         </div>
         <div id="toAirportPicker" style="display:none;margin-top:6px"></div>
+        <div id="mainDestDaysRow" style="display:none;margin-top:8px;align-items:center;gap:8px">
+          <label data-i18n="label_days_here" style="font-size:11px;color:#5A6478;text-transform:none;font-weight:400;margin:0">Days here:</label>
+          <input id="mainDestDays" type="number" min="1" max="90" value="3" onchange="mainDestDaysOverride=parseInt(this.value)||3" style="width:70px;padding:6px 10px;font-size:13px;border-radius:8px">
+        </div>
         <button type="button" onclick="addDestinationLeg()" data-i18n="add_destination_btn" style="margin-top:8px;background:transparent;border:1px dashed rgba(11,15,26,.25);color:#5A6478;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">+ Add another destination</button>
         <div id="extraLegsContainer"></div>
       </div>
@@ -389,12 +396,14 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       </div>
 
 
+      <div id="cityTabsContainer"></div>
       <div class="tabs">
         <button class="tab on" data-i18n="tab_itin" onclick="showTab(&#39;itin&#39;,this)">📅 Itinerary</button>
         <button class="tab" data-i18n="tab_food" onclick="showTab(&#39;food&#39;,this)">🍽️ Food</button>
         <button class="tab" data-i18n="tab_stays" onclick="showTab(&#39;stays&#39;,this)">🏨 Stays</button>
         <button class="tab" data-i18n="tab_flights" onclick="showTab(&#39;flights&#39;,this)">✈️ Flights</button>
         <button class="tab" data-i18n="tab_cars" onclick="showTab(&#39;cars&#39;,this)">🚗 Cars</button>
+        <button class="tab" data-i18n="tab_cart" onclick="showTab(&#39;cart&#39;,this)">🛒 Cart</button>
         <button class="tab" data-i18n="tab_budget" onclick="showTab(&#39;budget&#39;,this)">💰 Budget</button>
         <button class="tab" data-i18n="tab_tips" onclick="showTab(&#39;tips&#39;,this)">💎 Tips</button>
         <button class="tab" data-i18n="tab_info" onclick="showTab(&#39;info&#39;,this)">📋 Info</button>
@@ -419,6 +428,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:#5A6478;margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
       <div class="tp" id="tab-flights"><div id="flightsContent"><p style="font-size:13px;color:#5A6478;margin-bottom:10px">Prices are estimates. Compare real deals:</p><div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/Marrakech/Rome/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com/" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/Marrakech-Rome/" target="_blank" class="bl bl-ky">Kayak</a></div><div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ Search on Skyscanner</strong><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">Economy</span></div><div class="fr"><div><div class="fcity">MAR</div><div style="font-size:12px;color:var(--muted)">Varies</div></div><div class="fmid"><div class="fdur">Check routes · Multiple options</div><div class="fline"></div></div><div><div class="fcity">ROM</div><div style="font-size:12px;color:var(--muted)">Varies</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:24px">$1</span><span style="font-size:11px;color:var(--muted)"> /person</span></div><div class="bls"><a href="https://www.skyscanner.com/" target="_blank" class="bl bl-sk">Search</a></div></div></div></div></div>
       <div class="tp" id="tab-cars"><div id="carsContent"></div></div>
+      <div class="tp" id="tab-cart"><div id="cartContent"></div></div>
       <div class="tp" id="tab-budget"><div class="bbd" id="budgetBreak"><div class="bbi"><div class="bba">$7</div><div class="bbl">✈️ Flights</div><div class="bbar" style="width:35%"></div></div><div class="bbi"><div class="bba">$6</div><div class="bbl">🏨 Accommodation</div><div class="bbar" style="width:30%"></div></div><div class="bbi"><div class="bba">$3</div><div class="bbl">🍽️ Food</div><div class="bbar" style="width:15%"></div></div><div class="bbi"><div class="bba">$2</div><div class="bbl">🎭 Activities</div><div class="bbar" style="width:10%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🚌 Transport</div><div class="bbar" style="width:5%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🛍️ Shopping</div><div class="bbar" style="width:5%"></div></div></div><div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between"><span style="font-size:14px;color:#5A6478">Estimated total</span><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:28px" id="budgetTotal">$20</span></div></div>
       <div class="tp" id="tab-tips"><div id="tipsContent"><div class="gem"><div class="gem-t">Eat where locals eat</div><div class="gem-d">"Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus."</div></div><div class="gem"><div class="gem-t">Visit attractions at opening time</div><div class="gem-d">"Arrive right when they open — you'll have them almost to yourself and the light is perfect for photos."</div></div><div class="gem"><div class="gem-t">Download offline maps</div><div class="gem-d">"Download Google Maps offline for Rome before you land. Works without signal."</div></div><div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q=Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.viator.com/searchResults/all?text=Rome%2C%20Italy" target="_blank" class="bl bl-vi">Viator tours</a><a href="https://www.getyourguide.com/s/?q=Rome%2C%20Italy" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div></div></div>
       <div class="tp" id="tab-info"><div id="infoContent"><div class="info-box"><div class="info-t">📋 Need to know — Rome, Italy</div><div class="info-row"><div class="info-icon">🗓️</div><div><div class="info-lbl">Best time</div><div class="info-val">Research the best season for Rome</div></div></div><div class="info-row"><div class="info-icon">🌤️</div><div><div class="info-lbl">Weather</div><div class="info-val">Check weather.com for current forecasts</div></div></div><div class="info-row"><div class="info-icon">💵</div><div><div class="info-lbl">Currency</div><div class="info-val">Check Google for current exchange rates</div></div></div><div class="info-row"><div class="info-icon">🗣️</div><div><div class="info-lbl">Language</div><div class="info-val">Download Google Translate and use camera mode for signs</div></div></div><div class="info-row"><div class="info-icon">🚌</div><div><div class="info-lbl">Getting around</div><div class="info-val">Search "how to get around Rome" for local options</div></div></div><div class="info-row"><div class="info-icon">🔒</div><div><div class="info-lbl">Safety</div><div class="info-val">Check your government's travel advisory before departing</div></div></div><div class="info-row"><div class="info-icon">🛂</div><div><div class="info-lbl">Visa &amp; entry</div><div class="info-val">Check visa requirements at iVisa.com</div></div></div><div class="info-row"><div class="info-icon">🎒</div><div><div class="info-lbl">What to pack</div><div class="info-val">Pack layers, comfortable shoes, portable charger, light rain jacket</div></div></div></div></div></div>
@@ -619,6 +629,7 @@ setupAC('toCity', 'dropTo');
 // so single-destination trips are completely unaffected by this feature.
 var extraLegs = [];
 var MAX_LEGS = 6; // main destination + up to 5 extra legs
+var mainDestDaysOverride = null; // null = auto-compute as before; set once the person edits the field directly
 
 function addDestinationLeg() {
   if (extraLegs.length >= MAX_LEGS - 1) return;
@@ -627,6 +638,7 @@ function addDestinationLeg() {
   renderExtraLegs();
   // Wire up autocomplete for the newly-created input
   setupAC('legCity' + legIndex, 'legDrop' + legIndex);
+  document.getElementById('mainDestDaysRow').style.display = 'flex';
 }
 
 function removeDestinationLeg(idx) {
@@ -634,6 +646,10 @@ function removeDestinationLeg(idx) {
   renderExtraLegs();
   // Re-wire autocomplete for all remaining legs (their DOM ids shift down)
   extraLegs.forEach(function(leg, i) { setupAC('legCity' + i, 'legDrop' + i); });
+  if (extraLegs.length === 0) {
+    document.getElementById('mainDestDaysRow').style.display = 'none';
+    mainDestDaysOverride = null; // back to single-destination behavior, auto-computed from dates
+  }
 }
 
 function updateLegDays(idx, value) {
@@ -704,7 +720,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Fill in your details and get a complete personalized travel plan.',
     label_from: 'Flying from', ph_from: 'Your city...',
     label_destination: 'Destination', ph_to: 'Where to?',
-    surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days',
+    surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:',
     label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers',
     label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
@@ -728,7 +744,9 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Very relaxed', rh_relaxed_d: '1–2 things a day, chill',
     generate_btn: 'Generate my complete travel plan →',
     pdf_btn: '📄 Save as PDF',
-    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars',
+    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars', tab_cart: '🛒 Cart',
+    cart_add: '🛒 Add to cart', cart_added: '✓ Added', cart_remove: 'Remove', cart_empty: 'Your cart is empty. Browse Flights, Stays, and Cars to add your picks.',
+    cart_flight_section: '✈️ Flight', cart_stays_section: '🏨 Stays', cart_cars_section: '🚗 Cars', cart_total: 'Trip total',
     tab_budget: '💰 Budget', tab_tips: '💎 Tips', tab_info: '📋 Info',
     rt_early: '🌅 Early bird', rt_balanced: '☀️ Balanced', rt_night: '🌙 Night owl',
     cap_title: 'Be first to travel smarter', cap_subtitle: 'Free forever for founding members. No credit card needed.',
@@ -746,7 +764,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Preencha seus dados e receba um plano de viagem completo e personalizado.',
     label_from: 'Saindo de', ph_from: 'Sua cidade...',
     label_destination: 'Destino', ph_to: 'Para onde?',
-    surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias',
+    surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:',
     label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
     label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
@@ -770,7 +788,9 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Bem tranquilo', rh_relaxed_d: '1–2 coisas por dia, sem correria',
     generate_btn: 'Gerar meu plano de viagem completo →',
     pdf_btn: '📄 Salvar como PDF',
-    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros',
+    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros', tab_cart: '🛒 Carrinho',
+    cart_add: '🛒 Adicionar ao carrinho', cart_added: '✓ Adicionado', cart_remove: 'Remover', cart_empty: 'Seu carrinho está vazio. Navegue por Voos, Hospedagem e Carros para adicionar suas escolhas.',
+    cart_flight_section: '✈️ Voo', cart_stays_section: '🏨 Hospedagem', cart_cars_section: '🚗 Carros', cart_total: 'Total da viagem',
     tab_budget: '💰 Orçamento', tab_tips: '💎 Dicas', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Coruja noturna',
     cap_title: 'Seja o primeiro a viajar de forma mais inteligente', cap_subtitle: 'Grátis para sempre para membros fundadores. Sem cartão de crédito.',
@@ -788,7 +808,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Completa tus datos y obtén un plan de viaje completo y personalizado.',
     label_from: 'Saliendo de', ph_from: 'Tu ciudad...',
     label_destination: 'Destino', ph_to: '¿A dónde?',
-    surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días',
+    surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:',
     label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros',
     label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
@@ -812,7 +832,9 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Muy relajado', rh_relaxed_d: '1–2 cosas al día, tranquilo',
     generate_btn: 'Generar mi plan de viaje completo →',
     pdf_btn: '📄 Guardar como PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos', tab_cart: '🛒 Carrito',
+    cart_add: '🛒 Añadir al carrito', cart_added: '✓ Añadido', cart_remove: 'Quitar', cart_empty: 'Tu carrito está vacío. Explora Vuelos, Alojamiento y Autos para añadir tus opciones.',
+    cart_flight_section: '✈️ Vuelo', cart_stays_section: '🏨 Alojamiento', cart_cars_section: '🚗 Autos', cart_total: 'Total del viaje',
     tab_budget: '💰 Presupuesto', tab_tips: '💎 Consejos', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Ave nocturna',
     cap_title: 'Sé el primero en viajar de forma más inteligente', cap_subtitle: 'Gratis para siempre para miembros fundadores. Sin tarjeta de crédito.',
@@ -830,7 +852,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Remplissez vos informations et obtenez un plan de voyage complet et personnalisé.',
     label_from: 'Départ de', ph_from: 'Votre ville...',
     label_destination: 'Destination', ph_to: 'Où aller ?',
-    surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours',
+    surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:',
     label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs',
     label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
@@ -854,7 +876,9 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Très détendu', rh_relaxed_d: '1–2 choses par jour, tranquille',
     generate_btn: 'Générer mon plan de voyage complet →',
     pdf_btn: '📄 Enregistrer en PDF',
-    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures',
+    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures', tab_cart: '🛒 Panier',
+    cart_add: '🛒 Ajouter au panier', cart_added: '✓ Ajouté', cart_remove: 'Retirer', cart_empty: 'Votre panier est vide. Parcourez Vols, Hébergement et Voitures pour ajouter vos choix.',
+    cart_flight_section: '✈️ Vol', cart_stays_section: '🏨 Hébergement', cart_cars_section: '🚗 Voitures', cart_total: 'Total du voyage',
     tab_budget: '💰 Budget', tab_tips: '💎 Conseils', tab_info: '📋 Infos',
     rt_early: '🌅 Lève-tôt', rt_balanced: '☀️ Équilibré', rt_night: '🌙 Couche-tard',
     cap_title: 'Soyez le premier à voyager plus intelligemment', cap_subtitle: 'Gratuit pour toujours pour les membres fondateurs. Aucune carte de crédit requise.',
@@ -872,7 +896,7 @@ var TRANSLATIONS = {
     planner_subtitle: 'Inserisci i tuoi dati e ottieni un piano di viaggio completo e personalizzato.',
     label_from: 'Partenza da', ph_from: 'La tua città...',
     label_destination: 'Destinazione', ph_to: 'Dove andare?',
-    surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni',
+    surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:',
     label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori',
     label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
@@ -896,7 +920,9 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Molto rilassato', rh_relaxed_d: '1–2 cose al giorno, tranquillo',
     generate_btn: 'Genera il mio piano di viaggio completo →',
     pdf_btn: '📄 Salva come PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto', tab_cart: '🛒 Carrello',
+    cart_add: '🛒 Aggiungi al carrello', cart_added: '✓ Aggiunto', cart_remove: 'Rimuovi', cart_empty: 'Il tuo carrello è vuoto. Esplora Voli, Alloggi e Auto per aggiungere le tue scelte.',
+    cart_flight_section: '✈️ Volo', cart_stays_section: '🏨 Alloggi', cart_cars_section: '🚗 Auto', cart_total: 'Totale del viaggio',
     tab_budget: '💰 Budget', tab_tips: '💎 Consigli', tab_info: '📋 Info',
     rt_early: '🌅 Mattiniero', rt_balanced: '☀️ Equilibrato', rt_night: '🌙 Nottambulo',
     cap_title: 'Sii il primo a viaggiare in modo più intelligente', cap_subtitle: 'Gratis per sempre per i membri fondatori. Nessuna carta di credito richiesta.',
@@ -981,7 +1007,12 @@ function setLang(l) {
     if (window.planData) {
       renderBudget(window.planData.budget, window._lastBudgetTotal);
       renderFlights(window.planData.flights, window._flightsFrom, window._flightsDest);
-      renderStays(window.planData.accommodations, window._staysDest);
+      if (window.planData.isMultiDest && currentCityTab) {
+        renderStays(filterByNameSuffix(window.planData.accommodations, currentCityTab, 'name'), currentCityTab);
+        renderCars(filterByNameSuffix(window.planData.cars, currentCityTab, 'name'), currentCityTab);
+      } else {
+        renderStays(window.planData.accommodations, window._staysDest);
+      }
     }
   });
 }
@@ -1894,7 +1925,7 @@ async function generateMultiDestPlan(from) {
 
   var totalTripDays = (dep && ret) ? Math.max(legs.length, Math.round((new Date(ret) - new Date(dep)) / 86400000)) : (legs.length * 3);
   var extraDaysSum = legs.slice(1).reduce(function(s, l) { return s + (l.days || 3); }, 0);
-  legs[0].days = Math.max(1, totalTripDays - extraDaysSum);
+  legs[0].days = mainDestDaysOverride || Math.max(1, totalTripDays - extraDaysSum);
 
   var btn = document.getElementById('planBtn');
   btn.disabled = true;
@@ -1914,9 +1945,9 @@ async function generateMultiDestPlan(from) {
 
       var legOverviewPrompt = 'You are Zenvoy, a local travel expert for ' + leg.city + '. Return ONLY valid JSON, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
         'Give recommendations for a ' + leg.days + '-day stay in ' + leg.city + ' for ' + travelers + ' traveler(s). Style: ' + style + '. Interests: ' + interests + '. Budget level: ' + bl + '.\n\n' +
-        'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"$X"},{"name":"dish2","desc":"desc","where":"where","price":"$X"},{"name":"dish3","desc":"desc","where":"where","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"$X"},{"name":"item2","where":"where","price":"$X"},{"name":"item3","where":"where","price":"$X"}]},"accommodations":[{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"}],"gems":[{"title":"title","tip":"tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
+        'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"$X"},{"name":"dish2","desc":"desc","where":"where","price":"$X"},{"name":"dish3","desc":"desc","where":"where","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"$X"},{"name":"item2","where":"where","price":"$X"},{"name":"item3","where":"where","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"area","price_night":250,"highlights":["h1","h2","h3"],"why":"why"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment/Airbnb","stars":4,"area":"area","price_night":85,"highlights":["h1","h2"],"why":"why"}],"gems":[{"title":"title","tip":"tip"},{"title":"title2","tip":"tip"},{"title":"title3","tip":"tip"},{"title":"title4","tip":"tip"},{"title":"title5","tip":"tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
         'Provide AT LEAST 3 different options for each food_guide category (except street_food). "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop, distinct from lunch and dinner.\n\n' +
-        'Use REAL, specifically named, currently-operating places only — never generic placeholders.\n\n' +
+        'Use REAL, specifically named, currently-operating places only — never generic placeholders. Provide AT LEAST 5 different "gems" (insider tips) and all 4 accommodation types (Luxury Hotel, Boutique Hotel, Hostel, Apartment/Airbnb).\n\n' +
         'JSON formatting rules: use straight double quotes only, plain hyphens instead of em-dashes, no literal line breaks inside string values.';
 
       var legOverviewText = await callAI([{ role: 'user', content: legOverviewPrompt }], 2000);
@@ -2015,6 +2046,40 @@ async function generateMultiDestPlan(from) {
       planData.flights = estimateMultiCityFlights(from, resolvedCities, total);
     }
 
+    // Real hotel/car search, once per leg — same optional, never-blocks pattern
+    // as the single-destination path. Each leg gets its own check-in/check-out
+    // dates computed from cumulative day offsets. Results are tagged with the
+    // city name for consistent display alongside the AI-estimated items above.
+    if (window.DUFFEL_KEY && dep) {
+      var legCursor = new Date(dep);
+      for (var si = 0; si < legs.length; si++) {
+        var legCheckIn = legCursor.toISOString().slice(0, 10);
+        legCursor.setDate(legCursor.getDate() + legs[si].days);
+        var legCheckOut = legCursor.toISOString().slice(0, 10);
+        var legCityForSearch = resolvedCities[si];
+
+        try {
+          var legStays = await searchDuffelStays(legCityForSearch, legCheckIn, legCheckOut, travelers);
+          if (legStays && legStays.length) {
+            legStays.forEach(function(s) { s.name = s.name + ' (' + legCityForSearch + ')'; accommodationsAll.push(s); });
+          }
+        } catch (stayErr) {
+          console.error('Multi-dest stays enrichment skipped for ' + legCityForSearch + ':', stayErr);
+        }
+
+        try {
+          var legCars = await searchDuffelCars(legCityForSearch, legCheckIn, legCheckOut);
+          if (legCars && legCars.length) {
+            legCars.forEach(function(c) { c.name = c.name + ' (' + legCityForSearch + ')'; });
+            planData.cars = (planData.cars || []).concat(legCars);
+          }
+        } catch (carErr) {
+          console.error('Multi-dest cars enrichment skipped for ' + legCityForSearch + ':', carErr);
+        }
+      }
+      planData.accommodations = accommodationsAll; // refresh with any real results appended above
+    }
+
     planData.budget = estimateMultiDestBudget(total, legs.length);
 
     renderResult(planData, travelers, total, dayOffset, from);
@@ -2073,7 +2138,7 @@ async function generatePlan() {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
     // separately (below) so long trips never get cut off by the token limit.
-    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish2","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish3","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place2","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place3","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry/snack item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"market/street","price":"$X"},{"name":"item2","where":"market/street","price":"$X"},{"name":"item3","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
+    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish2","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish3","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place2","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place3","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry/snack item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"market/street","price":"$X"},{"name":"item2","where":"market/street","price":"$X"},{"name":"item3","where":"market/street","price":"$X"}]},"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"gems":[{"title":"gem title","tip":"insider tip"},{"title":"gem title2","tip":"insider tip"},{"title":"gem title3","tip":"insider tip"},{"title":"gem title4","tip":"insider tip"},{"title":"gem title5","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
       'Quality bar:\n'+
       '- Use REAL, specifically named places — real restaurant names, real neighborhoods, real hotel names. Never generic ("a local restaurant", "a boutique hotel").\n'+
       '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
@@ -2082,7 +2147,7 @@ async function generatePlan() {
       '- "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop (like a European café culture break) — distinct from lunch and dinner, at a real named café or bakery.\n'+
       '- "accommodations" prices (price_night) MUST reflect REAL, current market rates for '+dest+' specifically — a hostel in an expensive city like Zurich or Tokyo costs more than one in Bangkok or Lisbon; a luxury hotel in a budget-friendly destination costs less than one in a famously expensive city. Do not anchor to generic example numbers — research typical local rates for each accommodation type in this specific destination. The four options must have a clear, consistent price hierarchy: Luxury Hotel > Boutique Hotel and Apartment > Hostel, with realistic gaps between them (not arbitrarily close together, not wildly random).\n'+
       '- Calibrate the ENTIRE accommodations price range to the traveler\'s selected budget level ('+bl+'): a "budget" level trip should show realistically affordable options even at the "luxury hotel" slot (a nice-but-attainable option, not an ultra-premium one), while a "luxury" level trip can show genuinely high-end properties throughout.\n'+
-      '- "gems" should be the kind of specific, non-obvious tips a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
+      '- Provide AT LEAST 5 different "gems" — travelers want a rich set of insider tips, not just one or two. Each "gems" entry should be the kind of specific, non-obvious tip a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
       '- Recommend a nearby day-trip destination only inside the itinerary days (handled separately) if one genuinely fits this trip\'s length and interests — do not contradict it here.\n'+
       '- If "Theme parks" is among the traveler\'s interests AND the destination is genuinely famous for theme parks (e.g. Orlando -> Walt Disney World/Universal Studios, Anaheim -> Disneyland, Tokyo -> Tokyo Disneyland/DisneySea, Paris -> Disneyland Paris, Osaka -> Universal Studios Japan), treat the relevant park(s) as a headline activity for this trip — reflect that in the tagline and gems, and make sure the itinerary (handled separately) dedicates at least one full day per major park.\n'+
       (isFromBrazil ? '- The traveler is flying from Brazil. For the "flights" field, prioritize Brazilian carriers (LATAM, GOL, Azul) whenever they plausibly serve this route (directly or with a codeshare/connection) — Brazilian travelers usually get better fares and service on these airlines for international trips.\n' : '')+'\n'+
@@ -2201,12 +2266,169 @@ async function generatePlan() {
 }
 
 // ── RENDER RESULT ─────────────────────────────────────────────
+// For multi-destination trips, item names are tagged like "Hotel X (Rome, Italy)"
+// during merging — this extracts that specific city so search queries (TripAdvisor,
+// Maps) target the right place instead of the whole joined "City1 → City2" string.
+function getQueryLocationForItem(itemName, globalDest) {
+  var m = (itemName || '').match(/\(([^)]+)\)\s*$/);
+  return m ? m[1] : globalDest;
+}
+
 function getCountryFromLocation(location) {
   var parts = (location || '').split(',');
   return parts.length > 1 ? parts[parts.length - 1].trim().toLowerCase() : '';
 }
 
+// ── CITY TABS (multi-destination trips only) ──────────────────
+// Reuses the existing single-city render functions unchanged — each filter
+// helper just narrows the already-merged, city-tagged data down to one
+// city's items before handing it to renderDays/renderFood/renderStays/etc.
+// This avoids restructuring the data model, keeping the single-destination
+// path (which never calls any of this) at zero risk of regression.
+function filterDaysByCity(allDays, city) {
+  return (allDays || []).filter(function(d) { return d.city === city; });
+}
+function filterByNameSuffix(list, city, field) {
+  var suffix = '(' + city + ')';
+  return (list || []).filter(function(item) { return (item[field] || '').indexOf(suffix) !== -1; });
+}
+function filterFoodGuideByCity(fg, city) {
+  var out = {};
+  ['must_try', 'breakfast', 'lunch', 'afternoon_snack', 'dinner', 'street_food'].forEach(function(section) {
+    out[section] = filterByNameSuffix((fg || {})[section], city, 'name');
+  });
+  return out;
+}
+
+var currentCityTab = null;
+
+// ── TRIP CART ────────────────────────────────────────────────
+// Lets the traveler pick their favorite flight/stay/car as they browse
+// options, building a concrete "this is what I'm taking" summary — distinct
+// from the Budget tab's AI estimate. One flight for the whole trip; one
+// stay and one car per city (keyed by city so multi-destination trips can
+// have a different hotel/car pick in each place).
+var tripCart = { flight: null, stays: {}, cars: {} };
+
+function cartCityKey() { return currentCityTab || '_single'; }
+
+// Items don't have stable IDs (AI-estimated or Duffel results alike), so we
+// identify "the same option" by name+price — good enough to toggle add/remove
+// without needing a formal ID system.
+function itemKey(item) { return (item.name || item.airline || '') + '|' + item.price; }
+
+function isFlightInCart(f) { return tripCart.flight && itemKey(tripCart.flight) === itemKey(f); }
+function isStayInCart(a) { var s = tripCart.stays[cartCityKey()]; return s && itemKey(s) === itemKey(a); }
+function isCarInCart(c) { var s = tripCart.cars[cartCityKey()]; return s && itemKey(s) === itemKey(c); }
+
+function toggleFlightCart(f) {
+  tripCart.flight = isFlightInCart(f) ? null : f;
+  renderFlights(window.planData.flights, window._flightsFrom, window._flightsDest);
+  renderCart();
+}
+function toggleStayCart(a) {
+  var key = cartCityKey();
+  tripCart.stays[key] = isStayInCart(a) ? null : a;
+  if (!tripCart.stays[key]) delete tripCart.stays[key];
+  var p = window.planData;
+  if (p.isMultiDest && currentCityTab) renderStays(filterByNameSuffix(p.accommodations, currentCityTab, 'name'), currentCityTab);
+  else renderStays(p.accommodations, p.destination);
+  renderCart();
+}
+function toggleCarCart(c) {
+  var key = cartCityKey();
+  tripCart.cars[key] = isCarInCart(c) ? null : c;
+  if (!tripCart.cars[key]) delete tripCart.cars[key];
+  var p = window.planData;
+  if (p.isMultiDest && currentCityTab) renderCars(filterByNameSuffix(p.cars, currentCityTab, 'name'), currentCityTab);
+  else renderCars(p.cars, p.destination);
+  renderCart();
+}
+function removeCartItem(type, key) {
+  if (type === 'flight') tripCart.flight = null;
+  else if (type === 'stay') delete tripCart.stays[key];
+  else if (type === 'car') delete tripCart.cars[key];
+  renderCart();
+}
+
+function renderCart() {
+  var container = document.getElementById('cartContent');
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var hasAnything = tripCart.flight || Object.keys(tripCart.stays).length || Object.keys(tripCart.cars).length;
+
+  if (!hasAnything) {
+    container.innerHTML = '<p style="font-size:13px;color:#5A6478;padding:20px 0;text-align:center">' + dict.cart_empty + '</p>';
+    return;
+  }
+
+  var total = 0;
+  var h = '';
+
+  if (tripCart.flight) {
+    total += tripCart.flight.price || 0;
+    h += '<div class="info-t" style="margin-top:6px">' + dict.cart_flight_section + '</div>';
+    h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>✈️ ' + tripCart.flight.airline + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (tripCart.flight.routeSummary || ((tripCart.flight.from||'')+' → '+(tripCart.flight.to||''))) + '</div></div>';
+    h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(tripCart.flight.price) + '</div><button onclick="removeCartItem(\'flight\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+  }
+
+  var stayCities = Object.keys(tripCart.stays);
+  if (stayCities.length) {
+    h += '<div class="info-t" style="margin-top:14px">' + dict.cart_stays_section + '</div>';
+    stayCities.forEach(function(cityKey) {
+      var s = tripCart.stays[cityKey];
+      total += (s.price_night || 0);
+      h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + s.name + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (s.type||'') + '</div></div>';
+      h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+    });
+  }
+
+  var carCities = Object.keys(tripCart.cars);
+  if (carCities.length) {
+    h += '<div class="info-t" style="margin-top:14px">' + dict.cart_cars_section + '</div>';
+    carCities.forEach(function(cityKey) {
+      var c = tripCart.cars[cityKey];
+      total += (c.price || 0);
+      h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + c.name + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (c.supplier||'') + '</div></div>';
+      h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+    });
+  }
+
+  h += '<div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;margin-top:16px"><span style="font-size:14px;color:#5A6478">' + dict.cart_total + '</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px">' + formatPrice(total) + '</span></div>';
+
+  container.innerHTML = h;
+}
+
+function renderCityTabs(legCities) {
+  var container = document.getElementById('cityTabsContainer');
+  if (!legCities || legCities.length < 2) { container.innerHTML = ''; return; }
+  var h = '<div class="city-tabs">';
+  legCities.forEach(function(city, idx) {
+    h += '<button type="button" class="city-tab-btn' + (idx === 0 ? ' on' : '') + '" onclick="switchCityTab(\'' + city.replace(/'/g, "\\'") + '\', this)">' + city.split(',')[0] + '</button>';
+  });
+  h += '</div>';
+  container.innerHTML = h;
+  currentCityTab = legCities[0];
+}
+
+function switchCityTab(city, btnEl) {
+  currentCityTab = city;
+  document.querySelectorAll('.city-tab-btn').forEach(function(b) { b.classList.remove('on'); });
+  if (btnEl) btnEl.classList.add('on');
+
+  var p = window.planData;
+  if (!p) return;
+  currentDayIndex = 0;
+  renderDays(filterDaysByCity(p.days, city), 'balanced', city);
+  renderFood(filterFoodGuideByCity(p.food_guide, city), city);
+  renderStays(filterByNameSuffix(p.accommodations, city, 'name'), city);
+  renderCars(filterByNameSuffix(p.cars, city, 'name'), city);
+  renderTips(filterByNameSuffix(p.gems, city, 'title'), city);
+  // Flights, Budget, and Info stay trip-wide (unfiltered) — they describe
+  // the whole journey, not a single city, so switching city tabs leaves them as-is.
+}
+
 function renderResult(p, travelers, budget, days, from) {
+  tripCart = { flight: null, stays: {}, cars: {} }; // fresh cart for each newly-generated trip
   document.getElementById('rBg').style.backgroundImage = "url('"+getImg(p.destination,1600,900)+"')";
   // Upgrade to the real city photo from Wikipedia once available (async, non-blocking)
   getCityImage(p.destination).then(function(url) {
@@ -2227,14 +2449,25 @@ function renderResult(p, travelers, budget, days, from) {
   if (tripTypeLabel) metaItems.push(tripTypeLabel);
   document.getElementById('rMeta').innerHTML = metaItems.map(function(t){return '<span class="rmpill">'+t+'</span>';}).join('');
   currentDayIndex = 0;
-  renderDays(p.days, 'balanced', p.destination);
-  renderFood(p.food_guide, p.destination);
-  renderStays(p.accommodations, p.destination);
+  if (p.isMultiDest && p.legCities && p.legCities.length > 1) {
+    renderCityTabs(p.legCities);
+    var firstCity = p.legCities[0];
+    renderDays(filterDaysByCity(p.days, firstCity), 'balanced', firstCity);
+    renderFood(filterFoodGuideByCity(p.food_guide, firstCity), firstCity);
+    renderStays(filterByNameSuffix(p.accommodations, firstCity, 'name'), firstCity);
+    renderCars(filterByNameSuffix(p.cars, firstCity, 'name'), firstCity);
+    renderTips(filterByNameSuffix(p.gems, firstCity, 'title'), firstCity);
+  } else {
+    document.getElementById('cityTabsContainer').innerHTML = '';
+    renderDays(p.days, 'balanced', p.destination);
+    renderFood(p.food_guide, p.destination);
+    renderStays(p.accommodations, p.destination);
+    renderCars(p.cars, p.destination);
+    renderTips(p.gems, p.destination);
+  }
   renderFlights(p.flights, from, p.destination);
-  renderCars(p.cars, p.destination);
   window._lastBudgetTotal = budget;
   renderBudget(p.budget, budget);
-  renderTips(p.gems, p.destination);
   renderInfo(p.practical, p.destination);
   var res = document.getElementById('result');
   res.style.display = 'block';
@@ -2253,39 +2486,45 @@ var currentDayIndex = 0; // 0-based index into window._days
 // delays the initial UI.
 function enrichSlotsWithTripAdvisor(slotMeta) {
   if (!window.TRIPADVISOR_KEY || !slotMeta || !slotMeta.length) return;
-  slotMeta.forEach(function(meta) {
-    getTripAdvisorInfo(meta.placeName + ' ' + meta.dest, meta.category).then(function(info) {
-      var badge = document.getElementById(meta.slotId);
-      if (!badge || !info) return; // element may no longer be on screen (user navigated away)
+  slotMeta.forEach(function(meta, idx) {
+    // Stagger requests instead of firing them all at once — TripAdvisor
+    // rate-limits bursts (especially with many cities' worth of items in a
+    // multi-destination trip), so spacing calls out avoids 429 errors that
+    // would otherwise silently fail entire batches of photos/ratings.
+    setTimeout(function() {
+      getTripAdvisorInfo(meta.placeName + ' ' + meta.dest, meta.category).then(function(info) {
+        var badge = document.getElementById(meta.slotId);
+        if (!badge || !info) return; // element may no longer be on screen (user navigated away)
 
-      // Populate the photo, if this slot has a photo container and TripAdvisor returned one
-      if (meta.photoSlotId && info.photoUrl) {
-        var photoEl = document.getElementById(meta.photoSlotId);
-        if (photoEl) {
-          photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
-          photoEl.style.display = 'block';
+        // Populate the photo, if this slot has a photo container and TripAdvisor returned one
+        if (meta.photoSlotId && info.photoUrl) {
+          var photoEl = document.getElementById(meta.photoSlotId);
+          if (photoEl) {
+            photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
+            photoEl.style.display = 'block';
+          }
         }
-      }
 
-      if (!info.rating && !info.address && !info.priceLevel) return; // nothing useful to show
+        if (!info.rating && !info.address && !info.priceLevel) return; // nothing useful to show
 
-      var parts = [];
-      if (info.rating) parts.push('⭐ ' + info.rating + (info.numReviews ? ' (' + info.numReviews + ' reviews)' : ''));
-      if (info.priceLevel) parts.push(info.priceLevel);
-      if (info.cuisine) parts.push(info.cuisine);
+        var parts = [];
+        if (info.rating) parts.push('⭐ ' + info.rating + (info.numReviews ? ' (' + info.numReviews + ' reviews)' : ''));
+        if (info.priceLevel) parts.push(info.priceLevel);
+        if (info.cuisine) parts.push(info.cuisine);
 
-      var html = '<div class="ta-card">';
-      html += '<div class="ta-card-top">' + parts.join(' · ') + '</div>';
-      if (info.address) html += '<div class="ta-card-addr">📍 ' + info.address + '</div>';
-      if (info.webUrl) html += '<a href="' + info.webUrl + '" target="_blank" class="ta-card-link">View on TripAdvisor →</a>';
-      html += '</div>';
-      badge.innerHTML = html;
-      badge.classList.add('ta-card-wrap');
+        var html = '<div class="ta-card">';
+        html += '<div class="ta-card-top">' + parts.join(' · ') + '</div>';
+        if (info.address) html += '<div class="ta-card-addr">📍 ' + info.address + '</div>';
+        if (info.webUrl) html += '<a href="' + info.webUrl + '" target="_blank" class="ta-card-link">View on TripAdvisor →</a>';
+        html += '</div>';
+        badge.innerHTML = html;
+        badge.classList.add('ta-card-wrap');
 
-      // Also swap any plain "Reviews"/"TripAdvisor" link for the exact listing
-      var link = document.getElementById(meta.slotId + '-link');
-      if (link && info.webUrl) link.href = info.webUrl;
-    });
+        // Also swap any plain "Reviews"/"TripAdvisor" link for the exact listing
+        var link = document.getElementById(meta.slotId + '-link');
+        if (link && info.webUrl) link.href = info.webUrl;
+      });
+    }, idx * 200); // stagger by 200ms per item
   });
 }
 
@@ -2526,8 +2765,8 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">☕ Best breakfast spots</div>';
     fg.breakfast.forEach(function(s, idx) {
       var slotId = 'ta-badge-breakfast-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.specialty+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
-      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
+      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.specialty+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
   }
@@ -2535,8 +2774,8 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">🌞 Best lunch spots</div>';
     fg.lunch.forEach(function(s, idx) {
       var slotId = 'ta-badge-lunch-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.dish+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
-      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
+      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.dish+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
   }
@@ -2544,8 +2783,8 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">🥐 Afternoon coffee &amp; snack</div>';
     fg.afternoon_snack.forEach(function(s, idx) {
       var slotId = 'ta-badge-snack-'+idx;
-      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.specialty+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
-      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
+      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+s.name+' · '+s.area+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.specialty+' · '+s.price+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
   }
@@ -2553,8 +2792,8 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">🌙 Best dinner spots</div>';
     fg.dinner.forEach(function(s, idx) {
       var slotId = 'ta-badge-dinner-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+s.name+' · '+s.area+' · '+s.cuisine+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.dish+' · '+s.price+(s.tip?' · 💡 '+s.tip:'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
-      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: dest, category: 'restaurants' });
+      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+s.name+' · '+s.area+' · '+s.cuisine+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+s.dish+' · '+s.price+(s.tip?' · 💡 '+s.tip:'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
   }
@@ -2607,17 +2846,21 @@ function renderStays(accs, dest) {
     h += '<div class="acc-foot"><div><span class="acc-price">'+formatPrice(a.price_night)+'</span><span style="font-size:12px;color:var(--muted)">/night</span></div>';
     h += '<div class="bls">';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
-    h += '<a href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+dest)+'" target="_blank" class="bl bl-bk">Booking</a>';
+    h += '<a href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-bk">Booking</a>';
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
-    h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a>';
+    h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a>';
+    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+    var inCart = isStayInCart(a);
+    h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1px solid '+(inCart?'#2E7D32':'rgba(11,15,26,.15)')+';background:'+(inCart?'rgba(46,125,50,.1)':'transparent')+';color:'+(inCart?'#2E7D32':'#5A6478')+';font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;margin-left:auto">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
     h += '</div></div></div>';
     // Only queue TripAdvisor enrichment for AI-estimated results — real
     // Duffel results already have their own photo/rating data, no need to
     // spend a TripAdvisor lookup on them.
-    if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: dest, category: 'hotels' });
+    if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: getQueryLocationForItem(a.name, dest), category: 'hotels' });
   });
   document.getElementById('staysContent').innerHTML = h;
   enrichSlotsWithTripAdvisor(staySlotMeta);
+  renderCart();
 }
 
 var flightSortOrder = 'default'; // 'default' | 'price_asc' | 'price_desc'
@@ -2667,12 +2910,16 @@ function renderFlights(flights, from, dest) {
     } else {
       searchUrl = 'https://www.skyscanner.com'; // last-resort fallback if we somehow have no route at all
     }
-    h += '<div class="bls"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a></div></div></div>';
+    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+    var inCart = isFlightInCart(f);
+    h += '<div class="bls"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1px solid '+(inCart?'#2E7D32':'rgba(11,15,26,.15)')+';background:'+(inCart?'rgba(46,125,50,.1)':'transparent')+';color:'+(inCart?'#2E7D32':'#5A6478')+';font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div></div>';
   });
   document.getElementById('flightsContent').innerHTML = h;
+  renderCart();
 }
 
 function renderCars(cars, dest) {
+  window._cars = cars;
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
@@ -2688,17 +2935,21 @@ function renderCars(cars, dest) {
     return;
   }
 
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">Live prices from Duffel:</p>' + fallbackLinks;
   cars.forEach(function(c) {
+    var inCart = isCarInCart(c);
     h += '<div class="fc">';
     if (c.photoUrl) h += '<div style="width:100%;height:120px;background-size:cover;background-position:center;border-radius:10px;margin-bottom:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
     h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>🚗 ' + c.name + '</strong>';
     h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px">● LIVE</span></div>';
     if (c.supplier || c.category) h += '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">' + [c.supplier, c.category].filter(Boolean).join(' · ') + '</div>';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> total</span></div></div>';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> total</span></div>';
+    h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1px solid '+(inCart?'#2E7D32':'rgba(11,15,26,.15)')+';background:'+(inCart?'rgba(46,125,50,.1)':'transparent')+';color:'+(inCart?'#2E7D32':'#5A6478')+';font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div>';
     h += '</div>';
   });
   container.innerHTML = h;
+  renderCart();
 }
 
 function renderBudget(bb, total) {
