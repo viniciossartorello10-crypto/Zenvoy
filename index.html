@@ -241,14 +241,14 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 </nav>
 
 <button id="floatingCartBtn" onclick="toggleCartModal(true)" style="display:none;position:fixed;bottom:24px;right:24px;z-index:500;width:60px;height:60px;border-radius:50%;background:var(--navy);border:2px solid var(--gold);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);align-items:center;justify-content:center">
-  🛒
+  🧳
   <span id="floatingCartBadge" style="position:absolute;top:-4px;right:-4px;background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:none;align-items:center;justify-content:center;padding:0 4px">0</span>
 </button>
 
 <div id="cartModalOverlay" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(11,15,26,.6);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)toggleCartModal(false)">
   <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:24px" data-i18n="tab_cart">🛒 Cart</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px" data-i18n="tab_cart">🧳 My Trip</div>
       <button onclick="toggleCartModal(false)" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
     <div id="cartModalContent"></div>
@@ -441,7 +441,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         <button class="tab" data-i18n="tab_stays" onclick="showTab(&#39;stays&#39;,this)">🏨 Stays</button>
         <button class="tab" data-i18n="tab_flights" onclick="showTab(&#39;flights&#39;,this)">✈️ Flights</button>
         <button class="tab" data-i18n="tab_cars" onclick="showTab(&#39;cars&#39;,this)">🚗 Cars</button>
-        <button class="tab" data-i18n="tab_cart" onclick="showTab(&#39;cart&#39;,this)">🛒 Cart</button>
+        <button class="tab" data-i18n="tab_cart" onclick="showTab(&#39;cart&#39;,this)">🧳 My Trip</button>
         <button class="tab" data-i18n="tab_budget" onclick="showTab(&#39;budget&#39;,this)">💰 Budget</button>
         <button class="tab" data-i18n="tab_tips" onclick="showTab(&#39;tips&#39;,this)">💎 Tips</button>
         <button class="tab" data-i18n="tab_info" onclick="showTab(&#39;info&#39;,this)">📋 Info</button>
@@ -835,8 +835,8 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Very relaxed', rh_relaxed_d: '1–2 things a day, chill',
     generate_btn: 'Generate my complete travel plan →',
     pdf_btn: '📄 Save as PDF',
-    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars', tab_cart: '🛒 Cart',
-    cart_add: '🛒 Add to cart', cart_added: '✓ Added', cart_remove: 'Remove', cart_empty: 'Your cart is empty. Browse Flights, Stays, and Cars to add your picks.',
+    tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars', tab_cart: '🧳 My Trip',
+    cart_add: '🧳 Add to trip', cart_added: '✓ Added', cart_remove: 'Remove', cart_empty: 'Your trip is empty. Browse Flights, Stays, and Cars to add your picks — each links straight to where you book it.', cart_book: 'Book now',
     cart_flight_section: '✈️ Flight', cart_stays_section: '🏨 Stays', cart_cars_section: '🚗 Cars', cart_total: 'Trip total',
     tab_budget: '💰 Budget', tab_tips: '💎 Tips', tab_info: '📋 Info',
     rt_early: '🌅 Early bird', rt_balanced: '☀️ Balanced', rt_night: '🌙 Night owl',
@@ -882,8 +882,8 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Bem tranquilo', rh_relaxed_d: '1–2 coisas por dia, sem correria',
     generate_btn: 'Gerar meu plano de viagem completo →',
     pdf_btn: '📄 Salvar como PDF',
-    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros', tab_cart: '🛒 Carrinho',
-    cart_add: '🛒 Adicionar ao carrinho', cart_added: '✓ Adicionado', cart_remove: 'Remover', cart_empty: 'Seu carrinho está vazio. Navegue por Voos, Hospedagem e Carros para adicionar suas escolhas.',
+    tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros', tab_cart: '🧳 Meu Roteiro',
+    cart_add: '🧳 Adicionar ao roteiro', cart_added: '✓ Adicionado', cart_remove: 'Remover', cart_empty: 'Seu roteiro está vazio. Navegue por Voos, Hospedagem e Carros para adicionar suas escolhas — cada uma leva direto para reservar.', cart_book: 'Reservar agora',
     cart_flight_section: '✈️ Voo', cart_stays_section: '🏨 Hospedagem', cart_cars_section: '🚗 Carros', cart_total: 'Total da viagem',
     tab_budget: '💰 Orçamento', tab_tips: '💎 Dicas', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Coruja noturna',
@@ -929,8 +929,8 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Muy relajado', rh_relaxed_d: '1–2 cosas al día, tranquilo',
     generate_btn: 'Generar mi plan de viaje completo →',
     pdf_btn: '📄 Guardar como PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos', tab_cart: '🛒 Carrito',
-    cart_add: '🛒 Añadir al carrito', cart_added: '✓ Añadido', cart_remove: 'Quitar', cart_empty: 'Tu carrito está vacío. Explora Vuelos, Alojamiento y Autos para añadir tus opciones.',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos', tab_cart: '🧳 Mi Viaje',
+    cart_add: '🧳 Añadir al viaje', cart_added: '✓ Añadido', cart_remove: 'Quitar', cart_empty: 'Tu viaje está vacío. Explora Vuelos, Alojamiento y Autos para añadir tus opciones — cada una lleva directo a reservar.', cart_book: 'Reservar ahora',
     cart_flight_section: '✈️ Vuelo', cart_stays_section: '🏨 Alojamiento', cart_cars_section: '🚗 Autos', cart_total: 'Total del viaje',
     tab_budget: '💰 Presupuesto', tab_tips: '💎 Consejos', tab_info: '📋 Info',
     rt_early: '🌅 Madrugador', rt_balanced: '☀️ Equilibrado', rt_night: '🌙 Ave nocturna',
@@ -976,8 +976,8 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Très détendu', rh_relaxed_d: '1–2 choses par jour, tranquille',
     generate_btn: 'Générer mon plan de voyage complet →',
     pdf_btn: '📄 Enregistrer en PDF',
-    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures', tab_cart: '🛒 Panier',
-    cart_add: '🛒 Ajouter au panier', cart_added: '✓ Ajouté', cart_remove: 'Retirer', cart_empty: 'Votre panier est vide. Parcourez Vols, Hébergement et Voitures pour ajouter vos choix.',
+    tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures', tab_cart: '🧳 Mon Voyage',
+    cart_add: '🧳 Ajouter au voyage', cart_added: '✓ Ajouté', cart_remove: 'Retirer', cart_empty: 'Votre voyage est vide. Parcourez Vols, Hébergement et Voitures pour ajouter vos choix — chacun mène directement à la réservation.', cart_book: 'Réserver',
     cart_flight_section: '✈️ Vol', cart_stays_section: '🏨 Hébergement', cart_cars_section: '🚗 Voitures', cart_total: 'Total du voyage',
     tab_budget: '💰 Budget', tab_tips: '💎 Conseils', tab_info: '📋 Infos',
     rt_early: '🌅 Lève-tôt', rt_balanced: '☀️ Équilibré', rt_night: '🌙 Couche-tard',
@@ -1023,8 +1023,8 @@ var TRANSLATIONS = {
     rh_relaxed_t: 'Molto rilassato', rh_relaxed_d: '1–2 cose al giorno, tranquillo',
     generate_btn: 'Genera il mio piano di viaggio completo →',
     pdf_btn: '📄 Salva come PDF',
-    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto', tab_cart: '🛒 Carrello',
-    cart_add: '🛒 Aggiungi al carrello', cart_added: '✓ Aggiunto', cart_remove: 'Rimuovi', cart_empty: 'Il tuo carrello è vuoto. Esplora Voli, Alloggi e Auto per aggiungere le tue scelte.',
+    tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto', tab_cart: '🧳 Il Mio Viaggio',
+    cart_add: '🧳 Aggiungi al viaggio', cart_added: '✓ Aggiunto', cart_remove: 'Rimuovi', cart_empty: 'Il tuo viaggio è vuoto. Esplora Voli, Alloggi e Auto per aggiungere le tue scelte — ognuna porta direttamente alla prenotazione.', cart_book: 'Prenota ora',
     cart_flight_section: '✈️ Volo', cart_stays_section: '🏨 Alloggi', cart_cars_section: '🚗 Auto', cart_total: 'Totale del viaggio',
     tab_budget: '💰 Budget', tab_tips: '💎 Consigli', tab_info: '📋 Info',
     rt_early: '🌅 Mattiniero', rt_balanced: '☀️ Equilibrato', rt_night: '🌙 Nottambulo',
@@ -2374,6 +2374,33 @@ async function generatePlan() {
     planData = overview;
     planData.days = allDays;
 
+    // Normalize AI-generated car data: the prompt schema asks for "price_day"
+    // but the renderer (and the real Duffel path) use "price" — without this,
+    // AI-estimated cars always rendered with a blank price. Also attach a
+    // category illustration since AI-estimated cars aren't real vehicles and
+    // have no real photo (only genuine Duffel results do).
+    if (Array.isArray(planData.cars)) {
+      var carCategoryStyle = {
+        'Economy':     { emoji: '🚗', gradient: 'linear-gradient(135deg,#93a5cf,#5f7a9e)' },
+        'Compact':     { emoji: '🚗', gradient: 'linear-gradient(135deg,#a0c4ff,#4a6fa5)' },
+        'SUV':         { emoji: '🚙', gradient: 'linear-gradient(135deg,#8fbc8f,#3e6b4f)' },
+        'Sports car':  { emoji: '🏎️', gradient: 'linear-gradient(135deg,#ff9a8b,#b8322f)' },
+        'Luxury':      { emoji: '🚘', gradient: 'linear-gradient(135deg,#d4af7a,#8a6d3b)' },
+        'Van':         { emoji: '🚐', gradient: 'linear-gradient(135deg,#c9c9c9,#6e6e6e)' },
+        'Minivan':     { emoji: '🚐', gradient: 'linear-gradient(135deg,#c9c9c9,#6e6e6e)' },
+        'Convertible': { emoji: '🚗', gradient: 'linear-gradient(135deg,#ffd97a,#c98b1f)' }
+      };
+      planData.cars = planData.cars.map(function(c) {
+        if ((c.price === undefined || c.price === null) && c.price_day !== undefined) c.price = c.price_day;
+        if (!c.photoUrl) {
+          var style = carCategoryStyle[c.category] || carCategoryStyle['Compact'];
+          c.categoryEmoji = style.emoji;
+          c.categoryGradient = style.gradient;
+        }
+        return c;
+      });
+    }
+
     // Try to enrich with real flight offers from Duffel (optional — only if
     // the person configured a token). Never blocks or breaks the trip if it
     // fails; the AI's estimated flights remain as a fallback.
@@ -2391,10 +2418,18 @@ async function generatePlan() {
     }
 
     // Same pattern for real hotel data — optional, never blocks the trip.
+    // Real Duffel results are merged in ALONGSIDE the AI's estimates rather
+    // than replacing them — the Duffel sandbox often only covers a handful
+    // of properties per city, so replacing entirely left travelers with too
+    // few options. Real ones are shown first (marked "LIVE"), AI estimates
+    // fill out the rest for variety.
     try {
       var stayDestQuery = to || planData.destination;
       var realStays = await searchDuffelStays(stayDestQuery, dep, ret, travelers);
-      if (realStays && realStays.length) planData.accommodations = realStays;
+      if (realStays && realStays.length) {
+        var aiStays = (planData.accommodations || []).filter(function(a) { return !a.isReal; });
+        planData.accommodations = realStays.concat(aiStays);
+      }
     } catch (stayErr) {
       console.error('Duffel Stays enrichment skipped:', stayErr);
     }
@@ -2478,24 +2513,27 @@ function isStayInCart(a) { var s = tripCart.stays[cartCityKey()]; return s && it
 function isCarInCart(c) { var s = tripCart.cars[cartCityKey()]; return s && itemKey(s) === itemKey(c); }
 
 function toggleFlightCart(f) {
+  if (!isFlightInCart(f)) { f._cartFrom = window._flightsFrom; f._cartTo = window._flightsDest; }
   tripCart.flight = isFlightInCart(f) ? null : f;
   renderFlights(window.planData.flights, window._flightsFrom, window._flightsDest);
   renderCart();
 }
 function toggleStayCart(a) {
   var key = cartCityKey();
+  var p = window.planData;
+  if (!isStayInCart(a)) a._cartDest = (p.isMultiDest && currentCityTab) ? currentCityTab : p.destination;
   tripCart.stays[key] = isStayInCart(a) ? null : a;
   if (!tripCart.stays[key]) delete tripCart.stays[key];
-  var p = window.planData;
   if (p.isMultiDest && currentCityTab) renderStays(filterByNameSuffix(p.accommodations, currentCityTab, 'name'), currentCityTab);
   else renderStays(p.accommodations, p.destination);
   renderCart();
 }
 function toggleCarCart(c) {
   var key = cartCityKey();
+  var p = window.planData;
+  if (!isCarInCart(c)) c._cartDest = (p.isMultiDest && currentCityTab) ? currentCityTab : p.destination;
   tripCart.cars[key] = isCarInCart(c) ? null : c;
   if (!tripCart.cars[key]) delete tripCart.cars[key];
-  var p = window.planData;
   if (p.isMultiDest && currentCityTab) renderCars(filterByNameSuffix(p.cars, currentCityTab, 'name'), currentCityTab);
   else renderCars(p.cars, p.destination);
   renderCart();
@@ -2536,9 +2574,11 @@ function renderCart() {
 
     if (tripCart.flight) {
       total += tripCart.flight.price || 0;
+      var flightUrl = 'https://www.skyscanner.net/transport/flights/' + (tripCart.flight._cartFrom||'').split(',')[0].toLowerCase() + '/' + (tripCart.flight._cartTo||'').split(',')[0].toLowerCase() + '/';
       h += '<div class="info-t" style="margin-top:6px">' + dict.cart_flight_section + '</div>';
       h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>✈️ ' + tripCart.flight.airline + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (tripCart.flight.routeSummary || ((tripCart.flight.from||'')+' → '+(tripCart.flight.to||''))) + '</div></div>';
-      h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(tripCart.flight.price) + '</div><button onclick="removeCartItem(\'flight\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+      h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(tripCart.flight.price) + '</div><button onclick="removeCartItem(\'flight\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
+      h += '<div class="bls" style="margin-top:10px"><a href="' + flightUrl + '" target="_blank" class="bl bl-sk">' + (dict.cart_book||'Book now') + '</a></div></div>';
     }
 
     var stayCities = Object.keys(tripCart.stays);
@@ -2547,8 +2587,11 @@ function renderCart() {
       stayCities.forEach(function(cityKey) {
         var s = tripCart.stays[cityKey];
         total += (s.price_night || 0);
+        var stayDest = s._cartDest || cityKey;
+        var stayUrl = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + s.name + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (s.type||'') + '</div></div>';
-        h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+        h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
       });
     }
 
@@ -2558,8 +2601,11 @@ function renderCart() {
       carCities.forEach(function(cityKey) {
         var c = tripCart.cars[cityKey];
         total += (c.price || 0);
+        var carDest = (c._cartDest || cityKey).split(',')[0];
+        var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + c.name + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + (c.supplier||'') + '</div></div>';
-        h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div></div>';
+        h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + cityKey.replace(/'/g,"\\'") + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
       });
     }
 
@@ -3141,6 +3187,7 @@ function renderCars(cars, dest) {
       var inCart = isCarInCart(c);
       h += '<div class="fc">';
       if (c.photoUrl) h += '<div style="width:100%;height:120px;background-size:cover;background-position:center;border-radius:10px;margin-bottom:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
+      else h += '<div style="width:100%;height:120px;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:44px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
       h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>' + c.name + '</strong>';
       if (c.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px">● LIVE</span>';
       h += '</div>';
