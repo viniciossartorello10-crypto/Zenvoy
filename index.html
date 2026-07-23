@@ -68,9 +68,10 @@ input::placeholder{color:#aaa}
 .surprise:hover{opacity:.88}
 .dest-row{display:flex;gap:8px;align-items:flex-end}
 .dest-row .ac-wrap{flex:1}
-.section-title{font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:block}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.pill{padding:7px 15px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;transition:all .18s;background:transparent;font-family:'Inter',sans-serif}
+.section-title{font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:28px;display:block;padding-top:20px;border-top:1px solid rgba(11,15,26,.06)}
+.section-title:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.pill{padding:9px 18px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;transition:all .18s;background:transparent;font-family:'Inter',sans-serif}
 .pill:hover,.pill.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
 .rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
 .rcard{border:1px solid rgba(11,15,26,.12);border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:all .18s;background:var(--cream)}
@@ -230,7 +231,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
     <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(45deg)">
       <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2.5 1.5V22l4-1 4 1v-1.5L13 19v-5.5l8 2.5z"/>
     </svg>
-    Zen<span>voy</span>
+    Zen<span>Voy</span>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <select id="langSelect" onchange="setLang(this.value)" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none">
@@ -428,7 +429,6 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         </select>
       </div>
     </div>
-    </div>
 
     <div style="margin-bottom:16px">
       <span class="section-title" data-i18n="flight_time_title">Flight time preference</span>
@@ -509,6 +509,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
     </button>
 
     <div id="errorBanner" style="display:none;margin-top:14px;padding:14px 16px;background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.3);border-radius:10px;color:#a33;font-size:13px;line-height:1.5"></div>
+    </div>
 
     <div class="result" id="result" style="display: none;">
       <div class="rhero" id="rHero">
@@ -574,7 +575,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 </section>
 
 <footer>
-  <div class="flogo">Zen<span>voy</span></div>
+  <div class="flogo">Zen<span>Voy</span></div>
   <div class="fcopy">© 2025 Zenvoy. All rights reserved.</div>
 </footer>
 
@@ -2410,7 +2411,7 @@ async function generateMultiDestPlan(from) {
     planData.budget = estimateMultiDestBudget(total, legs.length);
 
     renderResult(planData, travelers, total, dayOffset, from);
-    enrichCarsWithGoogleImages(planData.cars, planData.destination);
+    enrichCarsWithUnsplashImages(planData.cars, planData.destination);
   } catch (e) {
     console.error(e);
     showErrorBanner('Multi-destination generation failed: ' + (e && e.message ? e.message : 'unknown error') + '. Try regenerating, or reduce the number of destinations.');
@@ -2620,7 +2621,7 @@ async function generatePlan() {
     }
 
     renderResult(planData, travelers, total, days, from);
-    enrichCarsWithGoogleImages(planData.cars, planData.destination);
+    enrichCarsWithUnsplashImages(planData.cars, planData.destination);
     renderFallback(to || 'Tokyo, Japan', travelers, total, days, from);
   } finally {
     btn.disabled = false;
@@ -3323,12 +3324,14 @@ function renderFlights(flights, from, dest) {
   renderCart();
 }
 
-// Fetches a real car photo from Google Custom Search for each AI-estimated
-// car (real Duffel results already have their own photo and are skipped).
-// Runs in the background AFTER the trip is already shown — never blocks or
-// delays trip generation. If no Google key/cx is configured, or a lookup
-// fails, that car just keeps its category illustration; nothing breaks.
-async function enrichCarsWithGoogleImages(cars, dest) {
+// Fetches a real car photo from Unsplash for each AI-estimated car (real
+// Duffel results already have their own photo and are skipped). Runs in the
+// background AFTER the trip is already shown — never blocks or delays trip
+// generation. Note: Unsplash returns a great photo for the car's *category*
+// (e.g. "modern SUV"), not the exact make/model/color — no free photo API
+// can reliably do that. If no key is configured, or a lookup fails, that
+// car just keeps its category illustration; nothing breaks either way.
+async function enrichCarsWithUnsplashImages(cars, dest) {
   if (!Array.isArray(cars) || !cars.length) return;
   var destShort = (dest || '').split(',')[0].split('→')[0].trim();
   var targets = cars.filter(function(c) { return !c.photoUrl; });
@@ -3337,8 +3340,8 @@ async function enrichCarsWithGoogleImages(cars, dest) {
   for (var i = 0; i < targets.length; i++) {
     var c = targets[i];
     try {
-      var query = (c.name || c.category || 'car') + ' ' + (c.category || '') + ' rental car';
-      var res = await fetch('/.netlify/functions/google-car-image', {
+      var query = (c.category || 'car') + ' rental car';
+      var res = await fetch('/.netlify/functions/unsplash-car-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: query })
@@ -3347,7 +3350,7 @@ async function enrichCarsWithGoogleImages(cars, dest) {
       var data = await res.json();
       if (data && data.imageUrl) c.photoUrl = data.imageUrl;
     } catch (err) {
-      console.error('Google car image lookup skipped for ' + (c.name || 'car') + ':', err);
+      console.error('Unsplash car image lookup skipped for ' + (c.name || 'car') + ':', err);
     }
   }
   // Re-render once, after all lookups settle, so cars show their real photos.
