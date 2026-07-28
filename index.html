@@ -234,7 +234,7 @@ input::placeholder{color:#aaa}
 footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid rgba(255,255,255,.06)}
 .flogo{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff}.flogo span{color:var(--gold)}
 .fcopy{font-size:12px;color:var(--muted)}
-@media(max-width:640px){.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.rhythm{grid-template-columns:1fr 1fr}.card{padding:20px 16px}.chat{width:calc(100vw - 32px);right:16px}nav{padding:12px 16px;gap:6px}nav select,nav button{font-size:10px!important;padding:5px 8px!important}}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.rhythm{grid-template-columns:1fr 1fr}.card{padding:20px 16px}.chat{width:calc(100vw - 32px);right:16px}nav{padding:12px 16px;gap:6px}nav select,nav button{font-size:10px!important;padding:5px 8px!important}.car-card-row{flex-direction:column;align-items:stretch!important}.car-card-row>div:first-child{width:100%!important;height:160px!important}.car-card-row>div:last-child{align-items:flex-start!important;text-align:left!important}}
 /* PDF export (via the browser's print-to-PDF) */
 #printArea{display:none}
 @media print{
@@ -3776,33 +3776,40 @@ function renderStays(accs, dest) {
     var slotId = 'ta-badge-stay-'+idx;
     var photoSlotId = 'ta-photo-stay-'+idx;
     var stayStyle = STAY_TYPE_STYLE[a.type] || STAY_TYPE_STYLE['Hotel'];
-    h += '<div class="acc-card">';
+    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+    var inCart = isStayInCart(a);
+    h += '<div class="fc" style="padding:16px">';
+    h += '<div class="car-card-row" style="display:flex;gap:18px;align-items:center">';
     // Real Duffel results already have a photo — show it immediately.
     // AI-estimated results get a colored type illustration as a placeholder;
     // TripAdvisor may replace it with a real photo once it loads below.
     if (a.isReal && a.photoUrl) {
-      h += '<div id="'+photoSlotId+'" class="acc-photo" style="display:block;background-image:url(\''+a.photoUrl+'\')"></div>';
+      h += '<div id="'+photoSlotId+'" style="width:180px;height:130px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\''+a.photoUrl+'\')"></div>';
     } else {
-      h += '<div id="'+photoSlotId+'" class="acc-photo" style="display:flex;align-items:center;justify-content:center;font-size:48px;background:'+stayStyle.gradient+'">'+stayStyle.emoji+'</div>';
+      h += '<div id="'+photoSlotId+'" style="width:180px;height:130px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:'+stayStyle.gradient+'">'+stayStyle.emoji+'</div>';
     }
-    h += '<div class="acc-name">'+a.name+' ';
-    if (a.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:2px 8px;border-radius:20px">● LIVE</span> ';
+    h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
+    h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">'+a.name+'</strong>';
+    if (a.isReal) h += '<span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
     h += '<span id="'+slotId+'" class="ta-badge"></span></div>';
-    if (a.area) h += '<div class="acc-loc">📍 '+a.area+' · <em style="color:var(--gold)">'+a.type+'</em></div>';
-    else h += '<div class="acc-loc"><em style="color:var(--gold)">'+a.type+'</em></div>';
-    h += '<div class="acc-stars">'+stars+'</div>';
-    if (a.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">'+a.why+'</p>';
-    h += '<div class="acc-tags">'+(a.highlights||[]).map(function(t){return '<span class="acc-tag">'+t+'</span>';}).join('')+'</div>';
-    h += '<div class="acc-foot"><div><span class="acc-price">'+formatPrice(a.price_night)+'</span><span style="font-size:12px;color:var(--muted)">/night</span></div>';
-    h += '<div class="bls">';
+    if (a.area) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">📍 '+a.area+' · <em style="color:var(--gold)">'+a.type+'</em></div>';
+    else h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">'+a.type+'</em></div>';
+    h += '<div style="font-size:13px;color:var(--gold);margin-top:6px;letter-spacing:1px">'+stars+'</div>';
+    if (a.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-top:8px;margin-bottom:0">'+a.why+'</p>';
+    if (a.highlights && a.highlights.length) h += '<div style="margin-top:8px">'+a.highlights.map(function(t){return '<span class="acc-tag">'+t+'</span>';}).join('')+'</div>';
+    h += '</div>';
+    h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
+    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">'+formatPrice(a.price_night)+'</span><span style="font-size:11px;color:var(--muted)">/night</span></div>';
+    h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
+    h += '</div>';
+    h += '</div>';
+    h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
     h += '<a href="https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-bk">Booking</a>';
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
     h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a>';
-    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
-    var inCart = isStayInCart(a);
-    h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;margin-left:auto;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
-    h += '</div></div></div>';
+    h += '</div>';
+    h += '</div>';
     // Only queue TripAdvisor enrichment for AI-estimated results — real
     // Duffel results already have their own photo/rating data, no need to
     // spend a TripAdvisor lookup on them.
@@ -3938,23 +3945,26 @@ function renderCars(cars, dest) {
     byCategory[cat].forEach(function(c) {
       var inCart = isCarInCart(c);
       h += '<div class="fc" style="padding:16px">';
-      h += '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">';
-      if (c.photoUrl) h += '<div style="width:120px;height:90px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
-      else h += '<div style="width:120px;height:90px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:38px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
-      h += '<div style="flex:1;min-width:0">';
-      h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><strong style="font-size:15px;line-height:1.3">' + c.name + '</strong>';
+      h += '<div class="car-card-row" style="display:flex;gap:18px;align-items:center">';
+      if (c.photoUrl) h += '<div style="width:180px;height:130px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
+      else h += '<div style="width:180px;height:130px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
+      h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
+      h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">' + c.name + '</strong>';
       if (c.isReal) h += '<span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
       h += '</div>';
       if (c.supplier) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + c.supplier + '</div>';
-      h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#5A6478">'
+      h += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:#5A6478">'
         + '<span>👤 5 ' + (dict.car_seats_label || 'seats') + '</span>'
         + '<span>⚙️ ' + (dict.car_automatic_label || 'Automatic') + '</span>'
         + '<span>♾️ ' + (dict.car_mileage_label || 'Unlimited mileage') + '</span>'
         + '</div>';
-      h += '</div></div>';
-      if (c.why) h += '<p style="font-size:12px;color:#5A6478;font-style:italic;margin-bottom:10px">' + c.why + '</p>';
-      h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:26px;color:var(--navy)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
-      h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div>';
+      if (c.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-top:10px;margin-bottom:0">' + c.why + '</p>';
+      h += '</div>';
+      h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
+      h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
+      h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
+      h += '</div>';
+      h += '</div>';
       h += '</div>';
     });
   });
