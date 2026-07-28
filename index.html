@@ -196,12 +196,14 @@ input::placeholder{color:#aaa}
 .acc-foot{display:flex;justify-content:space-between;align-items:center}
 .acc-price{font-family:'Cormorant Garamond',serif;font-size:24px}
 .fc{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
-.fr{display:flex;align-items:center;gap:10px;margin:12px 0}
-.fcity{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400}
-.fmid{flex:1;text-align:center}
-.fdur{font-size:11px;color:var(--muted);margin-bottom:16px}
-.fline{width:100%;height:1px;background:rgba(11,15,26,.15);position:relative}
-.fline::after{content:'✈';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--gold);background:var(--cream);padding:0 3px}
+.fr{display:flex;align-items:center;gap:16px;margin:16px 0;padding:16px 18px;background:rgba(201,169,110,.05);border-radius:12px}
+.fcity{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400}
+.fmid{flex:1;text-align:center;padding:0 6px}
+.fdur{font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:600;letter-spacing:.02em}
+.fline{width:100%;height:2px;background:linear-gradient(90deg,rgba(201,169,110,.1),var(--gold) 20%,var(--gold) 80%,rgba(201,169,110,.1));position:relative;border-radius:2px}
+.fline::before{content:'';position:absolute;left:-2px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.fline::after{content:'✈';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:24px;color:var(--gold);background:var(--cream);padding:0 8px;animation:plane-hover 2.2s ease-in-out infinite}
+@keyframes plane-hover{0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg)}50%{transform:translateX(-50%) translateY(-4px) rotate(3deg)}}
 .bbd{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
 .bbi{background:var(--cream);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(11,15,26,.06)}
 .bba{font-family:'Cormorant Garamond',serif;font-size:24px}
@@ -2623,7 +2625,7 @@ async function generateMultiDestPlan(from) {
         var legDayPrompt = 'You are Zenvoy, a local expert in ' + resolvedCity + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
           'Generate a detailed itinerary for days ' + localStart + ' through ' + localEnd + ' of a ' + leg.days + '-day stay in ' + resolvedCity + ' (part of a longer multi-city trip). Traveler style: ' + style + '. Interests: ' + interests + '.\n\n' +
           'Use REAL, specifically named, currently-operating places only. Vary neighborhoods and activity types across days. Morning/afternoon/night entries must be a compound suggestion — the main activity at a named place, then a natural follow-up at another named spot (e.g. "Spend the afternoon at Ipanema Beach, then grab a caipirinha at Zazá Bistrô as the sun sets") — not a single terse activity.\n\n' +
-          'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic just because the traveler picked a different one. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing (early_bird starts ~7am and winds down earlier; night_owl starts later with brunch and a real nightlife-appropriate night; balanced sits between).\n\n' +
+          'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic just because the traveler picked a different one. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing (early_bird starts ~7am and winds down earlier; night_owl starts later with brunch and a real nightlife-appropriate night; balanced sits between). Every field must always contain a real suggestion — never "N/A", "none", or empty.\n\n' +
           'Return an array, one object per day, using LOCAL day numbers ' + localStart + ' to ' + localEnd + ', in this exact shape:\n' +
           '[{"day":' + localStart + ',"theme":"specific theme naming the area","img_kw":"keyword",' +
           '"early_bird":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — $X","night":"compound suggestion, then a follow-up"},' +
@@ -3040,21 +3042,13 @@ async function generatePlan() {
       var rangeStart = ranges[ci][0], rangeEnd = ranges[ci][1];
       setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_building_days.replace('{r}', rangeStart+'–'+rangeEnd).replace('{d}', days));
 
-      // Day 1 and the last day need to respect the actual flight times —
-      // otherwise the AI happily plans a full 7am-to-midnight Day 1 even
-      // when the flight lands at 9pm, or a packed last morning when the
-      // flight leaves at 6am. Only added when this chunk actually includes
-      // that day, and only when we have real flight data to reference.
+      // Day 1 / last-day flight-arrival logistics are temporarily disabled —
+      // they were causing some slots to come back as "N/A" when the AI
+      // interpreted "keep it light" as "leave some meals out". Reverted to
+      // always generating a normal, fully-populated day (breakfast, lunch,
+      // afternoon, dinner, night) until that prompt is refined further.
       var arrivalNote = '';
       var departureNote = '';
-      var outboundFlight = (overview.flights || []).filter(function(f) { return f.type === 'outbound'; })[0];
-      var returnFlight = (overview.flights || []).filter(function(f) { return f.type === 'return'; })[0];
-      if (rangeStart === 1 && outboundFlight && outboundFlight.arr) {
-        arrivalNote = '\n\nIMPORTANT — Day 1 logistics: the traveler\'s flight lands at ' + outboundFlight.arr + ' (a "+1" suffix means it lands the next calendar day). Day 1\'s itinerary must realistically start AFTER landing, immigration/customs, baggage claim, and the transfer to the accommodation — do not schedule anything before a plausible arrival-to-first-activity window. Hotel check-in is typically not available before 3pm; if landing earlier, suggest dropping bags at the hotel/using a luggage storage service and doing a light, low-energy first activity nearby (a walk, a casual lunch) rather than a packed sightseeing day. If this is a long-haul or overnight flight (roughly 8+ hours or arrival "+1"), keep Day 1 noticeably lighter than the rest of the trip to account for jet lag/fatigue — this is not the day for an ambitious itinerary.';
-      }
-      if (rangeEnd === days && returnFlight && returnFlight.dep) {
-        departureNote = '\n\nIMPORTANT — Last day logistics: the return flight departs at ' + returnFlight.dep + '. The final day\'s itinerary must realistically end with enough buffer for hotel check-out, getting to the airport, and check-in/security BEFORE that departure time — do not schedule a full day of activities that would make the traveler miss their flight. If the flight is early morning, keep the final day very light (breakfast and a short activity at most, or none at all) and mention getting to the airport with buffer time; if it is evening, a fuller final day is fine but should still wrap up with enough transfer buffer before departure.';
-      }
 
       var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in '+overview.destination+'. Return ONLY a valid JSON array, no markdown, no explanation.\n\n'+langInstruction+'\n\n'+
         'Trip: '+tripBrief+'\nDestination: '+overview.destination+arrivalNote+departureNote+'\n\n'+
@@ -3072,7 +3066,8 @@ async function generatePlan() {
         '- Write like a premium concierge, not a checklist: weave in an approximate clock time AND the reason behind that timing wherever it adds real value — e.g. "arrive at 8am, before the tour buses" or "head up around 6:30pm to catch golden hour" or "grab this table by noon, it fills up fast." Never force a reason where there isn\'t a real one — only add it when it is genuinely useful local knowledge (beating crowds, catching light, a kitchen\'s peak freshness, a place that gets fully booked).\n'+
         '- Make each entry feel handcrafted for THIS specific traveler and day, not interchangeable with any other day of any other trip — reference the actual neighborhood, the actual weather/season, or the actual interest that led you to suggest it.\n'+
         '- CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed itinerary versions of the same day — never leave one thin, generic, or copy-pasted just because the traveler\'s chosen rhythm is a different one. Every field in all three must be filled with real, specific, named places. The three should genuinely differ in PACING and TIMING (early_bird starts around 7am and winds down earlier; night_owl starts later — brunch instead of breakfast — and has a real nightlife-appropriate night suggestion; balanced sits in between) — but a family trip\'s night_owl should still be a family-appropriate late option (a night market, a late dessert spot), not nightlife, unless nightlife/partying is actually one of this traveler\'s selected interests. Likewise, if the traveler DID select a party/nightlife style, that should shape ALL THREE variants\' night entries, not just one.\n'+
-        '- Capitalize every proper noun correctly (place names, restaurant names, neighborhood names, street names) exactly as they are really written/branded — never output a place name in all lowercase.\n\n'+
+        '- Capitalize every proper noun correctly (place names, restaurant names, neighborhood names, street names) exactly as they are really written/branded — never output a place name in all lowercase.\n'+
+        '- EVERY field (breakfast, lunch, dinner, morning, afternoon, night) in all three rhythm variants must always contain a real, specific suggestion — never "N/A", "none", "optional", or an empty string, even on a day you might otherwise think of as lighter or a travel/transit day.\n\n'+
         'Return an array, one object per day, in this exact shape:\n'+
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
         '"early_bird":{"morning":"7am — main activity at a specific named place (with a timing reason if genuinely useful), then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — $X","night":"compound evening suggestion at a named place, then a follow-up"},'+
@@ -3390,7 +3385,7 @@ async function regenerateItineraryFromCart() {
       var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in ' + p.destination + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n'
         + 'Destination: ' + p.destination + logisticsNote + (r.start === 1 ? '' : '') + '\n\n'
         + 'Generate the full detailed itinerary for days ' + r.start + ' through ' + r.end + ' ONLY (this is part of a longer ' + totalDays + '-day trip — do not summarize or skip days).\n\n'
-        + 'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing.\n\n'
+        + 'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing. Every field must always contain a real suggestion — never "N/A", "none", or empty.\n\n'
         + 'Return an array, one object per day, in this exact shape:\n'
         + '[{"day":' + r.start + ',"theme":"specific, evocative theme naming the area/neighborhood","img_kw":"one keyword for image search",'
         + '"early_bird":{"morning":"7am — activity at a named place","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"activity at a named place","dinner":"restaurant — dish — $X","night":"evening suggestion"},'
