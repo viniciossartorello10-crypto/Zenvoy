@@ -32,7 +32,8 @@ exports.handler = async function (event) {
     };
   }
 
-  const { token, slices, passengers, cabin_class } = body;
+  const { slices, passengers, cabin_class } = body;
+  const token = body.token || process.env.DUFFEL_API_KEY;
 
   if (!token || !slices || !passengers) {
     return {

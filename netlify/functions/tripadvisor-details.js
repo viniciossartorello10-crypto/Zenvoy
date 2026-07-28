@@ -1,7 +1,8 @@
 exports.handler = async function (event) {
   try {
     const params = event.queryStringParameters || {};
-    const { key, locationId, language, currency } = params;
+    const { locationId, language, currency } = params;
+    const key = params.key || process.env.TRIPADVISOR_API_KEY;
 
     if (!key || !locationId) {
       return {

@@ -26,7 +26,8 @@ exports.handler = async function (event) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON in request body: ' + parseErr.message }) };
   }
 
-  const { token, latitude, longitude, pickupDate, dropoffDate } = body;
+  const { latitude, longitude, pickupDate, dropoffDate } = body;
+  const token = body.token || process.env.DUFFEL_API_KEY;
 
   if (!token || latitude === undefined || longitude === undefined || !pickupDate || !dropoffDate) {
     return {

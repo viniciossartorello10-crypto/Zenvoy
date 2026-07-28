@@ -26,7 +26,8 @@ exports.handler = async function (event) {
     };
   }
 
-  const { token, latitude, longitude, checkIn, checkOut, guests, radius } = body;
+  const { latitude, longitude, checkIn, checkOut, guests, radius } = body;
+  const token = body.token || process.env.DUFFEL_API_KEY;
 
   if (!token || latitude === undefined || longitude === undefined || !checkIn || !checkOut) {
     return {
