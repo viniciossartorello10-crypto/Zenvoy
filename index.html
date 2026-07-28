@@ -199,9 +199,9 @@ input::placeholder{color:#aaa}
 .fr{display:flex;align-items:center;gap:10px;margin:12px 0}
 .fcity{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400}
 .fmid{flex:1;text-align:center}
-.fdur{font-size:11px;color:var(--muted)}
+.fdur{font-size:11px;color:var(--muted);margin-bottom:16px}
 .fline{width:100%;height:1px;background:rgba(11,15,26,.15);position:relative}
-.fline::after{content:'✈';position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--gold);background:var(--cream);padding:0 3px}
+.fline::after{content:'✈';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--gold);background:var(--cream);padding:0 3px}
 .bbd{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
 .bbi{background:var(--cream);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(11,15,26,.06)}
 .bba{font-family:'Cormorant Garamond',serif;font-size:24px}
@@ -661,6 +661,70 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 
 // ── CITIES (126 cities) ───────────────────────────────────────
 const CITIES=[
+  {city:'Valparaíso',country:'Chile',flag:'🇨🇱',iata:'SCL'},{city:'Atacama Desert',country:'Chile',flag:'🇨🇱',iata:'CJC'},
+  {city:'Punta Arenas',country:'Chile',flag:'🇨🇱',iata:'PUQ'},{city:'Easter Island',country:'Chile',flag:'🇨🇱',iata:'IPC'},
+  {city:'Arequipa',country:'Peru',flag:'🇵🇪',iata:'AQP'},{city:'Iquitos',country:'Peru',flag:'🇵🇪',iata:'IQT'},
+  {city:'Puno',country:'Peru',flag:'🇵🇪',iata:'JUL'},{city:'Nazca',country:'Peru',flag:'🇵🇪',iata:'LIM'},
+  {city:'Trujillo',country:'Peru',flag:'🇵🇪',iata:'TRU'},{city:'Puerto Iguazú',country:'Argentina',flag:'🇦🇷',iata:'IGR'},
+  {city:'Salta',country:'Argentina',flag:'🇦🇷',iata:'SLA'},{city:'Córdoba',country:'Argentina',flag:'🇦🇷',iata:'COR'},
+  {city:'El Calafate',country:'Argentina',flag:'🇦🇷',iata:'FTE'},{city:'Sucre',country:'Bolivia',flag:'🇧🇴',iata:'SRE'},
+  {city:'Uyuni',country:'Bolivia',flag:'🇧🇴',iata:'UYU'},{city:'Santa Cruz',country:'Bolivia',flag:'🇧🇴',iata:'VVI'},
+  {city:'Ciudad del Este',country:'Paraguay',flag:'🇵🇾',iata:'AGT'},{city:'Colonia del Sacramento',country:'Uruguay',flag:'🇺🇾',iata:'MVD'},
+  {city:'Georgetown',country:'Guyana',flag:'🇬🇾',iata:'GEO'},{city:'Paramaribo',country:'Suriname',flag:'🇸🇷',iata:'PBM'},
+  {city:'Tamarindo',country:'Costa Rica',flag:'🇨🇷',iata:'TNO'},{city:'La Fortuna',country:'Costa Rica',flag:'🇨🇷',iata:'SJO'},
+  {city:'Manuel Antonio',country:'Costa Rica',flag:'🇨🇷',iata:'XQP'},{city:'Monteverde',country:'Costa Rica',flag:'🇨🇷',iata:'SJO'},
+  {city:'Bocas del Toro',country:'Panama',flag:'🇵🇦',iata:'BOC'},{city:'San Blas Islands',country:'Panama',flag:'🇵🇦',iata:'PAC'},
+  {city:'Granada',country:'Nicaragua',flag:'🇳🇮',iata:'MGA'},{city:'San Juan del Sur',country:'Nicaragua',flag:'🇳🇮',iata:'MGA'},
+  {city:'Roatán',country:'Honduras',flag:'🇭🇳',iata:'RTB'},{city:'Tegucigalpa',country:'Honduras',flag:'🇭🇳',iata:'TGU'},
+  {city:'El Tunco',country:'El Salvador',flag:'🇸🇻',iata:'SAL'},{city:'Flores',country:'Guatemala',flag:'🇬🇹',iata:'FRS'},
+  {city:'Lake Atitlán',country:'Guatemala',flag:'🇬🇹',iata:'GUA'},{city:'San Pedro',country:'Belize',flag:'🇧🇿',iata:'SPR'},
+  {city:'Caye Caulker',country:'Belize',flag:'🇧🇿',iata:'TZA'},{city:'Oaxaca',country:'Mexico',flag:'🇲🇽',iata:'OAX'},
+  {city:'Puerto Vallarta',country:'Mexico',flag:'🇲🇽',iata:'PVR'},{city:'Playa del Carmen',country:'Mexico',flag:'🇲🇽',iata:'CUN'},
+  {city:'San Miguel de Allende',country:'Mexico',flag:'🇲🇽',iata:'BJX'},{city:'Guadalajara',country:'Mexico',flag:'🇲🇽',iata:'GDL'},
+  {city:'Mérida',country:'Mexico',flag:'🇲🇽',iata:'MID'},{city:'Margarita Island',country:'Venezuela',flag:'🇻🇪',iata:'PMV'},
+  {city:'Curitiba',country:'Brazil',flag:'🇧🇷',iata:'CWB'},{city:'Foz do Iguaçu',country:'Brazil',flag:'🇧🇷',iata:'IGU'},
+  {city:'Natal',country:'Brazil',flag:'🇧🇷',iata:'NAT'},{city:'Maceió',country:'Brazil',flag:'🇧🇷',iata:'MCZ'},
+  {city:'Manaus',country:'Brazil',flag:'🇧🇷',iata:'MAO'},{city:'Recife',country:'Brazil',flag:'🇧🇷',iata:'REC'},
+  {city:'Búzios',country:'Brazil',flag:'🇧🇷',iata:'RIA'},{city:'Paraty',country:'Brazil',flag:'🇧🇷',iata:'RIA'},
+  {city:'Ouro Preto',country:'Brazil',flag:'🇧🇷',iata:'CNF'},{city:'Trancoso',country:'Brazil',flag:'🇧🇷',iata:'BPS'},
+  {city:'Fernando de Noronha',country:'Brazil',flag:'🇧🇷',iata:'FEN'},{city:'Jalapão',country:'Brazil',flag:'🇧🇷',iata:'PMW'},
+  {city:'Lençóis Maranhenses',country:'Brazil',flag:'🇧🇷',iata:'SLZ'},{city:'Angra dos Reis',country:'Brazil',flag:'🇧🇷',iata:'GIG'},
+  {city:'Petrópolis',country:'Brazil',flag:'🇧🇷',iata:'GIG'},{city:'Alter do Chão',country:'Brazil',flag:'🇧🇷',iata:'STM'},
+  {city:'Nashville',country:'USA',flag:'🇺🇸',iata:'BNA'},{city:'New Orleans',country:'USA',flag:'🇺🇸',iata:'MSY'},
+  {city:'Austin',country:'USA',flag:'🇺🇸',iata:'AUS'},{city:'Portland',country:'USA',flag:'🇺🇸',iata:'PDX'},
+  {city:'Denver',country:'USA',flag:'🇺🇸',iata:'DEN'},{city:'Aspen',country:'USA',flag:'🇺🇸',iata:'ASE'},
+  {city:'Savannah',country:'USA',flag:'🇺🇸',iata:'SAV'},{city:'Charleston',country:'USA',flag:'🇺🇸',iata:'CHS'},
+  {city:'Napa Valley',country:'USA',flag:'🇺🇸',iata:'STS'},{city:'Palm Springs',country:'USA',flag:'🇺🇸',iata:'PSP'},
+  {city:'Key West',country:'USA',flag:'🇺🇸',iata:'EYW'},{city:'Jackson Hole',country:'USA',flag:'🇺🇸',iata:'JAC'},
+  {city:'Santa Fe',country:'USA',flag:'🇺🇸',iata:'SAF'},{city:'Providence',country:'USA',flag:'🇺🇸',iata:'PVD'},
+  {city:'Buffalo',country:'USA',flag:'🇺🇸',iata:'BUF'},{city:'Omaha',country:'USA',flag:'🇺🇸',iata:'OMA'},
+  {city:'Tucson',country:'USA',flag:'🇺🇸',iata:'TUS'},{city:'Boise',country:'USA',flag:'🇺🇸',iata:'BOI'},
+  {city:'Bologna',country:'Italy',flag:'🇮🇹',iata:'BLQ'},{city:'Turin',country:'Italy',flag:'🇮🇹',iata:'TRN'},
+  {city:'Palermo',country:'Italy',flag:'🇮🇹',iata:'PMO'},{city:'Verona',country:'Italy',flag:'🇮🇹',iata:'VRN'},
+  {city:'Cinque Terre',country:'Italy',flag:'🇮🇹',iata:'GOA'},{city:'Toledo',country:'Spain',flag:'🇪🇸',iata:'MAD'},
+  {city:'Granada',country:'Spain',flag:'🇪🇸',iata:'GRX'},{city:'San Sebastián',country:'Spain',flag:'🇪🇸',iata:'EAS'},
+  {city:'Ibiza Town',country:'Spain',flag:'🇪🇸',iata:'IBZ'},{city:'Marrakech',country:'Morocco',flag:'🇲🇦',iata:'RAK'},
+  {city:'Fez',country:'Morocco',flag:'🇲🇦',iata:'FEZ'},{city:'Casablanca',country:'Morocco',flag:'🇲🇦',iata:'CMN'},
+  {city:'Tel Aviv',country:'Israel',flag:'🇮🇱',iata:'TLV'},{city:'Jerusalem',country:'Israel',flag:'🇮🇱',iata:'TLV'},
+  {city:'Petra',country:'Jordan',flag:'🇯🇴',iata:'AMM'},{city:'Beirut',country:'Lebanon',flag:'🇱🇧',iata:'BEY'},
+  {city:'Salzburg',country:'Austria',flag:'🇦🇹',iata:'SZG'},{city:'Innsbruck',country:'Austria',flag:'🇦🇹',iata:'INN'},
+  {city:'Bruges',country:'Belgium',flag:'🇧🇪',iata:'BRU'},{city:'Ghent',country:'Belgium',flag:'🇧🇪',iata:'BRU'},
+  {city:'Bergen',country:'Norway',flag:'🇳🇴',iata:'BGO'},{city:'Tromsø',country:'Norway',flag:'🇳🇴',iata:'TOS'},
+  {city:'Gothenburg',country:'Sweden',flag:'🇸🇪',iata:'GOT'},{city:'Aarhus',country:'Denmark',flag:'🇩🇰',iata:'AAR'},
+  {city:'Edinburgh',country:'UK',flag:'🇬🇧',iata:'EDI'},{city:'Glasgow',country:'UK',flag:'🇬🇧',iata:'GLA'},
+  {city:'Liverpool',country:'UK',flag:'🇬🇧',iata:'LPL'},{city:'Bath',country:'UK',flag:'🇬🇧',iata:'BRS'},
+  {city:'Cork',country:'Ireland',flag:'🇮🇪',iata:'ORK'},{city:'Galway',country:'Ireland',flag:'🇮🇪',iata:'GWY'},
+  {city:'Queenstown',country:'New Zealand',flag:'🇳🇿',iata:'ZQN'},{city:'Auckland',country:'New Zealand',flag:'🇳🇿',iata:'AKL'},
+  {city:'Gold Coast',country:'Australia',flag:'🇦🇺',iata:'OOL'},{city:'Cairns',country:'Australia',flag:'🇦🇺',iata:'CNS'},
+  {city:'Bali Ubud',country:'Indonesia',flag:'🇮🇩',iata:'DPS'},{city:'Siem Reap',country:'Cambodia',flag:'🇰🇭',iata:'SAI'},
+  {city:'Luang Prabang',country:'Laos',flag:'🇱🇦',iata:'LPQ'},{city:'Hanoi',country:'Vietnam',flag:'🇻🇳',iata:'HAN'},
+  {city:'Ho Chi Minh City',country:'Vietnam',flag:'🇻🇳',iata:'SGN'},{city:'Da Nang',country:'Vietnam',flag:'🇻🇳',iata:'DAD'},
+  {city:'Kathmandu',country:'Nepal',flag:'🇳🇵',iata:'KTM'},{city:'Colombo',country:'Sri Lanka',flag:'🇱🇰',iata:'CMB'},
+  {city:'Male',country:'Maldives',flag:'🇲🇻',iata:'MLE'},{city:'Cape Town Winelands',country:'South Africa',flag:'🇿🇦',iata:'CPT'},
+  {city:'Victoria Falls',country:'Zimbabwe',flag:'🇿🇼',iata:'VFA'},{city:'Marrakesh Sahara',country:'Morocco',flag:'🇲🇦',iata:'RAK'},
+  {city:'Quito',country:'Ecuador',flag:'🇪🇨',iata:'UIO'},{city:'La Paz',country:'Bolivia',flag:'🇧🇴',iata:'LPB'},
+  {city:'Salvador de Bahia',country:'Brazil',flag:'🇧🇷',iata:'SSA'},{city:'Antigua Guatemala',country:'Guatemala',flag:'🇬🇹',iata:'GUA'},
+  {city:'San Juan',country:'Puerto Rico',flag:'🇵🇷',iata:'SJU'},{city:'Havana',country:'Cuba',flag:'🇨🇺',iata:'HAV'},
   {city:'Atlanta',country:'USA',flag:'🇺🇸',iata:'ATL'},{city:'Houston',country:'USA',flag:'🇺🇸',iata:'IAH'},
   {city:'Dallas',country:'USA',flag:'🇺🇸',iata:'DFW'},{city:'Philadelphia',country:'USA',flag:'🇺🇸',iata:'PHL'},
   {city:'San Diego',country:'USA',flag:'🇺🇸',iata:'SAN'},{city:'Phoenix',country:'USA',flag:'🇺🇸',iata:'PHX'},
@@ -1480,11 +1544,52 @@ var BEACH_DESTINATIONS = ['ibiza','bali','zanzibar','maldives','phuket','boracay
   'nassau','st. lucia','bridgetown','amalfi coast','santorini','mykonos','cancún','cancun',
   'goa','koh samui','maui','cabo san lucas','varadero','ocho rios','the bahamas'];
 
+// Some destinations are famous for something very specific — a generic
+// "city skyline" search returns misleading results for these (Las Vegas
+// searched generically returns daytime desert-city photos, not the Strip
+// at night, which is what actually represents the destination).
+var ICONIC_QUERY_OVERRIDES = {
+  'las vegas': 'Las Vegas strip neon lights night casinos',
+  'orlando': 'Orlando theme park castle fireworks',
+  'new orleans': 'New Orleans French Quarter Bourbon Street night',
+  'nashville': 'Nashville Broadway honky tonk neon night',
+  'venice': 'Venice canal gondola sunset',
+  'dubai': 'Dubai skyline Burj Khalifa night lights',
+  'petra': 'Petra Jordan Treasury facade',
+  'machu picchu': 'Machu Picchu ruins sunrise mountains',
+  'cairo': 'Cairo pyramids Giza sunset',
+  'kyoto': 'Kyoto temple torii gates autumn',
+  'reykjavik': 'Iceland northern lights aurora',
+  'queenstown': 'Queenstown New Zealand mountains lake',
+  'napa valley': 'Napa Valley vineyard rolling hills',
+  'aspen': 'Aspen Colorado ski mountains snow'
+};
+
 async function getCityImage(dest) {
   var city = (dest || '').split(',')[0].trim();
   if (!city) return null;
   var key = city.toLowerCase();
   if (key in cityImgCache) return cityImgCache[key];
+  var iconicQueryUpfront = ICONIC_QUERY_OVERRIDES[key];
+  // For destinations famous for something very specific (Vegas' Strip at
+  // night, Orlando's theme parks), skip Wikipedia entirely — its default
+  // article photo is usually a generic daytime cityscape that undersells
+  // what the place is actually known for. Go straight to a targeted search.
+  if (iconicQueryUpfront) {
+    try {
+      var iconicRes = await fetch('/.netlify/functions/unsplash-car-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: iconicQueryUpfront })
+      });
+      if (iconicRes.ok) {
+        var iconicData = await iconicRes.json();
+        if (iconicData && iconicData.imageUrl) { cityImgCache[key] = iconicData.imageUrl; return iconicData.imageUrl; }
+      }
+    } catch (e) {
+      console.error('Iconic destination image lookup failed, falling back to Wikipedia:', e);
+    }
+  }
   try {
     var res = await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(city));
     if (res.ok) {
@@ -1503,11 +1608,13 @@ async function getCityImage(dest) {
   // cityscape query used for everywhere else.
   var beachQuery = ' turquoise beach paradise aerial';
   var isBeachDest = BEACH_DESTINATIONS.indexOf(city.toLowerCase()) !== -1;
+  var iconicQuery = ICONIC_QUERY_OVERRIDES[city.toLowerCase()];
+  var searchQuery = iconicQuery || (city + (isBeachDest ? beachQuery : ' city skyline travel'));
   try {
     var unsplashRes = await fetch('/.netlify/functions/unsplash-car-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: city + (isBeachDest ? beachQuery : ' city skyline travel') })
+      body: JSON.stringify({ query: searchQuery })
     });
     if (unsplashRes.ok) {
       var unsplashData = await unsplashRes.json();
@@ -2516,6 +2623,7 @@ async function generateMultiDestPlan(from) {
         var legDayPrompt = 'You are Zenvoy, a local expert in ' + resolvedCity + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
           'Generate a detailed itinerary for days ' + localStart + ' through ' + localEnd + ' of a ' + leg.days + '-day stay in ' + resolvedCity + ' (part of a longer multi-city trip). Traveler style: ' + style + '. Interests: ' + interests + '.\n\n' +
           'Use REAL, specifically named, currently-operating places only. Vary neighborhoods and activity types across days. Morning/afternoon/night entries must be a compound suggestion — the main activity at a named place, then a natural follow-up at another named spot (e.g. "Spend the afternoon at Ipanema Beach, then grab a caipirinha at Zazá Bistrô as the sun sets") — not a single terse activity.\n\n' +
+          'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic just because the traveler picked a different one. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing (early_bird starts ~7am and winds down earlier; night_owl starts later with brunch and a real nightlife-appropriate night; balanced sits between).\n\n' +
           'Return an array, one object per day, using LOCAL day numbers ' + localStart + ' to ' + localEnd + ', in this exact shape:\n' +
           '[{"day":' + localStart + ',"theme":"specific theme naming the area","img_kw":"keyword",' +
           '"early_bird":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — $X","night":"compound suggestion, then a follow-up"},' +
@@ -2962,7 +3070,9 @@ async function generatePlan() {
         '- "Night" suggestions must genuinely reflect THIS traveler\'s selected style (\'+style+\'+) and interests (\'+interests+\'+) — do not default to generic nightlife clichés (jazz bars, rooftop cocktails) unless nightlife or wine/beer is actually among their interests. A family trip\'s "night" might be a nighttime market stroll or dessert spot; a nature-focused trip might be stargazing; an art-focused trip might be a late gallery opening. Vary the TYPE of night activity across days — never repeat the same kind of venue two nights in a row.\n'+
         (interests.toLowerCase().indexOf('theme park') !== -1 ? '- Theme parks is one of this traveler\'s selected interests. If '+overview.destination+' is home to a major theme park (Disney, Universal, or similar), dedicate at least one FULL day (morning through night) entirely to that park — do not split it across a partial afternoon only, and do not water it down with unrelated stops that day.\n' : '')+
         '- Write like a premium concierge, not a checklist: weave in an approximate clock time AND the reason behind that timing wherever it adds real value — e.g. "arrive at 8am, before the tour buses" or "head up around 6:30pm to catch golden hour" or "grab this table by noon, it fills up fast." Never force a reason where there isn\'t a real one — only add it when it is genuinely useful local knowledge (beating crowds, catching light, a kitchen\'s peak freshness, a place that gets fully booked).\n'+
-        '- Make each entry feel handcrafted for THIS specific traveler and day, not interchangeable with any other day of any other trip — reference the actual neighborhood, the actual weather/season, or the actual interest that led you to suggest it.\n\n'+
+        '- Make each entry feel handcrafted for THIS specific traveler and day, not interchangeable with any other day of any other trip — reference the actual neighborhood, the actual weather/season, or the actual interest that led you to suggest it.\n'+
+        '- CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed itinerary versions of the same day — never leave one thin, generic, or copy-pasted just because the traveler\'s chosen rhythm is a different one. Every field in all three must be filled with real, specific, named places. The three should genuinely differ in PACING and TIMING (early_bird starts around 7am and winds down earlier; night_owl starts later — brunch instead of breakfast — and has a real nightlife-appropriate night suggestion; balanced sits in between) — but a family trip\'s night_owl should still be a family-appropriate late option (a night market, a late dessert spot), not nightlife, unless nightlife/partying is actually one of this traveler\'s selected interests. Likewise, if the traveler DID select a party/nightlife style, that should shape ALL THREE variants\' night entries, not just one.\n'+
+        '- Capitalize every proper noun correctly (place names, restaurant names, neighborhood names, street names) exactly as they are really written/branded — never output a place name in all lowercase.\n\n'+
         'Return an array, one object per day, in this exact shape:\n'+
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
         '"early_bird":{"morning":"7am — main activity at a specific named place (with a timing reason if genuinely useful), then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — $X","night":"compound evening suggestion at a named place, then a follow-up"},'+
@@ -3280,6 +3390,7 @@ async function regenerateItineraryFromCart() {
       var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in ' + p.destination + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n'
         + 'Destination: ' + p.destination + logisticsNote + (r.start === 1 ? '' : '') + '\n\n'
         + 'Generate the full detailed itinerary for days ' + r.start + ' through ' + r.end + ' ONLY (this is part of a longer ' + totalDays + '-day trip — do not summarize or skip days).\n\n'
+        + 'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing.\n\n'
         + 'Return an array, one object per day, in this exact shape:\n'
         + '[{"day":' + r.start + ',"theme":"specific, evocative theme naming the area/neighborhood","img_kw":"one keyword for image search",'
         + '"early_bird":{"morning":"7am — activity at a named place","breakfast":"cafe — dish — $X","lunch":"restaurant — dish — $X","afternoon":"activity at a named place","dinner":"restaurant — dish — $X","night":"evening suggestion"},'
@@ -3852,9 +3963,9 @@ function getAirlineBadgeHtml(airlineName) {
   var match = Object.keys(AIRLINE_BADGES).filter(function(k) { return key.indexOf(k) !== -1; })[0];
   var badge = match ? AIRLINE_BADGES[match] : null;
   if (badge) {
-    return '<div style="width:34px;height:34px;border-radius:9px;background:'+badge.bg+';color:'+badge.fg+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:\'Inter\',sans-serif">'+badge.label+'</div>';
+    return '<div style="width:44px;height:44px;border-radius:50%;background:'+badge.bg+';color:'+badge.fg+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;font-family:\'Inter\',sans-serif;letter-spacing:.02em">'+badge.label+'</div>';
   }
-  return '<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#8a6d3b);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">✈️</div>';
+  return '<div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6d3b);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">✈️</div>';
 }
 
 function renderFlights(flights, from, dest) {
@@ -3875,9 +3986,19 @@ function renderFlights(flights, from, dest) {
   h += '</select></div>';
   h += '<div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
   sorted.forEach(function(f) {
-    h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px">'+getAirlineBadgeHtml(f.airline)+'<strong>'+f.airline+'</strong></div>';
-    if (f.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px;margin-right:6px">● LIVE</span>';
-    h += '<span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+f.class+'</span></div>';
+    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+    var inCart = isFlightInCart(f);
+    h += '<div class="fc">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px">';
+    h += '<div style="flex:1;min-width:0">';
+    h += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">'+getAirlineBadgeHtml(f.airline)+'<div><strong style="font-size:16px">'+f.airline+'</strong>';
+    if (f.isReal) h += ' <span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap">● LIVE</span>';
+    h += '<div><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+f.class+'</span></div></div></div>';
+    h += '</div>';
+    h += '<div style="flex-shrink:0;text-align:right;min-width:130px">';
+    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
+    h += '</div>';
+    h += '</div>';
     if (f.isMultiCity) {
       h += '<div style="padding:14px 0;text-align:center"><div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;color:var(--navy);margin-bottom:6px">'+(f.routeSummary||'')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.stops||'')+'</div></div>';
     } else {
@@ -3885,7 +4006,6 @@ function renderFlights(flights, from, dest) {
       h += '<div class="fmid"><div class="fdur">'+(f.dur||'—')+' · '+(f.stops||'')+'</div><div class="fline"></div></div>';
       h += '<div><div class="fcity">'+(f.to||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+(f.arr||'—')+'</div></div></div>';
     }
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:\'Cormorant Garamond\',serif;font-size:24px">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
     var searchUrl;
     if (f.isMultiCity) {
       searchUrl = 'https://www.skyscanner.com'; // multi-city routes can't be expressed in a simple two-airport URL
@@ -3903,9 +4023,7 @@ function renderFlights(flights, from, dest) {
     } else {
       searchUrl = 'https://www.skyscanner.com'; // last-resort fallback if we somehow have no route at all
     }
-    var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
-    var inCart = isFlightInCart(f);
-    h += '<div class="bls"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div></div>';
+    h += '<div class="bls" style="margin-top:10px;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div>';
   });
   document.getElementById('flightsContent').innerHTML = h;
   renderCart();
