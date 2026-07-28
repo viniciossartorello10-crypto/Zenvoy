@@ -255,7 +255,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 
 
 
-<nav style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
+<nav style="position:absolute;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
   <button onclick="toggleSideMenu(true)" aria-label="Menu" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;justify-self:start">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
@@ -383,7 +383,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   </div>
   <h1 data-i18n="hero_title">Your next<br><em>journey</em>,<br>designed by AI</h1>
   </div>
-  <button class="hero-btn" data-i18n="hero_cta" onclick="startNewTrip()">Plan my trip free →</button>
+  <button class="hero-btn" data-i18n="hero_cta" onclick="startNewTrip()">Plan my trip →</button>
   <div class="hero-ticker" aria-hidden="true">
     <div class="hero-ticker-track">
       <span>Barcelona</span><span>·</span><span>London</span><span>·</span><span>Chicago</span><span>·</span><span>Tokyo</span><span>·</span><span>Rome</span><span>·</span><span>Bali</span><span>·</span><span>Paris</span><span>·</span><span>New York</span><span>·</span><span>Lisbon</span><span>·</span><span>Cancún</span><span>·</span><span>Dubai</span><span>·</span><span>Cape Town</span><span>·</span>
@@ -1047,7 +1047,7 @@ var TRANSLATIONS = {
   en: {
     hero_title: 'Your next<br><em>journey</em>,<br>designed by AI',
     hero_subtitle: 'Complete trip planning in seconds — flights, hotels, food, activities, and local secrets.',
-    hero_cta: 'Plan my trip free →',
+    hero_cta: 'Plan my trip →',
     planner_title: 'Where do you want to go?',
     planner_subtitle: 'Fill in your details and get a complete personalized travel plan.',
     label_from: 'Flying from', ph_from: 'Your city...',
@@ -1108,7 +1108,7 @@ var TRANSLATIONS = {
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
     hero_subtitle: 'Planejamento completo de viagem em segundos — voos, hotéis, comida, atividades e segredos locais.',
-    hero_cta: 'Planejar minha viagem grátis →',
+    hero_cta: 'Planejar minha viagem →',
     planner_title: 'Para onde você quer ir?',
     planner_subtitle: 'Preencha seus dados e receba um plano de viagem completo e personalizado.',
     label_from: 'Saindo de', ph_from: 'Sua cidade...',
@@ -1169,7 +1169,7 @@ var TRANSLATIONS = {
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
     hero_subtitle: 'Planificación completa de viajes en segundos — vuelos, hoteles, comida, actividades y secretos locales.',
-    hero_cta: 'Planear mi viaje gratis →',
+    hero_cta: 'Planear mi viaje →',
     planner_title: '¿A dónde quieres ir?',
     planner_subtitle: 'Completa tus datos y obtén un plan de viaje completo y personalizado.',
     label_from: 'Saliendo de', ph_from: 'Tu ciudad...',
@@ -1230,7 +1230,7 @@ var TRANSLATIONS = {
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
     hero_subtitle: 'Planification complète de voyage en quelques secondes — vols, hôtels, nourriture, activités et secrets locaux.',
-    hero_cta: 'Planifier mon voyage gratuitement →',
+    hero_cta: 'Planifier mon voyage →',
     planner_title: 'Où voulez-vous aller ?',
     planner_subtitle: 'Remplissez vos informations et obtenez un plan de voyage complet et personnalisé.',
     label_from: 'Départ de', ph_from: 'Votre ville...',
@@ -1291,7 +1291,7 @@ var TRANSLATIONS = {
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
     hero_subtitle: 'Pianificazione completa del viaggio in pochi secondi — voli, hotel, cibo, attività e segreti locali.',
-    hero_cta: 'Pianifica il mio viaggio gratis →',
+    hero_cta: 'Pianifica il mio viaggio →',
     planner_title: 'Dove vuoi andare?',
     planner_subtitle: 'Inserisci i tuoi dati e ottieni un piano di viaggio completo e personalizzato.',
     label_from: 'Partenza da', ph_from: 'La tua città...',
@@ -3821,6 +3821,42 @@ function renderStays(accs, dest) {
 }
 
 var flightSortOrder = 'default'; // 'default' | 'price_asc' | 'price_desc'
+// Simplified colored badges for well-known airlines (not their actual
+// trademarked logos — just a recognizable colored initial, the same
+// approach comparison sites like Kayak/Skyscanner use in list views).
+var AIRLINE_BADGES = {
+  'united':    { bg: '#002244', fg: '#fff', label: 'UA' },
+  'american':  { bg: '#C8102E', fg: '#fff', label: 'AA' },
+  'delta':     { bg: '#C01933', fg: '#fff', label: 'DL' },
+  'southwest': { bg: '#304CB2', fg: '#fff', label: 'WN' },
+  'jetblue':   { bg: '#0033A0', fg: '#fff', label: 'B6' },
+  'alaska':    { bg: '#01426A', fg: '#fff', label: 'AS' },
+  'latam':     { bg: '#1D1D6B', fg: '#fff', label: 'LA' },
+  'gol':       { bg: '#FF6600', fg: '#fff', label: 'G3' },
+  'azul':      { bg: '#00A9E0', fg: '#fff', label: 'AD' },
+  'british airways': { bg: '#075AAA', fg: '#fff', label: 'BA' },
+  'lufthansa': { bg: '#05164D', fg: '#fff', label: 'LH' },
+  'air france':{ bg: '#002157', fg: '#fff', label: 'AF' },
+  'emirates':  { bg: '#D71921', fg: '#fff', label: 'EK' },
+  'ryanair':   { bg: '#073590', fg: '#fff', label: 'FR' },
+  'easyjet':   { bg: '#FF6600', fg: '#fff', label: 'U2' },
+  'iberia':    { bg: '#D7192D', fg: '#fff', label: 'IB' },
+  'klm':       { bg: '#00A1DE', fg: '#fff', label: 'KL' },
+  'qatar':     { bg: '#5C0632', fg: '#fff', label: 'QR' },
+  'turkish':   { bg: '#C90019', fg: '#fff', label: 'TK' },
+  'copa':      { bg: '#003DA5', fg: '#fff', label: 'CM' },
+  'avianca':   { bg: '#E4002B', fg: '#fff', label: 'AV' }
+};
+function getAirlineBadgeHtml(airlineName) {
+  var key = (airlineName || '').toLowerCase();
+  var match = Object.keys(AIRLINE_BADGES).filter(function(k) { return key.indexOf(k) !== -1; })[0];
+  var badge = match ? AIRLINE_BADGES[match] : null;
+  if (badge) {
+    return '<div style="width:34px;height:34px;border-radius:9px;background:'+badge.bg+';color:'+badge.fg+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:\'Inter\',sans-serif">'+badge.label+'</div>';
+  }
+  return '<div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#8a6d3b);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">✈️</div>';
+}
+
 function renderFlights(flights, from, dest) {
   window._flights = flights;
   window._flightsFrom = from;
@@ -3839,7 +3875,7 @@ function renderFlights(flights, from, dest) {
   h += '</select></div>';
   h += '<div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
   sorted.forEach(function(f) {
-    h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ '+f.airline+'</strong>';
+    h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px">'+getAirlineBadgeHtml(f.airline)+'<strong>'+f.airline+'</strong></div>';
     if (f.isReal) h += '<span style="font-size:10px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 9px;border-radius:20px;margin-right:6px">● LIVE</span>';
     h += '<span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+f.class+'</span></div>';
     if (f.isMultiCity) {
