@@ -62,6 +62,11 @@ h1 em{font-style:italic;color:var(--gold)}
 .wizard-msg-text{font-size:15px;color:#fff;line-height:1.5;font-weight:500}
 .building-screen{text-align:center;padding:50px 20px}
 .building-spinner{width:56px;height:56px;border:3px solid rgba(201,169,110,.2);border-top-color:var(--gold);border-radius:50%;margin:0 auto 24px;animation:building-spin 1s linear infinite}
+.building-mascot-wrap{position:relative;width:100px;height:100px;margin:0 auto 20px}
+.building-mascot-ring{position:absolute;inset:0;border:3px dashed rgba(201,169,110,.35);border-radius:50%;animation:building-spin 6s linear infinite}
+.building-mascot-bounce{position:absolute;inset:12px;display:flex;align-items:center;justify-content:center;animation:mascot-think 1.1s ease-in-out infinite}
+.building-mascot-bounce svg{width:100%;height:100%}
+@keyframes mascot-think{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
 @keyframes building-spin{to{transform:rotate(360deg)}}
 .building-status{font-size:15px;color:#3d4454;min-height:22px}
 .building-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:10px}
@@ -279,7 +284,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button onclick="toggleSideMenu(false)" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
     <button onclick="toggleSideMenu(false);toggleAboutModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_about">✦ Quem somos</button>
-    <button onclick="toggleSideMenu(false);document.getElementById('planner').scrollIntoView({behavior:'smooth'})" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_plan">✈ Planeje sua viagem</button>
+    <button onclick="toggleSideMenu(false);startNewTrip()" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_plan">✈ Planeje sua viagem</button>
     <button onclick="toggleSideMenu(false);toggleChatModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_chat">💬 Fale com a IA</button>
     <button onclick="toggleSideMenu(false);toggleHowModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_how">⚙ Como funciona</button>
     <button onclick="toggleSideMenu(false);toggleFaqModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_faq">❓ Perguntas frequentes</button>
@@ -378,7 +383,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   </div>
   <h1 data-i18n="hero_title">Your next<br><em>journey</em>,<br>designed by AI</h1>
   </div>
-  <button class="hero-btn" data-i18n="hero_cta" onclick="document.getElementById(&#39;planner&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">Plan my trip free →</button>
+  <button class="hero-btn" data-i18n="hero_cta" onclick="startNewTrip()">Plan my trip free →</button>
   <div class="hero-ticker" aria-hidden="true">
     <div class="hero-ticker-track">
       <span>Barcelona</span><span>·</span><span>London</span><span>·</span><span>Chicago</span><span>·</span><span>Tokyo</span><span>·</span><span>Rome</span><span>·</span><span>Bali</span><span>·</span><span>Paris</span><span>·</span><span>New York</span><span>·</span><span>Lisbon</span><span>·</span><span>Cancún</span><span>·</span><span>Dubai</span><span>·</span><span>Cape Town</span><span>·</span>
@@ -396,7 +401,10 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
     <div class="wizard-msg" id="wizardMsg"></div>
 
     <div class="building-screen" id="buildingScreen" style="display:none">
-      <div class="building-spinner"></div>
+      <div class="building-mascot-wrap">
+        <div class="building-mascot-ring"></div>
+        <div class="building-mascot-bounce" id="buildingMascot"></div>
+      </div>
       <div class="building-title" data-i18n="building_title">Building your trip...</div>
       <div class="building-status" id="buildingStatus">Choosing your destination...</div>
     </div>
@@ -583,7 +591,6 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <div class="rmeta" id="rMeta"><span class="rmpill">21 days</span><span class="rmpill">5 travelers</span><span class="rmpill">$20</span></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
             <button onclick="printItinerary()" data-i18n="pdf_btn" style="padding:8px 18px;background:rgba(201,169,110,.25);border:1px solid rgba(201,169,110,.5);color:#E2C99A;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">📄 Save as PDF</button>
-            <button onclick="startNewTrip()" data-i18n="new_trip_btn" style="padding:8px 18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">✨ Plan a new trip</button>
           </div>
         </div>
       </div>
@@ -2716,6 +2723,8 @@ function showBuildingScreen() {
   var msg = document.getElementById('wizardMsg'); if (msg) msg.style.display = 'none';
   var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = 'none';
   var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'block';
+  var mascotEl = document.getElementById('buildingMascot');
+  if (mascotEl && !mascotEl.innerHTML) mascotEl.innerHTML = ZENVOY_MASCOT_SVG;
 }
 // ── TRIP PACKAGES (Best Experience / Smart Budget / Adventure) ────────────
 // Reuses the accommodations (4 tiers) and cars (4 categories) the AI already
