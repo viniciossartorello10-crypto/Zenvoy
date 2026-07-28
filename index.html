@@ -49,6 +49,28 @@ h1 em{font-style:italic;color:var(--gold)}
 .planner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,48px);font-weight:400;text-align:center;margin-bottom:8px}
 .planner p{text-align:center;color:#5A6478;font-size:15px;margin-bottom:40px}
 .card{background:#fff;border-radius:20px;border:1px solid rgba(11,15,26,.08);padding:36px;max-width:900px;margin:0 auto}
+.wizard-step{display:none;animation:wiz-fade-in .25s ease}
+.wizard-step.active{display:block}
+@keyframes wiz-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.wizard-progress{display:flex;justify-content:center;gap:8px;margin-bottom:28px}
+.wiz-dot{width:8px;height:8px;border-radius:50%;background:rgba(11,15,26,.12);transition:all .2s}
+.wiz-dot.done{background:var(--gold)}
+.wiz-dot.on{background:var(--navy);width:22px;border-radius:5px}
+.wizard-msg{display:flex;align-items:flex-start;gap:10px;background:rgba(201,169,110,.08);border:1px solid rgba(201,169,110,.2);border-radius:14px;padding:14px 16px;margin-bottom:24px;font-size:14px;color:#3d4454;line-height:1.5}
+.wizard-msg-icon{width:28px;height:28px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.building-screen{text-align:center;padding:50px 20px}
+.building-spinner{width:56px;height:56px;border:3px solid rgba(201,169,110,.2);border-top-color:var(--gold);border-radius:50%;margin:0 auto 24px;animation:building-spin 1s linear infinite}
+@keyframes building-spin{to{transform:rotate(360deg)}}
+.building-status{font-size:15px;color:#3d4454;min-height:22px}
+.building-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:10px}
+.pkg-card{border:2px solid rgba(11,15,26,.1);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .18s;background:#fff}
+.pkg-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,15,26,.08)}
+.pkg-emoji{font-size:32px;margin-bottom:8px}
+.pkg-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);margin-bottom:4px}
+.pkg-tag{font-size:12px;color:var(--muted);margin-bottom:14px;min-height:32px}
+.pkg-price{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);margin-bottom:2px}
+.pkg-price-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+@media(max-width:640px){#packageCards{grid-template-columns:1fr!important}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
@@ -305,7 +327,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 <div id="chatModalOverlay" onclick="if(event.target===this)toggleChatModal(false)" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(11,15,26,.6);align-items:center;justify-content:center;padding:20px">
   <div style="background:#1A2235;border-radius:16px;max-width:480px;width:100%;height:min(600px,80vh);padding:20px;border:1px solid rgba(201,169,110,.3);display:flex;flex-direction:column">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff" data-i18n="menu_chat">💬 Fale com a IA</span>
+      <span style="display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-size:22px;color:#fff"><svg width="34" height="34" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><circle cx="30" cy="32" r="24" fill="#0B0F1A"/><circle cx="30" cy="30" r="17" fill="#F5F2EC"/><ellipse cx="30" cy="30" rx="17" ry="6" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/><ellipse cx="30" cy="30" rx="6" ry="17" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/><path d="M13 30 A17 17 0 0 0 47 30" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/><circle cx="25" cy="29" r="2.6" fill="#0B0F1A"/><circle cx="35" cy="29" r="2.6" fill="#0B0F1A"/><circle cx="26" cy="27.8" r="0.9" fill="#F5F2EC"/><circle cx="36" cy="27.8" r="0.9" fill="#F5F2EC"/><path d="M25 37 Q30 41 35 37" stroke="#0B0F1A" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="19" cy="34" r="2.4" fill="#e8a2a2" opacity="0.55"/><circle cx="41" cy="34" r="2.4" fill="#e8a2a2" opacity="0.55"/><rect x="28" y="6" width="4" height="6" rx="1.2" fill="#C9A96E"/><g transform="translate(30,7) rotate(45) scale(0.32)"><g transform="translate(-12,-12)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2.5 1.5V22l4-1 4 1v-1.5L13 19v-5.5l8 2.5z" fill="#C9A96E"/></g></g></svg><span data-i18n="menu_chat">💬 Fale com a IA</span></span>
       <button onclick="toggleChatModal(false)" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
     <div id="chatMessages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px;margin-bottom:12px"></div>
@@ -368,7 +390,22 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   <p data-i18n="planner_subtitle">Fill in your details and get a complete personalized travel plan.</p>
 
   <div class="card">
+    <div class="wizard-progress" id="wizardProgress"></div>
+    <div class="wizard-msg" id="wizardMsg"></div>
 
+    <div class="building-screen" id="buildingScreen" style="display:none">
+      <div class="building-spinner"></div>
+      <div class="building-title" data-i18n="building_title">Building your trip...</div>
+      <div class="building-status" id="buildingStatus">Choosing your destination...</div>
+    </div>
+
+    <div id="packageChooser" style="display:none">
+      <div class="building-title" style="margin-bottom:4px" data-i18n="pkg_title">Choose your trip style</div>
+      <p style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px" data-i18n="pkg_subtitle">Same destination, three different ways to experience it.</p>
+      <div id="packageCards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px"></div>
+    </div>
+
+    <div class="wizard-step active" data-step="1">
     <div class="grid2" style="margin-bottom:16px">
       <div class="field">
         <label data-i18n="label_from">Flying from</label>
@@ -404,8 +441,10 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       </div>
 
     </div>
+    </div>
 
-    <div class="grid4" id="tripDatesRow" style="margin-bottom:16px">
+    <div class="wizard-step" data-step="2">
+    <div class="grid2" id="tripDatesRow" style="margin-bottom:16px">
       <div class="field" id="depField">
         <label data-i18n="label_departure">Departure</label>
         <input type="date" id="depDate">
@@ -414,6 +453,8 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         <label data-i18n="label_return">Return</label>
         <input type="date" id="retDate">
       </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
       <div class="field">
         <label data-i18n="label_travelers">Travelers</label>
         <input type="number" id="travelers" value="2" min="1" max="20">
@@ -440,7 +481,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         <button type="button" class="pill" data-i18n="ftime_cheapest" onclick="pickFlightTime(this,'cheapest')">💰 Cheapest</button>
       </div>
     </div>
+    </div>
 
+    <div class="wizard-step" data-step="3">
     <div class="grid2" style="margin-bottom:16px">
       <div class="field">
         <label data-i18n="label_budget">Budget</label>
@@ -457,7 +500,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         </select>
       </div>
     </div>
+    </div>
 
+    <div class="wizard-step" data-step="4">
     <span class="section-title" data-i18n="style_title">Travel style (pick one)</span>
     <div class="pills" id="stylePills">
       <button class="pill" data-i18n="style_adventure" onclick="pickStyle(this)">Adventure</button>
@@ -473,7 +518,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button class="pill" data-i18n="style_honeymoon" onclick="pickStyle(this)">Honeymoon</button>
       <button class="pill" data-i18n="style_cultural" onclick="pickStyle(this)">Cultural immersion</button>
     </div>
+    </div>
 
+    <div class="wizard-step" data-step="5">
     <span class="section-title" data-i18n="interests_title">Interests (pick all that apply)</span>
     <div class="pills" id="interestPills">
       <button class="pill" data-i18n="int_food" onclick="this.classList.toggle(&#39;on&#39;)">Food &amp; dining</button>
@@ -493,7 +540,9 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <button class="pill" data-i18n="int_hiddengems" onclick="this.classList.toggle(&#39;on&#39;)">Hidden gems</button>
       <button class="pill" data-i18n="int_themeparks" onclick="this.classList.toggle(&#39;on&#39;)">Theme parks</button>
     </div>
+    </div>
 
+    <div class="wizard-step" data-step="6">
     <span class="section-title" data-i18n="rhythm_title">Your travel rhythm</span>
     <div class="rhythm" id="rhythmGrid">
       <div class="rcard" onclick="pickRhythm(this,&#39;early_bird&#39;)"><div class="ri">🌅</div><div class="rt" data-i18n="rh_early_t">Early bird</div><div class="rd" data-i18n="rh_early_d">Up at 7am, packed mornings</div></div>
@@ -504,10 +553,20 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <div class="rcard on" onclick="pickRhythm(this,&#39;relaxed&#39;)"><div class="ri">🌊</div><div class="rt" data-i18n="rh_relaxed_t">Very relaxed</div><div class="rd" data-i18n="rh_relaxed_d">1–2 things a day, chill</div></div>
     </div>
 
-    <button class="submit" id="planBtn" onclick="generatePlan()">
-      <span class="spin" id="planSpin" style="display: none;"></span>
-      <span id="planTxt" data-i18n="generate_btn">Generate my complete travel plan →</span>
-    </button>
+    </div>
+
+    <div class="wizard-step" data-step="7">
+      <span class="section-title" data-i18n="extra_notes_title">Anything else we should know?</span>
+      <textarea id="extraNotes" data-i18n-placeholder="extra_notes_ph" placeholder="e.g. celebrating an anniversary, traveling with a stroller, love spicy food, avoid long walks..." style="width:100%;min-height:100px;padding:14px 16px;border-radius:12px;border:1px solid rgba(11,15,26,.15);font-size:14px;font-family:'Inter',sans-serif;resize:vertical;outline:none"></textarea>
+    </div>
+
+    <div id="wizardNavRow" style="display:flex;gap:10px;margin-top:8px">
+      <button type="button" id="wizBackBtn" onclick="wizardBack()" style="display:none;background:transparent;border:1px solid rgba(11,15,26,.15);color:#5A6478;padding:0 22px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif" data-i18n="wizard_back">← Back</button>
+      <button class="submit" id="planBtn" onclick="handlePrimaryButton()" style="flex:1">
+        <span class="spin" id="planSpin" style="display: none;"></span>
+        <span id="planTxt" data-i18n="wizard_next">Next →</span>
+      </button>
+    </div>
 
     <div id="errorBanner" style="display:none;margin-top:14px;padding:14px 16px;background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.3);border-radius:10px;color:#a33;font-size:13px;line-height:1.5"></div>
     </div>
@@ -786,9 +845,11 @@ function updateTripDatesRowLayout() {
   var retField = document.getElementById('retField');
   if (!row || !depField || !retField) return;
   var multi = extraLegs.length > 0;
+  // With 2+ destinations, each leg already has its own arrive/leave dates,
+  // so the row collapses to just show a small info message instead of two
+  // now-redundant date pickers.
   depField.style.display = multi ? 'none' : '';
   retField.style.display = multi ? 'none' : '';
-  row.style.gridTemplateColumns = multi ? 'repeat(2,1fr)' : 'repeat(4,1fr)';
 }
 
 // Shows a computed, read-only date range for the main destination — it's
@@ -943,7 +1004,7 @@ var TRANSLATIONS = {
     rh_slow_t: 'Slow mornings', rh_slow_d: 'Coffee first, no rush',
     rh_packed_t: 'Pack it in', rh_packed_d: 'Max activities every hour',
     rh_relaxed_t: 'Very relaxed', rh_relaxed_d: '1–2 things a day, chill',
-    generate_btn: 'Generate my complete travel plan →',
+    generate_btn: 'Generate my complete travel plan →', wizard_next: 'Next →', wizard_back: '← Back', wizard_need_dest: 'Please enter a destination first.', wizard_msg_1: "Let's plan your trip! First, tell me where you're flying from and where you'd like to go.", wizard_msg_2: 'Great choice! Now, when are you thinking of traveling, and who\'s coming with you?', wizard_msg_3: "Got it. What's your budget looking like for this trip?", wizard_msg_4: "Now let's talk style — what kind of trip is this?", wizard_msg_5: 'Nice! What are you most excited to do there?', wizard_msg_6: "Almost done — what's your ideal daily pace?", wizard_msg_7: "Last thing — anything special I should know? (Totally optional!)", extra_notes_title: 'Anything else we should know?', extra_notes_ph: 'e.g. celebrating an anniversary, traveling with a stroller, love spicy food, avoid long walks...', building_title: 'Building your trip...', status_fixing: 'Fixing a formatting hiccup...', status_retrying_days: 'Retrying days {r}...', status_planning_leg: 'Planning {c} ({i})...', status_building_city_days: 'Building {c} days {r}...', status_choosing_dest: 'Choosing your destination...', status_researching: 'Researching flights, stays, cars & food...', status_building_days: 'Building days {r} of {d}...', err_partial_warning: 'Most of your trip generated successfully, but {p} hit a temporary error — try regenerating.', err_multidest_failed: 'Multi-destination generation failed: {e}. Try regenerating, or reduce the number of destinations.', err_partial_chunk: 'Most of your trip generated successfully, but {p} hit a temporary AI error and use a generic placeholder below — try regenerating, or this section alone may need a retry.', err_generation_failed: 'Trip generation failed: {e}. Please try again.', err_no_trip_yet: 'Generate a travel plan first, then save it as PDF.', pkg_title: 'Choose your trip style', pkg_subtitle: 'Same destination, three different ways to experience it.', pkg_total_label: 'total trip', pkg_smart_budget_title: '💰 Smart Budget', pkg_smart_budget_tag: 'Best value for money', pkg_best_experience_title: '🏆 Best Experience', pkg_best_experience_tag: 'Comfort and quality first', pkg_adventure_title: '🔥 Adventure', pkg_adventure_tag: 'More unique experiences',
     pdf_btn: '📄 Save as PDF',
     tab_itin: '📅 Itinerary', tab_food: '🍽️ Food', tab_stays: '🏨 Stays', tab_flights: '✈️ Flights', tab_cars: '🚗 Cars', tab_cart: '🧳 My Trip',
     cart_add: '🧳 Add to trip', cart_added: '✓ Added', cart_remove: 'Remove', cart_empty: 'Your trip is empty. Browse Flights, Stays, and Cars to add your picks — each links straight to where you book it.', cart_book: 'Book now',
@@ -1004,7 +1065,7 @@ var TRANSLATIONS = {
     rh_slow_t: 'Manhãs tranquilas', rh_slow_d: 'Café primeiro, sem pressa',
     rh_packed_t: 'Agenda cheia', rh_packed_d: 'Máximo de atividades a cada hora',
     rh_relaxed_t: 'Bem tranquilo', rh_relaxed_d: '1–2 coisas por dia, sem correria',
-    generate_btn: 'Gerar meu plano de viagem completo →',
+    generate_btn: 'Gerar meu plano de viagem completo →', wizard_next: 'Avançar →', wizard_back: '← Voltar', wizard_need_dest: 'Digite um destino primeiro.', wizard_msg_1: 'Vamos montar sua viagem! Mas antes, tenho algumas perguntinhas pra você. De onde você está saindo e para onde quer ir?', wizard_msg_2: 'Boa escolha! Agora me conta: quando você pensa em viajar, e quem vai com você?', wizard_msg_3: 'Entendi. E qual é o orçamento pra essa viagem?', wizard_msg_4: 'Agora vamos falar de estilo — que tipo de viagem é essa?', wizard_msg_5: 'Legal! O que mais te empolga em fazer por lá?', wizard_msg_6: 'Quase lá — qual é o ritmo ideal do seu dia a dia na viagem?', wizard_msg_7: 'Última coisa — tem algo especial que eu deveria saber? (totalmente opcional!)', extra_notes_title: 'Mais alguma coisa que devemos saber?', extra_notes_ph: 'ex: comemorando aniversário, viajando com carrinho de bebê, adora comida picante, evitar caminhadas longas...', building_title: 'Montando sua viagem...', status_fixing: 'Ajustando um probleminha de formatação...', status_retrying_days: 'Tentando de novo os dias {r}...', status_planning_leg: 'Planejando {c} ({i})...', status_building_city_days: 'Montando {c} dias {r}...', status_choosing_dest: 'Escolhendo seu destino...', status_researching: 'Pesquisando voos, hospedagem, carros e comida...', status_building_days: 'Montando os dias {r} de {d}...', err_partial_warning: 'A maior parte da sua viagem foi gerada com sucesso, mas {p} teve um erro temporário — tente gerar de novo.', err_multidest_failed: 'A geração da viagem com múltiplos destinos falhou: {e}. Tente novamente, ou reduza o número de destinos.', err_partial_chunk: 'A maior parte da sua viagem foi gerada com sucesso, mas {p} teve um erro temporário da IA e está usando um espaço reservado genérico abaixo — tente gerar de novo, ou essa seção específica pode precisar de nova tentativa.', err_generation_failed: 'A geração da viagem falhou: {e}. Por favor, tente novamente.', err_no_trip_yet: 'Gere um plano de viagem primeiro, depois salve como PDF.', pkg_title: 'Escolha o estilo da sua viagem', pkg_subtitle: 'Mesmo destino, três jeitos diferentes de viver ele.', pkg_total_label: 'total da viagem', pkg_smart_budget_title: '💰 Custo-Benefício', pkg_smart_budget_tag: 'Melhor custo-benefício', pkg_best_experience_title: '🏆 Melhor Experiência', pkg_best_experience_tag: 'Conforto e qualidade em primeiro lugar', pkg_adventure_title: '🔥 Aventura', pkg_adventure_tag: 'Mais experiências únicas',
     pdf_btn: '📄 Salvar como PDF',
     tab_itin: '📅 Roteiro', tab_food: '🍽️ Comida', tab_stays: '🏨 Hospedagem', tab_flights: '✈️ Voos', tab_cars: '🚗 Carros', tab_cart: '🧳 Meu Roteiro',
     cart_add: '🧳 Adicionar ao roteiro', cart_added: '✓ Adicionado', cart_remove: 'Remover', cart_empty: 'Seu roteiro está vazio. Navegue por Voos, Hospedagem e Carros para adicionar suas escolhas — cada uma leva direto para reservar.', cart_book: 'Reservar agora',
@@ -1065,7 +1126,7 @@ var TRANSLATIONS = {
     rh_slow_t: 'Mañanas tranquilas', rh_slow_d: 'Café primero, sin prisa',
     rh_packed_t: 'Agenda llena', rh_packed_d: 'Máximo de actividades cada hora',
     rh_relaxed_t: 'Muy relajado', rh_relaxed_d: '1–2 cosas al día, tranquilo',
-    generate_btn: 'Generar mi plan de viaje completo →',
+    generate_btn: 'Generar mi plan de viaje completo →', wizard_next: 'Siguiente →', wizard_back: '← Atrás', wizard_need_dest: 'Ingresa un destino primero.', wizard_msg_1: '¡Vamos a planear tu viaje! Pero antes, tengo algunas preguntas. ¿Desde dónde sales y a dónde quieres ir?', wizard_msg_2: '¡Buena elección! Ahora dime: ¿cuándo piensas viajar y quién te acompaña?', wizard_msg_3: 'Entendido. ¿Cuál es tu presupuesto para este viaje?', wizard_msg_4: 'Ahora hablemos de estilo — ¿qué tipo de viaje es este?', wizard_msg_5: '¡Genial! ¿Qué te emociona más hacer allí?', wizard_msg_6: 'Ya casi — ¿cuál es tu ritmo diario ideal?', wizard_msg_7: 'Última cosa — ¿hay algo especial que deba saber? (¡totalmente opcional!)', extra_notes_title: '¿Algo más que debamos saber?', extra_notes_ph: 'ej: celebrando un aniversario, viajando con cochecito, amamos la comida picante, evitar caminatas largas...', building_title: 'Armando tu viaje...', status_fixing: 'Arreglando un detalle de formato...', status_retrying_days: 'Reintentando los días {r}...', status_planning_leg: 'Planeando {c} ({i})...', status_building_city_days: 'Armando {c} días {r}...', status_choosing_dest: 'Eligiendo tu destino...', status_researching: 'Investigando vuelos, alojamiento, autos y comida...', status_building_days: 'Armando los días {r} de {d}...', err_partial_warning: 'La mayor parte de tu viaje se generó con éxito, pero {p} tuvo un error temporal — intenta generar de nuevo.', err_multidest_failed: 'La generación del viaje con varios destinos falló: {e}. Intenta de nuevo, o reduce el número de destinos.', err_partial_chunk: 'La mayor parte de tu viaje se generó con éxito, pero {p} tuvo un error temporal de la IA y usa un marcador genérico abajo — intenta generar de nuevo, o esta sección puede necesitar otro intento.', err_generation_failed: 'La generación del viaje falló: {e}. Por favor, intenta de nuevo.', err_no_trip_yet: 'Genera un plan de viaje primero, luego guárdalo como PDF.', pkg_title: 'Elige el estilo de tu viaje', pkg_subtitle: 'Mismo destino, tres formas distintas de vivirlo.', pkg_total_label: 'total del viaje', pkg_smart_budget_title: '💰 Costo Inteligente', pkg_smart_budget_tag: 'Mejor relación calidad-precio', pkg_best_experience_title: '🏆 Mejor Experiencia', pkg_best_experience_tag: 'Comodidad y calidad primero', pkg_adventure_title: '🔥 Aventura', pkg_adventure_tag: 'Más experiencias únicas',
     pdf_btn: '📄 Guardar como PDF',
     tab_itin: '📅 Itinerario', tab_food: '🍽️ Comida', tab_stays: '🏨 Alojamiento', tab_flights: '✈️ Vuelos', tab_cars: '🚗 Autos', tab_cart: '🧳 Mi Viaje',
     cart_add: '🧳 Añadir al viaje', cart_added: '✓ Añadido', cart_remove: 'Quitar', cart_empty: 'Tu viaje está vacío. Explora Vuelos, Alojamiento y Autos para añadir tus opciones — cada una lleva directo a reservar.', cart_book: 'Reservar ahora',
@@ -1126,7 +1187,7 @@ var TRANSLATIONS = {
     rh_slow_t: 'Matinées tranquilles', rh_slow_d: "Café d'abord, sans hâte",
     rh_packed_t: 'Programme chargé', rh_packed_d: "Maximum d'activités chaque heure",
     rh_relaxed_t: 'Très détendu', rh_relaxed_d: '1–2 choses par jour, tranquille',
-    generate_btn: 'Générer mon plan de voyage complet →',
+    generate_btn: 'Générer mon plan de voyage complet →', wizard_next: 'Suivant →', wizard_back: '← Retour', wizard_need_dest: 'Veuillez d\'abord saisir une destination.', wizard_msg_1: 'Planifions votre voyage ! Mais d\'abord, quelques questions. D\'où partez-vous et où voulez-vous aller ?', wizard_msg_2: 'Excellent choix ! Maintenant, dites-moi : quand pensez-vous voyager, et qui vous accompagne ?', wizard_msg_3: 'Compris. Quel est votre budget pour ce voyage ?', wizard_msg_4: 'Parlons style — quel genre de voyage est-ce ?', wizard_msg_5: 'Super ! Qu\'avez-vous hâte de faire là-bas ?', wizard_msg_6: 'Presque fini — quel est votre rythme quotidien idéal ?', wizard_msg_7: 'Dernière chose — y a-t-il quelque chose de spécial à savoir ? (Totalement facultatif !)', extra_notes_title: 'Autre chose à savoir ?', extra_notes_ph: 'ex: anniversaire à célébrer, voyage avec poussette, adore les plats épicés, éviter les longues marches...', building_title: 'Création de votre voyage...', status_fixing: 'Correction d\'un souci de formatage...', status_retrying_days: 'Nouvel essai des jours {r}...', status_planning_leg: 'Planification de {c} ({i})...', status_building_city_days: 'Création de {c} jours {r}...', status_choosing_dest: 'Choix de votre destination...', status_researching: 'Recherche de vols, hébergements, voitures et restaurants...', status_building_days: 'Création des jours {r} sur {d}...', err_partial_warning: 'La majorité de votre voyage a été générée avec succès, mais {p} a rencontré une erreur temporaire — essayez de régénérer.', err_multidest_failed: 'La génération du voyage multi-destinations a échoué : {e}. Réessayez, ou réduisez le nombre de destinations.', err_partial_chunk: 'La majorité de votre voyage a été générée avec succès, mais {p} a rencontré une erreur temporaire de l\'IA et utilise un espace réservé générique ci-dessous — essayez de régénérer, ou cette section peut nécessiter un nouvel essai.', err_generation_failed: 'La génération du voyage a échoué : {e}. Veuillez réessayer.', err_no_trip_yet: 'Générez d\'abord un plan de voyage, puis enregistrez-le en PDF.', pkg_title: 'Choisissez le style de votre voyage', pkg_subtitle: 'Même destination, trois façons différentes de la vivre.', pkg_total_label: 'total du voyage', pkg_smart_budget_title: '💰 Budget Malin', pkg_smart_budget_tag: 'Meilleur rapport qualité-prix', pkg_best_experience_title: '🏆 Meilleure Expérience', pkg_best_experience_tag: 'Confort et qualité avant tout', pkg_adventure_title: '🔥 Aventure', pkg_adventure_tag: 'Plus d\'expériences uniques',
     pdf_btn: '📄 Enregistrer en PDF',
     tab_itin: '📅 Itinéraire', tab_food: '🍽️ Nourriture', tab_stays: '🏨 Hébergement', tab_flights: '✈️ Vols', tab_cars: '🚗 Voitures', tab_cart: '🧳 Mon Voyage',
     cart_add: '🧳 Ajouter au voyage', cart_added: '✓ Ajouté', cart_remove: 'Retirer', cart_empty: 'Votre voyage est vide. Parcourez Vols, Hébergement et Voitures pour ajouter vos choix — chacun mène directement à la réservation.', cart_book: 'Réserver',
@@ -1187,7 +1248,7 @@ var TRANSLATIONS = {
     rh_slow_t: 'Mattine tranquille', rh_slow_d: 'Prima il caffè, senza fretta',
     rh_packed_t: 'Agenda piena', rh_packed_d: 'Massime attività ogni ora',
     rh_relaxed_t: 'Molto rilassato', rh_relaxed_d: '1–2 cose al giorno, tranquillo',
-    generate_btn: 'Genera il mio piano di viaggio completo →',
+    generate_btn: 'Genera il mio piano di viaggio completo →', wizard_next: 'Avanti →', wizard_back: '← Indietro', wizard_need_dest: 'Inserisci prima una destinazione.', wizard_msg_1: 'Pianifichiamo il tuo viaggio! Ma prima, qualche domanda. Da dove parti e dove vuoi andare?', wizard_msg_2: 'Ottima scelta! Ora dimmi: quando pensi di viaggiare e chi viene con te?', wizard_msg_3: 'Capito. Qual è il tuo budget per questo viaggio?', wizard_msg_4: 'Ora parliamo di stile — che tipo di viaggio è questo?', wizard_msg_5: 'Bello! Cosa non vedi l\'ora di fare lì?', wizard_msg_6: 'Quasi fatto — qual è il tuo ritmo quotidiano ideale?', wizard_msg_7: 'Ultima cosa — c\'è qualcosa di speciale che dovrei sapere? (Totalmente facoltativo!)', extra_notes_title: 'Altro che dovremmo sapere?', extra_notes_ph: 'es: anniversario da festeggiare, viaggio con passeggino, ami il cibo piccante, evitare lunghe camminate...', building_title: 'Creazione del tuo viaggio...', status_fixing: 'Sistemando un piccolo problema di formato...', status_retrying_days: 'Ritentando i giorni {r}...', status_planning_leg: 'Pianificando {c} ({i})...', status_building_city_days: 'Creando {c} giorni {r}...', status_choosing_dest: 'Scegliendo la tua destinazione...', status_researching: 'Ricercando voli, alloggi, auto e cibo...', status_building_days: 'Creando i giorni {r} di {d}...', err_partial_warning: 'La maggior parte del tuo viaggio è stata generata con successo, ma {p} ha avuto un errore temporaneo — prova a rigenerare.', err_multidest_failed: 'La generazione del viaggio multi-destinazione non è riuscita: {e}. Riprova, oppure riduci il numero di destinazioni.', err_partial_chunk: 'La maggior parte del tuo viaggio è stata generata con successo, ma {p} ha avuto un errore temporaneo dell\'IA e usa un segnaposto generico qui sotto — prova a rigenerare, oppure questa sezione potrebbe aver bisogno di un altro tentativo.', err_generation_failed: 'La generazione del viaggio non è riuscita: {e}. Riprova.', err_no_trip_yet: 'Genera prima un piano di viaggio, poi salvalo come PDF.', pkg_title: 'Scegli lo stile del tuo viaggio', pkg_subtitle: 'Stessa destinazione, tre modi diversi di viverla.', pkg_total_label: 'totale viaggio', pkg_smart_budget_title: '💰 Budget Intelligente', pkg_smart_budget_tag: 'Miglior rapporto qualità-prezzo', pkg_best_experience_title: '🏆 Migliore Esperienza', pkg_best_experience_tag: 'Comfort e qualità al primo posto', pkg_adventure_title: '🔥 Avventura', pkg_adventure_tag: 'Più esperienze uniche',
     pdf_btn: '📄 Salva come PDF',
     tab_itin: '📅 Itinerario', tab_food: '🍽️ Cibo', tab_stays: '🏨 Alloggi', tab_flights: '✈️ Voli', tab_cars: '🚗 Auto', tab_cart: '🧳 Il Mio Viaggio',
     cart_add: '🧳 Aggiungi al viaggio', cart_added: '✓ Aggiunto', cart_remove: 'Rimuovi', cart_empty: 'Il tuo viaggio è vuoto. Esplora Voli, Alloggi e Auto per aggiungere le tue scelte — ognuna porta direttamente alla prenotazione.', cart_book: 'Prenota ora',
@@ -1988,11 +2049,30 @@ function toggleChatModal(show) {
     renderChatMessages();
   }
 }
+// Compact avatar version of the Zenvoy mascot (globe head + antenna) used
+// next to assistant messages in the chat and in the chat header, so the AI
+// feels like it has a face rather than a generic icon.
+var ZENVOY_MASCOT_SVG = '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">' +
+  '<circle cx="30" cy="32" r="24" fill="#0B0F1A"/>' +
+  '<circle cx="30" cy="30" r="17" fill="#F5F2EC"/>' +
+  '<ellipse cx="30" cy="30" rx="17" ry="6" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/>' +
+  '<ellipse cx="30" cy="30" rx="6" ry="17" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/>' +
+  '<path d="M13 30 A17 17 0 0 0 47 30" fill="none" stroke="#0B0F1A" stroke-width="0.8" opacity="0.4"/>' +
+  '<circle cx="25" cy="29" r="2.6" fill="#0B0F1A"/><circle cx="35" cy="29" r="2.6" fill="#0B0F1A"/>' +
+  '<circle cx="26" cy="27.8" r="0.9" fill="#F5F2EC"/><circle cx="36" cy="27.8" r="0.9" fill="#F5F2EC"/>' +
+  '<path d="M25 37 Q30 41 35 37" stroke="#0B0F1A" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
+  '<circle cx="19" cy="34" r="2.4" fill="#e8a2a2" opacity="0.55"/><circle cx="41" cy="34" r="2.4" fill="#e8a2a2" opacity="0.55"/>' +
+  '<rect x="28" y="6" width="4" height="6" rx="1.2" fill="#C9A96E"/>' +
+  '<g transform="translate(30,7) rotate(45) scale(0.32)"><g transform="translate(-12,-12)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2.5 1.5V22l4-1 4 1v-1.5L13 19v-5.5l8 2.5z" fill="#C9A96E"/></g></g>' +
+  '</svg>';
+
 function renderChatMessages() {
   var el = document.getElementById('chatMessages');
   el.innerHTML = chatHistory.map(function(m) {
     var isUser = m.role === 'user';
-    return '<div style="align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';max-width:80%;background:' + (isUser ? 'var(--gold)' : 'rgba(255,255,255,.08)') + ';color:' + (isUser ? 'var(--navy)' : '#fff') + ';padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;white-space:pre-wrap">' + m.content.replace(/</g, '&lt;') + '</div>';
+    var bubble = '<div style="align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';max-width:75%;background:' + (isUser ? 'var(--gold)' : 'rgba(255,255,255,.08)') + ';color:' + (isUser ? 'var(--navy)' : '#fff') + ';padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;white-space:pre-wrap">' + m.content.replace(/</g, '&lt;') + '</div>';
+    if (isUser) return '<div style="align-self:flex-end">' + bubble + '</div>';
+    return '<div style="display:flex;gap:8px;align-items:flex-end;align-self:flex-start">' + ZENVOY_MASCOT_SVG + bubble + '</div>';
   }).join('');
   el.scrollTop = el.scrollHeight;
 }
@@ -2138,7 +2218,7 @@ async function generateDayChunk(dayPrompt, rangeStart, rangeEnd) {
       try {
         return extractJSONArray(dayText);
       } catch (parseErr) {
-        document.getElementById('planTxt').textContent = 'Fixing a formatting hiccup...';
+        setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_fixing);
         var fixPrompt = 'The following text was supposed to be a valid JSON array but failed to parse with this error: "'+parseErr.message+'".\n\n'+
           'Return ONLY the corrected, valid JSON array — same content, fixed formatting. No markdown, no explanation.\n\n'+
           'Broken text:\n'+dayText;
@@ -2148,7 +2228,7 @@ async function generateDayChunk(dayPrompt, rangeStart, rangeEnd) {
     } catch (e) {
       console.error('Chunk days '+rangeStart+'-'+rangeEnd+' attempt '+(chunkAttempt+1)+' failed:', e);
       if (chunkAttempt === 0) {
-        document.getElementById('planTxt').textContent = 'Retrying days '+rangeStart+'–'+rangeEnd+'...';
+        setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_retrying_days.replace('{r}', rangeStart+'–'+rangeEnd));
         await sleep(2000);
       }
     }
@@ -2287,6 +2367,7 @@ async function generateMultiDestPlan(from) {
   btn.disabled = true;
   document.getElementById('planSpin').style.display = 'block';
   hideErrorBanner();
+  showBuildingScreen();
 
   try {
     var allDays = [];
@@ -2298,7 +2379,7 @@ async function generateMultiDestPlan(from) {
 
     for (var li = 0; li < legs.length; li++) {
       var leg = legs[li];
-      document.getElementById('planTxt').textContent = 'Planning ' + leg.city + ' (' + (li + 1) + '/' + legs.length + ')...';
+      setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_planning_leg.replace('{c}', leg.city).replace('{i}', (li + 1) + '/' + legs.length));
 
       var legOverviewPrompt = 'You are Zenvoy, a local travel expert for ' + leg.city + '. Return ONLY valid JSON, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
         'Give recommendations for a ' + leg.days + '-day stay in ' + leg.city + ' for ' + travelers + ' traveler(s). Style: ' + style + '. Interests: ' + interests + '. Budget level: ' + bl + '.\n\n' +
@@ -2343,7 +2424,7 @@ async function generateMultiDestPlan(from) {
       for (var ri = 0; ri < legRanges.length; ri++) {
         var localStart = legRanges[ri][0], localEnd = legRanges[ri][1];
         var globalStart = dayOffset + localStart, globalEnd = dayOffset + localEnd;
-        document.getElementById('planTxt').textContent = 'Building ' + resolvedCity + ' days ' + globalStart + '–' + globalEnd + '...';
+        setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_building_city_days.replace('{c}', resolvedCity).replace('{r}', globalStart + '–' + globalEnd));
 
         var legDayPrompt = 'You are Zenvoy, a local expert in ' + resolvedCity + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
           'Generate a detailed itinerary for days ' + localStart + ' through ' + localEnd + ' of a ' + leg.days + '-day stay in ' + resolvedCity + ' (part of a longer multi-city trip). Traveler style: ' + style + '. Interests: ' + interests + '.\n\n' +
@@ -2377,7 +2458,7 @@ async function generateMultiDestPlan(from) {
     if (overviewWarnings.length) warningParts.push('hotels/food/tips for ' + overviewWarnings.join(', '));
     if (chunkWarnings.length) warningParts.push('itinerary for ' + chunkWarnings.join(', '));
     if (warningParts.length) {
-      showErrorBanner('Most of your trip generated successfully, but ' + warningParts.join(' and ') + ' hit a temporary error — try regenerating.');
+      showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_partial_warning.replace('{p}', warningParts.join(' and ')));
     }
 
     var mergedFoodGuide = { must_try: [], breakfast: [], lunch: [], afternoon_snack: [], dinner: [], street_food: [] };
@@ -2453,20 +2534,197 @@ async function generateMultiDestPlan(from) {
 
     planData.budget = estimateMultiDestBudget(total, legs.length);
 
-    renderResult(planData, travelers, total, dayOffset, from);
-    enrichCarsWithUnsplashImages(planData.cars, planData.destination);
+    showPackageChooser(planData, travelers, total, dayOffset, from);
   } catch (e) {
     console.error(e);
-    showErrorBanner('Multi-destination generation failed: ' + (e && e.message ? e.message : 'unknown error') + '. Try regenerating, or reduce the number of destinations.');
+    showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_multidest_failed.replace('{e}', (e && e.message ? e.message : 'unknown error')));
+    restoreWizardAfterError();
   } finally {
     btn.disabled = false;
     document.getElementById('planSpin').style.display = 'none';
-    document.getElementById('planTxt').textContent = (TRANSLATIONS[appLang] || TRANSLATIONS.en).generate_btn;
+    setStatus((TRANSLATIONS[appLang] || TRANSLATIONS.en).generate_btn);
   }
 }
 
 // ── GENERATE PLAN ─────────────────────────────────────────────
 var planData = null;
+// ── STEP-BY-STEP WIZARD ────────────────────────────────────────
+// Turns the long scrolling form into an app-like flow: one focused step at
+// a time, advanced with Back/Next, instead of a single page the person has
+// to scroll through. Doesn't change what data is collected or how
+// generatePlan() reads it — every field keeps its original id — this only
+// controls which section is visible at a given moment.
+var wizardStep = 1;
+var WIZARD_TOTAL_STEPS = 7;
+
+function renderWizardProgress() {
+  var el = document.getElementById('wizardProgress');
+  if (!el) return;
+  var html = '';
+  for (var i = 1; i <= WIZARD_TOTAL_STEPS; i++) {
+    var cls = 'wiz-dot' + (i === wizardStep ? ' on' : '') + (i < wizardStep ? ' done' : '');
+    html += '<div class="' + cls + '"></div>';
+  }
+  el.innerHTML = html;
+}
+
+function renderWizardMsg() {
+  var el = document.getElementById('wizardMsg');
+  if (!el) return;
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var msg = dict['wizard_msg_' + wizardStep] || '';
+  el.innerHTML = '<div class="wizard-msg-icon">✦</div><div>' + msg + '</div>';
+}
+
+function showWizardStep(n) {
+  wizardStep = Math.max(1, Math.min(WIZARD_TOTAL_STEPS, n));
+  document.querySelectorAll('.wizard-step').forEach(function(s) {
+    s.classList.toggle('active', parseInt(s.getAttribute('data-step'), 10) === wizardStep);
+  });
+  var backBtn = document.getElementById('wizBackBtn');
+  if (backBtn) backBtn.style.display = wizardStep > 1 ? 'inline-flex' : 'none';
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var txtEl = document.getElementById('planTxt');
+  if (txtEl) txtEl.textContent = wizardStep < WIZARD_TOTAL_STEPS ? (dict.wizard_next || 'Next →') : dict.generate_btn;
+  renderWizardProgress();
+  renderWizardMsg();
+  var card = document.querySelector('.card');
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Light validation per step — just enough to stop someone from generating
+// a trip with no destination, not a full form-validation system.
+function validateWizardStep(n) {
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  if (n === 1) {
+    var toVal = document.getElementById('toCity').value.trim();
+    if (!toVal) {
+      alert(dict.wizard_need_dest || 'Please enter a destination first.');
+      return false;
+    }
+  }
+  return true;
+}
+
+function wizardNext() {
+  if (!validateWizardStep(wizardStep)) return;
+  if (wizardStep < WIZARD_TOTAL_STEPS) showWizardStep(wizardStep + 1);
+}
+function wizardBack() {
+  if (wizardStep > 1) showWizardStep(wizardStep - 1);
+}
+// The single primary button does double duty: "Next" on steps 1–5,
+// "Generate my complete travel plan" on the final step — so the person
+// always has one clear, obvious action per screen.
+function handlePrimaryButton() {
+  if (wizardStep < WIZARD_TOTAL_STEPS) wizardNext();
+  else generatePlan();
+}
+
+// Mirrors a status update to both the (now usually hidden) button label and
+// the dedicated "building your trip" screen shown while generation runs.
+function setStatus(text) {
+  var planTxtEl = document.getElementById('planTxt');
+  if (planTxtEl) planTxtEl.textContent = text;
+  var buildingStatusEl = document.getElementById('buildingStatus');
+  if (buildingStatusEl) buildingStatusEl.textContent = text;
+}
+
+function showBuildingScreen() {
+  document.querySelectorAll('.wizard-step').forEach(function(s) { s.style.display = 'none'; });
+  var progress = document.getElementById('wizardProgress'); if (progress) progress.style.display = 'none';
+  var msg = document.getElementById('wizardMsg'); if (msg) msg.style.display = 'none';
+  var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = 'none';
+  var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'block';
+}
+// ── TRIP PACKAGES (Best Experience / Smart Budget / Adventure) ────────────
+// Reuses the accommodations (4 tiers) and cars (4 categories) the AI already
+// generated in the single main call — no extra AI calls, so this adds zero
+// generation time/cost/timeout risk. Each "package" is just a different
+// combination of an already-generated hotel + car, with the budget total
+// recalculated to match. Picking one reorders that tier to the front of its
+// tab (all options remain visible/clickable there) and continues into the
+// normal trip view.
+var pendingPlanArgs = null;
+var currentPackages = null;
+
+function computeTripPackages(p, nights) {
+  var accs = (p.accommodations || []).slice().sort(function(a, b) { return (a.price_night || 0) - (b.price_night || 0); });
+  var cars = (p.cars || []).slice().sort(function(a, b) { return (a.price_day || 0) - (b.price_day || 0); });
+  var b = p.budget || {};
+  var fixedTotal = (b.flights || 0) + (b.food || 0) + (b.activities || 0) + (b.transport || 0) + (b.shopping || 0);
+
+  function makePkg(key, emoji, acc, car) {
+    var accCost = acc ? (acc.price_night || 0) * nights : 0;
+    var carCost = car ? (car.price_day || 0) * nights : 0;
+    return { key: key, emoji: emoji, acc: acc, car: car, total: Math.round(fixedTotal + accCost + carCost) };
+  }
+
+  var adventureCar = cars.filter(function(c) { return /suv|sport/i.test(c.category || ''); })[0] || cars[cars.length - 1];
+  var midAcc = accs[Math.min(accs.length - 1, Math.floor(accs.length / 2))];
+
+  return [
+    makePkg('smart_budget', '💰', accs[0], cars[0]),
+    makePkg('best_experience', '🏆', accs[accs.length - 1], cars[cars.length - 1]),
+    makePkg('adventure', '🔥', midAcc, adventureCar)
+  ];
+}
+
+function renderPackageChooser(packages, currencyCode) {
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var el = document.getElementById('packageCards');
+  el.innerHTML = packages.map(function(pkg, i) {
+    return '<div class="pkg-card" onclick="selectPackage(' + i + ')">'
+      + '<div class="pkg-emoji">' + pkg.emoji + '</div>'
+      + '<div class="pkg-name">' + (dict['pkg_' + pkg.key + '_title'] || pkg.key) + '</div>'
+      + '<div class="pkg-tag">' + (dict['pkg_' + pkg.key + '_tag'] || '') + '</div>'
+      + '<div class="pkg-price">' + formatPrice(pkg.total) + '</div>'
+      + '<div class="pkg-price-label">' + (dict.pkg_total_label || 'total trip') + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function showPackageChooser(planData, travelers, total, days, from) {
+  pendingPlanArgs = { planData: planData, travelers: travelers, total: total, days: days, from: from };
+  currentPackages = computeTripPackages(planData, days);
+  var buildingEl = document.getElementById('buildingScreen'); if (buildingEl) buildingEl.style.display = 'none';
+  var chooserEl = document.getElementById('packageChooser'); if (chooserEl) chooserEl.style.display = 'block';
+  renderPackageChooser(currentPackages);
+}
+
+function selectPackage(idx) {
+  var pkg = currentPackages[idx];
+  var args = pendingPlanArgs;
+  if (!pkg || !args) return;
+  // Move the chosen tier to the front — every option still shows in the
+  // Stays/Cars tabs, this just makes the chosen one the featured/first one.
+  if (pkg.acc) args.planData.accommodations = [pkg.acc].concat((args.planData.accommodations || []).filter(function(a) { return a !== pkg.acc; }));
+  if (pkg.car) args.planData.cars = [pkg.car].concat((args.planData.cars || []).filter(function(c) { return c !== pkg.car; }));
+
+  var chooserEl = document.getElementById('packageChooser'); if (chooserEl) chooserEl.style.display = 'none';
+  renderResult(args.planData, args.travelers, pkg.total, args.days, args.from);
+  enrichCarsWithUnsplashImages(args.planData.cars, args.planData.destination);
+  hideBuildingScreen();
+}
+
+function hideBuildingScreen() {
+  var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'none';
+  // Once generation finishes, renderResult() shows the trip itself — the
+  // wizard form has served its purpose and can fully step aside.
+  var card = document.querySelector('.card'); if (card) card.style.display = 'none';
+  var plannerHeader = document.querySelector('#planner > h2'); if (plannerHeader) plannerHeader.style.display = 'none';
+  var plannerSub = document.querySelector('#planner > p'); if (plannerSub) plannerSub.style.display = 'none';
+}
+// If generation fails, bring the wizard back (instead of leaving the person
+// staring at a spinner forever) so they can see the error banner and retry.
+function restoreWizardAfterError() {
+  var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'none';
+  document.querySelectorAll('.wizard-step').forEach(function(s) { s.style.display = ''; }); // let CSS classes (.active) take back over
+  var progress = document.getElementById('wizardProgress'); if (progress) progress.style.display = '';
+  var msg = document.getElementById('wizardMsg'); if (msg) msg.style.display = '';
+  var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = '';
+}
+
 async function generatePlan() {
   var from = document.getElementById('fromCity').value || 'your city';
 
@@ -2496,10 +2754,13 @@ async function generatePlan() {
   var btn = document.getElementById('planBtn');
   btn.disabled = true;
   document.getElementById('planSpin').style.display = 'block';
-  document.getElementById('planTxt').textContent = 'Choosing your destination...';
+  setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_choosing_dest);
   hideErrorBanner();
+  showBuildingScreen();
 
   var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travelers+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
+  var extraNotesVal = (document.getElementById('extraNotes') || {}).value;
+  if (extraNotesVal && extraNotesVal.trim()) tripBrief += '. Additional notes from the traveler (take these into account throughout the plan): ' + extraNotesVal.trim();
   var langInstruction = getLangInstructionText('the ENTIRE response (every text field: tagline, descriptions, tips, themes, activity descriptions)') + ' Keep JSON keys in English exactly as specified, but ALL values must be in that language.';
   // When the trip originates from Brazil, Brazilian carriers (LATAM, GOL, Azul)
   // are usually the most relevant and often cheapest options for that traveler
@@ -2510,37 +2771,49 @@ async function generatePlan() {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
     // separately (below) so long trips never get cut off by the token limit.
-    var overviewPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nIMPORTANT: return the JSON keys in EXACTLY this order — flights, accommodations, cars and budget are the most critical fields and must be fully complete; food_guide, gems and practical come last so if you are ever running low on space, it is these last fields (never the earlier ones) that get shortened.\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound","label":"Cheapest"},{"airline":"name2","from":"GRU","to":"NRT","dep":"22:10","arr":"06:30+2","dur":"16h","stops":"Nonstop","class":"Economy","price":1050,"type":"outbound","label":"Fastest"},{"airline":"name3","from":"GRU","to":"NRT","dep":"11:20","arr":"19:40+1","dur":"17h","stops":"1 stop","class":"Premium Economy","price":1380,"type":"outbound","label":"Best value"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return","label":"Return"}],"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200},"food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish2","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish3","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place2","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place3","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry/snack item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"market/street","price":"$X"},{"name":"item2","where":"market/street","price":"$X"},{"name":"item3","where":"market/street","price":"$X"}]},"gems":[{"title":"gem title","tip":"insider tip"},{"title":"gem title2","tip":"insider tip"},{"title":"gem title3","tip":"insider tip"},{"title":"gem title4","tip":"insider tip"},{"title":"gem title5","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
+    var corePrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound","label":"Cheapest"},{"airline":"name2","from":"GRU","to":"NRT","dep":"22:10","arr":"06:30+2","dur":"16h","stops":"Nonstop","class":"Economy","price":1050,"type":"outbound","label":"Fastest"},{"airline":"name3","from":"GRU","to":"NRT","dep":"11:20","arr":"19:40+1","dur":"17h","stops":"1 stop","class":"Premium Economy","price":1380,"type":"outbound","label":"Best value"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return","label":"Return"}],"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200}}\n\n'+
       'Quality bar:\n'+
-      '- Use REAL, specifically named places — real restaurant names, real neighborhoods, real hotel names. Never generic ("a local restaurant", "a boutique hotel").\n'+
+      '- Use REAL, specifically named places — real airlines, real neighborhoods, real hotel names. Never generic ("a boutique hotel").\n'+
       '- "flights" MUST include exactly 3 different OUTBOUND options (varying airline, time of day, and price/class — e.g. a cheapest option, a fastest/nonstop option, and a premium option) PLUS exactly 1 return option, as shown in the schema. Never fewer than 3 outbound options.\n'+
       '- "cars" MUST include all 4 categories shown in the schema (Compact, SUV, Sports car, Economy) — never omit any.\n'+
-      '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
-      '- "transport" must account for a group of '+travelers+' traveler(s) specifically — note when a larger group changes the best transport choice (e.g. private transport becoming cost-competitive with public transport at this group size).\n'+
-      '- Provide AT LEAST 3 different options for each food_guide category (must_try, breakfast, lunch, afternoon_snack, dinner) — never just one. Travelers want real choices, not a single dictated recommendation per meal.\n'+
-      '- "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop (like a European café culture break) — distinct from lunch and dinner, at a real named café or bakery.\n'+
       '- "accommodations" prices (price_night) MUST reflect REAL, current market rates for '+dest+' specifically — a hostel in an expensive city like Zurich or Tokyo costs more than one in Bangkok or Lisbon; a luxury hotel in a budget-friendly destination costs less than one in a famously expensive city. Do not anchor to generic example numbers — research typical local rates for each accommodation type in this specific destination. The four options must have a clear, consistent price hierarchy: Luxury Hotel > Boutique Hotel and Apartment > Hostel, with realistic gaps between them (not arbitrarily close together, not wildly random).\n'+
       (stay !== 'Any' ? '- The traveler specifically wants \"'+stay+'\" as their accommodation type. ALL 4 accommodations must be \"'+stay+'\" (varying only in price tier/quality/area — e.g. a budget-friendly '+stay+', a mid-range '+stay+', a nicer '+stay+', and a top-tier '+stay+'), NOT a mix of hotel/hostel/apartment types. Ignore the example \"type\" labels shown in the schema above; use \"'+stay+'\" for all four.\n' : '- The traveler selected \"Any\" stay type, so offer a genuine MIX as shown in the schema (Luxury Hotel, Boutique Hotel, Hostel, Apartment).\n') +
       '- Calibrate the ENTIRE accommodations price range to the traveler\'s selected budget level ('+bl+'): a "budget" level trip should show realistically affordable options even at the "luxury hotel" slot (a nice-but-attainable option, not an ultra-premium one), while a "luxury" level trip can show genuinely high-end properties throughout.\n'+
-      '- Provide AT LEAST 5 different "gems" — travelers want a rich set of insider tips, not just one or two. Each "gems" entry should be the kind of specific, non-obvious tip a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
-      '- Recommend a nearby day-trip destination only inside the itinerary days (handled separately) if one genuinely fits this trip\'s length and interests — do not contradict it here.\n'+
-      '- If "Theme parks" is among the traveler\'s interests AND the destination is genuinely famous for theme parks (e.g. Orlando -> Walt Disney World/Universal Studios, Anaheim -> Disneyland, Tokyo -> Tokyo Disneyland/DisneySea, Paris -> Disneyland Paris, Osaka -> Universal Studios Japan), treat the relevant park(s) as a headline activity for this trip — reflect that in the tagline and gems, and make sure the itinerary (handled separately) dedicates at least one full day per major park.\n'+
       (isFromBrazil ? '- The traveler is flying from Brazil. For the "flights" field, prioritize Brazilian carriers (LATAM, GOL, Azul) whenever they plausibly serve this route (directly or with a codeshare/connection) — Brazilian travelers usually get better fares and service on these airlines for international trips.\n' : '')+'\n'+
       (flightTimePref === 'morning' ? '- The traveler prefers MORNING flights — set departure times in the "flights" field between roughly 05:00 and 11:00 where realistic for this route.\n' : (flightTimePref === 'night' ? '- The traveler prefers NIGHT/evening flights — set departure times in the "flights" field to 17:00 or later (or a red-eye before 05:00) where realistic for this route.\n' : '')) +
       'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
 
-    var overviewText = await callAI([{role:'user',content:overviewPrompt}], 16000);
-    var overview;
-    try {
-      overview = extractJSONObject(overviewText);
-    } catch (parseErr) {
-      document.getElementById('planTxt').textContent = 'Fixing a formatting hiccup...';
-      var fixOverviewPrompt = 'The following text was supposed to be a valid JSON object but failed to parse with this error: "'+parseErr.message+'".\n\n'+
-        'Return ONLY the corrected, valid JSON object — same content, fixed formatting. No markdown, no explanation.\n\n'+
-        'Broken text:\n'+overviewText;
-      var fixedOverviewText = await callAI([{role:'user',content:fixOverviewPrompt}], 3000);
-      overview = extractJSONObject(fixedOverviewText); // if this also fails, let it throw — caught by the outer try/catch
+    var extrasPrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"food_guide":{"must_try":[{"name":"dish","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish2","desc":"what it is","where":"where to find","price":"$X"},{"name":"dish3","desc":"what it is","where":"where to find","price":"$X"}],"breakfast":[{"name":"place","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place2","specialty":"item","area":"neighborhood","price":"$X"},{"name":"place3","specialty":"item","area":"neighborhood","price":"$X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"$X"},{"name":"place2","dish":"dish","area":"area","price":"$X"},{"name":"place3","dish":"dish","area":"area","price":"$X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry/snack item","area":"area","price":"$X"},{"name":"place2","specialty":"item","area":"area","price":"$X"},{"name":"place3","specialty":"item","area":"area","price":"$X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"reserve ahead etc"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"$XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"market/street","price":"$X"},{"name":"item2","where":"market/street","price":"$X"},{"name":"item3","where":"market/street","price":"$X"}]},"gems":[{"title":"gem title","tip":"insider tip"},{"title":"gem title2","tip":"insider tip"},{"title":"gem title3","tip":"insider tip"},{"title":"gem title4","tip":"insider tip"},{"title":"gem title5","tip":"insider tip"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n'+
+      'Quality bar:\n'+
+      '- Use REAL, specifically named places — real restaurant names, real neighborhoods. Never generic ("a local restaurant").\n'+
+      '- "weather" must reflect the ACTUAL season for these specific travel dates (e.g. if it is winter in the destination during these dates, say so plainly with realistic temperatures — do not give a generic year-round answer).\n'+
+      '- "transport" must account for a group of '+travelers+' traveler(s) specifically — note when a larger group changes the best transport choice (e.g. private transport becoming cost-competitive with public transport at this group size).\n'+
+      '- Provide AT LEAST 3 different options for each food_guide category (must_try, breakfast, lunch, afternoon_snack, dinner) — never just one. Travelers want real choices, not a single dictated recommendation per meal.\n'+
+      '- "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop (like a European café culture break) — distinct from lunch and dinner, at a real named café or bakery.\n'+
+      '- Provide AT LEAST 5 different "gems" — travelers want a rich set of insider tips, not just one or two. Each "gems" entry should be the kind of specific, non-obvious tip a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
+      (interests.toLowerCase().indexOf('theme park') !== -1 ? '- If the destination is genuinely famous for theme parks (e.g. Orlando, Anaheim, Tokyo, Paris, Osaka), mention the relevant park(s) in the gems as a headline tip.\n' : '')+
+      'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
+
+    async function generateWithRepair(prompt, label, tokens) {
+      var text = await callAI([{role:'user',content:prompt}], tokens);
+      try {
+        return extractJSONObject(text);
+      } catch (parseErr) {
+        setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_fixing + ' (' + label + ')');
+        var fixPrompt = 'The following text was supposed to be a valid JSON object but failed to parse with this error: "'+parseErr.message+'".\n\n'+
+          'Return ONLY the corrected, valid JSON object — same content, fixed formatting. No markdown, no explanation.\n\n'+
+          'Broken text:\n'+text;
+        var fixedText = await callAI([{role:'user',content:fixPrompt}], tokens);
+        return extractJSONObject(fixedText); // if this also fails, let it throw — caught by the outer try/catch
+      }
     }
+
+    setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_researching);
+    var overviewParts = await Promise.all([
+      generateWithRepair(corePrompt, 'flights/stays/cars', 9000),
+      generateWithRepair(extrasPrompt, 'food/tips', 8000)
+    ]);
+    var overview = Object.assign({}, overviewParts[0], overviewParts[1]);
 
     // CALL 2+ — the day-by-day itinerary, in chunks of up to 4 days per call.
     // This is the core of the product: every single day of the trip gets a
@@ -2556,7 +2829,7 @@ async function generatePlan() {
     var ranges = chunkDayRanges(days, 3);
     for (var ci = 0; ci < ranges.length; ci++) {
       var rangeStart = ranges[ci][0], rangeEnd = ranges[ci][1];
-      document.getElementById('planTxt').textContent = 'Building days '+rangeStart+'–'+rangeEnd+' of '+days+'...';
+      setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_building_days.replace('{r}', rangeStart+'–'+rangeEnd).replace('{d}', days));
 
       var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in '+overview.destination+'. Return ONLY a valid JSON array, no markdown, no explanation.\n\n'+langInstruction+'\n\n'+
         'Trip: '+tripBrief+'\nDestination: '+overview.destination+'\n\n'+
@@ -2570,12 +2843,14 @@ async function generatePlan() {
         '- Match the chosen rhythm ('+(rMap[rhythm]||'Balanced')+') in pacing — relaxed rhythms get 1-2 anchor activities per day with breathing room, packed rhythms get back-to-back activities.\n'+
         '- Morning, afternoon, and night entries must be a compound suggestion, not a single terse activity: describe the MAIN activity at a specific named place, then a natural follow-up (a nearby spot to relax, grab a coffee, or watch the sunset). For example: "Spend the afternoon at Ipanema Beach with the family, then walk over to Zazá Bistrô for a caipirinha as the sun sets" — not just "Ipanema Beach".\n'+
         '- "Night" suggestions must genuinely reflect THIS traveler\'s selected style (\'+style+\'+) and interests (\'+interests+\'+) — do not default to generic nightlife clichés (jazz bars, rooftop cocktails) unless nightlife or wine/beer is actually among their interests. A family trip\'s "night" might be a nighttime market stroll or dessert spot; a nature-focused trip might be stargazing; an art-focused trip might be a late gallery opening. Vary the TYPE of night activity across days — never repeat the same kind of venue two nights in a row.\n'+
-        (interests.toLowerCase().indexOf('theme park') !== -1 ? '- Theme parks is one of this traveler\'s selected interests. If '+overview.destination+' is home to a major theme park (Disney, Universal, or similar), dedicate at least one FULL day (morning through night) entirely to that park — do not split it across a partial afternoon only, and do not water it down with unrelated stops that day.\n' : '')+'\n'+
+        (interests.toLowerCase().indexOf('theme park') !== -1 ? '- Theme parks is one of this traveler\'s selected interests. If '+overview.destination+' is home to a major theme park (Disney, Universal, or similar), dedicate at least one FULL day (morning through night) entirely to that park — do not split it across a partial afternoon only, and do not water it down with unrelated stops that day.\n' : '')+
+        '- Write like a premium concierge, not a checklist: weave in an approximate clock time AND the reason behind that timing wherever it adds real value — e.g. "arrive at 8am, before the tour buses" or "head up around 6:30pm to catch golden hour" or "grab this table by noon, it fills up fast." Never force a reason where there isn\'t a real one — only add it when it is genuinely useful local knowledge (beating crowds, catching light, a kitchen\'s peak freshness, a place that gets fully booked).\n'+
+        '- Make each entry feel handcrafted for THIS specific traveler and day, not interchangeable with any other day of any other trip — reference the actual neighborhood, the actual weather/season, or the actual interest that led you to suggest it.\n\n'+
         'Return an array, one object per day, in this exact shape:\n'+
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
-        '"early_bird":{"morning":"7am compound activity — main activity at a specific named place, then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — $X","night":"compound evening suggestion at a named place, then a follow-up"},'+
-        '"balanced":{"morning":"compound activity — main activity at a named place, then a natural follow-up","breakfast":"cafe name — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"compound suggestion at a named place, then a follow-up"},'+
-        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place, then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"named nightlife spot, then a late-night follow-up"}}]\n\n'+
+        '"early_bird":{"morning":"7am — main activity at a specific named place (with a timing reason if genuinely useful), then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — $X","lunch":"specific restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — $X","night":"compound evening suggestion at a named place, then a follow-up"},'+
+        '"balanced":{"morning":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","breakfast":"cafe name — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"compound suggestion at a named place, then a follow-up"},'+
+        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — $X","lunch":"restaurant name — signature dish — $X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — $X","night":"named nightlife spot, then a late-night follow-up"}}]\n\n'+
         'Continue this pattern for every day from '+rangeStart+' to '+rangeEnd+' inclusive.\n\n'+
         'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
 
@@ -2589,7 +2864,7 @@ async function generatePlan() {
     }
 
     if (chunkWarnings.length) {
-      showErrorBanner('Most of your trip generated successfully, but ' + chunkWarnings.join(', ') + ' hit a temporary AI error and use a generic placeholder below — try regenerating, or this section alone may need a retry.');
+      showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_partial_chunk.replace('{p}', chunkWarnings.join(', ')));
     }
 
     planData = overview;
@@ -2668,13 +2943,15 @@ async function generatePlan() {
       console.error('Duffel Cars enrichment skipped:', carErr);
     }
 
-    renderResult(planData, travelers, total, days, from);
-    enrichCarsWithUnsplashImages(planData.cars, planData.destination);
-    renderFallback(to || 'Tokyo, Japan', travelers, total, days, from);
+    showPackageChooser(planData, travelers, total, days, from);
+  } catch (e) {
+    console.error(e);
+    showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_generation_failed.replace('{e}', (e && e.message ? e.message : 'unknown error')));
+    restoreWizardAfterError();
   } finally {
     btn.disabled = false;
     document.getElementById('planSpin').style.display = 'none';
-    document.getElementById('planTxt').textContent = (TRANSLATIONS[appLang] || TRANSLATIONS.en).generate_btn;
+    setStatus((TRANSLATIONS[appLang] || TRANSLATIONS.en).generate_btn);
   }
 }
 
@@ -2923,6 +3200,7 @@ function renderResult(p, travelers, budget, days, from) {
   renderInfo(p.practical, p.destination);
   var res = document.getElementById('result');
   res.style.display = 'block';
+  hideBuildingScreen();
   showTab('itin', document.querySelector('.tab'));
   setTimeout(function(){ res.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
 }
@@ -3483,12 +3761,47 @@ function renderInfo(p, dest) {
   if (!p) { document.getElementById('infoContent').innerHTML = ''; return; }
   var items = [['🗓️','Best time',p.best_time],['🌤️','Weather',p.weather],['💵','Currency',p.currency],['🗣️','Language',p.language],['🚌','Getting around',p.transport],['🔒','Safety',p.safety],['🛂','Visa & entry',p.visa],['🎒','What to pack',p.packing]];
   var h = '<div class="info-box"><div class="info-t">📋 Need to know — '+dest+'</div>';
+  h += '<div id="realWeatherStrip"></div>';
   items.forEach(function(it) {
     if (!it[2]) return;
     h += '<div class="info-row"><div class="info-icon">'+it[0]+'</div><div><div class="info-lbl">'+it[1]+'</div><div class="info-val">'+it[2]+'</div></div></div>';
   });
   h += '</div>';
   document.getElementById('infoContent').innerHTML = h;
+  enrichRealWeather(dest);
+}
+
+// Fetches a real 5-day forecast from OpenWeather (via our proxy) and shows
+// it as a small strip above the AI's text-based weather guess. Runs in the
+// background after the trip is already shown — never blocks generation.
+// If no key is configured, or the city can't be geocoded, this silently
+// does nothing and the AI's text description remains the only weather info.
+var WEATHER_ICON_MAP = {'01':'☀️','02':'⛅','03':'☁️','04':'☁️','09':'🌧️','10':'🌦️','11':'⛈️','13':'❄️','50':'🌫️'};
+async function enrichRealWeather(dest) {
+  var strip = document.getElementById('realWeatherStrip');
+  if (!strip) return;
+  try {
+    var city = (dest || '').split(',')[0].trim();
+    if (!city) return;
+    var res = await fetch('/.netlify/functions/weather?city=' + encodeURIComponent(city));
+    if (!res.ok) return;
+    var data = await res.json();
+    if (!data || !data.daily || !data.daily.length) return;
+    var html = '<div style="display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;margin-bottom:6px;border-bottom:1px solid rgba(11,15,26,.08)">';
+    data.daily.forEach(function(d) {
+      var dayLabel = new Date(d.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short' });
+      var emoji = WEATHER_ICON_MAP[(d.icon || '').slice(0, 2)] || '🌤️';
+      html += '<div style="flex-shrink:0;text-align:center;background:rgba(201,169,110,.08);border-radius:10px;padding:8px 12px;min-width:64px">'
+        + '<div style="font-size:11px;color:var(--muted);text-transform:capitalize">' + dayLabel + '</div>'
+        + '<div style="font-size:20px;margin:2px 0">' + emoji + '</div>'
+        + '<div style="font-size:12px;font-weight:600">' + d.maxTemp + '°<span style="color:var(--muted);font-weight:400"> / ' + d.minTemp + '°</span></div>'
+        + '</div>';
+    });
+    html += '</div>';
+    strip.innerHTML = html;
+  } catch (e) {
+    console.error('Real weather forecast skipped:', e);
+  }
 }
 
 function renderFallback(dest, travelers, budget, days, from) {
@@ -3521,7 +3834,7 @@ function renderFallback(dest, travelers, budget, days, from) {
 // the person chooses "Save as PDF" there. No libraries, works offline.
 function printItinerary() {
   if (!planData || !planData.days || !planData.days.length) {
-    alert('Generate a travel plan first, then save it as PDF.');
+    alert((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_no_trip_yet || 'Generate a travel plan first, then save it as PDF.');
     return;
   }
   var rk = window._rk || 'balanced';
@@ -3588,6 +3901,7 @@ var today = new Date();
 var next = new Date(today); next.setDate(today.getDate()+7);
 document.getElementById('depDate').value = today.toISOString().split('T')[0];
 document.getElementById('retDate').value = next.toISOString().split('T')[0];
+showWizardStep(1);
 
 </script>
 
