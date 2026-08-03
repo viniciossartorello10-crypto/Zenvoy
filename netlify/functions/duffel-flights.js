@@ -104,14 +104,18 @@ exports.handler = async function (event) {
     // Genuine proxy-level failure (network error, DNS failure, or an error
     // while parsing/trimming the response) — include full detail so the
     // real cause is visible in the browser console instead of just "502".
+    // Full stack trace goes to Netlify's function logs (visible in the
+    // dashboard), not to the browser — internal file paths/stack frames
+    // shouldn't be exposed to end users, even though name/message are
+    // still useful client-side for diagnosing which step failed.
+    console.error('Proxy error reaching Duffel:', err);
     return {
       statusCode: 502,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: 'Proxy error reaching Duffel',
         errorName: err.name,
-        errorMessage: err.message,
-        stack: err.stack
+        errorMessage: err.message
       })
     };
   }

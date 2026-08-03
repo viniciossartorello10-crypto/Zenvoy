@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <!-- saved from url=(0033)https://zenvoytravel.netlify.app/ -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+// Sets the theme before any CSS/body renders, so there's no flash of the
+// wrong theme on load — must run synchronously, this early, not from the
+// main script block at the bottom of the page (which only runs after
+// everything has already painted once).
+(function() {
+  var saved = localStorage.getItem('zenvoy_theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+})();
+</script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zenvoy — AI Travel Planner</title>
@@ -27,11 +38,21 @@
 {"@context":"https://schema.org","@type":"Organization","name":"Zenvoy","url":"https://zenvoytravel.netlify.app/","description":"AI travel planner that builds complete personalized trips — flights, hotels, food, activities, and local secrets."}
 </script>
 
-<link href="./Zenvoy — AI Travel Planner_files/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#8B96A8;--slate:#2D3A52}
-body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--navy)}
+:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#8B96A8;--slate:#2D3A52;--page-bg:var(--cream);--page-text:var(--navy);--card-bg:var(--white)}
+/* Dark theme — separate variables from --navy/--cream/--white on purpose:
+   those three are also used as fixed decorative colors (the hero, nav bar,
+   and modals are always-dark navy with white text by design, unrelated to
+   this toggle) and as text-on-gold-accent colors on buttons/badges, which
+   should stay legible the same way in both themes. Only --page-bg/
+   --page-text/--card-bg — the actual page background/body-text/card-surface
+   roles — flip here. */
+[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8}
+body{font-family:'Inter',sans-serif;background:var(--page-bg);color:var(--page-text);transition:background .2s,color .2s}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)}
 .logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:0}.logo span{color:var(--gold)}
 .hero{position:relative;overflow:hidden;min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:80px 24px 60px}
@@ -68,10 +89,10 @@ h1 em{font-style:italic;color:var(--gold)}
 @media(prefers-reduced-motion: reduce){.hero-ticker-track{animation:none}}
 .hero-btn{padding:16px 36px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
 .hero-btn:hover{background:var(--gold2)}
-.planner{padding:80px 24px;background:var(--cream)}
+.planner{padding:80px 24px;background:var(--page-bg)}
 .planner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,48px);font-weight:400;text-align:center;margin-bottom:8px}
 .planner p{text-align:center;color:#5A6478;font-size:15px;margin-bottom:40px}
-.card{background:#fff;border-radius:20px;border:1px solid rgba(11,15,26,.08);padding:36px;max-width:900px;margin:0 auto}
+.card{background:var(--card-bg);border-radius:20px;border:1px solid rgba(11,15,26,.08);padding:36px;max-width:900px;margin:0 auto}
 .wizard-step{display:none;animation:wiz-fade-in .25s ease}
 .wizard-step.active{display:block}
 @keyframes wiz-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -92,11 +113,11 @@ h1 em{font-style:italic;color:var(--gold)}
 @keyframes mascot-think{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
 @keyframes building-spin{to{transform:rotate(360deg)}}
 .building-status{font-size:15px;color:#3d4454;min-height:22px}
-.building-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:10px}
-.pkg-card{border:2px solid rgba(11,15,26,.1);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .18s;background:#fff}
+.building-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--page-text);margin-bottom:10px}
+.pkg-card{border:2px solid rgba(11,15,26,.1);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .18s;background:var(--card-bg)}
 .pkg-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,15,26,.08)}
 .pkg-emoji{font-size:32px;margin-bottom:8px}
-.pkg-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--navy);margin-bottom:4px}
+.pkg-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--page-text);margin-bottom:4px}
 .pkg-tag{font-size:12px;color:var(--muted);margin-bottom:14px;min-height:32px}
 .pkg-price{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);margin-bottom:2px}
 .pkg-price-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
@@ -105,16 +126,16 @@ h1 em{font-style:italic;color:var(--gold)}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .ac-wrap{position:relative}
-input,select{width:100%;padding:11px 14px;border:1px solid rgba(11,15,26,.15);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--navy);background:var(--cream);outline:none;transition:border-color .2s}
-input:focus,select:focus{border-color:var(--gold);background:#fff}
+input,select{width:100%;padding:11px 14px;border:1px solid rgba(11,15,26,.15);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
 input::placeholder{color:#aaa}
-.dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid rgba(11,15,26,.12);border-radius:10px;z-index:500;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
+.dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card-bg);border:1px solid rgba(11,15,26,.12);border-radius:10px;z-index:500;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
 .dropdown.show{display:block}
 .drop-item{padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:.5px solid rgba(11,15,26,.06);transition:background .15s}
 .drop-item:last-child{border-bottom:none}
-.drop-item:hover{background:var(--cream)}
+.drop-item:hover{background:var(--page-bg)}
 .drop-flag{font-size:18px}
-.drop-city{font-size:14px;font-weight:500;color:var(--navy)}
+.drop-city{font-size:14px;font-weight:500;color:var(--page-text)}
 .drop-ctry{font-size:11px;color:var(--muted)}
 .surprise{padding:11px 16px;background:linear-gradient(135deg,#7B2FF7,#E040FB);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:opacity .2s;height:42px}
 .surprise:hover{opacity:.88}
@@ -126,10 +147,10 @@ input::placeholder{color:#aaa}
 .pill{padding:9px 18px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;transition:all .18s;background:transparent;font-family:'Inter',sans-serif}
 .pill:hover,.pill.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
 .rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
-.rcard{border:1px solid rgba(11,15,26,.12);border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:all .18s;background:var(--cream)}
+.rcard{border:1px solid rgba(11,15,26,.12);border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:all .18s;background:var(--page-bg)}
 .rcard:hover,.rcard.on{border:2px solid var(--gold);background:rgba(201,169,110,.07)}
 .rcard .ri{font-size:22px;margin-bottom:6px}
-.rcard .rt{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.rcard .rt{font-size:12px;font-weight:600;color:var(--page-text);margin-bottom:3px}
 .rcard .rd{font-size:11px;color:var(--muted)}
 .btog{display:flex;border:1px solid rgba(11,15,26,.12);border-radius:8px;overflow:hidden;margin-bottom:8px}
 .btog button{flex:1;padding:8px;border:none;background:transparent;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:#5A6478;transition:background .15s}
@@ -154,12 +175,12 @@ input::placeholder{color:#aaa}
 .city-tab-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .tabs{display:flex;border-bottom:1px solid rgba(11,15,26,.1);margin-bottom:20px;overflow-x:auto}
 .tab{padding:11px 18px;font-size:13px;font-weight:500;color:#5A6478;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:all .2s}
-.tab.on{color:var(--navy);border-bottom-color:var(--gold)}
+.tab.on{color:var(--page-text);border-bottom-color:var(--gold)}
 .tp{display:none}.tp.on{display:block}
 .rtabs{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
 .rtab{padding:7px 16px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
 .rtab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.dc{background:#fff;border-radius:14px;border:1px solid rgba(11,15,26,.07);margin-bottom:12px;overflow:hidden}
+.dc{background:var(--card-bg);border-radius:14px;border:1px solid rgba(11,15,26,.07);margin-bottom:12px;overflow:hidden}
 .dc-img{height:160px;background-size:cover;background-position:center;position:relative;background-color:var(--slate)}
 .dc-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,15,26,.6) 0%,transparent 60%)}
 .dc-img-lbl{position:absolute;bottom:12px;left:16px;font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff}
@@ -172,7 +193,7 @@ input::placeholder{color:#aaa}
 .td{font-size:13px;color:#3A4557;line-height:1.6}
 .slot-swap-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(201,169,110,.08);border-radius:20px;width:fit-content}
 .slot-swap-label{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.slot-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);background:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);transition:all .15s;font-weight:700}
+.slot-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);background:var(--card-bg);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);transition:all .15s;font-weight:700}
 .slot-arrow:hover:not(:disabled){background:var(--gold);color:#fff}
 .slot-arrow:disabled{opacity:.3;cursor:default}
 .slot-arrow.loading{animation:slot-spin .8s linear infinite}
@@ -190,7 +211,7 @@ input::placeholder{color:#aaa}
 .leg-date-field input{width:100%;padding:6px 8px;font-size:12px;border-radius:6px}
 .leg-days-badge{font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;padding-bottom:7px}
 .leg-row .ac-wrap{flex:1}
-.leg-remove{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:#fff;color:#c33;font-size:12px;cursor:pointer;flex-shrink:0}
+.leg-remove{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:var(--card-bg);color:#c33;font-size:12px;cursor:pointer;flex-shrink:0}
 .dest-item-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 12px;border:1px solid rgba(11,15,26,.1);border-radius:10px;margin-bottom:8px;background:rgba(11,15,26,.02);position:relative}
 .dest-item-left{flex:1;min-width:0}
 .dest-item-left .ac-wrap{width:100%}
@@ -209,7 +230,7 @@ input::placeholder{color:#aaa}
 .bl-bk{background:#003580;color:#fff}.bl-ab{background:#FF5A5F;color:#fff}
 .bl-sk{background:#00B2F5;color:#fff}.bl-ky{background:#FF690F;color:#fff}
 .bl-gf{background:#1A73E8;color:#fff}.bl-vi{background:#FF8000;color:#fff}
-.acc-card{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
+.acc-card{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
 .acc-photo{width:100%;height:180px;background-size:cover;background-position:center;border-radius:12px;margin-bottom:12px;display:none;background-color:rgba(11,15,26,.05)}
 .acc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:3px}
 .acc-loc{font-size:12px;color:var(--muted);margin-bottom:6px}
@@ -218,24 +239,24 @@ input::placeholder{color:#aaa}
 .acc-tag{font-size:11px;color:#5A6478;background:rgba(11,15,26,.06);padding:2px 9px;border-radius:20px}
 .acc-foot{display:flex;justify-content:space-between;align-items:center}
 .acc-price{font-family:'Cormorant Garamond',serif;font-size:24px}
-.fc{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
+.fc{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
 .fr{display:flex;align-items:center;gap:16px;margin:16px 0;padding:16px 18px;background:rgba(201,169,110,.05);border-radius:12px}
 .fcity{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400}
 .fmid{flex:1;text-align:center;padding:0 6px}
 .fdur{font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:600;letter-spacing:.02em}
 .fline{width:100%;height:2px;background:linear-gradient(90deg,rgba(201,169,110,.1),var(--gold) 20%,var(--gold) 80%,rgba(201,169,110,.1));position:relative;border-radius:2px}
 .fline::before{content:'';position:absolute;left:-2px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
-.fline::after{content:'✈';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:24px;color:var(--gold);background:var(--cream);padding:0 8px;animation:plane-hover 2.2s ease-in-out infinite}
+.fline::after{content:'✈';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:24px;color:var(--gold);background:var(--page-bg);padding:0 8px;animation:plane-hover 2.2s ease-in-out infinite}
 @keyframes plane-hover{0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg)}50%{transform:translateX(-50%) translateY(-4px) rotate(3deg)}}
 .bbd{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
-.bbi{background:var(--cream);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(11,15,26,.06)}
+.bbi{background:var(--page-bg);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(11,15,26,.06)}
 .bba{font-family:'Cormorant Garamond',serif;font-size:24px}
 .bbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .bbar{height:3px;border-radius:2px;background:var(--gold);margin-top:6px}
 .gem{background:var(--navy);border-radius:12px;padding:20px;border-left:3px solid var(--gold);margin-bottom:10px}
 .gem-t{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 .gem-d{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(232,226,213,.9);line-height:1.5;font-style:italic}
-.info-box{background:#fff;border-radius:12px;padding:18px;border:1px solid rgba(11,15,26,.07);margin-bottom:10px}
+.info-box{background:var(--card-bg);border-radius:12px;padding:18px;border:1px solid rgba(11,15,26,.07);margin-bottom:10px}
 .ta-card-wrap{display:block;margin-top:6px}
 .ta-card{background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.25);border-radius:8px;padding:8px 10px;font-size:11px;color:#3A4557;margin-top:2px}
 .ta-card-top{font-weight:600;color:var(--gold);margin-bottom:3px}
@@ -310,13 +331,16 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
     </svg>
     <span>Voy</span>
   </div>
-  <select id="langSelect" onchange="setLang(this.value)" style="justify-self:end;width:auto;max-width:140px;background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;flex-shrink:0">
-    <option value="en" style="color:#000">🇺🇸 English</option>
-    <option value="pt" style="color:#000">🇧🇷 Português</option>
-    <option value="es" style="color:#000">🇪🇸 Español</option>
-    <option value="fr" style="color:#000">🇫🇷 Français</option>
-    <option value="it" style="color:#000">🇮🇹 Italiano</option>
-  </select>
+  <div style="display:flex;align-items:center;gap:8px;justify-self:end;flex-shrink:0">
+    <button id="themeToggleBtn" onclick="toggleThemeMode()" aria-label="Toggle dark mode" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;line-height:1">🌙</button>
+    <select id="langSelect" onchange="setLang(this.value)" style="width:auto;max-width:140px;background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;flex-shrink:0">
+      <option value="en" style="color:#000">🇺🇸 English</option>
+      <option value="pt" style="color:#000">🇧🇷 Português</option>
+      <option value="es" style="color:#000">🇪🇸 Español</option>
+      <option value="fr" style="color:#000">🇫🇷 Français</option>
+      <option value="it" style="color:#000">🇮🇹 Italiano</option>
+    </select>
+  </div>
 </nav>
 
 
@@ -395,7 +419,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 </button>
 
 <div id="cartModalOverlay" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(11,15,26,.6);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)toggleCartModal(false)">
-  <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px">
+  <div style="background:var(--card-bg);border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div style="font-family:'Cormorant Garamond',serif;font-size:24px" data-i18n="tab_cart">🧳 My Trip</div>
       <button onclick="toggleCartModal(false)" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
@@ -656,11 +680,11 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <button class="rtab" data-i18n="rt_night" onclick="switchR(&#39;night_owl&#39;,this)">🌙 Night owl</button>
         </div>
         <div id="dayNav" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
-          <button id="dayPrevBtn" onclick="goToDay(-1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:#fff;font-size:16px;cursor:pointer;flex-shrink:0">←</button>
+          <button id="dayPrevBtn" onclick="goToDay(-1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">←</button>
           <div style="text-align:center;flex:1">
             <div style="font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em" id="dayNavLabel">Day 1 of 1</div>
           </div>
-          <button id="dayNextBtn" onclick="goToDay(1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:#fff;font-size:16px;cursor:pointer;flex-shrink:0">→</button>
+          <button id="dayNextBtn" onclick="goToDay(1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">→</button>
         </div>
         <div id="dayCards"></div>
       </div>
@@ -1211,6 +1235,21 @@ function setBT(t) {
 }
 var rhythm = 'balanced';
 var appLang = localStorage.getItem('zenvoy_lang') || 'en';
+
+// Theme (light/dark) — same localStorage pattern as appLang/setLang above.
+// The initial data-theme attribute is already set by the tiny inline
+// anti-flash script in <head> (runs before this file even loads); this
+// just keeps `appTheme` and the toggle button in sync with that on load,
+// and handles switching it afterward.
+var appTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+function toggleThemeMode() {
+  appTheme = appTheme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('zenvoy_theme', appTheme);
+  if (appTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  var btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = appTheme === 'dark' ? '☀️' : '🌙';
+}
 
 // ── UI TRANSLATIONS (static interface text — separate from the AI-generated
 // trip content, which is translated by instructing the AI directly) ──
@@ -2256,6 +2295,64 @@ async function searchDuffelStays(destCity, checkInDate, checkOutDate, travelers)
     });
   } catch (e) {
     console.error('Duffel stays search failed (falling back to AI estimates):', e);
+    return null;
+  }
+}
+
+// ── AMADEUS HOTELS (optional — real hotel prices, currently DORMANT) ────
+// Built as an alternative to searchDuffelStays() above, since Duffel Stays
+// returns 403 "not enabled for your account" on this Duffel account — but
+// not currently wired up (searchDuffelStays() is still the active call at
+// both call sites below) because Amadeus self-serve signup wasn't working
+// at the time. Kept here, unused, in case it's worth revisiting — the
+// backing function is netlify/functions/amadeus-hotels.js. Same signature,
+// same output shape as searchDuffelStays(), so switching back just means
+// swapping the two call sites again.
+async function searchAmadeusHotels(destCity, checkInDate, checkOutDate, travelers) {
+  var coords = cityToCoords(destCity);
+  if (!coords) return null; // can't map to coordinates — fall back silently
+
+  if (!checkInDate || !checkOutDate || checkInDate === checkOutDate) return null; // needs a real date range
+
+  try {
+    var res = await fetch('/.netlify/functions/amadeus-hotels', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        latitude: coords[0],
+        longitude: coords[1],
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        guests: travelers,
+        radius: 8
+      })
+    });
+
+    if (!res.ok) {
+      var errBody = await res.text();
+      console.error('Amadeus hotel search failed — proxy returned ' + res.status + ':', errBody);
+      return null;
+    }
+    var data = await res.json();
+    var stays = (data && data.stays) || [];
+    if (!stays.length) return null; // e.g. sparse sandbox coverage for this city — not an error
+
+    // Same mapping shape as searchDuffelStays() — renderStays() needs no changes.
+    return stays.map(function(s, idx) {
+      return {
+        name: s.name,
+        type: idx === 0 ? 'Top Pick' : (idx === stays.length - 1 ? 'Budget Option' : 'Recommended'),
+        stars: s.rating || 3,
+        area: '', // Amadeus hotel-offers results don't include a neighborhood name at this stage
+        price_night: Math.round(parseFloat(s.price)),
+        highlights: s.reviewScore ? ['Rated ' + s.reviewScore + '/10 (' + (s.reviewCount || 0) + ' reviews)'] : [],
+        why: '',
+        photoUrl: s.photoUrl || null, // this Amadeus tier doesn't return photos — falls back to the placeholder icon
+        isReal: true // flags this as a live Amadeus result, not an AI estimate
+      };
+    });
+  } catch (e) {
+    console.error('Amadeus hotel search failed (falling back to AI estimates):', e);
     return null;
   }
 }
@@ -3778,7 +3875,7 @@ function refreshSlotDom(day, idx, slotLabel, dest) {
   var taCategory = isFood ? 'restaurants' : 'attractions';
   var slotId = 'ta-badge-' + key;
 
-  var h = text + ' <span id="' + slotId + '" class="ta-badge"></span>';
+  var h = escapeHtml(text) + ' <span id="' + slotId + '" class="ta-badge"></span>';
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 Maps</a>';
   if (isFood) h += '<a id="' + slotId + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-ta">Reviews</a>';
   if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">Book</a>';
@@ -4067,7 +4164,7 @@ function renderStays(accs, dest) {
     if (a.highlights && a.highlights.length) h += '<div style="margin-top:8px">'+a.highlights.map(function(t){return '<span class="acc-tag">'+escapeHtml(t)+'</span>';}).join('')+'</div>';
     h += '</div>';
     h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
-    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">'+formatPrice(a.price_night)+'</span><span style="font-size:11px;color:var(--muted)">/night</span></div>';
+    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">'+formatPrice(a.price_night)+'</span><span style="font-size:11px;color:var(--muted)">/night</span></div>';
     h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
     h += '</div>';
     h += '</div>';
@@ -4153,11 +4250,11 @@ function renderFlights(flights, from, dest) {
     h += '<div><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+escapeHtml(f.class)+'</span></div></div></div>';
     h += '</div>';
     h += '<div style="flex-shrink:0;text-align:right;min-width:130px">';
-    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
+    h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
     h += '</div>';
     h += '</div>';
     if (f.isMultiCity) {
-      h += '<div style="padding:14px 0;text-align:center"><div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;color:var(--navy);margin-bottom:6px">'+escapeHtml(f.routeSummary||'')+'</div><div style="font-size:12px;color:var(--muted)">'+escapeHtml(f.stops||'')+'</div></div>';
+      h += '<div style="padding:14px 0;text-align:center"><div style="font-family:\'Cormorant Garamond\',serif;font-size:18px;color:var(--page-text);margin-bottom:6px">'+escapeHtml(f.routeSummary||'')+'</div><div style="font-size:12px;color:var(--muted)">'+escapeHtml(f.stops||'')+'</div></div>';
     } else {
       h += '<div class="fr"><div><div class="fcity">'+escapeHtml(f.from||'—')+'</div><div style="font-size:12px;color:var(--muted)">'+escapeHtml(f.dep||'—')+'</div></div>';
       h += '<div class="fmid"><div class="fdur">'+escapeHtml(f.dur||'—')+' · '+escapeHtml(f.stops||'')+'</div><div class="fline"></div></div>';
@@ -4272,7 +4369,7 @@ function renderCars(cars, dest) {
       if (c.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-top:10px;margin-bottom:0">' + escapeHtml(c.why) + '</p>';
       h += '</div>';
       h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
-      h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--navy)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
+      h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
       h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
       h += '</div>';
       h += '</div>';
@@ -4448,6 +4545,8 @@ function subEmail(evt) {
 
 // ── DEFAULT DATES ─────────────────────────────────────────────
 document.getElementById('langSelect').value = appLang;
+var themeBtnInit = document.getElementById('themeToggleBtn');
+if (themeBtnInit) themeBtnInit.textContent = appTheme === 'dark' ? '☀️' : '🌙';
 translatePage();
 // Also apply the currency for the saved language on load — translatePage()
 // only updates text, so without this the currency would stay stuck on USD

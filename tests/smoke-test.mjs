@@ -3,9 +3,9 @@
 // Plain Node.js (v18+), zero dependencies — calls every deployed Netlify
 // Function with a minimal valid request and reports pass/fail. This exists
 // because the app has no build step and no test framework; this is the
-// lightest-weight way to confirm the 9 serverless integrations actually
-// work end-to-end against the real deployed site, not just that the code
-// looks right.
+// lightest-weight way to confirm the serverless integrations actually work
+// end-to-end against the real deployed site, not just that the code looks
+// right.
 //
 // Usage:
 //   node tests/smoke-test.mjs                  # tests production
@@ -92,6 +92,17 @@ async function main() {
       body: JSON.stringify({ latitude: 38.7223, longitude: -9.1393, checkIn: '2026-09-01', checkOut: '2026-09-03', guests: 2 })
     });
     return expectJsonOk(res, (b) => `${(b.stays || []).length} stays returned`);
+  });
+
+  await check('amadeus-hotels', async () => {
+    const res = await fetch(`${BASE_URL}/.netlify/functions/amadeus-hotels`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: 38.7223, longitude: -9.1393, checkIn: '2026-09-01', checkOut: '2026-09-03', guests: 2 })
+    });
+    // Amadeus's self-serve sandbox only has a limited test dataset, so a
+    // short or empty stays[] array is a valid non-error outcome, not a failure.
+    return expectJsonOk(res, (b) => `${(b.stays || []).length} stays returned (sandbox data may be sparse)`);
   });
 
   await check('duffel-cars', async () => {

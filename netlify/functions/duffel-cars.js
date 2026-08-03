@@ -92,10 +92,11 @@ exports.handler = async function (event) {
 
     return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cars: trimmed }) };
   } catch (err) {
+    console.error('Proxy error reaching Duffel Cars:', err);
     return {
       statusCode: 502,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Proxy error reaching Duffel Cars', errorName: err.name, errorMessage: err.message, stack: err.stack })
+      body: JSON.stringify({ error: 'Proxy error reaching Duffel Cars', errorName: err.name, errorMessage: err.message })
     };
   }
 };

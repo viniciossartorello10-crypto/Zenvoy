@@ -102,14 +102,14 @@ exports.handler = async function (event) {
       body: JSON.stringify({ stays: trimmed })
     };
   } catch (err) {
+    console.error('Proxy error reaching Duffel Stays:', err);
     return {
       statusCode: 502,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: 'Proxy error reaching Duffel Stays',
         errorName: err.name,
-        errorMessage: err.message,
-        stack: err.stack
+        errorMessage: err.message
       })
     };
   }
