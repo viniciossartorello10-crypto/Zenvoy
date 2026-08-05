@@ -230,6 +230,13 @@ input::placeholder{color:#aaa}
 .bl-bk{background:#003580;color:#fff}.bl-ab{background:#FF5A5F;color:#fff}
 .bl-sk{background:#00B2F5;color:#fff}.bl-ky{background:#FF690F;color:#fff}
 .bl-gf{background:#1A73E8;color:#fff}.bl-vi{background:#FF8000;color:#fff}
+/* Featured partner link — visually distinct from the plain .bl pills above
+   (larger, bolder, gold) so our current priority commission source stands
+   out without looking like an urgency banner. Uses the same gold accent as
+   every other primary action in the app (hero-btn, cap-go, cart add), so it
+   reads as "this app's usual way of marking something important," not a
+   foreign ad pattern. */
+.bl-featured{background:var(--gold);color:var(--navy);font-weight:700;padding:6px 14px;box-shadow:0 2px 6px rgba(201,169,110,.4);order:-1}
 .acc-card{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
 .acc-photo{width:100%;height:180px;background-size:cover;background-position:center;border-radius:12px;margin-bottom:12px;display:none;background-color:rgba(11,15,26,.05)}
 .acc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:3px}
@@ -1001,6 +1008,24 @@ var AFFILIATE_IDS = {
   viator: '',        // Viator partner dashboard -> pid=PXXXXXXX
   getyourguide: '',  // GetYourGuide Partner Portal -> partner_id=XXXXX
   discovercars: ''   // DiscoverCars affiliate dashboard -> a_aid=XXXXX
+};
+
+// Hotels.com, via the CJ (Commission Junction) affiliate network — approved
+// for Hotels, Car Rentals, and Vacation Rentals (4% / 1.5% / 2% commission
+// as of the approval). PRIORITY partner while Booking.com is still pending
+// and Duffel Stays/Cars remain disabled on this account (see AFFILIATE_IDS
+// and searchDuffelStays/searchDuffelCars above).
+//
+// IMPORTANT: these are CJ "click" tracking links, not deep links — tested
+// directly (curl, following redirects) and confirmed every click lands on
+// the same fixed Hotels.com page regardless of any destination info passed
+// in, so button copy is deliberately general ("Compare on Hotels.com")
+// rather than implying destination-specific results. If a real CJ Deep
+// Link Generator becomes available for this program later, swap these for
+// proper per-destination links and the button copy can become specific.
+var HOTELS_COM_LINKS = {
+  hotels: 'https://www.tkqlhce.com/click-101838851-15534491', // also covers vacation-rental-style stays (Apartment/Airbnb/Villa/Resort types) — same Hotels.com program
+  cars: 'https://www.kqzyfj.com/click-101838851-15857012'
 };
 
 function withAffiliateParam(url, param, value) {
@@ -3568,7 +3593,7 @@ function renderCart() {
         var stayUrl = withAffiliateParam('https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest), 'aid', AFFILIATE_IDS.booking);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + escapeHtml(s.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(s.type||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.hotels + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
       });
     }
 
@@ -3582,7 +3607,7 @@ function renderCart() {
         var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + escapeHtml(c.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
       });
     }
 
@@ -4169,6 +4194,7 @@ function renderStays(accs, dest) {
     h += '</div>';
     h += '</div>';
     h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
+    h += '<a href="'+HOTELS_COM_LINKS.hotels+'" target="_blank" class="bl bl-featured">Compare on Hotels.com</a>';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
     h += '<a href="'+withAffiliateParam('https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest)), 'aid', AFFILIATE_IDS.booking)+'" target="_blank" class="bl bl-bk">Booking</a>';
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
@@ -4322,6 +4348,7 @@ function renderCars(cars, dest) {
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
+    + '<a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a>'
     + '<a href="https://www.kayak.com/cars/' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-ky">Kayak</a>'
     + '<a href="https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-bk">RentalCars</a>'
     + '<a href="' + withAffiliateParam('https://www.discovercars.com/search?location=' + encodeURIComponent(destShort), 'a_aid', AFFILIATE_IDS.discovercars) + '" target="_blank" class="bl bl-gm">DiscoverCars</a>'
