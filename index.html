@@ -1338,7 +1338,8 @@ var TRANSLATIONS = {
     chat_greeting: 'Hi! I\'m Zenvoy\'s travel assistant. Ask me about destinations, budget, documents, or anything about your next trip.',
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
-    show_another: '🔄 Show another option', loading_option: 'Finding another option...'
+    show_another: '🔄 Show another option', loading_option: 'Finding another option...',
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -1399,7 +1400,8 @@ var TRANSLATIONS = {
     chat_greeting: 'Oi! Sou a assistente de viagem da Zenvoy. Pergunte sobre destinos, orçamento, documentação ou qualquer coisa da sua próxima viagem.',
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
-    show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...'
+    show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
+    bl_hotelscom_cta: 'Comparar no Hotels.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -1460,7 +1462,8 @@ var TRANSLATIONS = {
     chat_greeting: '¡Hola! Soy la asistente de viajes de Zenvoy. Pregúntame sobre destinos, presupuesto, documentos o cualquier cosa de tu próximo viaje.',
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidad local', cat_seafood: 'Mariscos', cat_meat: 'Carnes', cat_burger: 'Hamburguesas y casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorpréndeme',
-    show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...'
+    show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...',
+    bl_hotelscom_cta: 'Comparar en Hotels.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator'
   },
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
@@ -1521,7 +1524,8 @@ var TRANSLATIONS = {
     chat_greeting: 'Salut ! Je suis l\'assistante de voyage de Zenvoy. Posez-moi vos questions sur les destinations, le budget, les documents, ou tout ce qui concerne votre prochain voyage.',
     trip_domestic: '🏠 National', trip_international: '🌍 International',
     cat_local: 'Spécialité locale', cat_seafood: 'Fruits de mer', cat_meat: 'Viande', cat_burger: 'Burgers et décontracté', cat_veg: 'Végétarien', cat_surprise: 'Surprenez-moi',
-    show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option..."
+    show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option...",
+    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator'
   },
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
@@ -1582,7 +1586,8 @@ var TRANSLATIONS = {
     chat_greeting: 'Ciao! Sono l\'assistente di viaggio di Zenvoy. Chiedimi su destinazioni, budget, documenti o qualsiasi cosa riguardi il tuo prossimo viaggio.',
     trip_domestic: '🏠 Nazionale', trip_international: '🌍 Internazionale',
     cat_local: 'Specialità locale', cat_seafood: 'Pesce', cat_meat: 'Carne', cat_burger: 'Burger e casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorprendimi',
-    show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...'
+    show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...',
+    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator'
   }
 };
 
@@ -3593,7 +3598,7 @@ function renderCart() {
         var stayUrl = withAffiliateParam('https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest), 'aid', AFFILIATE_IDS.booking);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + escapeHtml(s.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(s.type||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.hotels + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.hotels + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
       });
     }
 
@@ -3607,7 +3612,7 @@ function renderCart() {
         var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + escapeHtml(c.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
       });
     }
 
@@ -3889,6 +3894,7 @@ async function fetchAlternativeOption(slotLabel, dest, category, existingTexts, 
 // current option, without touching the rest of the day card — keeps swaps
 // fast and avoids disrupting other slots' already-loaded TripAdvisor data.
 function refreshSlotDom(day, idx, slotLabel, dest) {
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var key = slotKeyFor(day, idx);
   var state = window._slotOptions[key];
   var text = state.texts[state.index];
@@ -3901,9 +3907,9 @@ function refreshSlotDom(day, idx, slotLabel, dest) {
   var slotId = 'ta-badge-' + key;
 
   var h = escapeHtml(text) + ' <span id="' + slotId + '" class="ta-badge"></span>';
-  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 Maps</a>';
-  if (isFood) h += '<a id="' + slotId + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-ta">Reviews</a>';
-  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">Book</a>';
+  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
+  if (isFood) h += '<a id="' + slotId + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
+  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
   h += '</div>';
   wrap.innerHTML = h;
   enrichSlotsWithTripAdvisor([{ slotId: slotId, placeName: placeName, dest: dest, category: taCategory }]);
@@ -3989,9 +3995,9 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
 
   var h = '<div class="ts"><div class="tt">' + escapeHtml(displayLabel || slotLabel) + '</div><div class="td">';
   h += '<div id="slot-content-' + key + '">' + escapeHtml(text) + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
-  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 Maps</a>';
-  if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">Reviews</a>';
-  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60)), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">Book</a>';
+  h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
+  if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
+  if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60)), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
   h += '</div></div>';
 
   // Swap arrows — let the traveler page through alternatives or fetch a new one
@@ -4089,7 +4095,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_breakfast_title+'</div>';
     fg.breakfast.forEach(function(s, idx) {
       var slotId = 'ta-badge-breakfast-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4098,7 +4104,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_lunch_title+'</div>';
     fg.lunch.forEach(function(s, idx) {
       var slotId = 'ta-badge-lunch-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4107,7 +4113,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_snack_title+'</div>';
     fg.afternoon_snack.forEach(function(s, idx) {
       var slotId = 'ta-badge-snack-'+idx;
-      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4116,7 +4122,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_dinner_title+'</div>';
     fg.dinner.forEach(function(s, idx) {
       var slotId = 'ta-badge-dinner-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' · '+escapeHtml(s.cuisine)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+(s.tip?' · 💡 '+escapeHtml(s.tip):'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' · '+escapeHtml(s.cuisine)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+(s.tip?' · 💡 '+escapeHtml(s.tip):'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4124,7 +4130,7 @@ function renderFood(fg, dest) {
   if (fg.street_food && fg.street_food.length) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_streetfood_title+'</div>';
     fg.street_food.forEach(function(s) {
-      h += '<div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">'+escapeHtml(s.name)+'</div><div class="info-val">'+escapeHtml(s.where)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.where+' '+dest)+'" target="_blank" class="bl bl-gm">Maps</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">'+escapeHtml(s.name)+'</div><div class="info-val">'+escapeHtml(s.where)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.where+' '+dest)+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
     });
     h += '</div>';
   }
@@ -4194,11 +4200,11 @@ function renderStays(accs, dest) {
     h += '</div>';
     h += '</div>';
     h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
-    h += '<a href="'+HOTELS_COM_LINKS.hotels+'" target="_blank" class="bl bl-featured">Compare on Hotels.com</a>';
+    h += '<a href="'+HOTELS_COM_LINKS.hotels+'" target="_blank" class="bl bl-featured">'+dict.bl_hotelscom_cta+'</a>';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
     h += '<a href="'+withAffiliateParam('https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest)), 'aid', AFFILIATE_IDS.booking)+'" target="_blank" class="bl bl-bk">Booking</a>';
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
-    h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-gm">Maps</a>';
+    h += '<a href="https://www.google.com/maps/search/'+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest))+'" target="_blank" class="bl bl-gm">'+dict.bl_maps+'</a>';
     h += '</div>';
     h += '</div>';
     // Only queue TripAdvisor enrichment for AI-estimated results — real
@@ -4303,7 +4309,7 @@ function renderFlights(flights, from, dest) {
     } else {
       searchUrl = 'https://www.skyscanner.com'; // last-resort fallback if we somehow have no route at all
     }
-    h += '<div class="bls" style="margin-top:10px;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">Search</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div>';
+    h += '<div class="bls" style="margin-top:10px;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">'+dict.bl_search+'</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div>';
   });
   document.getElementById('flightsContent').innerHTML = h;
   renderCart();
@@ -4345,10 +4351,11 @@ async function enrichCarsWithUnsplashImages(cars, dest) {
 function renderCars(cars, dest) {
   window._carsDest = dest;
   window._cars = cars;
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
-    + '<a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">Compare on Hotels.com</a>'
+    + '<a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a>'
     + '<a href="https://www.kayak.com/cars/' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-ky">Kayak</a>'
     + '<a href="https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-bk">RentalCars</a>'
     + '<a href="' + withAffiliateParam('https://www.discovercars.com/search?location=' + encodeURIComponent(destShort), 'a_aid', AFFILIATE_IDS.discovercars) + '" target="_blank" class="bl bl-gm">DiscoverCars</a>'
@@ -4361,7 +4368,6 @@ function renderCars(cars, dest) {
     return;
   }
 
-  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var hasReal = cars.some(function(c) { return c.isReal; });
   var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">' + (hasReal ? 'Live prices from Duffel:' : 'Estimated car rental options — compare real deals:') + '</p>' + fallbackLinks;
 
@@ -4420,10 +4426,11 @@ function renderBudget(bb, total) {
 }
 
 function renderTips(gems, dest) {
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var h = (gems||[]).map(function(g){
     return '<div class="gem"><div class="gem-t">'+escapeHtml(g.title||'Hidden gem')+'</div><div class="gem-d">"'+escapeHtml(g.tip||g)+'"</div></div>';
   }).join('');
-  h += '<div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="'+withAffiliateParam('https://www.viator.com/searchResults/all?text='+encodeURIComponent(dest), 'pid', AFFILIATE_IDS.viator)+'" target="_blank" class="bl bl-vi">Viator tours</a><a href="'+withAffiliateParam('https://www.getyourguide.com/s/?q='+encodeURIComponent(dest), 'partner_id', AFFILIATE_IDS.getyourguide)+'" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div>';
+  h += '<div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="'+withAffiliateParam('https://www.viator.com/searchResults/all?text='+encodeURIComponent(dest), 'pid', AFFILIATE_IDS.viator)+'" target="_blank" class="bl bl-vi">'+dict.bl_viator_tours+'</a><a href="'+withAffiliateParam('https://www.getyourguide.com/s/?q='+encodeURIComponent(dest), 'partner_id', AFFILIATE_IDS.getyourguide)+'" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div>';
   document.getElementById('tipsContent').innerHTML = h;
 }
 
