@@ -1028,6 +1028,33 @@ var HOTELS_COM_LINKS = {
   cars: 'https://www.kqzyfj.com/click-101838851-15857012'
 };
 
+// Builds a Hotels.com affiliate URL tagged with a CJ sub-ID identifying which
+// card the click came from, so CJ reporting can attribute revenue to specific
+// destinations/properties instead of one undifferentiated bucket.
+//
+// Why only a sub-ID and not a real deep link: verified by direct testing that
+// this link type ignores every standard CJ deep-link parameter (url, surl,
+// destination, murl, dlurl, cjsku) and always lands on the same fixed page,
+// while `sid` DOES survive the redirect chain (arriving as `wapa6=`). Until
+// CJ/Hotels.com provision deep-link-enabled links for this program, tagging
+// the click is the honest ceiling — we deliberately do NOT fake a deep link
+// that would look specific but silently drop attribution.
+//
+// `kind` is 'hotels' or 'cars'; `label` is free text (destination and/or
+// property name) which is sanitized to the alphanumeric/underscore form CJ
+// sub-IDs accept and truncated to stay within their length limit.
+function hotelsComLink(kind, label) {
+  var base = HOTELS_COM_LINKS[kind] || HOTELS_COM_LINKS.hotels;
+  if (!label) return base;
+  var sid = String(label)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip accents (São Paulo -> Sao Paulo)
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 50);
+  if (!sid) return base;
+  return base + (base.indexOf('?') === -1 ? '?' : '&') + 'sid=' + encodeURIComponent(kind + '_' + sid);
+}
+
 function withAffiliateParam(url, param, value) {
   if (!value) return url;
   return url + (url.indexOf('?') === -1 ? '?' : '&') + param + '=' + encodeURIComponent(value);
@@ -3618,7 +3645,7 @@ function renderCart() {
         var stayUrl = withAffiliateParam('https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest), 'aid', AFFILIATE_IDS.booking);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + escapeHtml(s.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(s.type||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.hotels + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + hotelsComLink('hotels', stayDest + ' ' + (s.name || '')) + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + stayUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.airbnb.com/s/' + encodeURIComponent(stayDest) + '/homes" target="_blank" class="bl bl-ab">Airbnb</a></div></div>';
       });
     }
 
@@ -3632,7 +3659,7 @@ function renderCart() {
         var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + escapeHtml(c.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + hotelsComLink('cars', carDest) + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a><a href="' + carUrl + '" target="_blank" class="bl bl-bk">' + (dict.cart_book||'Book now') + '</a><a href="https://www.kayak.com/cars/' + encodeURIComponent(carDest) + '" target="_blank" class="bl bl-ky">Kayak</a></div></div>';
       });
     }
 
@@ -4229,7 +4256,7 @@ function renderStays(accs, dest) {
     h += '</div>';
     h += '</div>';
     h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
-    h += '<a href="'+HOTELS_COM_LINKS.hotels+'" target="_blank" class="bl bl-featured">'+dict.bl_hotelscom_cta+'</a>';
+    h += '<a href="'+hotelsComLink('hotels', getQueryLocationForItem(a.name, dest) + ' ' + (a.name || ''))+'" target="_blank" class="bl bl-featured">'+dict.bl_hotelscom_cta+'</a>';
     if (isHostel) h += '<a href="https://www.hostelworld.com/findabed.php/ChosenCity.'+encodeURIComponent(dest)+'" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a>';
     h += '<a href="'+withAffiliateParam('https://www.booking.com/searchresults.html?ss='+encodeURIComponent(a.name+' '+getQueryLocationForItem(a.name, dest)), 'aid', AFFILIATE_IDS.booking)+'" target="_blank" class="bl bl-bk">Booking</a>';
     h += '<a href="https://www.airbnb.com/s/'+encodeURIComponent(dest)+'/homes" target="_blank" class="bl bl-ab">Airbnb</a>';
@@ -4384,7 +4411,7 @@ function renderCars(cars, dest) {
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
-    + '<a href="' + HOTELS_COM_LINKS.cars + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a>'
+    + '<a href="' + hotelsComLink('cars', destShort) + '" target="_blank" class="bl bl-featured">' + dict.bl_hotelscom_cta + '</a>'
     + '<a href="https://www.kayak.com/cars/' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-ky">Kayak</a>'
     + '<a href="https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(destShort) + '" target="_blank" class="bl bl-bk">RentalCars</a>'
     + '<a href="' + withAffiliateParam('https://www.discovercars.com/search?location=' + encodeURIComponent(destShort), 'a_aid', AFFILIATE_IDS.discovercars) + '" target="_blank" class="bl bl-gm">DiscoverCars</a>'
