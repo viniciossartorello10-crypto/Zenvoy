@@ -22,6 +22,13 @@ exports.handler = async function (event) {
   }
 
   const { contents, maxTokens } = body;
+  // Itinerary generation is a factual-recall task (name real, currently-open
+  // venues this destination is actually known for), not a creative-writing
+  // one. A high temperature actively encourages plausible-sounding invention
+  // over accurate recall — which is what produced generic "jazz bar"-style
+  // filler instead of a destination's real signature venues. Callers may
+  // still override per-request; 0.35 is the default for everything now.
+  const temperature = typeof body.temperature === 'number' ? body.temperature : 0.35;
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -50,7 +57,7 @@ exports.handler = async function (event) {
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
           body: JSON.stringify({
             contents: contents,
-            generationConfig: { maxOutputTokens: maxTokens || 1000, temperature: 0.7 }
+            generationConfig: { maxOutputTokens: maxTokens || 1000, temperature: temperature }
           })
         });
 
