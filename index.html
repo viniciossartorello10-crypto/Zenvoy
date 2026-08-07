@@ -3553,6 +3553,7 @@ var currentCityTab = null;
 // stay and one car per city (keyed by city so multi-destination trips can
 // have a different hotel/car pick in each place).
 var tripCart = { flight: null, stays: {}, cars: {} };
+var _regenInProgress = false;
 
 function cartCityKey() { return currentCityTab || '_single'; }
 
@@ -3680,6 +3681,13 @@ function renderCart() {
   if (tabContainer) tabContainer.innerHTML = h;
   var modalContainer = document.getElementById('cartModalContent');
   if (modalContainer) modalContainer.innerHTML = h;
+
+  // If regen is running, re-disable the freshly rendered button — renderCart()
+  // rebuilds the DOM from scratch so the disabled state is otherwise lost.
+  if (_regenInProgress) {
+    var regenBtn = document.getElementById('regenItinBtn');
+    if (regenBtn) { regenBtn.disabled = true; regenBtn.textContent = (TRANSLATIONS[appLang] || TRANSLATIONS.en).cart_regen_loading || 'Building your new itinerary...'; }
+  }
 }
 
 // Rebuilds ONLY the day-by-day itinerary + tips, using the REAL flight
@@ -3693,6 +3701,7 @@ async function regenerateItineraryFromCart() {
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var btn = document.getElementById('regenItinBtn');
   var originalBtnText = btn ? btn.textContent : '';
+  _regenInProgress = true;
   if (btn) { btn.disabled = true; btn.textContent = dict.cart_regen_loading || 'Building your new itinerary...'; }
 
   try {
@@ -3722,21 +3731,22 @@ async function regenerateItineraryFromCart() {
     var allDays = [];
     for (var i = 0; i < ranges.length; i++) {
       var r = ranges[i];
+      var rStart = r[0], rEnd = r[1];
       var dayPrompt = 'You are Zenvoy, an elite local travel expert writing a day-by-day itinerary as if you actually live in ' + p.destination + '. Return ONLY a valid JSON array, no markdown, no explanation.\n\n' + langInstruction + '\n\n'
-        + 'Destination: ' + p.destination + logisticsNote + (r.start === 1 ? '' : '') + '\n\n'
-        + 'Generate the full detailed itinerary for days ' + r.start + ' through ' + r.end + ' ONLY (this is part of a longer ' + totalDays + '-day trip — do not summarize or skip days).\n\n'
+        + 'Destination: ' + p.destination + logisticsNote + '\n\n'
+        + 'Generate the full detailed itinerary for days ' + rStart + ' through ' + rEnd + ' ONLY (this is part of a longer ' + totalDays + '-day trip — do not summarize or skip days).\n\n'
         + 'Traveler style: ' + regenStyle + '. Interests: ' + regenInterests + '.\n\n'
         + 'BEFORE writing anything, think about what ' + p.destination + ' is SPECIFICALLY and GENUINELY famous for within this traveler\'s interests (' + regenInterests + ') — then draw your suggestions from that, not from a generic template of the category. Every destination expresses a category differently: "nightlife" means beach clubs in Florianópolis, techno warehouses in Berlin, live-music bars in New Orleans, izakayas in Tokyo — these are NOT interchangeable. If a well-known, genuinely popular venue defines that scene locally, NAME IT. A suggestion that would fit equally well in fifty other cities is a failure, even when it technically matches the category.\n\n'
         + 'CRITICAL: "early_bird", "balanced", and "night_owl" are three FULLY SEPARATE, fully-detailed versions of the same day — never leave one thin or generic. Every field in all three must be filled with real, specific, named places, genuinely differing in pacing. Every field must always contain a real suggestion — never "N/A", "none", or empty.\n\n'
         + 'Return an array, one object per day, in this exact shape:\n'
-        + '[{"day":' + r.start + ',"theme":"specific, evocative theme naming the area/neighborhood","img_kw":"one keyword for image search",'
+        + '[{"day":' + rStart + ',"theme":"specific, evocative theme naming the area/neighborhood","img_kw":"one keyword for image search",'
         + '"early_bird":{"morning":"7am — activity at a named place","breakfast":"cafe — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"activity at a named place","dinner":"restaurant — dish — '+curSym()+'X","night":"evening suggestion"},'
         + '"balanced":{"morning":"activity at a named place","breakfast":"cafe — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"activity at a named place","dinner":"restaurant — dish — '+curSym()+'X","night":"evening suggestion"},'
         + '"night_owl":{"morning":"11am brunch","breakfast":"brunch spot — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"activity at a named place","dinner":"restaurant — dish — '+curSym()+'X","night":"the specific, locally-famous venue this destination is really known for (name it)"}}]';
-      if (r.start === 1) dayPrompt += '\n\nRemember: Day 1 must respect the real flight arrival and hotel check-in noted above.';
-      if (r.end === totalDays) dayPrompt += '\n\nRemember: the final day should leave enough time to return the rental car and get to the airport.';
+      if (rStart === 1) dayPrompt += '\n\nRemember: Day 1 must respect the real flight arrival and hotel check-in noted above.';
+      if (rEnd === totalDays) dayPrompt += '\n\nRemember: the final day should leave enough time to return the rental car and get to the airport.';
 
-      var parsedDays = await generateDayChunk(dayPrompt, r.start, r.end);
+      var parsedDays = await generateDayChunk(dayPrompt, rStart, rEnd);
       allDays = allDays.concat(parsedDays);
     }
 
@@ -3761,6 +3771,7 @@ async function regenerateItineraryFromCart() {
     console.error('Itinerary regeneration from cart failed:', e);
     alert(dict.cart_regen_error || 'Could not rebuild the itinerary right now — please try again.');
   } finally {
+    _regenInProgress = false;
     if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
   }
 }
