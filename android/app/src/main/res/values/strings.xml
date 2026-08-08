@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Zenvoy</string>
+    <string name="title_activity_main">Zenvoy</string>
+    <string name="package_name">com.zenvoy.app</string>
+    <string name="custom_url_scheme">com.zenvoy.app</string>
+</resources>
