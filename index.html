@@ -1086,7 +1086,7 @@ function bookingDeepLink(type, destUrl, label) {
 function bookingHotelUrl(hotelName, dest) {
   var p = window.planData || {};
   var ss = hotelName ? hotelName + ' ' + dest : dest;
-  var url = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(ss) + '&no_rooms=1';
+  var url = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(ss) + '&no_rooms=1&aid=8133101';
   if (p.checkIn)   url += '&checkin='      + encodeURIComponent(p.checkIn);
   if (p.checkOut)  url += '&checkout='     + encodeURIComponent(p.checkOut);
   if (p.travelers) url += '&group_adults=' + encodeURIComponent(p.travelers);
@@ -1097,7 +1097,7 @@ function bookingHotelUrl(hotelName, dest) {
 function bookingCarUrl(dest) {
   var p = window.planData || {};
   var loc = (dest || '').split(',')[0].split('\u2192')[0].trim();
-  var url = 'https://cars.booking.com/?picked_up=' + encodeURIComponent(loc);
+  var url = 'https://cars.booking.com/?picked_up=' + encodeURIComponent(loc) + '&aid=8133101';
   if (p.checkIn)  url += '&pickup_date='  + encodeURIComponent(p.checkIn  + 'T10:00:00');
   if (p.checkOut) url += '&dropoff_date=' + encodeURIComponent(p.checkOut + 'T10:00:00');
   return url;
@@ -1107,7 +1107,7 @@ function bookingCarUrl(dest) {
 function bookingFlightUrl(fromIata, toIata, depDate) {
   var p = window.planData || {};
   if (fromIata && toIata) {
-    var url = 'https://www.booking.com/flights/search.html?type=ROUNDTRIP'
+    var url = 'https://www.booking.com/flights/search.html?type=ROUNDTRIP&aid=8133101'
       + '&from_iata=' + encodeURIComponent(fromIata)
       + '&to_iata='   + encodeURIComponent(toIata);
     var date = depDate || p.checkIn || '';
@@ -1115,7 +1115,7 @@ function bookingFlightUrl(fromIata, toIata, depDate) {
     if (p.travelers) url += '&adults='      + encodeURIComponent(p.travelers);
     return url;
   }
-  return 'https://www.booking.com/flights/';
+  return 'https://www.booking.com/flights/?aid=8133101';
 }
 
 // Pre-filled Booking.com attractions search URL.
@@ -3721,7 +3721,7 @@ function renderCart() {
         var stayUrl = withAffiliateParam('https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest), 'aid', AFFILIATE_IDS.booking);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + escapeHtml(s.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(s.type||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingDeepLink('hotels', bookingHotelUrl(s.name, stayDest), s.name+' '+stayDest) + '" target="_blank" class="bl bl-featured">Booking.com</a><a href="' + hotelsComLink('hotels', s.name+' '+stayDest) + '" target="_blank" class="bl bl-bk">Hotels.com</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingHotelUrl(s.name, stayDest) + '" target="_blank" class="bl bl-featured">Booking.com</a><a href="' + hotelsComLink('hotels', s.name+' '+stayDest) + '" target="_blank" class="bl bl-bk">Hotels.com</a></div></div>';
       });
     }
 
@@ -3735,7 +3735,7 @@ function renderCart() {
         var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + escapeHtml(c.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingDeepLink('cars', bookingCarUrl(carDest), carDest) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingCarUrl(carDest) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a></div></div>';
       });
     }
 
@@ -4348,7 +4348,7 @@ function renderStays(accs, dest) {
     h += '</div>';
     h += '</div>';
     h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
-    h += '<a href="'+bookingDeepLink('hotels', bookingHotelUrl(a.name, dest), a.name+' '+dest)+'" target="_blank" class="bl bl-featured">Booking.com</a>';
+    h += '<a href="'+bookingHotelUrl(a.name, dest)+'" target="_blank" class="bl bl-featured">Booking.com</a>';
     h += '<a href="'+hotelsComLink('hotels', a.name+' '+dest)+'" target="_blank" class="bl bl-bk">Hotels.com</a>';
     h += '</div>';
     h += '</div>';
@@ -4415,7 +4415,7 @@ function renderFlights(flights, from, dest) {
   h += '<option value="price_asc"'+(flightSortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
   h += '<option value="price_desc"'+(flightSortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
   h += '</select></div>';
-  h += '<div class="bls" style="margin-bottom:16px"><a href="'+bookingDeepLink('flights', bookingFlightUrl(from.split(',')[0], dest.split(',')[0]), from.split(',')[0]+'-'+dest.split(',')[0])+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
+  h += '<div class="bls" style="margin-bottom:16px"><a href="'+bookingFlightUrl(from.split(',')[0], dest.split(',')[0])+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
   sorted.forEach(function(f) {
     var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
     var inCart = isFlightInCart(f);
@@ -4500,7 +4500,7 @@ function renderCars(cars, dest) {
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
-    + '<a href="' + bookingDeepLink('cars', bookingCarUrl(destShort), destShort) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a>'
+    + '<a href="' + bookingCarUrl(destShort) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a>'
     + '</div>';
 
   if (!cars || !cars.length) {
