@@ -1082,15 +1082,64 @@ function bookingDeepLink(type, destUrl, label) {
   return url;
 }
 
-// Pre-filled Booking.com hotel search URL (destination + dates + guests).
+// ISO-3166-1 alpha-2 codes for Booking.com hotel page URLs (/hotel/<cc>/<slug>.html).
+var BOOKING_COUNTRY_CODES = {
+  'brazil':'br','brasil':'br','france':'fr','united states':'us','usa':'us',
+  'spain':'es','italy':'it','portugal':'pt','japan':'jp','germany':'de',
+  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb','wales':'gb',
+  'argentina':'ar','mexico':'mx','thailand':'th','indonesia':'id','bali':'id',
+  'australia':'au','canada':'ca','netherlands':'nl','belgium':'be',
+  'switzerland':'ch','austria':'at','greece':'gr','turkey':'tr',
+  'croatia':'hr','czech republic':'cz','czechia':'cz','hungary':'hu',
+  'poland':'pl','colombia':'co','peru':'pe','chile':'cl','uruguay':'uy',
+  'india':'in','china':'cn','south korea':'kr','vietnam':'vn','cambodia':'kh',
+  'singapore':'sg','malaysia':'my','philippines':'ph','new zealand':'nz',
+  'south africa':'za','egypt':'eg','morocco':'ma','kenya':'ke',
+  'iceland':'is','norway':'no','sweden':'se','denmark':'dk','finland':'fi',
+  'israel':'il','uae':'ae','united arab emirates':'ae','qatar':'qa',
+  'saudi arabia':'sa','jordan':'jo','georgia':'ge','ireland':'ie',
+  'romania':'ro','bulgaria':'bg','slovakia':'sk','slovenia':'si',
+  'ecuador':'ec','bolivia':'bo','paraguay':'py','venezuela':'ve',
+  'cuba':'cu','costa rica':'cr','panama':'pa','dominican republic':'do'
+};
+
+// Extract Booking.com country code from destination string or planData.
+function _bookingCountryCode(dest) {
+  var p = window.planData || {};
+  var haystack = ((dest || '') + ' ' + (p.destination || '')).toLowerCase();
+  for (var c in BOOKING_COUNTRY_CODES) {
+    if (haystack.indexOf(c) >= 0) return BOOKING_COUNTRY_CODES[c];
+  }
+  return null;
+}
+
+// Convert a hotel name to a Booking.com URL slug.
+function _bookingHotelSlug(name) {
+  if (!name) return '';
+  return name.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Build Booking.com hotel URL: tries /hotel/<cc>/<slug>.html (direct page) first;
+// falls back to searchresults if country code is unknown.
 function bookingHotelUrl(hotelName, dest) {
   var p = window.planData || {};
+  var cc = _bookingCountryCode(dest);
+  var params = '?aid=8133101&no_rooms=1';
+  if (p.checkIn)   params += '&checkin='      + encodeURIComponent(p.checkIn);
+  if (p.checkOut)  params += '&checkout='     + encodeURIComponent(p.checkOut);
+  if (p.travelers) params += '&group_adults=' + encodeURIComponent(p.travelers);
+  if (hotelName && cc) {
+    return 'https://www.booking.com/hotel/' + cc + '/' + _bookingHotelSlug(hotelName) + '.html' + params;
+  }
   var ss = hotelName ? hotelName + ' ' + dest : dest;
-  var url = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(ss) + '&no_rooms=1&aid=8133101';
-  if (p.checkIn)   url += '&checkin='      + encodeURIComponent(p.checkIn);
-  if (p.checkOut)  url += '&checkout='     + encodeURIComponent(p.checkOut);
-  if (p.travelers) url += '&group_adults=' + encodeURIComponent(p.travelers);
-  return url;
+  return 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(ss) + '&no_rooms=1&aid=8133101'
+    + (p.checkIn   ? '&checkin='      + encodeURIComponent(p.checkIn)   : '')
+    + (p.checkOut  ? '&checkout='     + encodeURIComponent(p.checkOut)  : '')
+    + (p.travelers ? '&group_adults=' + encodeURIComponent(p.travelers) : '');
 }
 
 // Pre-filled Booking.com cars search URL.
