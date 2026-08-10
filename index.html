@@ -43,7 +43,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#8B96A8;--slate:#2D3A52;--page-bg:var(--cream);--page-text:var(--navy);--card-bg:var(--white)}
+:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#6B7789;--slate:#2D3A52;--page-bg:var(--cream);--page-text:var(--navy);--card-bg:var(--white);--body-text:#5A6478;--hairline:rgba(11,15,26,.08);--border:rgba(11,15,26,.15);--surface-tint:rgba(11,15,26,.05);--live:#2E7D32;--live-bg:rgba(46,125,50,.1)}
 /* Dark theme — separate variables from --navy/--cream/--white on purpose:
    those three are also used as fixed decorative colors (the hero, nav bar,
    and modals are always-dark navy with white text by design, unrelated to
@@ -51,7 +51,11 @@
    should stay legible the same way in both themes. Only --page-bg/
    --page-text/--card-bg — the actual page background/body-text/card-surface
    roles — flip here. */
-[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8}
+/* Dark-theme counterparts. Body copy, hairlines, chip fills and the LIVE
+   badge were all hardcoded to near-black values that vanished against the
+   dark card surface — every one of them is now a variable with a real dark
+   value. --body-text sits at 9.9:1 on --card-bg, --muted at 6.5:1. */
+[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.11);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15)}
 body{font-family:'Inter',sans-serif;background:var(--page-bg);color:var(--page-text);transition:background .2s,color .2s}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)}
 .logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:0}.logo span{color:var(--gold)}
@@ -91,13 +95,13 @@ h1 em{font-style:italic;color:var(--gold)}
 .hero-btn:hover{background:var(--gold2)}
 .planner{padding:80px 24px;background:var(--page-bg)}
 .planner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,48px);font-weight:400;text-align:center;margin-bottom:8px}
-.planner p{text-align:center;color:#5A6478;font-size:15px;margin-bottom:40px}
-.card{background:var(--card-bg);border-radius:20px;border:1px solid rgba(11,15,26,.08);padding:36px;max-width:900px;margin:0 auto}
+.planner p{text-align:center;color:var(--body-text);font-size:15px;margin-bottom:40px}
+.card{background:var(--card-bg);border-radius:20px;border:1px solid var(--hairline);padding:36px;max-width:900px;margin:0 auto}
 .wizard-step{display:none;animation:wiz-fade-in .25s ease}
 .wizard-step.active{display:block}
 @keyframes wiz-fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .wizard-progress{display:flex;justify-content:center;gap:8px;margin-bottom:28px}
-.wiz-dot{width:8px;height:8px;border-radius:50%;background:rgba(11,15,26,.12);transition:all .2s}
+.wiz-dot{width:8px;height:8px;border-radius:50%;background:var(--surface-tint);transition:all .2s}
 .wiz-dot.done{background:var(--gold)}
 .wiz-dot.on{background:var(--navy);width:22px;border-radius:5px}
 .wizard-msg{display:flex;align-items:center;gap:14px;background:var(--navy);border:1px solid rgba(201,169,110,.35);border-radius:16px;padding:16px 20px;margin-bottom:24px;box-shadow:0 4px 14px rgba(11,15,26,.08)}
@@ -112,9 +116,9 @@ h1 em{font-style:italic;color:var(--gold)}
 .building-mascot-bounce svg{width:100%;height:100%}
 @keyframes mascot-think{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
 @keyframes building-spin{to{transform:rotate(360deg)}}
-.building-status{font-size:15px;color:#3d4454;min-height:22px}
+.building-status{font-size:15px;color:var(--body-text);min-height:22px}
 .building-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--page-text);margin-bottom:10px}
-.pkg-card{border:2px solid rgba(11,15,26,.1);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .18s;background:var(--card-bg)}
+.pkg-card{border:2px solid var(--hairline);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .18s;background:var(--card-bg)}
 .pkg-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 20px rgba(11,15,26,.08)}
 .pkg-emoji{font-size:32px;margin-bottom:8px}
 .pkg-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--page-text);margin-bottom:4px}
@@ -124,14 +128,14 @@ h1 em{font-style:italic;color:var(--gold)}
 @media(max-width:640px){#packageCards{grid-template-columns:1fr!important}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
-.field label{display:block;font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--body-text);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .ac-wrap{position:relative}
-input,select{width:100%;padding:11px 14px;border:1px solid rgba(11,15,26,.15);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
+input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
 input::placeholder{color:#aaa}
-.dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card-bg);border:1px solid rgba(11,15,26,.12);border-radius:10px;z-index:500;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
+.dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;z-index:500;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
 .dropdown.show{display:block}
-.drop-item{padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:.5px solid rgba(11,15,26,.06);transition:background .15s}
+.drop-item{padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:.5px solid var(--hairline);transition:background .15s}
 .drop-item:last-child{border-bottom:none}
 .drop-item:hover{background:var(--page-bg)}
 .drop-flag{font-size:18px}
@@ -141,19 +145,19 @@ input::placeholder{color:#aaa}
 .surprise:hover{opacity:.88}
 .dest-row{display:flex;gap:8px;align-items:flex-end}
 .dest-row .ac-wrap{flex:1}
-.section-title{font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:28px;display:block;padding-top:20px;border-top:1px solid rgba(11,15,26,.06)}
+.section-title{font-size:11px;font-weight:600;color:var(--body-text);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;margin-top:28px;display:block;padding-top:20px;border-top:1px solid var(--hairline)}
 .section-title:first-of-type{margin-top:0;padding-top:0;border-top:none}
 .pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-.pill{padding:9px 18px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;transition:all .18s;background:transparent;font-family:'Inter',sans-serif}
+.pill{padding:9px 18px;border-radius:40px;border:1px solid var(--border);font-size:13px;color:var(--body-text);cursor:pointer;transition:all .18s;background:transparent;font-family:'Inter',sans-serif}
 .pill:hover,.pill.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
 .rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
-.rcard{border:1px solid rgba(11,15,26,.12);border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:all .18s;background:var(--page-bg)}
+.rcard{border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:all .18s;background:var(--page-bg)}
 .rcard:hover,.rcard.on{border:2px solid var(--gold);background:rgba(201,169,110,.07)}
 .rcard .ri{font-size:22px;margin-bottom:6px}
 .rcard .rt{font-size:12px;font-weight:600;color:var(--page-text);margin-bottom:3px}
 .rcard .rd{font-size:11px;color:var(--muted)}
-.btog{display:flex;border:1px solid rgba(11,15,26,.12);border-radius:8px;overflow:hidden;margin-bottom:8px}
-.btog button{flex:1;padding:8px;border:none;background:transparent;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:#5A6478;transition:background .15s}
+.btog{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px}
+.btog button{flex:1;padding:8px;border:none;background:transparent;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;color:var(--body-text);transition:background .15s}
 .btog button.on{background:var(--navy);color:#fff}
 .submit{width:100%;padding:17px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:500;letter-spacing:.04em;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
 .submit:hover{background:var(--slate)}
@@ -170,27 +174,27 @@ input::placeholder{color:#aaa}
 .rhero-tag{font-size:13px;color:rgba(232,226,213,.8);margin-top:4px}
 .rmeta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .rmpill{background:rgba(201,169,110,.2);border:1px solid rgba(201,169,110,.35);color:var(--gold2);padding:3px 12px;border-radius:40px;font-size:12px}
-.city-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin-bottom:6px;border-bottom:1px solid rgba(11,15,26,.08)}
-.city-tab-btn{padding:8px 18px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;font-weight:500;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
+.city-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin-bottom:6px;border-bottom:1px solid var(--hairline)}
+.city-tab-btn{padding:8px 18px;border-radius:40px;border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--body-text);cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
 .city-tab-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.tabs{display:flex;border-bottom:1px solid rgba(11,15,26,.1);margin-bottom:20px;overflow-x:auto}
-.tab{padding:11px 18px;font-size:13px;font-weight:500;color:#5A6478;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:all .2s}
+.tabs{display:flex;border-bottom:1px solid var(--hairline);margin-bottom:20px;overflow-x:auto}
+.tab{padding:11px 18px;font-size:13px;font-weight:500;color:var(--body-text);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:all .2s}
 .tab.on{color:var(--page-text);border-bottom-color:var(--gold)}
 .tp{display:none}.tp.on{display:block}
 .rtabs{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
-.rtab{padding:7px 16px;border-radius:40px;border:1px solid rgba(11,15,26,.15);font-size:13px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
+.rtab{padding:7px 16px;border-radius:40px;border:1px solid var(--border);font-size:13px;color:var(--body-text);cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .18s}
 .rtab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.dc{background:var(--card-bg);border-radius:14px;border:1px solid rgba(11,15,26,.07);margin-bottom:12px;overflow:hidden}
+.dc{background:var(--card-bg);border-radius:14px;border:1px solid var(--hairline);margin-bottom:12px;overflow:hidden}
 .dc-img{height:160px;background-size:cover;background-position:center;position:relative;background-color:var(--slate)}
 .dc-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,15,26,.6) 0%,transparent 60%)}
 .dc-img-lbl{position:absolute;bottom:12px;left:16px;font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff}
 .dc-body{padding:18px}
 .dlabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
 .dth{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:12px}
-.ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid rgba(11,15,26,.05)}
+.ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
-.td{font-size:13px;color:#3A4557;line-height:1.6}
+.td{font-size:13px;color:var(--body-text);line-height:1.6}
 .slot-swap-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(201,169,110,.08);border-radius:20px;width:fit-content}
 .slot-swap-label{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
 .slot-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);background:var(--card-bg);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);transition:all .15s;font-weight:700}
@@ -200,9 +204,9 @@ input::placeholder{color:#aaa}
 @keyframes slot-spin{to{transform:rotate(360deg)}}
 .slot-dots{font-size:10px;color:var(--muted)}
 .food-cat-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.food-cat-chip{padding:3px 10px;border-radius:20px;border:1px solid rgba(11,15,26,.12);font-size:10px;color:#5A6478;cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
+.food-cat-chip{padding:3px 10px;border-radius:20px;border:1px solid var(--border);font-size:10px;color:var(--body-text);cursor:pointer;background:transparent;font-family:'Inter',sans-serif;transition:all .15s}
 .food-cat-chip:hover,.food-cat-chip.on{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500}
-.leg-row{display:block;margin-top:10px;padding:12px;border:1px solid rgba(11,15,26,.1);border-radius:10px;background:rgba(11,15,26,.02);position:relative}
+.leg-row{display:block;margin-top:10px;padding:12px;border:1px solid var(--hairline);border-radius:10px;background:var(--surface-tint);position:relative}
 .leg-row .ac-wrap{width:100%;margin-bottom:8px}
 .leg-row .ac-wrap input{width:100%}
 .leg-dates-row{display:flex;gap:10px;align-items:flex-end}
@@ -212,14 +216,14 @@ input::placeholder{color:#aaa}
 .leg-days-badge{font-size:11px;color:var(--gold);font-weight:600;white-space:nowrap;padding-bottom:7px}
 .leg-row .ac-wrap{flex:1}
 .leg-remove{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1px solid rgba(220,53,69,.3);background:var(--card-bg);color:#c33;font-size:12px;cursor:pointer;flex-shrink:0}
-.dest-item-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 12px;border:1px solid rgba(11,15,26,.1);border-radius:10px;margin-bottom:8px;background:rgba(11,15,26,.02);position:relative}
+.dest-item-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 12px;border:1px solid var(--hairline);border-radius:10px;margin-bottom:8px;background:var(--surface-tint);position:relative}
 .dest-item-left{flex:1;min-width:0}
 .dest-item-left .ac-wrap{width:100%}
 .dest-item-left input{width:100%}
 .dest-item-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .dest-item-daterange{font-size:11px;color:var(--muted);white-space:nowrap}
 .dest-item-days{display:flex;align-items:center;gap:6px}
-.dest-item-days label{font-size:11px;color:#5A6478;white-space:nowrap}
+.dest-item-days label{font-size:11px;color:var(--body-text);white-space:nowrap}
 .dest-item-days input{width:56px;padding:6px 8px;font-size:13px;border-radius:8px}
 .dest-item-row .leg-remove{position:static;margin-left:2px}
 @media(max-width:640px){.dest-item-row{flex-direction:column;align-items:stretch}.dest-item-right{justify-content:space-between}}
@@ -237,16 +241,16 @@ input::placeholder{color:#aaa}
    reads as "this app's usual way of marking something important," not a
    foreign ad pattern. */
 .bl-featured{background:var(--gold);color:var(--navy);font-weight:700;padding:6px 14px;box-shadow:0 2px 6px rgba(201,169,110,.4);order:-1}
-.acc-card{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
-.acc-photo{width:100%;height:180px;background-size:cover;background-position:center;border-radius:12px;margin-bottom:12px;display:none;background-color:rgba(11,15,26,.05)}
+.acc-card{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid var(--hairline);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
+.acc-photo{width:100%;height:180px;background-size:cover;background-position:center;border-radius:12px;margin-bottom:12px;display:none;background-color:var(--surface-tint)}
 .acc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:3px}
 .acc-loc{font-size:12px;color:var(--muted);margin-bottom:6px}
 .acc-stars{color:var(--gold);font-size:13px;margin-bottom:8px}
 .acc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
-.acc-tag{font-size:11px;color:#5A6478;background:rgba(11,15,26,.06);padding:2px 9px;border-radius:20px}
+.acc-tag{font-size:11px;color:var(--body-text);background:var(--surface-tint);padding:2px 9px;border-radius:20px}
 .acc-foot{display:flex;justify-content:space-between;align-items:center}
 .acc-price{font-family:'Cormorant Garamond',serif;font-size:24px}
-.fc{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid rgba(11,15,26,.06);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
+.fc{background:var(--card-bg);border-radius:16px;padding:18px;border:1px solid var(--hairline);margin-bottom:12px;box-shadow:0 2px 12px rgba(11,15,26,.04)}
 .fr{display:flex;align-items:center;gap:16px;margin:16px 0;padding:16px 18px;background:rgba(201,169,110,.05);border-radius:12px}
 .fcity{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400}
 .fmid{flex:1;text-align:center;padding:0 6px}
@@ -256,26 +260,26 @@ input::placeholder{color:#aaa}
 .fline::after{content:'✈';position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:24px;color:var(--gold);background:var(--page-bg);padding:0 8px;animation:plane-hover 2.2s ease-in-out infinite}
 @keyframes plane-hover{0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg)}50%{transform:translateX(-50%) translateY(-4px) rotate(3deg)}}
 .bbd{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
-.bbi{background:var(--page-bg);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(11,15,26,.06)}
+.bbi{background:var(--page-bg);border-radius:12px;padding:14px;text-align:center;border:1px solid var(--hairline)}
 .bba{font-family:'Cormorant Garamond',serif;font-size:24px}
 .bbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .bbar{height:3px;border-radius:2px;background:var(--gold);margin-top:6px}
 .gem{background:var(--navy);border-radius:12px;padding:20px;border-left:3px solid var(--gold);margin-bottom:10px}
 .gem-t{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 .gem-d{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(232,226,213,.9);line-height:1.5;font-style:italic}
-.info-box{background:var(--card-bg);border-radius:12px;padding:18px;border:1px solid rgba(11,15,26,.07);margin-bottom:10px}
+.info-box{background:var(--card-bg);border-radius:12px;padding:18px;border:1px solid var(--hairline);margin-bottom:10px}
 .ta-card-wrap{display:block;margin-top:6px}
-.ta-card{background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.25);border-radius:8px;padding:8px 10px;font-size:11px;color:#3A4557;margin-top:2px}
+.ta-card{background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.25);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--body-text);margin-top:2px}
 .ta-card-top{font-weight:600;color:var(--gold);margin-bottom:3px}
-.ta-card-addr{color:#5A6478;margin-bottom:4px}
+.ta-card-addr{color:var(--body-text);margin-bottom:4px}
 .ta-card-link{color:var(--gold);text-decoration:none;font-weight:500;font-size:11px}
 .ta-card-link:hover{text-decoration:underline}
 .info-t{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:10px}
-.info-row{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid rgba(11,15,26,.05)}
+.info-row{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .info-row:last-child{border-bottom:none}
 .info-icon{font-size:15px;width:22px;flex-shrink:0}
 .info-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.info-val{font-size:13px;color:#3A4557;line-height:1.5}
+.info-val{font-size:13px;color:var(--body-text);line-height:1.5}
 .cap{padding:80px 24px;background:#1A2235;text-align:center}
 .cap h2{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:400;color:#fff;margin-bottom:12px}
 .cap p{color:var(--muted);font-size:15px;margin-bottom:32px}
@@ -294,7 +298,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   body.printing nav,body.printing .hero,body.printing .planner,body.printing .cap,body.printing footer{display:none!important}
   body.printing #printArea{display:block!important;font-family:'Inter',sans-serif;color:#0B0F1A}
   #printArea h1{font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:4px}
-  #printArea .p-meta{font-size:12px;color:#5A6478;margin-bottom:18px}
+  #printArea .p-meta{font-size:12px;color:var(--body-text);margin-bottom:18px}
   #printArea .p-day{page-break-inside:avoid;margin-bottom:16px;border:1px solid #ddd;border-radius:8px;padding:12px}
   #printArea .p-day h2{font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:8px}
   #printArea .p-slot{font-size:12px;margin:4px 0;line-height:1.5}
@@ -522,7 +526,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           </div>
         </div>
         <div id="extraLegsContainer"></div>
-        <button type="button" onclick="addDestinationLeg()" data-i18n="add_destination_btn" style="margin-top:2px;background:transparent;border:1px dashed rgba(11,15,26,.25);color:#5A6478;font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">+ Add another destination</button>
+        <button type="button" onclick="addDestinationLeg()" data-i18n="add_destination_btn" style="margin-top:2px;background:transparent;border:1px dashed var(--border);color:var(--body-text);font-size:12px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif">+ Add another destination</button>
       </div>
 
     </div>
@@ -634,15 +638,15 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
       <div class="rcard on" onclick="pickRhythm(this,&#39;relaxed&#39;)"><div class="ri">🌊</div><div class="rt" data-i18n="rh_relaxed_t">Very relaxed</div><div class="rd" data-i18n="rh_relaxed_d">1–2 things a day, chill</div></div>
     </div>
 
-    <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(11,15,26,.06)">
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--hairline)">
       <span class="section-title" style="margin-top:0;padding-top:0;border-top:none" data-i18n="extra_notes_title">Anything else we should know?</span>
-      <textarea id="extraNotes" data-i18n-placeholder="extra_notes_ph" placeholder="e.g. celebrating an anniversary, traveling with a stroller, love spicy food, avoid long walks..." style="width:100%;min-height:80px;padding:14px 16px;border-radius:12px;border:1px solid rgba(11,15,26,.15);font-size:14px;font-family:'Inter',sans-serif;resize:vertical;outline:none"></textarea>
+      <textarea id="extraNotes" data-i18n-placeholder="extra_notes_ph" placeholder="e.g. celebrating an anniversary, traveling with a stroller, love spicy food, avoid long walks..." style="width:100%;min-height:80px;padding:14px 16px;border-radius:12px;border:1px solid var(--border);font-size:14px;font-family:'Inter',sans-serif;resize:vertical;outline:none"></textarea>
     </div>
 
     </div>
 
     <div id="wizardNavRow" style="display:flex;align-items:center;gap:10px;margin-top:8px">
-      <button type="button" id="wizBackBtn" onclick="wizardBack()" style="display:none;align-items:center;justify-content:center;background:transparent;border:1px solid rgba(11,15,26,.15);color:#5A6478;padding:15px 22px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap" data-i18n="wizard_back">← Back</button>
+      <button type="button" id="wizBackBtn" onclick="wizardBack()" style="display:none;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--body-text);padding:15px 22px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap" data-i18n="wizard_back">← Back</button>
       <button class="submit" id="planBtn" onclick="handlePrimaryButton()" style="flex:1">
         <span class="spin" id="planSpin" style="display: none;"></span>
         <span id="planTxt" data-i18n="wizard_next">Next →</span>
@@ -688,20 +692,20 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
           <button class="rtab" data-i18n="rt_night" onclick="switchR(&#39;night_owl&#39;,this)">🌙 Night owl</button>
         </div>
         <div id="dayNav" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
-          <button id="dayPrevBtn" onclick="goToDay(-1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">←</button>
+          <button id="dayPrevBtn" onclick="goToDay(-1)" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">←</button>
           <div style="text-align:center;flex:1">
-            <div style="font-size:11px;font-weight:600;color:#5A6478;text-transform:uppercase;letter-spacing:.07em" id="dayNavLabel">Day 1 of 1</div>
+            <div style="font-size:11px;font-weight:600;color:var(--body-text);text-transform:uppercase;letter-spacing:.07em" id="dayNavLabel">Day 1 of 1</div>
           </div>
-          <button id="dayNextBtn" onclick="goToDay(1)" style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(11,15,26,.15);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">→</button>
+          <button id="dayNextBtn" onclick="goToDay(1)" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);font-size:16px;cursor:pointer;flex-shrink:0">→</button>
         </div>
         <div id="dayCards"></div>
       </div>
       <div class="tp" id="tab-food"><div id="foodContent"><div class="info-box"><div class="info-t">🍜 Must-try regional dishes</div><div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">Local specialty</div><div class="info-val">Ask locals what not to miss · 📍 Local markets · <strong style="color:var(--gold)">$5–$20</strong></div></div></div></div><div class="info-box"><div class="info-t">☕ Best breakfast spots</div><div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">Local café · City center</div><div class="info-val">Regional breakfast · $5–$12</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌞 Best lunch spots</div><div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">Market lunch · Central market</div><div class="info-val">Fresh local food · $8–$15</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌙 Best dinner spots</div><div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">Top rated restaurant · Old town · Local</div><div class="info-val">House specialty · $20–$40 pp · 💡 Reserve in advance</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🛺 Street food</div><div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">Local street food</div><div class="info-val">Rome main market · $2–$5</div><div class="bls"><a href="https://www.google.com/maps/search/Rome%20main%20market%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div></div>
-      <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:#5A6478;margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:#2E7D32">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:#5A6478;font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
-      <div class="tp" id="tab-flights"><div id="flightsContent"><p style="font-size:13px;color:#5A6478;margin-bottom:10px">Prices are estimates. Compare real deals:</p><div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/Marrakech/Rome/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com/" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/Marrakech-Rome/" target="_blank" class="bl bl-ky">Kayak</a></div><div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ Search on Skyscanner</strong><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">Economy</span></div><div class="fr"><div><div class="fcity">MAR</div><div style="font-size:12px;color:var(--muted)">Varies</div></div><div class="fmid"><div class="fdur">Check routes · Multiple options</div><div class="fline"></div></div><div><div class="fcity">ROM</div><div style="font-size:12px;color:var(--muted)">Varies</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><div><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:24px">$1</span><span style="font-size:11px;color:var(--muted)"> /person</span></div><div class="bls"><a href="https://www.skyscanner.com/" target="_blank" class="bl bl-sk">Search</a></div></div></div></div></div>
+      <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:var(--body-text);margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:var(--live)">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
+      <div class="tp" id="tab-flights"><div id="flightsContent"><p style="font-size:13px;color:var(--body-text);margin-bottom:10px">Prices are estimates. Compare real deals:</p><div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/Marrakech/Rome/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com/" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/Marrakech-Rome/" target="_blank" class="bl bl-ky">Kayak</a></div><div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ Search on Skyscanner</strong><span style="font-size:11px;color:var(--muted);background:var(--surface-tint);padding:3px 9px;border-radius:20px">Economy</span></div><div class="fr"><div><div class="fcity">MAR</div><div style="font-size:12px;color:var(--muted)">Varies</div></div><div class="fmid"><div class="fdur">Check routes · Multiple options</div><div class="fline"></div></div><div><div class="fcity">ROM</div><div style="font-size:12px;color:var(--muted)">Varies</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid var(--hairline)"><div><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:24px">$1</span><span style="font-size:11px;color:var(--muted)"> /person</span></div><div class="bls"><a href="https://www.skyscanner.com/" target="_blank" class="bl bl-sk">Search</a></div></div></div></div></div>
       <div class="tp" id="tab-cars"><div id="carsContent"></div></div>
       <div class="tp" id="tab-cart"><div id="cartContent"></div></div>
-      <div class="tp" id="tab-budget"><div class="bbd" id="budgetBreak"><div class="bbi"><div class="bba">$7</div><div class="bbl">✈️ Flights</div><div class="bbar" style="width:35%"></div></div><div class="bbi"><div class="bba">$6</div><div class="bbl">🏨 Accommodation</div><div class="bbar" style="width:30%"></div></div><div class="bbi"><div class="bba">$3</div><div class="bbl">🍽️ Food</div><div class="bbar" style="width:15%"></div></div><div class="bbi"><div class="bba">$2</div><div class="bbl">🎭 Activities</div><div class="bbar" style="width:10%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🚌 Transport</div><div class="bbar" style="width:5%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🛍️ Shopping</div><div class="bbar" style="width:5%"></div></div></div><div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between"><span style="font-size:14px;color:#5A6478">Estimated total</span><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:28px" id="budgetTotal">$20</span></div></div>
+      <div class="tp" id="tab-budget"><div class="bbd" id="budgetBreak"><div class="bbi"><div class="bba">$7</div><div class="bbl">✈️ Flights</div><div class="bbar" style="width:35%"></div></div><div class="bbi"><div class="bba">$6</div><div class="bbl">🏨 Accommodation</div><div class="bbar" style="width:30%"></div></div><div class="bbi"><div class="bba">$3</div><div class="bbl">🍽️ Food</div><div class="bbar" style="width:15%"></div></div><div class="bbi"><div class="bba">$2</div><div class="bbl">🎭 Activities</div><div class="bbar" style="width:10%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🚌 Transport</div><div class="bbar" style="width:5%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🛍️ Shopping</div><div class="bbar" style="width:5%"></div></div></div><div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between"><span style="font-size:14px;color:var(--body-text)">Estimated total</span><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:28px" id="budgetTotal">$20</span></div></div>
       <div class="tp" id="tab-tips"><div id="tipsContent"><div class="gem"><div class="gem-t">Eat where locals eat</div><div class="gem-d">"Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus."</div></div><div class="gem"><div class="gem-t">Visit attractions at opening time</div><div class="gem-d">"Arrive right when they open — you'll have them almost to yourself and the light is perfect for photos."</div></div><div class="gem"><div class="gem-t">Download offline maps</div><div class="gem-d">"Download Google Maps offline for Rome before you land. Works without signal."</div></div><div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q=Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.viator.com/searchResults/all?text=Rome%2C%20Italy" target="_blank" class="bl bl-vi">Viator tours</a><a href="https://www.getyourguide.com/s/?q=Rome%2C%20Italy" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div></div></div>
       <div class="tp" id="tab-attractions"><div id="attractionsContent"></div></div>
       <div class="tp" id="tab-info"><div id="infoContent"><div class="info-box"><div class="info-t">📋 Need to know — Rome, Italy</div><div class="info-row"><div class="info-icon">🗓️</div><div><div class="info-lbl">Best time</div><div class="info-val">Research the best season for Rome</div></div></div><div class="info-row"><div class="info-icon">🌤️</div><div><div class="info-lbl">Weather</div><div class="info-val">Check weather.com for current forecasts</div></div></div><div class="info-row"><div class="info-icon">💵</div><div><div class="info-lbl">Currency</div><div class="info-val">Check Google for current exchange rates</div></div></div><div class="info-row"><div class="info-icon">🗣️</div><div><div class="info-lbl">Language</div><div class="info-val">Download Google Translate and use camera mode for signs</div></div></div><div class="info-row"><div class="info-icon">🚌</div><div><div class="info-lbl">Getting around</div><div class="info-val">Search "how to get around Rome" for local options</div></div></div><div class="info-row"><div class="info-icon">🔒</div><div><div class="info-lbl">Safety</div><div class="info-val">Check your government's travel advisory before departing</div></div></div><div class="info-row"><div class="info-icon">🛂</div><div><div class="info-lbl">Visa &amp; entry</div><div class="info-val">Check visa requirements at iVisa.com</div></div></div><div class="info-row"><div class="info-icon">🎒</div><div><div class="info-lbl">What to pack</div><div class="info-val">Pack layers, comfortable shoes, portable charger, light rain jacket</div></div></div></div></div></div>
@@ -1012,165 +1016,299 @@ var AFFILIATE_IDS = {
   discovercars: ''   // DiscoverCars affiliate dashboard -> a_aid=XXXXX
 };
 
-// Hotels.com, via the CJ (Commission Junction) affiliate network — approved
-// for Hotels, Car Rentals, and Vacation Rentals (4% / 1.5% / 2% commission
-// as of the approval). PRIORITY partner while Booking.com is still pending
-// and Duffel Stays/Cars remain disabled on this account (see AFFILIATE_IDS
-// and searchDuffelStays/searchDuffelCars above).
+// ── AFFILIATE DEEP LINKS ─────────────────────────────────────────
+// Every outbound booking link is built here. Two hard requirements drove the
+// current shape, both learned by testing the real redirect chains with curl:
 //
-// IMPORTANT: these are CJ "click" tracking links, not deep links — tested
-// directly (curl, following redirects) and confirmed every click lands on
-// the same fixed Hotels.com page regardless of any destination info passed
-// in, so button copy is deliberately general ("Compare on Hotels.com")
-// rather than implying destination-specific results. If a real CJ Deep
-// Link Generator becomes available for this program later, swap these for
-// proper per-destination links and the button copy can become specific.
-var HOTELS_COM_LINKS = {
-  hotels: 'https://www.tkqlhce.com/click-101838851-15534491',
-  cars:   'https://www.kqzyfj.com/click-101838851-15857012'
-};
+//   1. CJ "click" links CANNOT deep-link. Passing ?url= to the Booking.com or
+//      Hotels.com CJ links is silently dropped: the hotels link lands on
+//      booking.com/ (bare homepage), cars on cars/index.html, and every
+//      Hotels.com link lands on a *fixed hoteis.com Sao Paulo search* — which
+//      is why a Chicago hotel used to open Brazilian results. Only the
+//      Attractions CJ link honours ?url=.
+//   2. Both merchants accept their own native affiliate identifier as a plain
+//      query parameter (Booking.com `aid=`, Hotels.com `affcid=`), which DOES
+//      survive on a fully-formed search URL.
+//
+// So we build the destination URL ourselves and attach the native affiliate
+// id, rather than routing through a CJ link that would throw the destination
+// away. Attribution stays intact; the landing page is finally correct.
+var BOOKING_AID = '8133101';                              // Booking.com native affiliate id
+var HOTELS_COM_AFFCID = 'HCOM-LATAM.NETWORK.CJ.101838851'; // Hotels.com/Expedia CJ publisher id
+var HOTELS_COM_RFFRID = 'aff.hcom.lm.002.003.101838851.cjaff';
 
-// Booking.com CJ affiliate links — approved for Hotels (primary), Flights,
-// Cars, and Attractions. These CJ click links support the standard ?url=
-// deep-link parameter, so we can pre-fill destination + dates.
+// Kept only for the Attractions vertical, the one CJ link verified to forward
+// ?url= through to the destination page.
 var BOOKING_COM_LINKS = {
-  hotels:      'https://www.dpbolvw.net/click-101838851-17293132',
-  flights:     'https://www.anrdoezrs.net/click-101838851-17288982',
-  cars:        'https://www.tkqlhce.com/click-101838851-17314628',
   attractions: 'https://www.kqzyfj.com/click-101838851-17288984'
 };
 
-// Builds a Hotels.com affiliate URL tagged with a CJ sub-ID identifying which
-// card the click came from, so CJ reporting can attribute revenue to specific
-// destinations/properties instead of one undifferentiated bucket.
+// ── Country resolution ───────────────────────────────────────────
+// ISO-3166-1 alpha-2 for every country name that appears in CITIES, plus the
+// aliases an AI-written "City, Country" string is likely to use.
+var COUNTRY_ISO = {
+  'usa':'us','united states':'us','united states of america':'us','us':'us',
+  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb','wales':'gb','great britain':'gb',
+  'uae':'ae','united arab emirates':'ae',
+  's. africa':'za','south africa':'za','dom. republic':'do','dominican republic':'do',
+  'trinidad & tobago':'tt','trinidad and tobago':'tt','st. lucia':'lc','saint lucia':'lc',
+  'brazil':'br','brasil':'br','argentina':'ar','chile':'cl','peru':'pe','bolivia':'bo',
+  'paraguay':'py','uruguay':'uy','colombia':'co','ecuador':'ec','venezuela':'ve',
+  'guyana':'gy','suriname':'sr','mexico':'mx','guatemala':'gt','belize':'bz',
+  'honduras':'hn','el salvador':'sv','nicaragua':'ni','costa rica':'cr','panama':'pa',
+  'cuba':'cu','jamaica':'jm','bahamas':'bs','barbados':'bb','aruba':'aw','curacao':'cw',
+  'puerto rico':'pr','canada':'ca',
+  'france':'fr','spain':'es','portugal':'pt','italy':'it','germany':'de','austria':'at',
+  'switzerland':'ch','netherlands':'nl','belgium':'be','luxembourg':'lu','ireland':'ie',
+  'denmark':'dk','norway':'no','sweden':'se','finland':'fi','iceland':'is','estonia':'ee',
+  'latvia':'lv','lithuania':'lt','poland':'pl','czech republic':'cz','czechia':'cz',
+  'slovakia':'sk','slovenia':'si','hungary':'hu','romania':'ro','bulgaria':'bg',
+  'croatia':'hr','bosnia':'ba','serbia':'rs','greece':'gr','turkey':'tr','cyprus':'cy',
+  'malta':'mt','israel':'il','lebanon':'lb','jordan':'jo','saudi arabia':'sa',
+  'qatar':'qa','kuwait':'kw','bahrain':'bh','oman':'om',
+  'japan':'jp','south korea':'kr','china':'cn','taiwan':'tw','thailand':'th',
+  'vietnam':'vn','cambodia':'kh','laos':'la','myanmar':'mm','malaysia':'my',
+  'singapore':'sg','indonesia':'id','philippines':'ph','india':'in','nepal':'np',
+  'sri lanka':'lk','maldives':'mv','bangladesh':'bd','pakistan':'pk',
+  'australia':'au','new zealand':'nz','fiji':'fj','french polynesia':'pf',
+  'papua new guinea':'pg','egypt':'eg','morocco':'ma','tunisia':'tn','algeria':'dz',
+  'kenya':'ke','tanzania':'tz','uganda':'ug','rwanda':'rw','ethiopia':'et',
+  'ghana':'gh','nigeria':'ng','senegal':'sn','ivory coast':'ci','angola':'ao',
+  'mozambique':'mz','namibia':'na','zimbabwe':'zw','mauritius':'mu','seychelles':'sc'
+};
+
+// Accent-insensitive lowercase, so "Sao Paulo" matches "São Paulo".
+function _plainLower(s) {
+  return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+// Resolves a destination string to { city, country, iso }.
 //
-// Why only a sub-ID and not a real deep link: verified by direct testing that
-// this link type ignores every standard CJ deep-link parameter (url, surl,
-// destination, murl, dlurl, cjsku) and always lands on the same fixed page,
-// while `sid` DOES survive the redirect chain (arriving as `wapa6=`). Until
-// CJ/Hotels.com provision deep-link-enabled links for this program, tagging
-// the click is the honest ceiling — we deliberately do NOT fake a deep link
-// that would look specific but silently drop attribution.
+// The CITIES table is consulted FIRST and is authoritative — it is the same
+// list the destination autocomplete picks from, so a bare "Chicago" resolves
+// to USA with no guessing at all. Only when the city is unknown do we read a
+// trailing ", Country" off the string itself.
 //
-// `kind` is 'hotels' or 'cars'; `label` is free text (destination and/or
-// property name) which is sanitized to the alphanumeric/underscore form CJ
-// sub-IDs accept and truncated to stay within their length limit.
-// Shared CJ sub-ID sanitizer: strips accents, keeps alphanumeric/underscore.
-function _cjSid(label) {
+// Deliberately does NOT look at window.planData: on a multi-destination trip
+// planData.destination holds the whole "Rio de Janeiro → Chicago" route, and
+// substring-matching that route is exactly how Chicago hotels used to come
+// back filtered to Brazil.
+function resolveDest(dest) {
+  var raw = (dest || '').toString().split('→')[0].trim();
+  var parts = raw.split(',');
+  var cityPart = (parts[0] || '').trim();
+  var cityKey = _plainLower(cityPart);
+
+  var match = null;
+  for (var i = 0; i < CITIES.length; i++) {
+    if (_plainLower(CITIES[i].city) === cityKey) { match = CITIES[i]; break; }
+  }
+  if (match) {
+    return { city: match.city, country: match.country, iso: COUNTRY_ISO[_plainLower(match.country)] || null };
+  }
+
+  // Unknown city — fall back to any country name written in the string.
+  var countryPart = parts.length > 1 ? _plainLower(parts[parts.length - 1]) : '';
+  if (countryPart && COUNTRY_ISO[countryPart]) {
+    return { city: cityPart, country: parts[parts.length - 1].trim(), iso: COUNTRY_ISO[countryPart] };
+  }
+  var hay = _plainLower(raw);
+  for (var name in COUNTRY_ISO) {
+    if (hay.indexOf(name) >= 0) return { city: cityPart, country: name, iso: COUNTRY_ISO[name] };
+  }
+  return { city: cityPart, country: '', iso: null };
+}
+
+// IATA code for a destination, resolved through the same authoritative CITIES
+// table as the country. Flight deep links need airport codes, not city names —
+// passing "Chicago" where Booking.com expects "ORD" is why the flights link
+// used to drop straight onto the generic flights page.
+function destIata(dest) {
+  var raw = (dest || '').toString().split('→')[0].split(',')[0].trim();
+  if (/^[A-Z]{3}$/.test(raw)) return raw;      // already an IATA code
+  var key = _plainLower(raw);
+  for (var i = 0; i < CITIES.length; i++) {
+    if (_plainLower(CITIES[i].city) === key) return CITIES[i].iata;
+  }
+  return '';
+}
+
+// "City, Country" — the unambiguous search string both merchants resolve best.
+function destQuery(dest) {
+  var r = resolveDest(dest);
+  return r.country ? r.city + ', ' + r.country : r.city;
+}
+
+// Sanitizes free text into the alphanumeric/underscore form affiliate sub-ID
+// parameters accept, so reporting can attribute a click to the exact card.
+function _sid(label) {
   if (!label) return '';
   return String(label)
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
     .slice(0, 50);
 }
 
-// Hotels.com CJ link with sid attribution (sid= survives redirect; ?url= not confirmed for Hotels.com).
-function hotelsComLink(kind, label) {
-  var base = HOTELS_COM_LINKS[kind] || HOTELS_COM_LINKS.hotels;
-  var sid = _cjSid(label);
-  if (!sid) return base;
-  return base + (base.indexOf('?') === -1 ? '?' : '&') + 'sid=' + encodeURIComponent(kind + '_' + sid);
+// Trip dates/occupancy, read once so every vertical stays consistent.
+function _tripCtx() {
+  var p = window.planData || {};
+  return {
+    checkIn:  p.checkIn  || '',
+    checkOut: p.checkOut || '',
+    adults:   p.travelers || 2
+  };
 }
 
-// Booking.com CJ deep-link: wraps a booking.com URL via ?url= + sid= for attribution.
+var BOOKING_LANG = { en: 'en-us', pt: 'pt-br', es: 'es', fr: 'fr', it: 'it' };
+var HOTELS_LOCALE = { en: 'en_US', pt: 'pt_BR', es: 'es_ES', fr: 'fr_FR', it: 'it_IT' };
+
+function _qs(pairs) {
+  var out = [];
+  for (var i = 0; i < pairs.length; i++) {
+    var k = pairs[i][0], v = pairs[i][1];
+    if (v === '' || v === null || v === undefined) continue;
+    out.push(k + '=' + encodeURIComponent(v));
+  }
+  return out.join('&');
+}
+
+// ── Booking.com ──────────────────────────────────────────────────
+// Hotels: a pre-filtered search (property name + resolved "City, Country" +
+// dates + occupancy). Search rather than a /hotel/<cc>/<slug>.html page on
+// purpose: a guessed slug that does not exist 404s straight back to the
+// homepage, which was the "opens the homepage" bug. A name-scoped search
+// always lands on the right property with the dates already applied.
+function bookingHotelUrl(hotelName, dest) {
+  var t = _tripCtx();
+  var q = destQuery(dest);
+  var ss = hotelName ? hotelName + ', ' + q : q;
+  return 'https://www.booking.com/searchresults.html?' + _qs([
+    ['aid', BOOKING_AID],
+    ['label', 'zenvoy_hotel_' + (_sid(hotelName || q) || 'search')],
+    ['ss', ss],
+    ['checkin', t.checkIn],
+    ['checkout', t.checkOut],
+    ['group_adults', t.adults],
+    ['group_children', 0],
+    ['no_rooms', 1],
+    ['sb_travel_purpose', 'leisure'],
+    ['lang', BOOKING_LANG[appLang] || 'en-us'],
+    ['selected_currency', currentCurrencyCode || 'USD']
+  ]);
+}
+
+// Cars: cars.booking.com is the Rentalcars-powered vertical. Both the
+// legacy (picked_up/pickup_date) and current (pickupLocation/pickUpDate)
+// parameter spellings are sent — whichever the live page reads wins, and the
+// unread pair is ignored, so the search is pre-filled either way.
+function bookingCarUrl(dest) {
+  var t = _tripCtx();
+  var q = destQuery(dest);
+  var pickup  = t.checkIn  ? t.checkIn  + 'T10:00:00' : '';
+  var dropoff = t.checkOut ? t.checkOut + 'T10:00:00' : '';
+  return 'https://www.booking.com/cars/index.html?' + _qs([
+    ['aid', BOOKING_AID],
+    ['label', 'zenvoy_car_' + (_sid(q) || 'search')],
+    ['ss', q],
+    ['pickupPlace', q],
+    ['picked_up', q],
+    ['pickupLocation', q],
+    ['pickup_date', pickup],
+    ['pickUpDate', pickup],
+    ['dropoff_date', dropoff],
+    ['dropOffDate', dropoff],
+    ['lang', BOOKING_LANG[appLang] || 'en-us'],
+    ['selected_currency', currentCurrencyCode || 'USD']
+  ]);
+}
+
+// Flights: IATA pair + date. Falls back to the flights landing page only when
+// we genuinely have no route (multi-city offers).
+function bookingFlightUrl(fromIata, toIata, depDate, returnDate) {
+  var t = _tripCtx();
+  if (!fromIata || !toIata) {
+    return 'https://www.booking.com/flights/index.html?aid=' + BOOKING_AID;
+  }
+  var depart = depDate || t.checkIn || '';
+  var ret    = returnDate || t.checkOut || '';
+  return 'https://www.booking.com/flights/search.html?' + _qs([
+    ['aid', BOOKING_AID],
+    ['label', 'zenvoy_flight_' + _sid(fromIata + '_' + toIata)],
+    ['type', ret ? 'ROUNDTRIP' : 'ONEWAY'],
+    ['from', fromIata],
+    ['to', toIata],
+    ['fromLocationName', fromIata],
+    ['toLocationName', toIata],
+    ['depart', depart],
+    ['depart_date', depart],
+    ['return', ret],
+    ['return_date', ret],
+    ['adults', t.adults],
+    ['cabinClass', 'ECONOMY'],
+    ['lang', BOOKING_LANG[appLang] || 'en-us'],
+    ['selected_currency', currentCurrencyCode || 'USD']
+  ]);
+}
+
+// Attractions: this is the one CJ link verified to forward ?url= intact, so
+// it keeps full CJ attribution AND lands on the right city.
+function bookingAttractionUrl(dest, attractionName) {
+  var q = destQuery(dest);
+  var ss = attractionName ? attractionName + ', ' + q : q;
+  return 'https://www.booking.com/attractions/searchresults.html?' + _qs([
+    ['aid', BOOKING_AID],
+    ['label', 'zenvoy_attr_' + (_sid(attractionName || q) || 'search')],
+    ['ss', ss],
+    ['start_date', _tripCtx().checkIn],
+    ['lang', BOOKING_LANG[appLang] || 'en-us'],
+    ['selected_currency', currentCurrencyCode || 'USD']
+  ]);
+}
+
+// Wraps a booking.com destination URL in the Attractions CJ click link.
 function bookingDeepLink(type, destUrl, label) {
-  var base = BOOKING_COM_LINKS[type] || BOOKING_COM_LINKS.hotels;
-  var sid = _cjSid(label);
+  var base = BOOKING_COM_LINKS[type];
+  if (!base) return destUrl;               // no CJ link for this vertical — go direct
+  var sid = _sid(label);
   var url = base + '?url=' + encodeURIComponent(destUrl);
   if (sid) url += '&sid=' + encodeURIComponent(type + '_' + sid);
   return url;
 }
 
-// ISO-3166-1 alpha-2 codes for Booking.com hotel page URLs (/hotel/<cc>/<slug>.html).
-var BOOKING_COUNTRY_CODES = {
-  'brazil':'br','brasil':'br','france':'fr','united states':'us','usa':'us',
-  'spain':'es','italy':'it','portugal':'pt','japan':'jp','germany':'de',
-  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb','wales':'gb',
-  'argentina':'ar','mexico':'mx','thailand':'th','indonesia':'id','bali':'id',
-  'australia':'au','canada':'ca','netherlands':'nl','belgium':'be',
-  'switzerland':'ch','austria':'at','greece':'gr','turkey':'tr',
-  'croatia':'hr','czech republic':'cz','czechia':'cz','hungary':'hu',
-  'poland':'pl','colombia':'co','peru':'pe','chile':'cl','uruguay':'uy',
-  'india':'in','china':'cn','south korea':'kr','vietnam':'vn','cambodia':'kh',
-  'singapore':'sg','malaysia':'my','philippines':'ph','new zealand':'nz',
-  'south africa':'za','egypt':'eg','morocco':'ma','kenya':'ke',
-  'iceland':'is','norway':'no','sweden':'se','denmark':'dk','finland':'fi',
-  'israel':'il','uae':'ae','united arab emirates':'ae','qatar':'qa',
-  'saudi arabia':'sa','jordan':'jo','georgia':'ge','ireland':'ie',
-  'romania':'ro','bulgaria':'bg','slovakia':'sk','slovenia':'si',
-  'ecuador':'ec','bolivia':'bo','paraguay':'py','venezuela':'ve',
-  'cuba':'cu','costa rica':'cr','panama':'pa','dominican republic':'do'
-};
-
-// Extract Booking.com country code from destination string or planData.
-function _bookingCountryCode(dest) {
-  var p = window.planData || {};
-  var haystack = ((dest || '') + ' ' + (p.destination || '')).toLowerCase();
-  for (var c in BOOKING_COUNTRY_CODES) {
-    if (haystack.indexOf(c) >= 0) return BOOKING_COUNTRY_CODES[c];
-  }
-  return null;
+// ── Hotels.com ───────────────────────────────────────────────────
+// www.hotels.com (never the hoteis.com Brazilian mirror the CJ link forced)
+// with the destination, dates and occupancy applied, carrying the Expedia/CJ
+// publisher id so the click is still attributed.
+function hotelsComHotelUrl(dest, hotelName) {
+  var t = _tripCtx();
+  var q = destQuery(dest);
+  return 'https://www.hotels.com/Hotel-Search?' + _qs([
+    ['destination', hotelName ? hotelName + ', ' + q : q],
+    ['startDate', t.checkIn],
+    ['endDate', t.checkOut],
+    ['adults', t.adults],
+    ['rooms', 1],
+    ['sort', 'RECOMMENDED'],
+    ['locale', HOTELS_LOCALE[appLang] || 'en_US'],
+    ['affcid', HOTELS_COM_AFFCID],
+    ['rffrid', HOTELS_COM_RFFRID],
+    ['wapa6', 'hotel_' + (_sid(hotelName || q) || 'search')]
+  ]);
 }
 
-// Convert a hotel name to a Booking.com URL slug.
-function _bookingHotelSlug(name) {
-  if (!name) return '';
-  return name.toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-// Build Booking.com hotel URL: tries /hotel/<cc>/<slug>.html (direct page) first;
-// falls back to searchresults if country code is unknown.
-function bookingHotelUrl(hotelName, dest) {
-  var p = window.planData || {};
-  var cc = _bookingCountryCode(dest);
-  var params = '?aid=8133101&no_rooms=1';
-  if (p.checkIn)   params += '&checkin='      + encodeURIComponent(p.checkIn);
-  if (p.checkOut)  params += '&checkout='     + encodeURIComponent(p.checkOut);
-  if (p.travelers) params += '&group_adults=' + encodeURIComponent(p.travelers);
-  if (hotelName && cc) {
-    return 'https://www.booking.com/hotel/' + cc + '/' + _bookingHotelSlug(hotelName) + '.html' + params;
-  }
-  var ss = hotelName ? hotelName + ' ' + dest : dest;
-  return 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(ss) + '&no_rooms=1&aid=8133101'
-    + (p.checkIn   ? '&checkin='      + encodeURIComponent(p.checkIn)   : '')
-    + (p.checkOut  ? '&checkout='     + encodeURIComponent(p.checkOut)  : '')
-    + (p.travelers ? '&group_adults=' + encodeURIComponent(p.travelers) : '');
-}
-
-// Pre-filled Booking.com cars search URL.
-function bookingCarUrl(dest) {
-  var p = window.planData || {};
-  var loc = (dest || '').split(',')[0].split('\u2192')[0].trim();
-  var url = 'https://cars.booking.com/?picked_up=' + encodeURIComponent(loc) + '&aid=8133101';
-  if (p.checkIn)  url += '&pickup_date='  + encodeURIComponent(p.checkIn  + 'T10:00:00');
-  if (p.checkOut) url += '&dropoff_date=' + encodeURIComponent(p.checkOut + 'T10:00:00');
-  return url;
-}
-
-// Pre-filled Booking.com flights search URL (IATA codes + depart date + guests).
-function bookingFlightUrl(fromIata, toIata, depDate) {
-  var p = window.planData || {};
-  if (fromIata && toIata) {
-    var url = 'https://www.booking.com/flights/search.html?type=ROUNDTRIP&aid=8133101'
-      + '&from_iata=' + encodeURIComponent(fromIata)
-      + '&to_iata='   + encodeURIComponent(toIata);
-    var date = depDate || p.checkIn || '';
-    if (date)        url += '&depart_date=' + encodeURIComponent(date);
-    if (p.travelers) url += '&adults='      + encodeURIComponent(p.travelers);
-    return url;
-  }
-  return 'https://www.booking.com/flights/?aid=8133101';
-}
-
-// Pre-filled Booking.com attractions search URL.
-function bookingAttractionUrl(dest, attractionName) {
-  var ss = attractionName ? attractionName + ' ' + dest : dest;
-  return 'https://www.booking.com/attractions/searchresults.html?ss=' + encodeURIComponent(ss);
+function hotelsComCarUrl(dest) {
+  var t = _tripCtx();
+  var q = destQuery(dest);
+  return 'https://www.hotels.com/car-hire?' + _qs([
+    ['destination', q],
+    ['pickupDate', t.checkIn],
+    ['dropoffDate', t.checkOut],
+    ['locale', HOTELS_LOCALE[appLang] || 'en_US'],
+    ['affcid', HOTELS_COM_AFFCID],
+    ['rffrid', HOTELS_COM_RFFRID],
+    ['wapa6', 'car_' + (_sid(q) || 'search')]
+  ]);
 }
 
 function withAffiliateParam(url, param, value) {
@@ -1223,7 +1361,7 @@ function setupAC(inpId, dropId) {
         if (inpId === 'fromCity') selectedFromAirport = null; else if (inpId === 'toCity') selectedToAirport = null;
         if (airports.length > 1 && picker) {
           var pdict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
-          var pickerHtml = '<div style="font-size:11px;color:#5A6478;margin-bottom:4px">'+pdict.which_airport+'</div><select style="width:100%;padding:8px 10px;font-size:13px;border-radius:8px" onchange="'+(inpId==='fromCity'?'selectedFromAirport':'selectedToAirport')+'=(this.value===\'\'?null:this.value)">';
+          var pickerHtml = '<div style="font-size:11px;color:var(--body-text);margin-bottom:4px">'+pdict.which_airport+'</div><select style="width:100%;padding:8px 10px;font-size:13px;border-radius:8px" onchange="'+(inpId==='fromCity'?'selectedFromAirport':'selectedToAirport')+'=(this.value===\'\'?null:this.value)">';
           airports.forEach(function(a) {
             pickerHtml += '<option value="'+a.code+'">'+a.code+' — '+buildAirportLabel(a)+'</option>';
           });
@@ -1766,22 +1904,54 @@ var currentCurrencyCode = 'USD';
 var currentRate = 1; // USD -> currentCurrencyCode
 var rateCache = { USD: 1 }; // avoid re-fetching the same currency repeatedly in a session
 
+// Last-resort approximate rates. These exist so that a currency the UI has
+// already committed to in its labels never falls back to showing "$": a
+// Portuguese UI showing R$ at a slightly stale rate is correct-looking and
+// roughly right, whereas one showing $ is simply wrong. Only ever used when
+// every live provider is unreachable.
+var FALLBACK_RATES = { USD: 1, BRL: 5.4, EUR: 0.92 };
+
+// Two independent providers, tried in order. The original single provider
+// (api.frankfurter.app) began 301-redirecting to a new domain, which made
+// every lookup fail — and because a failed lookup left the currency on USD,
+// switching the app to Portuguese silently kept showing "$" instead of "R$".
+// That is exactly the bug this list of fallbacks prevents from recurring.
+var RATE_PROVIDERS = [
+  {
+    url: function (cur) { return 'https://api.frankfurter.dev/v1/latest?base=USD&symbols=' + cur; },
+    read: function (data, cur) { return data && data.rates && data.rates[cur]; }
+  },
+  {
+    url: function () { return 'https://open.er-api.com/v6/latest/USD'; },
+    read: function (data, cur) { return data && data.rates && data.rates[cur]; }
+  }
+];
+
 async function fetchExchangeRate(targetCurrency) {
   if (targetCurrency === 'USD') return 1;
   if (rateCache[targetCurrency] !== undefined) return rateCache[targetCurrency];
-  try {
-    // Frankfurter's /latest endpoint returns { amount, base, date, rates: { <TARGET>: number } }
-    var res = await fetch('https://api.frankfurter.app/latest?from=USD&to=' + targetCurrency);
-    if (!res.ok) return null;
-    var data = await res.json();
-    var rate = data && data.rates && data.rates[targetCurrency];
-    if (typeof rate !== 'number') return null;
-    rateCache[targetCurrency] = rate;
-    return rate;
-  } catch (e) {
-    console.error('Exchange rate fetch failed (keeping USD):', e);
-    return null;
+
+  for (var i = 0; i < RATE_PROVIDERS.length; i++) {
+    try {
+      var res = await fetch(RATE_PROVIDERS[i].url(targetCurrency));
+      if (!res.ok) continue;
+      var data = await res.json();
+      var rate = RATE_PROVIDERS[i].read(data, targetCurrency);
+      if (typeof rate !== 'number' || !isFinite(rate) || rate <= 0) continue;
+      rateCache[targetCurrency] = rate;
+      return rate;
+    } catch (e) {
+      console.error('Exchange rate provider ' + (i + 1) + ' failed, trying next:', e);
+    }
   }
+
+  var fallback = FALLBACK_RATES[targetCurrency];
+  if (fallback) {
+    console.warn('All exchange-rate providers unreachable — using approximate ' + targetCurrency + ' rate so the UI currency still matches the language.');
+    rateCache[targetCurrency] = fallback;
+    return fallback;
+  }
+  return null;
 }
 
 // Formats a USD amount in the currently selected currency. Falls back to
@@ -1803,6 +1973,59 @@ function curInstruction() {
          ' and prefixed with the symbol "' + curSym() + '" — never any other currency or symbol.';
 }
 
+// Not every price on screen goes through formatPrice(). The AI writes prices
+// directly into free text ("Pequod's Pizza - deep dish - $18", food-guide
+// entries, attraction ticket prices), and those strings are baked in whatever
+// currency was selected at generation time. Switching language afterwards used
+// to leave them behind: hotels flipped to R$ while the food and day-plan
+// prices on the same screen stayed in $, showing two currencies at once.
+//
+// This rewrites those embedded prices into the current currency, converting
+// the amount as well as the symbol. Anything it cannot parse with confidence
+// is left exactly as written — a stale price is bad, an invented one is worse.
+var _PRICE_TOKEN = /(R\$|US\$|\$|€|£)\s?(\d[\d.,]*)/g;
+
+function _parseAmount(raw) {
+  var lastDot = raw.lastIndexOf('.'), lastComma = raw.lastIndexOf(',');
+  var n;
+  if (lastDot === -1 && lastComma === -1) {
+    n = parseFloat(raw);
+  } else if (lastDot !== -1 && lastComma !== -1) {
+    // Both separators present — whichever comes last is the decimal one.
+    n = lastDot > lastComma
+      ? parseFloat(raw.replace(/,/g, ''))                      // 1,234.56 (en)
+      : parseFloat(raw.replace(/\./g, '').replace(',', '.'));  // 1.234,56 (pt)
+  } else {
+    // Only one kind of separator, which is genuinely ambiguous: "1,250" is a
+    // thousand in English and "1.250" is a thousand in Portuguese, while
+    // "18.50"/"18,50" are both decimals. Exactly three trailing digits is the
+    // reliable tell for a thousands separator.
+    var atDot = lastDot !== -1;
+    var sep = atDot ? '.' : ',';
+    var tail = raw.slice((atDot ? lastDot : lastComma) + 1);
+    n = /^\d{3}$/.test(tail)
+      ? parseFloat(raw.split(sep).join(''))
+      : parseFloat(raw.replace(sep, '.'));
+  }
+  return isFinite(n) ? n : null;
+}
+
+function localizePriceText(text) {
+  if (!text) return text;
+  var p = window.planData || {};
+  var fromCode = p.genCurrency || currentCurrencyCode;
+  if (fromCode === currentCurrencyCode) return text;      // already in the right currency
+  var fromRate = p.genRate || 1;                          // USD -> fromCode, as used at generation
+  if (!fromRate) return text;
+  var symbol = CURRENCY_SYMBOLS[currentCurrencyCode] || '$';
+  return String(text).replace(_PRICE_TOKEN, function (match, _sym, digits) {
+    var amount = _parseAmount(digits);
+    if (amount === null) return match;                    // unparseable -> leave untouched
+    var converted = Math.round((amount / fromRate) * currentRate);
+    return symbol + converted.toLocaleString();
+  });
+}
+
 function formatPrice(usdAmount) {
   var amount = Math.round((usdAmount || 0) * currentRate);
   var symbol = CURRENCY_SYMBOLS[currentCurrencyCode] || '$';
@@ -1822,15 +2045,27 @@ function setLang(l) {
     if (rate === null) return; // fetch failed — keep showing the previous currency rather than guessing
     currentCurrencyCode = targetCurrency;
     currentRate = rate;
-    if (window.planData) {
-      renderBudget(window.planData.budget, window._lastBudgetTotal);
-      renderFlights(window.planData.flights, window._flightsFrom, window._flightsDest);
-      if (window.planData.isMultiDest && currentCityTab) {
-        renderStays(filterByNameSuffix(window.planData.accommodations, currentCityTab, 'name'), currentCityTab);
-        renderCars(filterByNameSuffix(window.planData.cars, currentCityTab, 'name'), currentCityTab);
+    // Every view that shows a price has to be redrawn, not just some of them.
+    // Cars, the food guide, the day plan, attractions and the cart were all
+    // missing here, which is why a switch to Portuguese left R$ hotels sitting
+    // next to $ meals and $ car rentals on the same screen.
+    var p = window.planData;
+    if (p) {
+      renderBudget(p.budget, window._lastBudgetTotal);
+      renderFlights(p.flights, window._flightsFrom, window._flightsDest);
+      if (p.isMultiDest && currentCityTab) {
+        renderStays(filterByNameSuffix(p.accommodations, currentCityTab, 'name'), currentCityTab);
+        renderCars(filterByNameSuffix(p.cars, currentCityTab, 'name'), currentCityTab);
+        renderFood(filterFoodGuideByCity(p.food_guide, currentCityTab), currentCityTab);
+        renderAttractions(filterByNameSuffix(p.attractions || [], currentCityTab, 'name'), currentCityTab);
       } else {
-        renderStays(window.planData.accommodations, window._staysDest);
+        renderStays(p.accommodations, window._staysDest);
+        renderCars(p.cars, window._carsDest || p.destination);
+        renderFood(p.food_guide, p.destination);
+        renderAttractions(p.attractions || [], p.destination);
       }
+      if (typeof renderCurrentDay === 'function') renderCurrentDay();
+      renderCart();
     }
   });
 }
@@ -2685,7 +2920,7 @@ async function sendChatMessage() {
   renderChatMessages();
 }
 
-async function callAI(messages, maxTokens) {
+async function callAI(messages, maxTokens, temperature) {
   // Convert messages to Gemini format
   var contents = [];
   var systemText = '';
@@ -2728,7 +2963,11 @@ async function callAI(messages, maxTokens) {
       res = await fetch('/.netlify/functions/generate-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: contents, maxTokens: maxTokens || 1000 })
+        // temperature is only sent when a caller asks for one — otherwise the
+        // serverless function applies its own default.
+        body: JSON.stringify(typeof temperature === 'number'
+          ? { contents: contents, maxTokens: maxTokens || 1000, temperature: temperature }
+          : { contents: contents, maxTokens: maxTokens || 1000 })
       });
     } catch (networkErr) {
       lastErr = new Error('Network error reaching Zenvoy AI: ' + networkErr.message);
@@ -2818,6 +3057,76 @@ function hideErrorBanner() {
 // giving up on just this chunk (returns null on final failure — the caller
 // decides how to handle that, instead of this function throwing and
 // potentially wiping out an entire successfully-generated trip).
+// ── DESTINATION INTELLIGENCE (grounding pass) ────────────────────
+// A single, cheap "recall before you generate" call made BEFORE the itinerary
+// prompts run.
+//
+// Why this exists: asking one model call to both remember what a city is
+// famous for AND compose an itinerary reliably produces category-correct but
+// place-generic output — Chicago came back with nightlife but never named the
+// rooftop bars it is actually known for (Cindy's, London House, Trump Tower
+// Bar), and Florianópolis returned "jazz clubs" instead of Jurerê
+// Internacional / P12 / Moon. Splitting recall from composition fixes that:
+// this call does nothing but name real places, and its answer is then pasted
+// into the itinerary prompts as source material they are told to draw from.
+//
+// Always non-blocking: any failure returns '' and generation proceeds exactly
+// as it did before, just without the extra grounding.
+var _destIntelCache = {};
+
+async function fetchDestinationIntel(destination, interests, style) {
+  if (!destination) return '';
+  var key = (destination + '|' + (interests || '') + '|' + (style || '')).toLowerCase();
+  if (_destIntelCache[key] !== undefined) return _destIntelCache[key];
+
+  // Their selected interests drive the question, plus a few categories every
+  // trip touches, so the itinerary always has real anchors to reach for.
+  var categories = [];
+  (interests || '').split(',').forEach(function (i) {
+    var t = i.trim();
+    if (t) categories.push(t);
+  });
+  ['Signature local food', 'Nightlife and bars', 'Iconic landmarks', 'Neighborhoods worth walking'].forEach(function (c) {
+    if (categories.join(' ').toLowerCase().indexOf(c.split(' ')[0].toLowerCase()) === -1) categories.push(c);
+  });
+
+  var prompt = 'You are a lifelong local of ' + destination + ' with an encyclopedic memory of the city. '
+    + 'This is a factual recall task, NOT a trip plan. Do not write an itinerary.\n\n'
+    + 'Question: what is ' + destination + ' GENUINELY and SPECIFICALLY known for in each category below?\n\n'
+    + 'Categories:\n- ' + categories.join('\n- ') + '\n\n'
+    + 'Rules:\n'
+    + '- Name REAL, currently-operating, well-known places by their actual names — the ones locals and repeat visitors actually name out loud.\n'
+    + '- If the city has a signature scene for a category (a famous district, strip, or venue type), say what that scene IS, then name 2-4 leading examples of it.\n'
+    + '- Prefer what this city is distinctively known for over what merely exists there. If every large city has it, it does not belong in the answer.\n'
+    + '- If a category is genuinely not notable in ' + destination + ', write exactly "not notable here" — never invent one.\n'
+    + '- No generic filler ("a local bar", "a rooftop lounge", "a popular market"). No prices. No opening hours. No itinerary.\n\n'
+    + 'Answer in plain text, ONE line per category, in this format:\n'
+    + 'Category: what the city is known for here - Real Place Name, Real Place Name, Real Place Name';
+
+  try {
+    // Low temperature: this is recall, and creative sampling is precisely what
+    // produces plausible-sounding invented venues.
+    var text = await callAI([{ role: 'user', content: prompt }], 900, 0.15);
+    var clean = (text || '').trim();
+    _destIntelCache[key] = clean;
+    return clean;
+  } catch (err) {
+    console.error('Destination intel lookup skipped (itinerary continues ungrounded):', err);
+    _destIntelCache[key] = '';
+    return '';
+  }
+}
+
+// Formats the recall answer as a prompt block. Returns '' when there is no
+// intel, so callers can concatenate it unconditionally.
+function destIntelBlock(intel, destination) {
+  if (!intel) return '';
+  return '\n\nGROUNDING — what ' + destination + ' is genuinely known for, recalled before planning.\n'
+    + 'Treat the places named below as your primary source material: prefer them over anything you would otherwise reach for, '
+    + 'and never replace one with a generic equivalent of the same category. If a line says "not notable here", do NOT force that category into the trip.\n'
+    + '<<<LOCAL_KNOWLEDGE>>>\n' + intel + '\n<<<END_LOCAL_KNOWLEDGE>>>';
+}
+
 async function generateDayChunk(dayPrompt, rangeStart, rangeEnd) {
   for (var chunkAttempt = 0; chunkAttempt < 2; chunkAttempt++) {
     try {
@@ -2985,6 +3294,9 @@ async function generateMultiDestPlan(from) {
   // rather than a sequential for-loop (previously: 2+ AI round-trips per leg,
   // fully serial, so total latency scaled linearly with number of legs).
   async function processLeg(leg) {
+    // Each leg is a different city, so each gets its own recall — a Rio leg
+    // and a Chicago leg must not share grounding.
+    var legIntel = await fetchDestinationIntel(leg.city, interests, style);
     var legOverviewPrompt = 'You are Zenvoy, a local travel expert for ' + leg.city + '. Return ONLY valid JSON, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
       'Give recommendations for a ' + leg.days + '-day stay in ' + leg.city + ' for ' + travelers + ' traveler(s). Style: ' + style + '. Interests: ' + interests + '. Budget level: ' + bl + '.\n\n' +
       'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish2","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish3","desc":"desc","where":"where","price":"'+curSym()+'X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place2","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place3","dish":"dish","area":"area","price":"'+curSym()+'X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"'+curSym()+'X"},{"name":"item2","where":"where","price":"'+curSym()+'X"},{"name":"item3","where":"where","price":"'+curSym()+'X"}]},"accommodations":[{"name":"Chain Name + Property","type":"Luxury Hotel","stars":5,"area":"area","price_night":250,"highlights":["h1","h2","h3"],"why":"why"},{"name":"Chain Name + Property","type":"Resort","stars":5,"area":"area","price_night":300,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Aparthotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment/Airbnb","stars":4,"area":"area","price_night":85,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":60,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"gems":[{"title":"title","tip":"tip"},{"title":"title2","tip":"tip"},{"title":"title3","tip":"tip"},{"title":"title4","tip":"tip"},{"title":"title5","tip":"tip"}],"attractions":[{"name":"attraction name","type":"Museum","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 2","type":"Park","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 3","type":"Historic site","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 4","type":"Beach/Viewpoint","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 5","type":"Tour/Experience","desc":"one sentence","price":"XX","area":"neighborhood"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
@@ -2992,7 +3304,7 @@ async function generateMultiDestPlan(from) {
       'Use REAL, specifically named, currently-operating places only — never generic placeholders. Provide AT LEAST 5 different "gems" (insider tips) and all 8 accommodation types shown in the schema (Luxury Hotel, Resort, Business Hotel, Boutique Hotel, Aparthotel, Apartment/Airbnb, Bed & Breakfast, Hostel).\n\n' +
       '- accommodation prices (price_night) MUST reflect REAL current market rates for ' + leg.city + ' specifically, spanning a genuine range from budget to luxury with realistic gaps between tiers — not a narrow band of similar numbers.\n' +
       '- For the hotel-type slots, prefer a REAL, recognizable hotel chain that ACTUALLY OPERATES in ' + leg.city + ', choosing the chains a traveler in THAT country would recognize (in Brazil e.g. Rede Andrade, Bourbon, Nacional Inn, Transamerica, Blue Tree, Íbis/Accor; in the US e.g. Marriott, Hilton, Best Western, Holiday Inn; in Europe e.g. Accor/Novotel/Ibis, NH, Meliá, Radisson). Name the chain explicitly in the "name" field (e.g. "Ibis Florianópolis Centro", not "a mid-range hotel"). Put familiar, recognizable names FIRST in the array and independents after.\n\n' +
-      JSON_FORMATTING_RULES;
+      JSON_FORMATTING_RULES + destIntelBlock(legIntel, leg.city);
 
     var legOverviewText = await callAI([{ role: 'user', content: legOverviewPrompt }], 6000);
     var legOverview;
@@ -3029,7 +3341,7 @@ async function generateMultiDestPlan(from) {
         '"early_bird":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — '+curSym()+'X","night":"a named venue this destination is actually known for, then a follow-up"},' +
         '"balanced":{"morning":"compound activity at a named place, then a follow-up","breakfast":"cafe — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — '+curSym()+'X","night":"a named venue this destination is actually known for, then a follow-up"},' +
         '"night_owl":{"morning":"brunch","breakfast":"brunch — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"compound activity at a named place, then a follow-up","dinner":"restaurant — dish — '+curSym()+'X","night":"the specific, locally-famous nightlife venue this destination is really known for (name it), then a late-night follow-up"}}]\n\n' +
-        JSON_FORMATTING_RULES;
+        JSON_FORMATTING_RULES + destIntelBlock(legIntel, resolvedCity);
 
       var parsedLegDays = await generateDayChunk(legDayPrompt, localStart, localEnd);
       return { localStart: localStart, localEnd: localEnd, days: parsedLegDays };
@@ -3117,6 +3429,11 @@ async function generateMultiDestPlan(from) {
 
     var destinationLabel = resolvedCities.join(' → ');
     planData = {
+      // Currency the AI was told to write free-text prices in, plus the rate
+      // used at that moment — localizePriceText() needs both to convert those
+      // strings if the traveler switches language later.
+      genCurrency: currentCurrencyCode,
+      genRate: currentRate,
       destination: destinationLabel,
       tagline: legs.length + '-city adventure: ' + destinationLabel,
       days: allDays,
@@ -3429,6 +3746,12 @@ async function generatePlan() {
   // — prioritize them in the AI-estimated flights when it's plausible they fly the route.
   var isFromBrazil = /brazil|brasil/i.test(from);
 
+  // Start the destination-intelligence recall now, un-awaited, so it resolves
+  // while the much larger overview call is still in flight. By the time the
+  // prompts below need it, it has normally already landed — grounding costs
+  // effectively no extra wall-clock time.
+  var destIntelPromise = fetchDestinationIntel(dest, interests, style);
+
   try {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
@@ -3472,9 +3795,14 @@ async function generatePlan() {
     }
 
     setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_researching);
+    // Attractions, gems and the food guide all benefit from the same recall
+    // the itinerary uses, so they name the same real places rather than
+    // drifting to generic category examples.
+    var destIntel = await destIntelPromise;
+    var groundedExtrasPrompt = extrasPrompt + destIntelBlock(destIntel, dest);
     var overviewParts = await Promise.all([
       generateWithRepair(corePrompt, 'flights/stays/cars', 16000),
-      generateWithRepair(extrasPrompt, 'food/tips', 8000)
+      generateWithRepair(groundedExtrasPrompt, 'food/tips', 8000)
     ]);
     var overview = Object.assign({}, overviewParts[0], overviewParts[1]);
 
@@ -3527,7 +3855,8 @@ async function generatePlan() {
         '"balanced":{"morning":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","breakfast":"cafe name — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"compound suggestion at a named place, then a follow-up"},'+
         '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"the specific, locally-famous nightlife venue this destination is really known for (name it), then a late-night follow-up"}}]\n\n'+
         'Continue this pattern for every day from '+rangeStart+' to '+rangeEnd+' inclusive.\n\n'+
-        'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
+        'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.'
+        + destIntelBlock(destIntel, overview.destination);
 
       var parsedDays = await generateDayChunk(dayPrompt, rangeStart, rangeEnd);
       if (parsedDays) {
@@ -3543,6 +3872,8 @@ async function generatePlan() {
     }
 
     planData = overview;
+    planData.genCurrency = currentCurrencyCode;
+    planData.genRate = currentRate;
     planData.days = allDays;
     planData.checkIn = dep;
     planData.checkOut = ret;
@@ -3746,7 +4077,7 @@ function renderCart() {
 
   var h;
   if (!hasAnything) {
-    h = '<p style="font-size:13px;color:#5A6478;padding:20px 0;text-align:center">' + dict.cart_empty + '</p>';
+    h = '<p style="font-size:13px;color:var(--body-text);padding:20px 0;text-align:center">' + dict.cart_empty + '</p>';
   } else {
     var total = 0;
     h = '';
@@ -3770,7 +4101,7 @@ function renderCart() {
         var stayUrl = withAffiliateParam('https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(s.name + ' ' + stayDest), 'aid', AFFILIATE_IDS.booking);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🏨 ' + escapeHtml(s.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(s.type||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(s.price_night) + '<span style="font-size:11px;color:var(--muted)">/night</span></div><button onclick="removeCartItem(\'stay\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingHotelUrl(s.name, stayDest) + '" target="_blank" class="bl bl-featured">Booking.com</a><a href="' + hotelsComLink('hotels', s.name+' '+stayDest) + '" target="_blank" class="bl bl-bk">Hotels.com</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingHotelUrl(s.name, stayDest) + '" target="_blank" class="bl bl-featured">Booking.com</a><a href="' + hotelsComHotelUrl(stayDest, s.name) + '" target="_blank" class="bl bl-bk">Hotels.com</a></div></div>';
       });
     }
 
@@ -3788,7 +4119,7 @@ function renderCart() {
       });
     }
 
-    h += '<div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;margin-top:16px"><span style="font-size:14px;color:#5A6478">' + dict.cart_total + '</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px">' + formatPrice(total) + '</span></div>';
+    h += '<div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;margin-top:16px"><span style="font-size:14px;color:var(--body-text)">' + dict.cart_total + '</span><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px">' + formatPrice(total) + '</span></div>';
 
     // Only offer this once the traveler has picked a flight, a stay AND a
     // car — that's when we have real logistics (arrival time, check-in
@@ -3827,6 +4158,11 @@ async function regenerateItineraryFromCart() {
   var originalBtnText = btn ? btn.textContent : '';
   _regenInProgress = true;
   if (btn) { btn.disabled = true; btn.textContent = dict.cart_regen_loading || 'Building your new itinerary...'; }
+
+  // Same grounding the original generation used, so a rebuilt itinerary does
+  // not silently drop to generic suggestions. Cached from the first run in the
+  // common case, so this is usually free.
+  var regenIntel = await fetchDestinationIntel(p.destination, getInterests(), p.style || '');
 
   try {
     var totalDays = (p.days || []).length || 1;
@@ -3869,6 +4205,8 @@ async function regenerateItineraryFromCart() {
         + '"night_owl":{"morning":"11am brunch","breakfast":"brunch spot — dish — '+curSym()+'X","lunch":"restaurant — dish — '+curSym()+'X","afternoon":"activity at a named place","dinner":"restaurant — dish — '+curSym()+'X","night":"the specific, locally-famous venue this destination is really known for (name it)"}}]';
       if (rStart === 1) dayPrompt += '\n\nRemember: Day 1 must respect the real flight arrival and hotel check-in noted above.';
       if (rEnd === totalDays) dayPrompt += '\n\nRemember: the final day should leave enough time to return the rental car and get to the airport.';
+
+      dayPrompt += destIntelBlock(regenIntel, p.destination);
 
       var parsedDays = await generateDayChunk(dayPrompt, rStart, rEnd);
       allDays = allDays.concat(parsedDays);
@@ -4100,7 +4438,7 @@ function refreshSlotDom(day, idx, slotLabel, dest) {
   var taCategory = isFood ? 'restaurants' : 'attractions';
   var slotId = 'ta-badge-' + key;
 
-  var h = escapeHtml(text) + ' <span id="' + slotId + '" class="ta-badge"></span>';
+  var h = escapeHtml(localizePriceText(text)) + ' <span id="' + slotId + '" class="ta-badge"></span>';
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
   if (isFood) h += '<a id="' + slotId + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent(placeName + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
   if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
@@ -4188,7 +4526,7 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
 
   var h = '<div class="ts"><div class="tt">' + escapeHtml(displayLabel || slotLabel) + '</div><div class="td">';
-  h += '<div id="slot-content-' + key + '">' + escapeHtml(text) + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
+  h += '<div id="slot-content-' + key + '">' + escapeHtml(localizePriceText(text)) + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
   if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
   if (slotLabel === 'Afternoon' || slotLabel === 'Morning') {
@@ -4284,7 +4622,7 @@ function renderFood(fg, dest) {
   if (fg.must_try && fg.must_try.length) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_musttry_title+'</div>';
     fg.must_try.forEach(function(d) {
-      h += '<div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">'+escapeHtml(d.name)+'</div><div class="info-val">'+escapeHtml(d.desc)+' · 📍 '+escapeHtml(d.where)+' · <strong style="color:var(--gold)">'+escapeHtml(d.price)+'</strong></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">'+escapeHtml(d.name)+'</div><div class="info-val">'+escapeHtml(d.desc)+' · 📍 '+escapeHtml(d.where)+' · <strong style="color:var(--gold)">'+escapeHtml(localizePriceText(d.price))+'</strong></div></div></div>';
     });
     h += '</div>';
   }
@@ -4292,7 +4630,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_breakfast_title+'</div>';
     fg.breakfast.forEach(function(s, idx) {
       var slotId = 'ta-badge-breakfast-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(localizePriceText(s.price))+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4301,7 +4639,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_lunch_title+'</div>';
     fg.lunch.forEach(function(s, idx) {
       var slotId = 'ta-badge-lunch-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(localizePriceText(s.price))+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4310,7 +4648,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_snack_title+'</div>';
     fg.afternoon_snack.forEach(function(s, idx) {
       var slotId = 'ta-badge-snack-'+idx;
-      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">☕</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.specialty)+' · '+escapeHtml(localizePriceText(s.price))+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4319,7 +4657,7 @@ function renderFood(fg, dest) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_dinner_title+'</div>';
     fg.dinner.forEach(function(s, idx) {
       var slotId = 'ta-badge-dinner-'+idx;
-      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' · '+escapeHtml(s.cuisine)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(s.price)+(s.tip?' · 💡 '+escapeHtml(s.tip):'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">'+escapeHtml(s.name)+' · '+escapeHtml(s.area)+' · '+escapeHtml(s.cuisine)+' <span id="'+slotId+'" class="ta-badge"></span></div><div class="info-val">'+escapeHtml(s.dish)+' · '+escapeHtml(localizePriceText(s.price))+(s.tip?' · 💡 '+escapeHtml(s.tip):'')+'</div><div class="bls"><a id="'+slotId+'-link" href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.name+' '+getQueryLocationForItem(s.name, dest))+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
       foodSlotMeta.push({ slotId: slotId, placeName: s.name, dest: getQueryLocationForItem(s.name, dest), category: 'restaurants' });
     });
     h += '</div>';
@@ -4327,7 +4665,7 @@ function renderFood(fg, dest) {
   if (fg.street_food && fg.street_food.length) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_streetfood_title+'</div>';
     fg.street_food.forEach(function(s) {
-      h += '<div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">'+escapeHtml(s.name)+'</div><div class="info-val">'+escapeHtml(s.where)+' · '+escapeHtml(s.price)+'</div><div class="bls"><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.where+' '+dest)+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">'+escapeHtml(s.name)+'</div><div class="info-val">'+escapeHtml(s.where)+' · '+escapeHtml(localizePriceText(s.price))+'</div><div class="bls"><a href="https://www.google.com/maps/search/'+encodeURIComponent(s.where+' '+dest)+'" target="_blank" class="bl bl-gm">'+slotDict.bl_maps+'</a></div></div></div>';
     });
     h += '</div>';
   }
@@ -4345,7 +4683,7 @@ function renderStays(accs, dest) {
 
   var hasReal = sorted.some(function(a){ return a.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h += '<p style="font-size:13px;color:#5A6478;margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'All prices estimated per night. Click to find real-time availability.')+'</p>';
+  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'All prices estimated per night. Click to find real-time availability.')+'</p>';
   h += '<select onchange="staySortOrder=this.value;renderStays(window._stays,window._staysDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
   h += '<option value="default"'+(staySortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
   h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
@@ -4383,22 +4721,22 @@ function renderStays(accs, dest) {
     }
     h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
     h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">'+escapeHtml(a.name)+'</strong>';
-    if (a.isReal) h += '<span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
+    if (a.isReal) h += '<span style="font-size:9px;font-weight:600;color:var(--live);background:var(--live-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
     h += '<span id="'+slotId+'" class="ta-badge"></span></div>';
     if (a.area) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">📍 '+escapeHtml(a.area)+' · <em style="color:var(--gold)">'+escapeHtml(a.type)+'</em></div>';
     else h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">'+escapeHtml(a.type)+'</em></div>';
     h += '<div style="font-size:13px;color:var(--gold);margin-top:6px;letter-spacing:1px">'+stars+'</div>';
-    if (a.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-top:8px;margin-bottom:0">'+escapeHtml(a.why)+'</p>';
+    if (a.why) h += '<p style="font-size:13px;color:var(--body-text);font-style:italic;margin-top:8px;margin-bottom:0">'+escapeHtml(a.why)+'</p>';
     if (a.highlights && a.highlights.length) h += '<div style="margin-top:8px">'+a.highlights.map(function(t){return '<span class="acc-tag">'+escapeHtml(t)+'</span>';}).join('')+'</div>';
     h += '</div>';
     h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
     h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">'+formatPrice(a.price_night)+'</span><span style="font-size:11px;color:var(--muted)">/night</span></div>';
-    h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
+    h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
     h += '</div>';
     h += '</div>';
-    h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid rgba(11,15,26,.06)">';
+    h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)">';
     h += '<a href="'+bookingHotelUrl(a.name, dest)+'" target="_blank" class="bl bl-featured">Booking.com</a>';
-    h += '<a href="'+hotelsComLink('hotels', a.name+' '+dest)+'" target="_blank" class="bl bl-bk">Hotels.com</a>';
+    h += '<a href="'+hotelsComHotelUrl(dest, a.name)+'" target="_blank" class="bl bl-bk">Hotels.com</a>';
     h += '</div>';
     h += '</div>';
     // Only queue TripAdvisor enrichment for AI-estimated results — real
@@ -4438,6 +4776,29 @@ var AIRLINE_BADGES = {
   'copa':      { bg: '#003DA5', fg: '#fff', label: 'CM' },
   'avianca':   { bg: '#E4002B', fg: '#fff', label: 'AV' }
 };
+// Default flight ordering is by how recognizable the carrier is, not by the
+// arbitrary order the AI or Duffel happened to return them in — a traveler
+// scanning the list trusts a name they know, and an unfamiliar carrier at the
+// top reads as a worse result even when the price is good. Brazilian majors
+// lead (this app's primary market), then US majors, then the large
+// international carriers; anything unrecognized sorts to the bottom.
+var AIRLINE_PRIORITY = [
+  'latam', 'gol', 'azul',
+  'american', 'united', 'delta',
+  'air canada', 'aeromexico', 'aeroméxico', 'copa', 'avianca',
+  'british airways', 'lufthansa', 'air france', 'klm', 'iberia', 'tap', 'swiss', 'ita airways', 'austrian', 'sas', 'finnair',
+  'emirates', 'qatar', 'turkish', 'etihad', 'singapore', 'cathay', 'ana', 'japan airlines', 'korean air', 'qantas',
+  'jetblue', 'southwest', 'alaska', 'spirit', 'frontier',
+  'ryanair', 'easyjet', 'vueling', 'wizz', 'norwegian'
+];
+function airlineRank(airlineName) {
+  var key = (airlineName || '').toLowerCase();
+  for (var i = 0; i < AIRLINE_PRIORITY.length; i++) {
+    if (key.indexOf(AIRLINE_PRIORITY[i]) !== -1) return i;
+  }
+  return AIRLINE_PRIORITY.length; // unrecognized carrier -> bottom of the list
+}
+
 function getAirlineBadgeHtml(airlineName) {
   var key = (airlineName || '').toLowerCase();
   var match = Object.keys(AIRLINE_BADGES).filter(function(k) { return key.indexOf(k) !== -1; })[0];
@@ -4455,16 +4816,25 @@ function renderFlights(flights, from, dest) {
   var sorted = (flights||[]).slice();
   if (flightSortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price||0)-(b.price||0); });
   else if (flightSortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price||0)-(a.price||0); });
+  else sorted.sort(function(a, b) {
+    // Outbound legs stay above return legs whatever the carrier, then most
+    // recognizable airline first, then cheapest as the tie-breaker.
+    var legA = a.type === 'return' ? 1 : 0, legB = b.type === 'return' ? 1 : 0;
+    if (legA !== legB) return legA - legB;
+    var rankDiff = airlineRank(a.airline) - airlineRank(b.airline);
+    if (rankDiff !== 0) return rankDiff;
+    return (a.price || 0) - (b.price || 0);
+  });
 
   var hasReal = sorted.some(function(f){ return f.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
-  h += '<p style="font-size:13px;color:#5A6478;margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'Prices are estimates. Compare real deals:')+'</p>';
+  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'Prices are estimates. Compare real deals:')+'</p>';
   h += '<select onchange="flightSortOrder=this.value;renderFlights(window._flights,window._flightsFrom,window._flightsDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
   h += '<option value="default"'+(flightSortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
   h += '<option value="price_asc"'+(flightSortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
   h += '<option value="price_desc"'+(flightSortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
   h += '</select></div>';
-  h += '<div class="bls" style="margin-bottom:16px"><a href="'+bookingFlightUrl(from.split(',')[0], dest.split(',')[0])+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
+  h += '<div class="bls" style="margin-bottom:16px"><a href="'+bookingFlightUrl(destIata(from), destIata(dest))+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
   sorted.forEach(function(f) {
     var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
     var inCart = isFlightInCart(f);
@@ -4472,8 +4842,8 @@ function renderFlights(flights, from, dest) {
     h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px">';
     h += '<div style="flex:1;min-width:0">';
     h += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">'+getAirlineBadgeHtml(f.airline)+'<div><strong style="font-size:16px">'+escapeHtml(f.airline)+'</strong>';
-    if (f.isReal) h += ' <span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap">● LIVE</span>';
-    h += '<div><span style="font-size:11px;color:var(--muted);background:rgba(11,15,26,.06);padding:3px 9px;border-radius:20px">'+escapeHtml(f.class)+'</span></div></div></div>';
+    if (f.isReal) h += ' <span style="font-size:9px;font-weight:600;color:var(--live);background:var(--live-bg);padding:3px 8px;border-radius:20px;white-space:nowrap">● LIVE</span>';
+    h += '<div><span style="font-size:11px;color:var(--muted);background:var(--surface-tint);padding:3px 9px;border-radius:20px">'+escapeHtml(f.class)+'</span></div></div></div>';
     h += '</div>';
     h += '<div style="flex-shrink:0;text-align:right;min-width:130px">';
     h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">'+formatPrice(f.price)+'</span><span style="font-size:11px;color:var(--muted)"> /person</span></div>';
@@ -4503,7 +4873,10 @@ function renderFlights(flights, from, dest) {
     } else {
       searchUrl = 'https://www.skyscanner.com'; // last-resort fallback if we somehow have no route at all
     }
-    h += '<div class="bls" style="margin-top:10px;padding-top:10px;border-top:.5px solid rgba(11,15,26,.06)"><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">'+dict.bl_search+'</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div>';
+    var cardBookingUrl = f.isMultiCity
+      ? bookingFlightUrl(destIata(from), destIata(dest))
+      : bookingFlightUrl(f.from || destIata(from), f.to || destIata(dest), f.depDateOnly || '');
+    h += '<div class="bls" style="margin-top:10px;padding-top:10px;border-top:.5px solid var(--hairline)"><a href="'+cardBookingUrl+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="'+searchUrl+'" target="_blank" class="bl bl-sk">'+dict.bl_search+'</a><button type="button" onclick="toggleFlightCart(window._flights['+flights.indexOf(f)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button></div></div>';
   });
   document.getElementById('flightsContent').innerHTML = h;
   renderCart();
@@ -4555,12 +4928,12 @@ function renderCars(cars, dest) {
   if (!cars || !cars.length) {
     // No real Duffel data (no token, no coverage, or the call failed) —
     // show a simple, always-useful fallback rather than an empty tab.
-    container.innerHTML = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">Compare car rental deals for ' + escapeHtml(destShort) + ':</p>' + fallbackLinks;
+    container.innerHTML = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">Compare car rental deals for ' + escapeHtml(destShort) + ':</p>' + fallbackLinks;
     return;
   }
 
   var hasReal = cars.some(function(c) { return c.isReal; });
-  var h = '<p style="font-size:13px;color:#5A6478;margin-bottom:10px">' + (hasReal ? 'Live prices from Duffel:' : 'Estimated car rental options — compare real deals:') + '</p>' + fallbackLinks;
+  var h = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + (hasReal ? 'Live prices from Duffel:' : 'Estimated car rental options — compare real deals:') + '</p>' + fallbackLinks;
 
   // Group by category (Compact/SUV/Sports car/Economy/etc.) so options are
   // organized instead of one flat list, matching how a rental site presents them.
@@ -4582,19 +4955,19 @@ function renderCars(cars, dest) {
       else h += '<div style="width:180px;height:130px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
       h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
       h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">' + escapeHtml(c.name) + '</strong>';
-      if (c.isReal) h += '<span style="font-size:9px;font-weight:600;color:#2E7D32;background:rgba(46,125,50,.1);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
+      if (c.isReal) h += '<span style="font-size:9px;font-weight:600;color:var(--live);background:var(--live-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
       h += '</div>';
       if (c.supplier) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier) + '</div>';
-      h += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:#5A6478">'
+      h += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--body-text)">'
         + '<span>👤 5 ' + (dict.car_seats_label || 'seats') + '</span>'
         + '<span>⚙️ ' + (dict.car_automatic_label || 'Automatic') + '</span>'
         + '<span>♾️ ' + (dict.car_mileage_label || 'Unlimited mileage') + '</span>'
         + '</div>';
-      if (c.why) h += '<p style="font-size:13px;color:#5A6478;font-style:italic;margin-top:10px;margin-bottom:0">' + escapeHtml(c.why) + '</p>';
+      if (c.why) h += '<p style="font-size:13px;color:var(--body-text);font-style:italic;margin-top:10px;margin-bottom:0">' + escapeHtml(c.why) + '</p>';
       h += '</div>';
       h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
       h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
-      h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'#2E7D32':'var(--gold)')+';background:'+(inCart?'rgba(46,125,50,.1)':'var(--gold)')+';color:'+(inCart?'#2E7D32':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
+      h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
       h += '</div>';
       h += '</div>';
       h += '</div>';
@@ -4647,8 +5020,8 @@ function renderAttractions(attractions, dest) {
       h += '<div style="width:64px;height:64px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,var(--gold),#8a6d3b)">🎡</div>';
       h += '<div style="flex:1;min-width:0">';
       h += '<strong style="font-size:16px;line-height:1.3">' + escapeHtml(name) + '</strong>';
-      if (type) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">' + escapeHtml(type) + '</em>' + (area ? ' · 📍 ' + escapeHtml(area) : '') + (price ? ' · 🎟️ ' + escapeHtml(price) : '') + '</div>';
-      if (desc) h += '<p style="font-size:13px;color:#5A6478;margin-top:6px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
+      if (type) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">' + escapeHtml(type) + '</em>' + (area ? ' · 📍 ' + escapeHtml(area) : '') + (price ? ' · 🎟️ ' + escapeHtml(localizePriceText(price)) : '') + '</div>';
+      if (desc) h += '<p style="font-size:13px;color:var(--body-text);margin-top:6px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
       h += '<div class="bls" style="margin-top:8px">';
       h += '<a href="' + bookUrl + '" target="_blank" class="bl bl-featured">Booking.com Attractions</a>';
       h += '</div>';
@@ -4657,8 +5030,8 @@ function renderAttractions(attractions, dest) {
   }
 
   // Footer with general Booking.com Attractions link
-  h += '<div style="margin-top:16px" class="bls"><a href="' + bookingDeepLink('attractions', 'https://www.booking.com/attractions/searchresults.html?ss=' + destEnc, dest) + '" target="_blank" class="bl bl-featured">Browse all attractions on Booking.com</a></div>';
-  container.innerHTML = h || '<p style="font-size:13px;color:#5A6478">Attractions will appear here after generating a trip.</p>';
+  h += '<div style="margin-top:16px" class="bls"><a href="' + bookingDeepLink('attractions', bookingAttractionUrl(dest), dest) + '" target="_blank" class="bl bl-featured">Browse all attractions on Booking.com</a></div>';
+  container.innerHTML = h || '<p style="font-size:13px;color:var(--body-text)">Attractions will appear here after generating a trip.</p>';
 }
 function renderInfo(p, dest) {
   if (!p) { document.getElementById('infoContent').innerHTML = ''; return; }
@@ -4690,7 +5063,7 @@ async function enrichRealWeather(dest) {
     if (!res.ok) return;
     var data = await res.json();
     if (!data || !data.daily || !data.daily.length) return;
-    var html = '<div style="display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;margin-bottom:6px;border-bottom:1px solid rgba(11,15,26,.08)">';
+    var html = '<div style="display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;margin-bottom:6px;border-bottom:1px solid var(--hairline)">';
     data.daily.forEach(function(d) {
       var dayLabel = new Date(d.date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short' });
       var emoji = WEATHER_ICON_MAP[(d.icon || '').slice(0, 2)] || '🌤️';
