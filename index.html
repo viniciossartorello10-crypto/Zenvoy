@@ -43,7 +43,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#6B7789;--slate:#2D3A52;--page-bg:var(--cream);--page-text:var(--navy);--card-bg:var(--white);--body-text:#5A6478;--hairline:rgba(11,15,26,.08);--border:rgba(11,15,26,.15);--surface-tint:rgba(11,15,26,.05);--live:#2E7D32;--live-bg:rgba(46,125,50,.1)}
+:root{--navy:#0B0F1A;--gold:#C9A96E;--gold2:#E2C99A;--cream:#F5F2EC;--white:#fff;--muted:#626D7D;--slate:#2D3A52;--page-bg:var(--cream);--page-text:var(--navy);--card-bg:var(--white);--body-text:#5A6478;--hairline:rgba(11,15,26,.08);--border:rgba(11,15,26,.15);--surface-tint:rgba(11,15,26,.05);--live:#2E7D32;--live-bg:rgba(46,125,50,.1);--gold-text:#7D6234}
 /* Dark theme — separate variables from --navy/--cream/--white on purpose:
    those three are also used as fixed decorative colors (the hero, nav bar,
    and modals are always-dark navy with white text by design, unrelated to
@@ -55,7 +55,7 @@
    badge were all hardcoded to near-black values that vanished against the
    dark card surface — every one of them is now a variable with a real dark
    value. --body-text sits at 9.9:1 on --card-bg, --muted at 6.5:1. */
-[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.11);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15)}
+[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.11);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15);--gold-text:#E2C99A}
 body{font-family:'Inter',sans-serif;background:var(--page-bg);color:var(--page-text);transition:background .2s,color .2s}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)}
 .logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:0}.logo span{color:var(--gold)}
@@ -84,11 +84,11 @@ section.hero .hero-bg-anim,section.hero .hero-worldmap-full{position:absolute!im
 @media(prefers-reduced-motion: reduce){.hero-globe,.hero-plane,.wm-line{animation:none}}
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,7vw,80px);font-weight:300;color:#fff;line-height:1.1;margin-bottom:16px}
 h1 em{font-style:italic;color:var(--gold)}
-.hero p{font-size:18px;color:var(--muted);max-width:480px;line-height:1.7;margin-bottom:40px}
+.hero p{font-size:18px;color:#A8B2C4;max-width:480px;line-height:1.7;margin-bottom:40px}
 .hero-btn{margin-top:4px}
 .hero-ticker{width:100%;max-width:100vw;overflow:hidden;margin-top:36px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .hero-ticker-track{display:flex;width:max-content;gap:14px;animation:ticker-scroll 32s linear infinite}
-.hero-ticker-track span{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--muted);white-space:nowrap;letter-spacing:.03em}
+.hero-ticker-track span{font-family:'Cormorant Garamond',serif;font-size:18px;color:#A8B2C4;white-space:nowrap;letter-spacing:.03em}
 @keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion: reduce){.hero-ticker-track{animation:none}}
 .hero-btn{padding:16px 36px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
@@ -123,7 +123,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .pkg-emoji{font-size:32px;margin-bottom:8px}
 .pkg-name{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--page-text);margin-bottom:4px}
 .pkg-tag{font-size:12px;color:var(--muted);margin-bottom:14px;min-height:32px}
-.pkg-price{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);margin-bottom:2px}
+.pkg-price{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold-text);margin-bottom:2px}
 .pkg-price-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 @media(max-width:640px){#packageCards{grid-template-columns:1fr!important}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
@@ -189,14 +189,14 @@ input::placeholder{color:#aaa}
 .dc-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,15,26,.6) 0%,transparent 60%)}
 .dc-img-lbl{position:absolute;bottom:12px;left:16px;font-family:'Cormorant Garamond',serif;font-size:18px;color:#fff}
 .dc-body{padding:18px}
-.dlabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.dlabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text);margin-bottom:4px}
 .dth{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:12px}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
 .td{font-size:13px;color:var(--body-text);line-height:1.6}
 .slot-swap-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(201,169,110,.08);border-radius:20px;width:fit-content}
-.slot-swap-label{font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.slot-swap-label{font-size:10px;color:var(--gold-text);font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
 .slot-arrow{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);background:var(--card-bg);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);transition:all .15s;font-weight:700}
 .slot-arrow:hover:not(:disabled){background:var(--gold);color:#fff}
 .slot-arrow:disabled{opacity:.3;cursor:default}
@@ -230,10 +230,13 @@ input::placeholder{color:#aaa}
 .bls{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .bl{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;text-decoration:none;white-space:nowrap}
 .bl:hover{opacity:.85}
-.bl-gm{background:#4285F4;color:#fff}.bl-ta{background:#00AA6C;color:#fff}
-.bl-bk{background:#003580;color:#fff}.bl-ab{background:#FF5A5F;color:#fff}
-.bl-sk{background:#00B2F5;color:#fff}.bl-ky{background:#FF690F;color:#fff}
-.bl-gf{background:#1A73E8;color:#fff}.bl-vi{background:#FF8000;color:#fff}
+/* Partner pill colours are the lightest shade of each brand hue that keeps
+   white label text at or above the 4.5:1 AA minimum — the original brand
+   values measured 2.4-3.6:1 and were hard to read in either theme. */
+.bl-gm{background:#3974D4;color:#fff}.bl-ta{background:#008856;color:#fff}
+.bl-bk{background:#003580;color:#fff}.bl-ab{background:#CC484C;color:#fff}
+.bl-sk{background:#007EAE;color:#fff}.bl-ky{background:#C7520C;color:#fff}
+.bl-gf{background:#1A73E8;color:#fff}.bl-vi{background:#BA5D00;color:#fff}
 /* Featured partner link — visually distinct from the plain .bl pills above
    (larger, bolder, gold) so our current priority commission source stands
    out without looking like an urgency banner. Uses the same gold accent as
@@ -264,6 +267,8 @@ input::placeholder{color:#aaa}
 .bba{font-family:'Cormorant Garamond',serif;font-size:24px}
 .bbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .bbar{height:3px;border-radius:2px;background:var(--gold);margin-top:6px}
+/* .gem is an always-navy card in both themes, so its title keeps the bright
+   decorative --gold (8:1 on navy); --gold-text is for light card surfaces. */
 .gem{background:var(--navy);border-radius:12px;padding:20px;border-left:3px solid var(--gold);margin-bottom:10px}
 .gem-t{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 .gem-d{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(232,226,213,.9);line-height:1.5;font-style:italic}
@@ -274,7 +279,7 @@ input::placeholder{color:#aaa}
 .ta-card-addr{color:var(--body-text);margin-bottom:4px}
 .ta-card-link{color:var(--gold);text-decoration:none;font-weight:500;font-size:11px}
 .ta-card-link:hover{text-decoration:underline}
-.info-t{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:10px}
+.info-t{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gold-text);margin-bottom:10px}
 .info-row{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .info-row:last-child{border-bottom:none}
 .info-icon{font-size:15px;width:22px;flex-shrink:0}
@@ -700,13 +705,13 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
         </div>
         <div id="dayCards"></div>
       </div>
-      <div class="tp" id="tab-food"><div id="foodContent"><div class="info-box"><div class="info-t">🍜 Must-try regional dishes</div><div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">Local specialty</div><div class="info-val">Ask locals what not to miss · 📍 Local markets · <strong style="color:var(--gold)">$5–$20</strong></div></div></div></div><div class="info-box"><div class="info-t">☕ Best breakfast spots</div><div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">Local café · City center</div><div class="info-val">Regional breakfast · $5–$12</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌞 Best lunch spots</div><div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">Market lunch · Central market</div><div class="info-val">Fresh local food · $8–$15</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌙 Best dinner spots</div><div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">Top rated restaurant · Old town · Local</div><div class="info-val">House specialty · $20–$40 pp · 💡 Reserve in advance</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🛺 Street food</div><div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">Local street food</div><div class="info-val">Rome main market · $2–$5</div><div class="bls"><a href="https://www.google.com/maps/search/Rome%20main%20market%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div></div>
-      <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:var(--body-text);margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:var(--live)">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
+      <div class="tp" id="tab-food"><div id="foodContent"><div class="info-box"><div class="info-t">🍜 Must-try regional dishes</div><div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">Local specialty</div><div class="info-val">Ask locals what not to miss · 📍 Local markets · <strong style="color:var(--gold-text)">$5–$20</strong></div></div></div></div><div class="info-box"><div class="info-t">☕ Best breakfast spots</div><div class="info-row"><div class="info-icon">🌅</div><div><div class="info-lbl">Local café · City center</div><div class="info-val">Regional breakfast · $5–$12</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Local%20caf%C3%A9%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌞 Best lunch spots</div><div class="info-row"><div class="info-icon">🍱</div><div><div class="info-lbl">Market lunch · Central market</div><div class="info-val">Fresh local food · $8–$15</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Market%20lunch%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🌙 Best dinner spots</div><div class="info-row"><div class="info-icon">🍷</div><div><div class="info-lbl">Top rated restaurant · Old town · Local</div><div class="info-val">House specialty · $20–$40 pp · 💡 Reserve in advance</div><div class="bls"><a href="https://www.tripadvisor.com/Search?q=Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.google.com/maps/search/Top%20rated%20restaurant%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div><div class="info-box"><div class="info-t">🛺 Street food</div><div class="info-row"><div class="info-icon">🥢</div><div><div class="info-lbl">Local street food</div><div class="info-val">Rome main market · $2–$5</div><div class="bls"><a href="https://www.google.com/maps/search/Rome%20main%20market%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div></div>
+      <div class="tp" id="tab-stays"><div id="staysContent"><p style="font-size:13px;color:var(--body-text);margin-bottom:14px">All prices estimated per night. Click to find real-time availability.</p><div class="acc-card"><div class="acc-name">Luxury Option</div><div class="acc-loc">📍 City center · <em style="color:var(--gold-text)">Luxury Hotel</em></div><div class="acc-stars">★★★★★</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Best address in Rome for luxury travelers</p><div class="acc-tags"><span class="acc-tag">Premium location</span><span class="acc-tag">Full amenities</span><span class="acc-tag">Great views</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Luxury%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Mid-range Option</div><div class="acc-loc">📍 Old town · <em style="color:var(--gold-text)">Boutique Hotel</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Perfect balance of comfort and value</p><div class="acc-tags"><span class="acc-tag">Great location</span><span class="acc-tag">Local character</span></div><div class="acc-foot"><div><span class="acc-price">$1</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Mid-range%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Budget Option</div><div class="acc-loc">📍 Backpacker area · <em style="color:var(--gold-text)">Hostel</em></div><div class="acc-stars">★★★☆☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Meet fellow travelers and save money</p><div class="acc-tags"><span class="acc-tag">Social vibe</span><span class="acc-tag">Central</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.hostelworld.com/findabed.php/ChosenCity.Rome%2C%20Italy" target="_blank" class="bl bl-gm" style="background:var(--live)">Hostelworld</a><a href="https://www.booking.com/searchresults.html?ss=Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Budget%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div><div class="acc-card"><div class="acc-name">Apartment Option</div><div class="acc-loc">📍 Local neighborhood · <em style="color:var(--gold-text)">Apartment</em></div><div class="acc-stars">★★★★☆</div><p style="font-size:13px;color:var(--body-text);font-style:italic;margin-bottom:8px">Live like a local</p><div class="acc-tags"><span class="acc-tag">Kitchen</span><span class="acc-tag">Local feel</span></div><div class="acc-foot"><div><span class="acc-price">$0</span><span style="font-size:12px;color:var(--muted)">/night</span></div><div class="bls"><a href="https://www.booking.com/searchresults.html?ss=Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-bk">Booking</a><a href="https://www.airbnb.com/s/Rome%2C%20Italy/homes" target="_blank" class="bl bl-ab">Airbnb</a><a href="https://www.google.com/maps/search/Apartment%20Option%20Rome%2C%20Italy" target="_blank" class="bl bl-gm">Maps</a></div></div></div></div></div>
       <div class="tp" id="tab-flights"><div id="flightsContent"><p style="font-size:13px;color:var(--body-text);margin-bottom:10px">Prices are estimates. Compare real deals:</p><div class="bls" style="margin-bottom:16px"><a href="https://www.skyscanner.com/transport/flights/Marrakech/Rome/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com/" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/Marrakech-Rome/" target="_blank" class="bl bl-ky">Kayak</a></div><div class="fc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>✈️ Search on Skyscanner</strong><span style="font-size:11px;color:var(--muted);background:var(--surface-tint);padding:3px 9px;border-radius:20px">Economy</span></div><div class="fr"><div><div class="fcity">MAR</div><div style="font-size:12px;color:var(--muted)">Varies</div></div><div class="fmid"><div class="fdur">Check routes · Multiple options</div><div class="fline"></div></div><div><div class="fcity">ROM</div><div style="font-size:12px;color:var(--muted)">Varies</div></div></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:.5px solid var(--hairline)"><div><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:24px">$1</span><span style="font-size:11px;color:var(--muted)"> /person</span></div><div class="bls"><a href="https://www.skyscanner.com/" target="_blank" class="bl bl-sk">Search</a></div></div></div></div></div>
       <div class="tp" id="tab-cars"><div id="carsContent"></div></div>
       <div class="tp" id="tab-cart"><div id="cartContent"></div></div>
       <div class="tp" id="tab-budget"><div class="bbd" id="budgetBreak"><div class="bbi"><div class="bba">$7</div><div class="bbl">✈️ Flights</div><div class="bbar" style="width:35%"></div></div><div class="bbi"><div class="bba">$6</div><div class="bbl">🏨 Accommodation</div><div class="bbar" style="width:30%"></div></div><div class="bbi"><div class="bba">$3</div><div class="bbl">🍽️ Food</div><div class="bbar" style="width:15%"></div></div><div class="bbi"><div class="bba">$2</div><div class="bbl">🎭 Activities</div><div class="bbar" style="width:10%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🚌 Transport</div><div class="bbar" style="width:5%"></div></div><div class="bbi"><div class="bba">$1</div><div class="bbl">🛍️ Shopping</div><div class="bbar" style="width:5%"></div></div></div><div style="background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between"><span style="font-size:14px;color:var(--body-text)">Estimated total</span><span style="font-family:&#39;Cormorant Garamond&#39;,serif;font-size:28px" id="budgetTotal">$20</span></div></div>
-      <div class="tp" id="tab-tips"><div id="tipsContent"><div class="gem"><div class="gem-t">Eat where locals eat</div><div class="gem-d">"Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus."</div></div><div class="gem"><div class="gem-t">Visit attractions at opening time</div><div class="gem-d">"Arrive right when they open — you'll have them almost to yourself and the light is perfect for photos."</div></div><div class="gem"><div class="gem-t">Download offline maps</div><div class="gem-d">"Download Google Maps offline for Rome before you land. Works without signal."</div></div><div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q=Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.viator.com/searchResults/all?text=Rome%2C%20Italy" target="_blank" class="bl bl-vi">Viator tours</a><a href="https://www.getyourguide.com/s/?q=Rome%2C%20Italy" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div></div></div>
+      <div class="tp" id="tab-tips"><div id="tipsContent"><div class="gem"><div class="gem-t">Eat where locals eat</div><div class="gem-d">"Walk 5 minutes from tourist areas — prices drop by half and quality doubles. Look for handwritten menus."</div></div><div class="gem"><div class="gem-t">Visit attractions at opening time</div><div class="gem-d">"Arrive right when they open — you'll have them almost to yourself and the light is perfect for photos."</div></div><div class="gem"><div class="gem-t">Download offline maps</div><div class="gem-d">"Download Google Maps offline for Rome before you land. Works without signal."</div></div><div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q=Rome%2C%20Italy" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="https://www.viator.com/searchResults/all?text=Rome%2C%20Italy" target="_blank" class="bl bl-vi">Viator tours</a><a href="https://www.getyourguide.com/s/?q=Rome%2C%20Italy" target="_blank" class="bl bl-vi" style="background:#BA5D00">GetYourGuide</a></div></div></div>
       <div class="tp" id="tab-attractions"><div id="attractionsContent"></div></div>
       <div class="tp" id="tab-info"><div id="infoContent"><div class="info-box"><div class="info-t">📋 Need to know — Rome, Italy</div><div class="info-row"><div class="info-icon">🗓️</div><div><div class="info-lbl">Best time</div><div class="info-val">Research the best season for Rome</div></div></div><div class="info-row"><div class="info-icon">🌤️</div><div><div class="info-lbl">Weather</div><div class="info-val">Check weather.com for current forecasts</div></div></div><div class="info-row"><div class="info-icon">💵</div><div><div class="info-lbl">Currency</div><div class="info-val">Check Google for current exchange rates</div></div></div><div class="info-row"><div class="info-icon">🗣️</div><div><div class="info-lbl">Language</div><div class="info-val">Download Google Translate and use camera mode for signs</div></div></div><div class="info-row"><div class="info-icon">🚌</div><div><div class="info-lbl">Getting around</div><div class="info-val">Search "how to get around Rome" for local options</div></div></div><div class="info-row"><div class="info-icon">🔒</div><div><div class="info-lbl">Safety</div><div class="info-val">Check your government's travel advisory before departing</div></div></div><div class="info-row"><div class="info-icon">🛂</div><div><div class="info-lbl">Visa &amp; entry</div><div class="info-val">Check visa requirements at iVisa.com</div></div></div><div class="info-row"><div class="info-icon">🎒</div><div><div class="info-lbl">What to pack</div><div class="info-val">Pack layers, comfortable shoes, portable charger, light rain jacket</div></div></div></div></div></div>
     </div>
@@ -1251,23 +1256,103 @@ function bookingFlightUrl(fromIata, toIata, depDate, returnDate) {
   ]);
 }
 
-// Attractions: this is the one CJ link verified to forward ?url= intact, so
-// it keeps full CJ attribution AND lands on the right city.
+// Booking.com attractions city pages exist for only some destinations, and a
+// guessed URL for a missing one renders their "This page doesn't exist" page.
+// This set was produced by fetching the city page for every entry in CITIES
+// and keeping the 243 that returned real content, so a link is only pointed at
+// Booking.com when that page is known to exist. Everything else goes to
+// GetYourGuide, whose free-text search always resolves. Regenerate this list
+// if CITIES gains destinations.
+var BOOKING_ATTRACTION_CITIES = {};
+[
+  'Aarhus', 'Abu Dhabi', 'Accra', 'Adelaide', 'Albuquerque', 'Amman', 'Amsterdam', 'Anchorage',
+  'Antigua Guatemala', 'Arequipa', 'Aspen', 'Athens', 'Atlanta', 'Auckland', 'Austin', 'Baltimore',
+  'Bangkok', 'Barcelona', 'Basel', 'Bath', 'Beijing', 'Belize City', 'Belo Horizonte', 'Bergen', 'Berlin',
+  'Bilbao', 'Boise', 'Bologna', 'Boracay', 'Boston', 'Bratislava', 'Bridgetown', 'Brisbane', 'Brussels',
+  'Bucharest', 'Budapest', 'Buffalo', 'Búzios', 'Cairns', 'Cairo', 'Calgary', 'Cancún', 'Cape Town',
+  'Casablanca', 'Charleston', 'Charlotte', 'Chengdu', 'Chicago', 'Christchurch', 'Cincinnati', 'Cleveland',
+  'Colombo', 'Colonia del Sacramento', 'Columbus', 'Copenhagen', 'Cork', 'Curitiba', 'Cusco', 'Dallas',
+  'Dar es Salaam', 'Denver', 'Detroit', 'Doha', 'Dubai', 'Dublin', 'Dubrovnik', 'Edinburgh', 'Faro',
+  'Fernando de Noronha', 'Florence', 'Flores', 'Florianópolis', 'Fortaleza', 'Foz do Iguaçu', 'Frankfurt',
+  'Galway', 'Gdansk', 'Geneva', 'Ghent', 'Glasgow', 'Gold Coast', 'Guadalajara', 'Guayaquil', 'Halifax',
+  'Hamburg', 'Hanoi', 'Helsinki', 'Ho Chi Minh City', 'Hoi An', 'Hong Kong', 'Honolulu', 'Houston', 'Ibiza',
+  'Indianapolis', 'Innsbruck', 'Iquitos', 'Istanbul', 'Jakarta', 'Jericoacoara', 'João Pessoa',
+  'Johannesburg', 'Kathmandu', 'Key West', 'Krakow', 'Kuala Lumpur', 'Kyoto', 'La Paz', 'Larnaca',
+  'Las Vegas', 'Lima', 'Lisbon', 'Liverpool', 'Ljubljana', 'London', 'Los Angeles', 'Louisville',
+  'Luxembourg', 'Lyon', 'Maceió', 'Madrid', 'Malaga', 'Male', 'Malta', 'Manama', 'Manaus', 'Manila',
+  'Marrakech', 'Mauritius', 'Melbourne', 'Memphis', 'Mérida', 'Miami', 'Milan', 'Milwaukee', 'Minneapolis',
+  'Montego Bay', 'Montevideo', 'Montreal', 'Munich', 'Muscat', 'Mykonos', 'Nairobi', 'Naples', 'Nashville',
+  'Nassau', 'Natal', 'Nazca', 'New Orleans', 'New York', 'Nice', 'Omaha', 'Orlando', 'Osaka', 'Oslo',
+  'Ottawa', 'Palermo', 'Palm Springs', 'Palmas', 'Paris', 'Perth', 'Petra', 'Philadelphia', 'Phnom Penh',
+  'Phoenix', 'Phuket', 'Pittsburgh', 'Playa del Carmen', 'Portland', 'Porto', 'Porto Alegre',
+  'Porto Seguro', 'Prague', 'Providence', 'Puerto Vallarta', 'Puno', 'Punta Arenas', 'Punta Cana',
+  'Punta del Este', 'Queenstown', 'Quito', 'Raleigh', 'Reykjavik', 'Riga', 'Rio de Janeiro', 'Roatán',
+  'Rome', 'Rotterdam', 'Sacramento', 'Salt Lake City', 'Salvador', 'Salzburg', 'San Antonio', 'San Diego',
+  'San Francisco', 'San Juan', 'San Miguel de Allende', 'San Salvador', 'Santa Fe', 'Santiago', 'Santorini',
+  'São Paulo', 'Sapporo', 'Sarajevo', 'Savannah', 'Seattle', 'Seoul', 'Seville', 'Shanghai', 'Shenzhen',
+  'Singapore', 'Sofia', 'Split', 'Stockholm', 'Sucre', 'Sydney', 'Tallinn', 'Tampa', 'Tegucigalpa', 'Tokyo',
+  'Toledo', 'Toronto', 'Trujillo', 'Tucson', 'Tunis', 'Uyuni', 'Valencia', 'Valparaíso', 'Vancouver',
+  'Venice', 'Verona', 'Vienna', 'Vientiane', 'Vilnius', 'Vitória', 'Warsaw', 'Washington DC', 'Wellington',
+  'Windhoek', 'Winnipeg', 'Yogyakarta', 'Zagreb', 'Zanzibar', 'Zurich'
+].forEach(function (c) { BOOKING_ATTRACTION_CITIES[_plainLower(c)] = 1; });
+
+// Cities whose Booking.com slug does not match the plain slugified name.
+var ATTRACTION_SLUG_OVERRIDES = {
+  'washington dc': 'us/washington',
+  'hong kong':     'hk/hong-kong',
+  'seville':       'es/sevilla',
+  'frankfurt':     'de/frankfurt-am-main'
+};
+
+// Lowercase hyphenated city slug, accents stripped — the form Booking.com uses
+// in its attractions city URLs ("São Paulo" -> "sao-paulo").
+function _citySlug(name) {
+  return (name || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Attractions: Booking.com has NO free-text attractions search. Verified by
+// testing every plausible form — /attractions/searchresults.html returns their
+// "This page doesn't exist" page for ?ss= and ?query= alike, and only renders
+// when given a numeric dest_id we have no way to derive from a city name.
+//
+// What does work is the per-city guide at /attractions/city/<iso>/<slug>.html,
+// and both halves of that path are already available: the ISO code from
+// resolveDest() and the slug from the city name. So attractions link there —
+// a real page, correct city, affiliate id intact. Cities outside the CITIES
+// table fall back to the attractions home rather than a guessed 404.
+// Returns a Booking.com attractions city URL, or '' when Booking has no page
+// for that city — callers fall back to GetYourGuide rather than send someone
+// to a 404.
 function bookingAttractionUrl(dest, attractionName) {
-  var q = destQuery(dest);
-  var ss = attractionName ? attractionName + ', ' + q : q;
-  return 'https://www.booking.com/attractions/searchresults.html?' + _qs([
+  var r = resolveDest(dest);
+  var key = _plainLower(r.city);
+  var override = ATTRACTION_SLUG_OVERRIDES[key];
+  var path = override || (r.iso && _citySlug(r.city) ? r.iso + '/' + _citySlug(r.city) : '');
+  if (!path || (!override && !BOOKING_ATTRACTION_CITIES[key])) return '';
+  return 'https://www.booking.com/attractions/city/' + path + '.html?' + _qs([
     ['aid', BOOKING_AID],
-    ['label', 'zenvoy_attr_' + (_sid(attractionName || q) || 'search')],
-    ['ss', ss],
+    ['label', 'zenvoy_attr_' + (_sid(attractionName || r.city) || 'city')],
     ['start_date', _tripCtx().checkIn],
-    ['lang', BOOKING_LANG[appLang] || 'en-us'],
     ['selected_currency', currentCurrencyCode || 'USD']
   ]);
 }
 
+// GetYourGuide honours a plain ?q= search, so it is the one partner that can
+// deep-link to a NAMED attraction rather than just its city. Used alongside
+// the Booking.com city guide on each attraction card.
+function getYourGuideUrl(dest, attractionName) {
+  var q = attractionName ? attractionName + ', ' + destQuery(dest) : destQuery(dest);
+  return withAffiliateParam(
+    'https://www.getyourguide.com/s/?q=' + encodeURIComponent(q),
+    'partner_id', AFFILIATE_IDS.getyourguide);
+}
+
 // Wraps a booking.com destination URL in the Attractions CJ click link.
 function bookingDeepLink(type, destUrl, label) {
+  if (!destUrl) return '';                 // no Booking page for this city
   var base = BOOKING_COM_LINKS[type];
   if (!base) return destUrl;               // no CJ link for this vertical — go direct
   var sid = _sid(label);
@@ -3086,7 +3171,12 @@ async function fetchDestinationIntel(destination, interests, style) {
     var t = i.trim();
     if (t) categories.push(t);
   });
-  ['Signature local food', 'Nightlife and bars', 'Iconic landmarks', 'Neighborhoods worth walking'].forEach(function (c) {
+  // Rooftops earn a slot of their own. Asked only about "nightlife", the model
+  // names a city's single most famous scene — for Chicago that is the blues
+  // clubs, which is correct but buries the rooftop bars locals name in the
+  // same breath. Asking for them explicitly surfaces both.
+  ['Signature local food', 'Nightlife and bars', 'Rooftop bars and skyline views',
+   'Iconic landmarks', 'Neighborhoods worth walking'].forEach(function (c) {
     if (categories.join(' ').toLowerCase().indexOf(c.split(' ')[0].toLowerCase()) === -1) categories.push(c);
   });
 
@@ -4530,7 +4620,8 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
   if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
   if (slotLabel === 'Afternoon' || slotLabel === 'Morning') {
-    h += '<a href="' + bookingDeepLink('attractions', bookingAttractionUrl(dest, (text.split(' at ')[1] || text.split('\u2014')[0] || text).split('.')[0].trim().slice(0,60)), (text.split(' at ')[1] || text.split('\u2014')[0] || text).split('.')[0].trim().slice(0,40)) + '" target="_blank" class="bl bl-featured">Booking.com</a>';
+    var slotAttrUrl = bookingDeepLink('attractions', bookingAttractionUrl(dest), dest);
+    if (slotAttrUrl) h += '<a href="' + slotAttrUrl + '" target="_blank" class="bl bl-featured">Booking.com</a>';
     h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('\u2014')[0] || text).split('.')[0].trim().slice(0,60)), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
   }
   h += '</div></div>';
@@ -4622,7 +4713,7 @@ function renderFood(fg, dest) {
   if (fg.must_try && fg.must_try.length) {
     h += '<div class="info-box"><div class="info-t">'+slotDict.food_musttry_title+'</div>';
     fg.must_try.forEach(function(d) {
-      h += '<div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">'+escapeHtml(d.name)+'</div><div class="info-val">'+escapeHtml(d.desc)+' · 📍 '+escapeHtml(d.where)+' · <strong style="color:var(--gold)">'+escapeHtml(localizePriceText(d.price))+'</strong></div></div></div>';
+      h += '<div class="info-row"><div class="info-icon">🍽️</div><div><div class="info-lbl">'+escapeHtml(d.name)+'</div><div class="info-val">'+escapeHtml(d.desc)+' · 📍 '+escapeHtml(d.where)+' · <strong style="color:var(--gold-text)">'+escapeHtml(localizePriceText(d.price))+'</strong></div></div></div>';
     });
     h += '</div>';
   }
@@ -4723,9 +4814,9 @@ function renderStays(accs, dest) {
     h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">'+escapeHtml(a.name)+'</strong>';
     if (a.isReal) h += '<span style="font-size:9px;font-weight:600;color:var(--live);background:var(--live-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
     h += '<span id="'+slotId+'" class="ta-badge"></span></div>';
-    if (a.area) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">📍 '+escapeHtml(a.area)+' · <em style="color:var(--gold)">'+escapeHtml(a.type)+'</em></div>';
-    else h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">'+escapeHtml(a.type)+'</em></div>';
-    h += '<div style="font-size:13px;color:var(--gold);margin-top:6px;letter-spacing:1px">'+stars+'</div>';
+    if (a.area) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">📍 '+escapeHtml(a.area)+' · <em style="color:var(--gold-text)">'+escapeHtml(a.type)+'</em></div>';
+    else h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold-text)">'+escapeHtml(a.type)+'</em></div>';
+    h += '<div style="font-size:13px;color:var(--gold-text);margin-top:6px;letter-spacing:1px">'+stars+'</div>';
     if (a.why) h += '<p style="font-size:13px;color:var(--body-text);font-style:italic;margin-top:8px;margin-bottom:0">'+escapeHtml(a.why)+'</p>';
     if (a.highlights && a.highlights.length) h += '<div style="margin-top:8px">'+a.highlights.map(function(t){return '<span class="acc-tag">'+escapeHtml(t)+'</span>';}).join('')+'</div>';
     h += '</div>';
@@ -4994,7 +5085,7 @@ function renderTips(gems, dest) {
   var h = (gems||[]).map(function(g){
     return '<div class="gem"><div class="gem-t">'+escapeHtml(g.title||'Hidden gem')+'</div><div class="gem-d">"'+escapeHtml(g.tip||g)+'"</div></div>';
   }).join('');
-  h += '<div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="'+withAffiliateParam('https://www.viator.com/searchResults/all?text='+encodeURIComponent(dest), 'pid', AFFILIATE_IDS.viator)+'" target="_blank" class="bl bl-vi">'+dict.bl_viator_tours+'</a><a href="'+withAffiliateParam('https://www.getyourguide.com/s/?q='+encodeURIComponent(dest), 'partner_id', AFFILIATE_IDS.getyourguide)+'" target="_blank" class="bl bl-vi" style="background:#FF8000">GetYourGuide</a></div>';
+  h += '<div style="margin-top:14px" class="bls"><a href="https://www.tripadvisor.com/Search?q='+encodeURIComponent(dest)+'" target="_blank" class="bl bl-ta">TripAdvisor</a><a href="'+withAffiliateParam('https://www.viator.com/searchResults/all?text='+encodeURIComponent(dest), 'pid', AFFILIATE_IDS.viator)+'" target="_blank" class="bl bl-vi">'+dict.bl_viator_tours+'</a><a href="'+withAffiliateParam('https://www.getyourguide.com/s/?q='+encodeURIComponent(dest), 'partner_id', AFFILIATE_IDS.getyourguide)+'" target="_blank" class="bl bl-vi" style="background:#BA5D00">GetYourGuide</a></div>';
   document.getElementById('tipsContent').innerHTML = h;
 }
 
@@ -5015,22 +5106,27 @@ function renderAttractions(attractions, dest) {
       var price = a.price || '';
       var area = a.area || '';
       var bookUrl = bookingDeepLink('attractions', bookingAttractionUrl(dest, name), name);
+      var gygUrl = getYourGuideUrl(dest, name);
       h += '<div class="fc" style="padding:16px;margin-bottom:0">';
       h += '<div style="display:flex;gap:14px;align-items:flex-start">';
       h += '<div style="width:64px;height:64px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,var(--gold),#8a6d3b)">🎡</div>';
       h += '<div style="flex:1;min-width:0">';
       h += '<strong style="font-size:16px;line-height:1.3">' + escapeHtml(name) + '</strong>';
-      if (type) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold)">' + escapeHtml(type) + '</em>' + (area ? ' · 📍 ' + escapeHtml(area) : '') + (price ? ' · 🎟️ ' + escapeHtml(localizePriceText(price)) : '') + '</div>';
+      if (type) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px"><em style="color:var(--gold-text)">' + escapeHtml(type) + '</em>' + (area ? ' · 📍 ' + escapeHtml(area) : '') + (price ? ' · 🎟️ ' + escapeHtml(localizePriceText(price)) : '') + '</div>';
       if (desc) h += '<p style="font-size:13px;color:var(--body-text);margin-top:6px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
       h += '<div class="bls" style="margin-top:8px">';
-      h += '<a href="' + bookUrl + '" target="_blank" class="bl bl-featured">Booking.com Attractions</a>';
+      if (bookUrl) h += '<a href="' + bookUrl + '" target="_blank" class="bl bl-featured">Booking.com</a>';
+      h += '<a href="' + gygUrl + '" target="_blank" class="bl' + (bookUrl ? ' bl-vi' : ' bl-featured') + '" style="background:#BA5D00">GetYourGuide</a>';
       h += '</div>';
       h += '</div></div></div>';
     });
   }
 
   // Footer with general Booking.com Attractions link
-  h += '<div style="margin-top:16px" class="bls"><a href="' + bookingDeepLink('attractions', bookingAttractionUrl(dest), dest) + '" target="_blank" class="bl bl-featured">Browse all attractions on Booking.com</a></div>';
+  var browseUrl = bookingDeepLink('attractions', bookingAttractionUrl(dest), dest);
+  h += '<div style="margin-top:16px" class="bls">'
+    + (browseUrl ? '<a href="' + browseUrl + '" target="_blank" class="bl bl-featured">Browse all attractions on Booking.com</a>' : '')
+    + '<a href="' + getYourGuideUrl(dest) + '" target="_blank" class="bl bl-vi" style="background:#BA5D00">Browse all on GetYourGuide</a></div>';
   container.innerHTML = h || '<p style="font-size:13px;color:var(--body-text)">Attractions will appear here after generating a trip.</p>';
 }
 function renderInfo(p, dest) {
