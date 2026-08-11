@@ -1046,6 +1046,8 @@ var AFFILIATE_IDS = {
 var BOOKING_PROGRAMS = {
   br: {
     aid: '8133103',
+    // Verticals whose CJ link is verified to forward a destination URL.
+    deepLink: { hotels: 1, flights: 1 },
     cj: {
       hotels:      'https://www.dpbolvw.net/click-101838851-17293138', // evergreen, deep-link enabled
       hotelsHome:  'https://www.dpbolvw.net/click-101838851-17288448', // homepage fallback
@@ -1056,6 +1058,7 @@ var BOOKING_PROGRAMS = {
   },
   na: {
     aid: '8133101',
+    deepLink: { hotels: 1, flights: 1, attractions: 1 },
     cj: {
       hotels:      'https://www.dpbolvw.net/click-101838851-17293132', // evergreen, deep-link enabled
       flights:     'https://www.anrdoezrs.net/click-101838851-17288982',
@@ -1074,9 +1077,6 @@ function bookingProgram() {
   return BOOKING_PROGRAMS[BOOKING_PROGRAM_BY_LANG[appLang] || 'na'];
 }
 function bookingAid() { return bookingProgram().aid; }
-
-// Verticals whose CJ link is verified to carry a destination URL through.
-var CJ_DEEPLINK_SAFE = { hotels: 1, flights: 1 };
 
 var HOTELS_COM_AFFCID = 'HCOM-LATAM.NETWORK.CJ.101838851'; // Hotels.com/Expedia CJ publisher id
 var HOTELS_COM_RFFRID = 'aff.hcom.lm.002.003.101838851.cjaff';
@@ -1179,13 +1179,13 @@ function destQuery(dest) {
 
 // Sanitizes free text into the alphanumeric/underscore form affiliate sub-ID
 // parameters accept, so reporting can attribute a click to the exact card.
-function _sid(label) {
+function _sid(label, maxLen) {
   if (!label) return '';
   return String(label)
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
-    .slice(0, 50);
+    .slice(0, maxLen || 50);
 }
 
 // Trip dates/occupancy, read once so every vertical stays consistent.
@@ -1200,6 +1200,26 @@ function _tripCtx() {
 
 var BOOKING_LANG = { en: 'en-us', pt: 'pt-br', es: 'es', fr: 'fr', it: 'it' };
 var HOTELS_LOCALE = { en: 'en_US', pt: 'pt_BR', es: 'es_ES', fr: 'fr_FR', it: 'it_IT' };
+
+// CJ truncates the URL handed to it in ?url= somewhere between 245 and 297
+// characters — past that the destination is silently discarded and the
+// traveler lands on a bare vertical homepage with the click still tracked but
+// nothing pre-filled. Measured directly by walking a flights URL up in length.
+//
+// So every inner URL is built shortest-first: required params, then optional
+// ones only while they still fit. `pairs` is ordered by importance and
+// anything that would push past the budget is dropped rather than silently
+// costing us the whole deep link.
+var CJ_URL_BUDGET = 240;
+
+function _qsBudgeted(base, required, optional) {
+  var url = base + '?' + _qs(required);
+  for (var i = 0; i < optional.length; i++) {
+    var next = url + '&' + _qs([optional[i]]);
+    if (_qs([optional[i]]) && next.length <= CJ_URL_BUDGET) url = next;
+  }
+  return url;
+}
 
 function _qs(pairs) {
   var out = [];
@@ -1221,19 +1241,10 @@ function bookingHotelUrl(hotelName, dest) {
   var t = _tripCtx();
   var q = destQuery(dest);
   var ss = hotelName ? hotelName + ', ' + q : q;
-  var destUrl = 'https://www.booking.com/searchresults.html?' + _qs([
-    ['aid', bookingAid()],
-    ['label', 'zenvoy_hotel_' + (_sid(hotelName || q) || 'search')],
-    ['ss', ss],
-    ['checkin', t.checkIn],
-    ['checkout', t.checkOut],
-    ['group_adults', t.adults],
-    ['group_children', 0],
-    ['no_rooms', 1],
-    ['sb_travel_purpose', 'leisure'],
-    ['lang', BOOKING_LANG[appLang] || 'en-us'],
-    ['selected_currency', currentCurrencyCode || 'USD']
-  ]);
+  var destUrl = _qsBudgeted('https://www.booking.com/searchresults.html',
+    [['aid', bookingAid()], ['ss', ss], ['checkin', t.checkIn], ['checkout', t.checkOut]],
+    [['group_adults', t.adults], ['no_rooms', 1],
+     ['label', 'zenvoy_hotel_' + (_sid(hotelName || q, 20) || 'search')]]);
   return bookingDeepLink('hotels', destUrl, hotelName || q);
 }
 
@@ -1246,7 +1257,7 @@ function bookingCarUrl(dest) {
   var q = destQuery(dest);
   var pickup  = t.checkIn  ? t.checkIn  + 'T10:00:00' : '';
   var dropoff = t.checkOut ? t.checkOut + 'T10:00:00' : '';
-  return 'https://www.booking.com/cars/index.html?' + _qs([
+  var destUrl = 'https://www.booking.com/cars/index.html?' + _qs([
     ['aid', bookingAid()],
     ['label', 'zenvoy_car_' + (_sid(q) || 'search')],
     ['ss', q],
@@ -1260,6 +1271,7 @@ function bookingCarUrl(dest) {
     ['lang', BOOKING_LANG[appLang] || 'en-us'],
     ['selected_currency', currentCurrencyCode || 'USD']
   ]);
+  return bookingDeepLink('cars', destUrl, q);
 }
 
 // Flights: IATA pair + date. Falls back to the flights landing page only when
@@ -1271,23 +1283,11 @@ function bookingFlightUrl(fromIata, toIata, depDate, returnDate) {
   }
   var depart = depDate || t.checkIn || '';
   var ret    = returnDate || t.checkOut || '';
-  var destUrl = 'https://www.booking.com/flights/search.html?' + _qs([
-    ['aid', bookingAid()],
-    ['label', 'zenvoy_flight_' + _sid(fromIata + '_' + toIata)],
-    ['type', ret ? 'ROUNDTRIP' : 'ONEWAY'],
-    ['from', fromIata],
-    ['to', toIata],
-    ['fromLocationName', fromIata],
-    ['toLocationName', toIata],
-    ['depart', depart],
-    ['depart_date', depart],
-    ['return', ret],
-    ['return_date', ret],
-    ['adults', t.adults],
-    ['cabinClass', 'ECONOMY'],
-    ['lang', BOOKING_LANG[appLang] || 'en-us'],
-    ['selected_currency', currentCurrencyCode || 'USD']
-  ]);
+  var destUrl = _qsBudgeted('https://www.booking.com/flights/search.html',
+    [['aid', bookingAid()], ['type', ret ? 'ROUNDTRIP' : 'ONEWAY'],
+     ['from', fromIata], ['to', toIata], ['depart', depart]],
+    [['return', ret], ['adults', t.adults],
+     ['label', 'zenvoy_flight_' + _sid(fromIata + '_' + toIata, 20)]]);
   return bookingDeepLink('flights', destUrl, fromIata + '_' + toIata);
 }
 
@@ -1367,12 +1367,10 @@ function bookingAttractionUrl(dest, attractionName) {
   var override = ATTRACTION_SLUG_OVERRIDES[key];
   var path = override || (r.iso && _citySlug(r.city) ? r.iso + '/' + _citySlug(r.city) : '');
   if (!path || (!override && !BOOKING_ATTRACTION_CITIES[key])) return '';
-  return 'https://www.booking.com/attractions/city/' + path + '.html?' + _qs([
-    ['aid', bookingAid()],
-    ['label', 'zenvoy_attr_' + (_sid(attractionName || r.city) || 'city')],
-    ['start_date', _tripCtx().checkIn],
-    ['selected_currency', currentCurrencyCode || 'USD']
-  ]);
+  return _qsBudgeted('https://www.booking.com/attractions/city/' + path + '.html',
+    [['aid', bookingAid()]],
+    [['start_date', _tripCtx().checkIn],
+     ['label', 'zenvoy_attr_' + (_sid(attractionName || r.city, 20) || 'city')]]);
 }
 
 // GetYourGuide honours a plain ?q= search, so it is the one partner that can
@@ -1385,18 +1383,28 @@ function getYourGuideUrl(dest, attractionName) {
     'partner_id', AFFILIATE_IDS.getyourguide);
 }
 
-// Wraps a booking.com destination URL in the active program's CJ click link,
-// but only for the verticals whose CJ link is proven to forward the URL. For
-// the rest the destination URL is returned untouched (it already carries the
-// program's aid), so the traveler always lands where they asked to.
+// Every Booking.com click goes through the active program's CJ link, because
+// CJ is where the commission is recorded — a direct booking.com URL carrying
+// only `aid` is not registered as a CJ click and so is not guaranteed to earn.
+//
+// Where CJ forwards a destination (see each program's `deepLink` map) the
+// traveler gets BOTH: tracking and a pre-filled page. Where it does not
+// (cars in both programs, attractions in BR) the CJ link still runs, and they
+// land on that vertical's Booking.com home to enter the city themselves.
+// That is a deliberate trade: an untracked click earns nothing however good
+// its landing page. Ask CJ for deep-link-enabled links for those two
+// verticals and they will upgrade automatically — just add the vertical to
+// the program's `deepLink` map.
 function bookingDeepLink(type, destUrl, label) {
   if (!destUrl) return '';
-  if (!CJ_DEEPLINK_SAFE[type]) return destUrl;
-  var base = bookingProgram().cj[type];
-  if (!base) return destUrl;
+  var program = bookingProgram();
+  var base = program.cj[type];
+  if (!base) return destUrl;                 // no CJ link for this vertical at all
   var sid = _sid(label);
-  var url = base + '?url=' + encodeURIComponent(destUrl);
-  if (sid) url += '&sid=' + encodeURIComponent(type + '_' + sid);
+  var url = program.deepLink[type]
+    ? base + '?url=' + encodeURIComponent(destUrl)
+    : base;                                  // CJ would discard the destination anyway
+  url += (url.indexOf('?') === -1 ? '?' : '&') + 'sid=' + encodeURIComponent(type + '_' + (sid || 'search'));
   return url;
 }
 
