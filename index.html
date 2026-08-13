@@ -1043,30 +1043,43 @@ var AFFILIATE_IDS = {
 // destination. Cars and attractions are built directly with `aid`, because
 // routing them through CJ would throw away the city and dates the traveler
 // just chose — the landing page has to be right first.
+// Every vertical of BOTH programs now deep-links — re-verified against the
+// updated (higher-EPC) links by sending a fully-formed destination URL through
+// each and confirming the city/dates survive the redirect. Cars and BR
+// attractions, which the OLD links discarded, now carry the destination too.
+// `attractions` lands on Booking's renamed /things-to-do/city/<iso>/<slug>
+// path with the city intact.
 var BOOKING_PROGRAMS = {
   br: {
     aid: '8133103',
-    // Verticals whose CJ link is verified to forward a destination URL.
-    deepLink: { hotels: 1, flights: 1 },
+    deepLink: { hotels: 1, flights: 1, cars: 1, attractions: 1 },
     cj: {
-      hotels:      'https://www.dpbolvw.net/click-101838851-17293138', // evergreen, deep-link enabled
-      hotelsHome:  'https://www.dpbolvw.net/click-101838851-17288448', // homepage fallback
-      flights:     'https://www.tkqlhce.com/click-101838851-17288986',
-      cars:        'https://www.anrdoezrs.net/click-101838851-17314638',
-      attractions: 'https://www.jdoqocy.com/click-101838851-17314829'
+      hotels:      'https://www.tkqlhce.com/click-101838851-17293138', // evergreen, deep-link enabled (EPC $60)
+      hotelsHome:  'https://www.dpbolvw.net/click-101838851-17288448', // homepage fallback (EPC $83)
+      flights:     'https://www.dpbolvw.net/click-101838851-17288986',
+      cars:        'https://www.kqzyfj.com/click-101838851-17288987',
+      attractions: 'https://www.jdoqocy.com/click-101838851-17288988'
     }
   },
   na: {
     aid: '8133101',
-    deepLink: { hotels: 1, flights: 1, attractions: 1 },
+    deepLink: { hotels: 1, flights: 1, cars: 1, attractions: 1 },
     cj: {
-      hotels:      'https://www.dpbolvw.net/click-101838851-17293132', // evergreen, deep-link enabled
-      flights:     'https://www.anrdoezrs.net/click-101838851-17288982',
-      cars:        'https://www.tkqlhce.com/click-101838851-17314628',
-      attractions: 'https://www.kqzyfj.com/click-101838851-17288984'
+      hotels:      'https://www.jdoqocy.com/click-101838851-17293132', // evergreen, deep-link enabled (EPC $206)
+      hotelsHome:  'https://www.tkqlhce.com/click-101838851-17288959', // homepage fallback (EPC $509)
+      flights:     'https://www.kqzyfj.com/click-101838851-17288982',
+      cars:        'https://www.kqzyfj.com/click-101838851-17288983',
+      attractions: 'https://www.kqzyfj.com/click-101838851-17288984',
+      // Limited "2026 Getaway Deals" promo — highest EPC ($255) but time-boxed.
+      // Shown as an extra badge on stays while active; auto-drops after expiry
+      // so we never surface a dead promo. NA program only.
+      deals:       'https://www.dpbolvw.net/click-101838851-17288985'
     }
   }
 };
+
+// After this date the Getaway Deals promo is over; the badge stops rendering.
+var BOOKING_DEALS_EXPIRES = '2026-10-31';
 
 // Language -> program. Portuguese sends travelers to the Brazil program;
 // every other supported language uses North America.
@@ -1080,6 +1093,10 @@ function bookingAid() { return bookingProgram().aid; }
 
 var HOTELS_COM_AFFCID = 'HCOM-LATAM.NETWORK.CJ.101838851'; // Hotels.com/Expedia CJ publisher id
 var HOTELS_COM_RFFRID = 'aff.hcom.lm.002.003.101838851.cjaff';
+// Hotels.com LATAM CJ click link — verified deep-link enabled (destination +
+// dates survive), EPC $106. Every Hotels.com link is wrapped in this so the
+// click is CJ-tracked, same reasoning as the Booking.com verticals.
+var HOTELS_COM_CJ = 'https://www.kqzyfj.com/click-101838851-15010309';
 
 // ── Country resolution ───────────────────────────────────────────
 // ISO-3166-1 alpha-2 for every country name that appears in CITIES, plus the
@@ -1240,6 +1257,12 @@ function _qs(pairs) {
 function bookingHotelUrl(hotelName, dest) {
   var t = _tripCtx();
   var q = destQuery(dest);
+  // No resolvable destination at all — use the program's homepage link (its
+  // own higher-EPC deal) rather than a deep link to nowhere.
+  if (!q) {
+    var home = bookingProgram().cj.hotelsHome;
+    return home + '?sid=' + encodeURIComponent('hotel_search');
+  }
   var ss = hotelName ? hotelName + ', ' + q : q;
   var destUrl = _qsBudgeted('https://www.booking.com/searchresults.html',
     [['aid', bookingAid()], ['ss', ss], ['checkin', t.checkIn], ['checkout', t.checkOut]],
@@ -1248,29 +1271,42 @@ function bookingHotelUrl(hotelName, dest) {
   return bookingDeepLink('hotels', destUrl, hotelName || q);
 }
 
+// The 2026 Getaway Deals promo link, pre-filled to the destination, or '' once
+// the promo has expired (so callers can simply skip rendering the badge).
+function bookingDealsUrl(dest) {
+  // NA-program promo only — never shown to Brazil-program (PT) travelers, so
+  // the two programs never mix on one screen.
+  if (bookingProgram() !== BOOKING_PROGRAMS.na) return '';
+  var na = BOOKING_PROGRAMS.na;
+  if (!na.cj.deals) return '';
+  // Date-only lexical compare is safe for YYYY-MM-DD.
+  var today = new Date().toISOString().slice(0, 10);
+  if (today > BOOKING_DEALS_EXPIRES) return '';
+  var t = _tripCtx();
+  var q = destQuery(dest);
+  var destUrl = _qsBudgeted('https://www.booking.com/searchresults.html',
+    [['aid', na.aid], ['ss', q || 'worldwide'], ['checkin', t.checkIn], ['checkout', t.checkOut]],
+    [['group_adults', t.adults]]);
+  var url = na.cj.deals + '?url=' + encodeURIComponent(destUrl);
+  return url + '&sid=' + encodeURIComponent('deals_' + (_sid(q, 20) || 'all'));
+}
+
 // Cars: cars.booking.com is the Rentalcars-powered vertical. Both the
 // legacy (picked_up/pickup_date) and current (pickupLocation/pickUpDate)
 // parameter spellings are sent — whichever the live page reads wins, and the
 // unread pair is ignored, so the search is pre-filled either way.
+// Cars now deep-link through CJ, so the inner URL has to stay under the CJ
+// length budget — the three params verified to actually pre-fill the search
+// (ss + pickup/dropoff datetimes) are required, the rest are dropped if they
+// would push it over.
 function bookingCarUrl(dest) {
   var t = _tripCtx();
   var q = destQuery(dest);
   var pickup  = t.checkIn  ? t.checkIn  + 'T10:00:00' : '';
   var dropoff = t.checkOut ? t.checkOut + 'T10:00:00' : '';
-  var destUrl = 'https://www.booking.com/cars/index.html?' + _qs([
-    ['aid', bookingAid()],
-    ['label', 'zenvoy_car_' + (_sid(q) || 'search')],
-    ['ss', q],
-    ['pickupPlace', q],
-    ['picked_up', q],
-    ['pickupLocation', q],
-    ['pickup_date', pickup],
-    ['pickUpDate', pickup],
-    ['dropoff_date', dropoff],
-    ['dropOffDate', dropoff],
-    ['lang', BOOKING_LANG[appLang] || 'en-us'],
-    ['selected_currency', currentCurrencyCode || 'USD']
-  ]);
+  var destUrl = _qsBudgeted('https://www.booking.com/cars/index.html',
+    [['aid', bookingAid()], ['ss', q], ['pickup_date', pickup], ['dropoff_date', dropoff]],
+    [['label', 'zenvoy_car_' + (_sid(q, 20) || 'search')]]);
   return bookingDeepLink('cars', destUrl, q);
 }
 
@@ -1388,13 +1424,10 @@ function getYourGuideUrl(dest, attractionName) {
 // only `aid` is not registered as a CJ click and so is not guaranteed to earn.
 //
 // Where CJ forwards a destination (see each program's `deepLink` map) the
-// traveler gets BOTH: tracking and a pre-filled page. Where it does not
-// (cars in both programs, attractions in BR) the CJ link still runs, and they
-// land on that vertical's Booking.com home to enter the city themselves.
-// That is a deliberate trade: an untracked click earns nothing however good
-// its landing page. Ask CJ for deep-link-enabled links for those two
-// verticals and they will upgrade automatically — just add the vertical to
-// the program's `deepLink` map.
+// traveler gets BOTH: tracking and a pre-filled page. With the current links
+// every vertical of both programs deep-links; the `deepLink` guard remains so
+// that if a link is ever swapped for one that discards the destination, we
+// fall back to a tracked homepage click rather than a broken URL.
 function bookingDeepLink(type, destUrl, label) {
   if (!destUrl) return '';
   var program = bookingProgram();
@@ -1415,18 +1448,11 @@ function bookingDeepLink(type, destUrl, label) {
 function hotelsComHotelUrl(dest, hotelName) {
   var t = _tripCtx();
   var q = destQuery(dest);
-  return 'https://www.hotels.com/Hotel-Search?' + _qs([
-    ['destination', hotelName ? hotelName + ', ' + q : q],
-    ['startDate', t.checkIn],
-    ['endDate', t.checkOut],
-    ['adults', t.adults],
-    ['rooms', 1],
-    ['sort', 'RECOMMENDED'],
-    ['locale', HOTELS_LOCALE[appLang] || 'en_US'],
-    ['affcid', HOTELS_COM_AFFCID],
-    ['rffrid', HOTELS_COM_RFFRID],
-    ['wapa6', 'hotel_' + (_sid(hotelName || q) || 'search')]
-  ]);
+  var destUrl = _qsBudgeted('https://www.hotels.com/Hotel-Search',
+    [['destination', hotelName ? hotelName + ', ' + q : q], ['startDate', t.checkIn], ['endDate', t.checkOut]],
+    [['adults', t.adults], ['rooms', 1]]);
+  return HOTELS_COM_CJ + '?url=' + encodeURIComponent(destUrl)
+    + '&sid=' + encodeURIComponent('hotel_' + (_sid(hotelName || q, 20) || 'search'));
 }
 
 function hotelsComCarUrl(dest) {
@@ -1754,7 +1780,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -1816,7 +1842,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -1878,7 +1904,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidad local', cat_seafood: 'Mariscos', cat_meat: 'Carnes', cat_burger: 'Hamburguesas y casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorpréndeme',
     show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...',
-    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator'
+    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator', deals_badge: 'Ofertas Getaway 2026 de Booking.com — hasta 30% de descuento, tiempo limitado'
   },
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
@@ -1940,7 +1966,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 National', trip_international: '🌍 International',
     cat_local: 'Spécialité locale', cat_seafood: 'Fruits de mer', cat_meat: 'Viande', cat_burger: 'Burgers et décontracté', cat_veg: 'Végétarien', cat_surprise: 'Surprenez-moi',
     show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option...",
-    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator'
+    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator', deals_badge: 'Offres Getaway 2026 Booking.com — jusqu\'à 30% de réduction, durée limitée'
   },
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
@@ -2002,7 +2028,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nazionale', trip_international: '🌍 Internazionale',
     cat_local: 'Specialità locale', cat_seafood: 'Pesce', cat_meat: 'Carne', cat_burger: 'Burger e casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorprendimi',
     show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...',
-    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator'
+    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator', deals_badge: 'Offerte Getaway 2026 Booking.com — fino al 30% di sconto, tempo limitato'
   }
 };
 
@@ -3812,10 +3838,38 @@ function selectPackage(idx) {
 // Resets the view back to a fresh wizard (step 1), hiding the finished trip
 // result — lets someone plan another trip without reloading the page.
 function startNewTrip() {
-  document.getElementById('result').style.display = 'none';
+  // Full reset back to a fresh wizard. The subtle bug this fixes: generating a
+  // trip runs showBuildingScreen(), which sets inline display:none on every
+  // .wizard-step; hideBuildingScreen() then hides the whole card instead of
+  // clearing those inline styles. So simply re-showing the card and adding the
+  // .active class to step 1 left the step still display:none (inline beats the
+  // CSS class) and the card rendered blank. Every screen and every transient
+  // display override is cleared here so the wizard is exactly as it loads fresh.
+  var result = document.getElementById('result'); if (result) result.style.display = 'none';
+  var building = document.getElementById('buildingScreen'); if (building) building.style.display = 'none';
+  var chooser = document.getElementById('packageChooser'); if (chooser) chooser.style.display = 'none';
+  hideErrorBanner();
+
+  // Clear the inline display:none that showBuildingScreen() stamped on these,
+  // so their CSS (.wizard-step.active, and the default block for the rest) wins.
+  document.querySelectorAll('.wizard-step').forEach(function (s) { s.style.display = ''; });
+  var progress = document.getElementById('wizardProgress'); if (progress) progress.style.display = '';
+  var msg = document.getElementById('wizardMsg'); if (msg) msg.style.display = '';
+  var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = '';
+
   var card = document.querySelector('.card'); if (card) card.style.display = '';
   var plannerHeader = document.querySelector('#planner > h2'); if (plannerHeader) plannerHeader.style.display = '';
   var plannerSub = document.querySelector('#planner > p'); if (plannerSub) plannerSub.style.display = '';
+
+  // Re-enable the generate button and hide its spinner — generatePlan()
+  // disables it, and a failed/left-mid-flow run could leave it stuck.
+  var planBtn = document.getElementById('planBtn'); if (planBtn) planBtn.disabled = false;
+  var planSpin = document.getElementById('planSpin'); if (planSpin) planSpin.style.display = 'none';
+
+  // Drop the previous trip's state so nothing from it bleeds into the next one.
+  window.planData = null;
+  currentCityTab = null;
+
   showWizardStep(1);
   document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
 }
@@ -4828,6 +4882,17 @@ function renderStays(accs, dest) {
   h += '<option value="price_desc"'+(staySortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
   h += '</select></div>';
 
+  // Limited-time 2026 Getaway Deals promo (NA program, highest EPC) — a single
+  // destination-aware badge above the list while the promo is live. bookingDealsUrl
+  // returns '' once it expires or when the Brazil program is active, so nothing
+  // renders in those cases.
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var dealsUrl = bookingDealsUrl(dest);
+  if (dealsUrl) {
+    h += '<a href="' + dealsUrl + '" target="_blank" style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#c0392b,#e67e22);color:#fff;text-decoration:none;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(192,57,43,.35)">'
+      + '<span style="font-size:16px">🔥</span><span>' + (dict.deals_badge || 'Booking.com 2026 Getaway Deals — up to 30% off, limited time') + '</span></a>';
+  }
+
   var STAY_TYPE_STYLE = {
     'Luxury Hotel':  { emoji: '🏨', gradient: 'linear-gradient(135deg,#d4af7a,#8a6d3b)' },
     'Boutique Hotel':{ emoji: '🏩', gradient: 'linear-gradient(135deg,#e0a8c4,#a15c82)' },
@@ -4948,6 +5013,12 @@ function getAirlineBadgeHtml(airlineName) {
 }
 
 function renderFlights(flights, from, dest) {
+  // Guard against being called before the route globals are set (e.g. a
+  // language switch that re-renders from window.planData): the header link and
+  // the per-card skyscanner URLs do from.split(',') / dest.split(','), which
+  // would throw on undefined and blank the whole tab.
+  from = from || '';
+  dest = dest || '';
   window._flights = flights;
   window._flightsFrom = from;
   window._flightsDest = dest;
