@@ -13,7 +13,7 @@
 })();
 </script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Zenvoy — AI Travel Planner</title>
 <meta name="description" content="Zenvoy plans your entire trip in seconds with AI — flights, hotels, food, activities, and local secrets, personalized to your budget and travel style.">
 <link rel="canonical" href="https://zenvoytravel.netlify.app/">
@@ -57,6 +57,25 @@
    value. --body-text sits at 9.9:1 on --card-bg, --muted at 6.5:1. */
 [data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.11);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15);--gold-text:#E2C99A}
 body{font-family:'Inter',sans-serif;background:var(--page-bg);color:var(--page-text);transition:background .2s,color .2s}
+/* ── Mobile / native shell ──────────────────────────────────────
+   Nothing on the page should scroll horizontally, and taps shouldn't flash the
+   grey webview highlight. */
+html,body{overflow-x:hidden;max-width:100%}
+*{-webkit-tap-highlight-color:transparent}
+img,svg,video{max-width:100%;height:auto}
+/* Safe-area insets — with viewport-fit=cover the webview draws under the status
+   bar / notch / gesture bar, so fixed-position chrome is inset to stay clear. */
+nav{padding-top:calc(16px + env(safe-area-inset-top));padding-left:calc(40px + env(safe-area-inset-left));padding-right:calc(40px + env(safe-area-inset-right))}
+#floatingCartBtn{bottom:calc(24px + env(safe-area-inset-bottom)) !important;right:calc(24px + env(safe-area-inset-right)) !important}
+@media (max-width:768px){
+  nav{padding-left:calc(20px + env(safe-area-inset-left));padding-right:calc(20px + env(safe-area-inset-right))}
+  /* Touch targets: primary interactive controls get a comfortable min height
+     (Android's 48dp guideline). Small affiliate pills stay compact but still
+     clear the ~40px tappable floor. */
+  button,.submit,.hero-btn,.rcard,select,input,.tab,.city-tab-btn,.rtab,.pill{min-height:48px}
+  .bl{min-height:40px}
+  .pill{display:inline-flex;align-items:center}
+}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)}
 .logo{font-family:'Cormorant Garamond',serif;font-size:24px;color:#fff;letter-spacing:0}.logo span{color:var(--gold)}
 .hero{position:relative;overflow:hidden;min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:80px 24px 60px}
@@ -334,6 +353,12 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 </head>
 <body>
 
+<!-- Offline banner: shown whenever the device loses connectivity, so a failed
+     AI call or lookup reads as "you're offline" rather than a blank/frozen
+     screen. Fixed at the top, clears the notch via safe-area inset. -->
+<div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:#c0392b;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.25)">
+  📡 <span data-i18n="offline_msg">No internet connection — some features are unavailable until you reconnect.</span>
+</div>
 
 
 <nav style="position:absolute;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
@@ -998,6 +1023,27 @@ function escapeJsAttr(str) {
 // arrival-logistics comment near generatePlan's day prompt) — so only this
 // identical, mechanical fragment is factored out rather than force-unifying
 // prompts whose exact wording affects live AI output quality.
+// ── API BASE ─────────────────────────────────────────────────────
+// On the web the app is served from the same origin as its Netlify functions,
+// so relative "/.netlify/functions/..." calls just work. Inside the Capacitor
+// Android shell the webview is served from a local origin (capacitor://localhost),
+// where those relative paths resolve to the device and never reach the backend
+// — AI generation and every live lookup would silently fail. So when running
+// natively we prefix calls with the production origin. On the web API_BASE is
+// '' and behaviour is unchanged.
+var API_BASE = (function () {
+  try {
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
+        && window.Capacitor.isNativePlatform()) {
+      return 'https://zenvoytravel.netlify.app';
+    }
+    var proto = window.location.protocol;
+    if (proto === 'capacitor:' || proto === 'file:') return 'https://zenvoytravel.netlify.app';
+  } catch (e) {}
+  return '';
+})();
+function apiUrl(path) { return API_BASE + path; }
+
 var JSON_FORMATTING_RULES = 'JSON formatting rules: use straight double quotes only, plain hyphens instead of em-dashes, no literal line breaks inside string values.';
 
 // ── AFFILIATE / PARTNER LINKS ───────────────────────────────────
@@ -1780,7 +1826,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -1842,7 +1888,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -1904,7 +1950,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidad local', cat_seafood: 'Mariscos', cat_meat: 'Carnes', cat_burger: 'Hamburguesas y casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorpréndeme',
     show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...',
-    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator', deals_badge: 'Ofertas Getaway 2026 de Booking.com — hasta 30% de descuento, tiempo limitado'
+    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator', deals_badge: 'Ofertas Getaway 2026 de Booking.com — hasta 30% de descuento, tiempo limitado', offline_msg: 'Sin conexión a internet — algunas funciones no están disponibles hasta que te reconectes.'
   },
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
@@ -1966,7 +2012,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 National', trip_international: '🌍 International',
     cat_local: 'Spécialité locale', cat_seafood: 'Fruits de mer', cat_meat: 'Viande', cat_burger: 'Burgers et décontracté', cat_veg: 'Végétarien', cat_surprise: 'Surprenez-moi',
     show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option...",
-    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator', deals_badge: 'Offres Getaway 2026 Booking.com — jusqu\'à 30% de réduction, durée limitée'
+    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator', deals_badge: 'Offres Getaway 2026 Booking.com — jusqu\'à 30% de réduction, durée limitée', offline_msg: 'Pas de connexion internet — certaines fonctions sont indisponibles jusqu\'à la reconnexion.'
   },
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
@@ -2028,7 +2074,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nazionale', trip_international: '🌍 Internazionale',
     cat_local: 'Specialità locale', cat_seafood: 'Pesce', cat_meat: 'Carne', cat_burger: 'Burger e casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorprendimi',
     show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...',
-    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator', deals_badge: 'Offerte Getaway 2026 Booking.com — fino al 30% di sconto, tempo limitato'
+    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator', deals_badge: 'Offerte Getaway 2026 Booking.com — fino al 30% di sconto, tempo limitato', offline_msg: 'Nessuna connessione internet — alcune funzioni non sono disponibili finché non ti riconnetti.'
   }
 };
 
@@ -2308,7 +2354,7 @@ async function getCityImage(dest) {
   // what the place is actually known for. Go straight to a targeted search.
   if (iconicQueryUpfront) {
     try {
-      var iconicRes = await fetch('/.netlify/functions/unsplash-car-image', {
+      var iconicRes = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: iconicQueryUpfront })
@@ -2342,7 +2388,7 @@ async function getCityImage(dest) {
   var iconicQuery = ICONIC_QUERY_OVERRIDES[city.toLowerCase()];
   var searchQuery = iconicQuery || (city + (isBeachDest ? beachQuery : ' city skyline travel'));
   try {
-    var unsplashRes = await fetch('/.netlify/functions/unsplash-car-image', {
+    var unsplashRes = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: searchQuery })
@@ -2378,7 +2424,7 @@ async function taLocationSearch(query, category) {
     // api.content.tripadvisor.com directly — the browser can't do that
     // because TripAdvisor's API doesn't allow direct cross-origin requests.
     // The proxy holds the TripAdvisor key server-side, so no key is sent from here.
-    var url = '/.netlify/functions/tripadvisor-search'
+    var url = apiUrl('/.netlify/functions/tripadvisor-search')
       + '?searchQuery=' + encodeURIComponent(query)
       + (category ? '&category=' + encodeURIComponent(category) : '')
       + '&language=en';
@@ -2397,7 +2443,7 @@ async function taLocationDetails(locationId) {
   if (!locationId) return null;
   try {
     // Same proxy pattern as taLocationSearch above.
-    var url = '/.netlify/functions/tripadvisor-details'
+    var url = apiUrl('/.netlify/functions/tripadvisor-details')
       + '?locationId=' + encodeURIComponent(locationId)
       + '&language=en&currency=USD';
     var res = await fetch(url, { headers: { 'accept': 'application/json' } });
@@ -2417,7 +2463,7 @@ async function taLocationPhotos(locationId) {
   try {
     // TripAdvisor's Location Details endpoint doesn't include photos — this
     // is the dedicated endpoint for that, called separately.
-    var url = '/.netlify/functions/tripadvisor-photos'
+    var url = apiUrl('/.netlify/functions/tripadvisor-photos')
       + '?locationId=' + encodeURIComponent(locationId)
       + '&language=en';
     var res = await fetch(url, { headers: { 'accept': 'application/json' } });
@@ -2754,7 +2800,7 @@ async function searchDuffelFlights(fromCity, toCity, departDate, returnDate, tra
     // Routed through our own Netlify Function proxy instead of calling
     // api.duffel.com directly — the browser can't do that because Duffel's
     // API doesn't allow direct cross-origin requests.
-    var res = await fetch('/.netlify/functions/duffel-flights', {
+    var res = await fetch(apiUrl('/.netlify/functions/duffel-flights'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slices: slices, passengers: passengers, cabin_class: 'economy' })
@@ -2840,7 +2886,7 @@ async function searchDuffelStays(destCity, checkInDate, checkOutDate, travelers)
 
   try {
     // Routed through our own Netlify Function proxy — same CORS reason as flights.
-    var res = await fetch('/.netlify/functions/duffel-stays', {
+    var res = await fetch(apiUrl('/.netlify/functions/duffel-stays'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2899,7 +2945,7 @@ async function searchAmadeusHotels(destCity, checkInDate, checkOutDate, traveler
   if (!checkInDate || !checkOutDate || checkInDate === checkOutDate) return null; // needs a real date range
 
   try {
-    var res = await fetch('/.netlify/functions/amadeus-hotels', {
+    var res = await fetch(apiUrl('/.netlify/functions/amadeus-hotels'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2956,7 +3002,7 @@ async function searchDuffelCars(destCity, pickupDate, dropoffDate) {
   if (!pickupDate || !dropoffDate || pickupDate === dropoffDate) return null;
 
   try {
-    var res = await fetch('/.netlify/functions/duffel-cars', {
+    var res = await fetch(apiUrl('/.netlify/functions/duffel-cars'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ latitude: coords[0], longitude: coords[1], pickupDate: pickupDate, dropoffDate: dropoffDate })
@@ -3118,7 +3164,7 @@ async function callAI(messages, maxTokens, temperature) {
   for (var attempt = 0; attempt <= maxNetworkRetries; attempt++) {
     var res, data;
     try {
-      res = await fetch('/.netlify/functions/generate-ai', {
+      res = await fetch(apiUrl('/.netlify/functions/generate-ai'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // temperature is only sent when a caller asks for one — otherwise the
@@ -3369,7 +3415,7 @@ async function searchDuffelFlightsMultiCity(fromCity, legCities, departDate, leg
   for (var p = 0; p < Math.max(1, travelers || 1); p++) passengers.push({ type: 'adult' });
 
   try {
-    var res = await fetch('/.netlify/functions/duffel-flights', {
+    var res = await fetch(apiUrl('/.netlify/functions/duffel-flights'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slices: slices, passengers: passengers, cabin_class: 'economy' })
@@ -5108,7 +5154,7 @@ async function enrichCarsWithUnsplashImages(cars, dest) {
     var c = targets[i];
     try {
       var query = (c.category || 'car') + ' rental car';
-      var res = await fetch('/.netlify/functions/unsplash-car-image', {
+      var res = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: query })
@@ -5273,7 +5319,7 @@ async function enrichRealWeather(dest) {
   try {
     var city = (dest || '').split(',')[0].trim();
     if (!city) return;
-    var res = await fetch('/.netlify/functions/weather?city=' + encodeURIComponent(city));
+    var res = await fetch(apiUrl('/.netlify/functions/weather') + '?city=' + encodeURIComponent(city));
     if (!res.ok) return;
     var data = await res.json();
     if (!data || !data.daily || !data.daily.length) return;
@@ -5394,6 +5440,20 @@ function subEmail(evt) {
 document.getElementById('langSelect').value = appLang;
 var themeBtnInit = document.getElementById('themeToggleBtn');
 if (themeBtnInit) themeBtnInit.textContent = appTheme === 'dark' ? '☀️' : '🌙';
+// ── Offline detection ───────────────────────────────────────────
+// Toggles the offline banner on the browser's connectivity events and on load.
+// The app shell itself is bundled locally so it always renders; this keeps a
+// dropped connection from looking like a frozen/blank app when a live call
+// can't complete.
+function updateOnlineStatus() {
+  var banner = document.getElementById('offlineBanner');
+  if (!banner) return;
+  banner.style.display = navigator.onLine ? 'none' : 'block';
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
 translatePage();
 // Also apply the currency for the saved language on load — translatePage()
 // only updates text, so without this the currency would stay stuck on USD
