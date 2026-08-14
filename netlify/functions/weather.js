@@ -1,3 +1,22 @@
+// CORS wrapper — lets the Capacitor Android app (origin https://localhost) call
+// this function cross-origin. Adds the headers to every response and answers
+// the preflight OPTIONS request. Web (same-origin) calls are unaffected.
+var CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
+function withCors(handler) {
+  return async function (event, context) {
+    if (event.httpMethod === 'OPTIONS') {
+      return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+    }
+    var res = await handler(event, context);
+    res.headers = Object.assign({}, res.headers || {}, CORS_HEADERS);
+    return res;
+  };
+}
+
 // Netlify Function: proxies OpenWeather's Geocoding + One Call / forecast
 // endpoints to get a real weather forecast for the destination, using a
 // server-side key (OPENWEATHER_API_KEY env var) — no key ever reaches the
@@ -8,7 +27,7 @@
 // Expected call from the frontend (GET):
 //   /.netlify/functions/weather?city=Lisbon
 
-exports.handler = async function (event) {
+var _handler = async function (event) {
   try {
     const params = event.queryStringParameters || {};
     const city = params.city;
@@ -73,3 +92,5 @@ exports.handler = async function (event) {
     return { statusCode: 502, body: JSON.stringify({ error: 'Proxy error: ' + err.message }) };
   }
 };
+
+exports.handler = withCors(_handler);

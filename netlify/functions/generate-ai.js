@@ -1,3 +1,22 @@
+// CORS wrapper — lets the Capacitor Android app (origin https://localhost) call
+// this function cross-origin. Adds the headers to every response and answers
+// the preflight OPTIONS request. Web (same-origin) calls are unaffected.
+var CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
+function withCors(handler) {
+  return async function (event, context) {
+    if (event.httpMethod === 'OPTIONS') {
+      return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+    }
+    var res = await handler(event, context);
+    res.headers = Object.assign({}, res.headers || {}, CORS_HEADERS);
+    return res;
+  };
+}
+
 // Netlify Function: proxies Google Gemini's generateContent endpoint using a
 // server-side API key (GEMINI_API_KEY environment variable), so end users
 // never need to bring their own key. Mirrors the same model-fallback logic
@@ -9,7 +28,7 @@
 //   /.netlify/functions/generate-ai
 //   Body: { contents: [...], maxTokens }
 
-exports.handler = async function (event) {
+var _handler = async function (event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -92,3 +111,5 @@ exports.handler = async function (event) {
 
   return { statusCode: 502, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'All Gemini models failed. Last error: ' + lastError }) };
 };
+
+exports.handler = withCors(_handler);

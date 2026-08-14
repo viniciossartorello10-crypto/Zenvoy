@@ -1,4 +1,23 @@
-exports.handler = async function (event) {
+// CORS wrapper — lets the Capacitor Android app (origin https://localhost) call
+// this function cross-origin. Adds the headers to every response and answers
+// the preflight OPTIONS request. Web (same-origin) calls are unaffected.
+var CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
+function withCors(handler) {
+  return async function (event, context) {
+    if (event.httpMethod === 'OPTIONS') {
+      return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+    }
+    var res = await handler(event, context);
+    res.headers = Object.assign({}, res.headers || {}, CORS_HEADERS);
+    return res;
+  };
+}
+
+var _handler = async function (event) {
   try {
     const params = event.queryStringParameters || {};
     const { searchQuery, category, language } = params;
@@ -35,3 +54,5 @@ exports.handler = async function (event) {
     };
   }
 };
+
+exports.handler = withCors(_handler);
