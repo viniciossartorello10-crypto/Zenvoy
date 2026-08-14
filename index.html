@@ -331,6 +331,132 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
   #printArea .p-section h3{font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:6px}
 }
 </style>
+<!-- ══════════════════════════════════════════════════════════════════
+     NATIVE APP SHELL — Capacitor Android only.
+     Everything here is scoped under body.native-app, a class added at runtime
+     ONLY when running inside Capacitor (or with ?app=1 for browser preview).
+     On the website the class is never added, so none of this applies and the
+     site renders exactly as before. This is a presentation layer over the
+     existing logic — the wizard, AI calls, cart and chat are all reused.
+     ══════════════════════════════════════════════════════════════════ -->
+<style id="native-app-styles">
+/* Light, Airbnb-clean palette — navy + gold become accents, not the ground. */
+body.native-app{
+  --app-bg:#FFFFFF; --app-surface:#FFFFFF; --app-surface-2:#F6F7F9;
+  --app-text:#1A1D24; --app-text-soft:#6A7280; --app-line:#ECEEF1;
+  --app-navy:#0B0F1A; --app-gold:#C9A96E; --app-gold-deep:#8A6D3B;
+  --app-nav-h:64px;
+  background:var(--app-bg); color:var(--app-text);
+  overflow:hidden; /* the app never page-scrolls; screens scroll internally if needed */
+}
+/* Hide all website chrome inside the app. */
+body.native-app > nav,
+body.native-app .hero,
+body.native-app #capture,
+body.native-app footer,
+body.native-app #floatingCartBtn,
+body.native-app .hero-ticker,
+body.native-app #offlineBanner{ }
+body.native-app > nav{display:none !important}
+body.native-app .hero{display:none !important}
+body.native-app #capture{display:none !important}
+body.native-app footer{display:none !important}
+body.native-app #floatingCartBtn{display:none !important}
+
+/* Full-screen stage that holds the screens + bottom nav. */
+body.native-app #appShell{
+  display:flex; flex-direction:column;
+  position:fixed; inset:0; z-index:400;
+  background:var(--app-bg);
+}
+body.native-app #appScreens{
+  flex:1; position:relative; overflow:hidden;
+}
+.app-screen{
+  position:absolute; inset:0;
+  padding-top:env(safe-area-inset-top);
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  display:none; flex-direction:column;
+}
+.app-screen.on{display:flex}
+
+/* Bottom navigation — sits at the base of the flex column. Must override the
+   website's `nav{position:fixed;top:0}` rule, which this <nav> would otherwise
+   inherit and get pinned to the top of the screen. */
+body.native-app #appBottomNav{
+  position:relative; top:auto; left:auto; right:auto; z-index:auto;
+  backdrop-filter:none;
+  display:flex; align-items:stretch;
+  height:calc(var(--app-nav-h) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:var(--app-surface);
+  border-top:1px solid var(--app-line);
+  box-shadow:0 -2px 12px rgba(11,15,26,.05);
+}
+.app-nav-btn{
+  flex:1; border:none; background:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  font-family:'Inter',sans-serif; color:var(--app-text-soft);
+  font-size:11px; font-weight:600; padding:8px 4px 6px;
+  position:relative; transition:color .15s;
+}
+.app-nav-btn .ic{font-size:22px; line-height:1}
+.app-nav-btn.on{color:var(--app-navy)}
+.app-nav-btn.on .ic{transform:translateY(-1px)}
+.app-nav-btn .badge{
+  position:absolute; top:4px; right:calc(50% - 22px);
+  min-width:17px; height:17px; padding:0 4px; border-radius:9px;
+  background:#e0533d; color:#fff; font-size:10px; font-weight:700;
+  display:none; align-items:center; justify-content:center;
+}
+.app-nav-btn .badge.show{display:flex}
+
+/* ── HOME / EXPLORE screen ─────────────────────────────────────── */
+#appHome{ background:linear-gradient(180deg,#FFFFFF 0%,#F6F7F9 100%); }
+.app-home-inner{
+  flex:1; display:flex; flex-direction:column;
+  padding:calc(24px + env(safe-area-inset-top)) 22px 24px;
+}
+.app-home-hi{font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--app-gold-deep)}
+.app-home-title{font-family:'Cormorant Garamond',serif; font-size:34px; line-height:1.12; color:var(--app-navy); margin:6px 0 2px}
+.app-home-title em{font-style:italic; color:var(--app-gold-deep)}
+.app-mascot-wrap{display:flex; justify-content:center; margin:6px 0 2px}
+.app-mascot{width:190px; max-width:56%; height:auto; filter:drop-shadow(0 12px 22px rgba(11,15,26,.18))}
+.app-mascot-fallback{font-size:96px; text-align:center}
+/* Big search/plan entry card. */
+.app-search-card{
+  margin-top:14px; background:var(--app-surface); border:1px solid var(--app-line);
+  border-radius:20px; padding:18px; box-shadow:0 8px 24px rgba(11,15,26,.08);
+}
+.app-search-card label{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--app-text-soft); margin-bottom:6px}
+.app-search-fake{
+  display:flex; align-items:center; gap:10px; width:100%;
+  background:var(--app-surface-2); border:1px solid var(--app-line); border-radius:14px;
+  padding:15px 16px; font-size:16px; color:var(--app-text-soft); cursor:pointer; text-align:left;
+}
+.app-cta{
+  margin-top:12px; width:100%; min-height:54px; border:none; border-radius:14px;
+  background:var(--app-navy); color:#fff; font-family:'Inter',sans-serif;
+  font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  box-shadow:0 6px 16px rgba(11,15,26,.22);
+}
+.app-chip-row{display:flex; gap:8px; overflow-x:auto; margin-top:18px; padding-bottom:4px; scrollbar-width:none}
+.app-chip-row::-webkit-scrollbar{display:none}
+.app-chip{
+  flex:0 0 auto; padding:9px 15px; border-radius:22px; background:var(--app-surface);
+  border:1px solid var(--app-line); font-size:13px; font-weight:600; color:var(--app-navy); cursor:pointer;
+  box-shadow:0 2px 6px rgba(11,15,26,.05);
+}
+.app-section-h{font-size:15px; font-weight:800; color:var(--app-navy); margin:22px 2px 10px}
+/* Placeholder empty-states for tabs not yet built out (filled in later slices). */
+.app-empty{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; padding:40px 30px; text-align:center; color:var(--app-text-soft);
+}
+.app-empty .em{font-size:64px}
+.app-empty .et{font-size:17px; font-weight:700; color:var(--app-navy)}
+.app-empty .ed{font-size:14px; line-height:1.5; max-width:280px}
+</style>
 <!-- Google Analytics 4 — replace GA_MEASUREMENT_ID with the real ID from
      your GA4 property (Admin > Data Streams > your stream > Measurement ID,
      looks like "G-XXXXXXXXXX"). Left as a placeholder and gated below so it
@@ -358,6 +484,76 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
      screen. Fixed at the top, clears the notch via safe-area inset. -->
 <div id="offlineBanner" role="status" aria-live="polite" style="display:none;position:fixed;top:0;left:0;right:0;z-index:1000;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:#c0392b;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.25)">
   📡 <span data-i18n="offline_msg">No internet connection — some features are unavailable until you reconnect.</span>
+</div>
+
+<!-- ══ NATIVE APP SHELL (hidden unless body.native-app) ══════════════ -->
+<div id="appShell" style="display:none">
+  <div id="appScreens">
+
+    <!-- EXPLORE / HOME -->
+    <section class="app-screen on" id="appHome" data-tab="explore">
+      <div class="app-home-inner">
+        <div class="app-home-hi" data-i18n="app_home_hi">Welcome to Zenvoy</div>
+        <div class="app-home-title" data-i18n="app_home_title">Where to <em>next?</em></div>
+        <div class="app-mascot-wrap">
+          <img class="app-mascot" src="assets/mascot.png" alt="Zenvoy mascot"
+               onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
+          <div class="app-mascot-fallback" style="display:none">🤖</div>
+        </div>
+        <div class="app-search-card">
+          <label data-i18n="app_home_search_label">Plan a new trip</label>
+          <button class="app-search-fake" onclick="appStartPlanning()">
+            🔍 <span data-i18n="app_home_search_ph">Search a destination…</span>
+          </button>
+          <button class="app-cta" onclick="appStartPlanning()">
+            <span data-i18n="app_home_cta">Plan my trip</span> →
+          </button>
+        </div>
+        <div class="app-section-h" data-i18n="app_home_popular">Popular right now</div>
+        <div class="app-chip-row" id="appHomeChips"></div>
+      </div>
+    </section>
+
+    <!-- MY TRIP -->
+    <section class="app-screen" id="appTrip" data-tab="trip">
+      <div class="app-empty" id="appTripEmpty">
+        <div class="em">✈️</div>
+        <div class="et" data-i18n="app_trip_empty_t">No trip yet</div>
+        <div class="ed" data-i18n="app_trip_empty_d">Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.</div>
+        <button class="app-cta" style="max-width:220px" onclick="appGoTab('explore')"><span data-i18n="app_home_cta">Plan my trip</span> →</button>
+      </div>
+    </section>
+
+    <!-- MY BAG -->
+    <section class="app-screen" id="appBag" data-tab="bag">
+      <div class="app-empty" id="appBagEmpty">
+        <div class="em">🧳</div>
+        <div class="et" data-i18n="app_bag_empty_t">Your bag is empty</div>
+        <div class="ed" data-i18n="app_bag_empty_d">Add flights, stays and cars from your trip and they'll collect here.</div>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="app-screen" id="appChat" data-tab="chat">
+      <div class="app-empty">
+        <div class="em">💬</div>
+        <div class="et" data-i18n="app_chat_empty_t">Travel assistant</div>
+        <div class="ed" data-i18n="app_chat_empty_d">Ask me anything about your trip — I'm here to help.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <nav id="appBottomNav" role="tablist">
+    <button class="app-nav-btn on" role="tab" data-tab="explore" onclick="appGoTab('explore')">
+      <span class="ic">🔍</span><span data-i18n="app_nav_explore">Explore</span></button>
+    <button class="app-nav-btn" role="tab" data-tab="trip" onclick="appGoTab('trip')">
+      <span class="ic">✈️</span><span data-i18n="app_nav_trip">My Trip</span></button>
+    <button class="app-nav-btn" role="tab" data-tab="bag" onclick="appGoTab('bag')">
+      <span class="ic">🧳</span><span class="badge" id="appBagBadge">0</span><span data-i18n="app_nav_bag">My Bag</span></button>
+    <button class="app-nav-btn" role="tab" data-tab="chat" onclick="appGoTab('chat')">
+      <span class="ic">💬</span><span data-i18n="app_nav_chat">Chat</span></button>
+  </nav>
 </div>
 
 
@@ -1826,7 +2022,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help."
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -1888,7 +2084,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -5470,6 +5666,78 @@ var next = new Date(today); next.setDate(today.getDate()+7);
 document.getElementById('depDate').value = today.toISOString().split('T')[0];
 document.getElementById('retDate').value = next.toISOString().split('T')[0];
 showWizardStep(1);
+
+// ══════════════════════════════════════════════════════════════════
+// NATIVE APP SHELL controller — only active under body.native-app.
+// Presentation layer over the existing wizard/result/cart/chat logic.
+// ══════════════════════════════════════════════════════════════════
+function appIsNative() {
+  try {
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
+        && window.Capacitor.isNativePlatform()) return true;
+  } catch (e) {}
+  // ?app=1 forces the shell on in a normal browser, for previewing the app UI.
+  return /[?&]app=1\b/.test(window.location.search);
+}
+
+var APP_POPULAR = ['Rio de Janeiro', 'Paris', 'Tokyo', 'Lisbon', 'New York', 'Cancún', 'Barcelona', 'Chicago'];
+
+function appGoTab(name) {
+  document.querySelectorAll('#appScreens .app-screen').forEach(function (s) {
+    s.classList.toggle('on', s.getAttribute('data-tab') === name);
+  });
+  document.querySelectorAll('#appBottomNav .app-nav-btn').forEach(function (b) {
+    b.classList.toggle('on', b.getAttribute('data-tab') === name);
+  });
+  // Scroll the newly shown screen back to top.
+  var active = document.querySelector('#appScreens .app-screen.on');
+  if (active) active.scrollTop = 0;
+}
+
+// Explore CTA → open the planning flow. Slice 1: reveals the existing wizard,
+// relocated into the My Trip screen so it lives inside the app shell with the
+// bottom nav. Results (which render into the same #planner subtree) will get
+// their own card-rail treatment in the next slice.
+function appStartPlanning() {
+  var trip = document.getElementById('appTrip');
+  var planner = document.getElementById('planner');
+  var empty = document.getElementById('appTripEmpty');
+  if (trip && planner && planner.parentNode !== trip) trip.appendChild(planner);
+  if (empty) empty.style.display = 'none';
+  if (planner) planner.style.display = '';
+  startNewTrip();          // reset to a fresh wizard at step 1
+  appGoTab('trip');
+}
+
+function appInitShell() {
+  if (!appIsNative()) return;
+  document.body.classList.add('native-app');
+  var shell = document.getElementById('appShell');
+  if (shell) shell.style.display = 'flex';
+
+  // Popular-destination chips on the home screen.
+  var chipWrap = document.getElementById('appHomeChips');
+  if (chipWrap) {
+    chipWrap.innerHTML = APP_POPULAR.map(function (c) {
+      return '<button class="app-chip" onclick="appPickPopular(\'' + escapeJsAttr(c) + '\')">' + escapeHtml(c) + '</button>';
+    }).join('');
+  }
+  appGoTab('explore');
+  appTranslateShell();
+}
+
+// A tapped popular chip pre-fills the destination and jumps into planning.
+function appPickPopular(city) {
+  appStartPlanning();
+  var toEl = document.getElementById('toCity');
+  if (toEl) { toEl.value = city; selectedToAirport = null; }
+}
+
+// The shell's data-i18n nodes use the same TRANSLATIONS dictionary; translatePage
+// already walks all [data-i18n], so this just re-runs it after the shell mounts.
+function appTranslateShell() { if (typeof translatePage === 'function') translatePage(); }
+
+appInitShell();
 
 </script>
 
