@@ -340,122 +340,193 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
      existing logic — the wizard, AI calls, cart and chat are all reused.
      ══════════════════════════════════════════════════════════════════ -->
 <style id="native-app-styles">
-/* Light, Airbnb-clean palette — navy + gold become accents, not the ground. */
+/* ══ NATIVE APP SHELL — scoped under body.native-app (Capacitor only) ══ */
 body.native-app{
   --app-bg:#FFFFFF; --app-surface:#FFFFFF; --app-surface-2:#F6F7F9;
   --app-text:#1A1D24; --app-text-soft:#6A7280; --app-line:#ECEEF1;
-  --app-navy:#0B0F1A; --app-gold:#C9A96E; --app-gold-deep:#8A6D3B;
-  --app-nav-h:64px;
-  background:var(--app-bg); color:var(--app-text);
-  overflow:hidden; /* the app never page-scrolls; screens scroll internally if needed */
+  --app-navy:#0B0F1A; --app-gold:#C9A96E; --app-gold-deep:#7D6234;
+  --app-nav-h:62px; --app-top-h:52px;
+  background:var(--app-bg); color:var(--app-text); overflow:hidden;
 }
-/* Hide all website chrome inside the app. */
+/* data-theme lives on <html>, so the app-var dark overrides key off the
+   ancestor, not the body itself. */
+html[data-theme="dark"] body.native-app{
+  --app-bg:#12161F; --app-surface:#1B2130; --app-surface-2:#232B3A;
+  --app-text:#F0EDE6; --app-text-soft:#9AA5B8; --app-line:rgba(255,255,255,.10);
+  --app-gold-deep:#E2C99A;
+}
 body.native-app > nav,
 body.native-app .hero,
 body.native-app #capture,
 body.native-app footer,
-body.native-app #floatingCartBtn,
-body.native-app .hero-ticker,
-body.native-app #offlineBanner{ }
-body.native-app > nav{display:none !important}
-body.native-app .hero{display:none !important}
-body.native-app #capture{display:none !important}
-body.native-app footer{display:none !important}
 body.native-app #floatingCartBtn{display:none !important}
+html,body{overflow-x:hidden;max-width:100%}
+*{-webkit-tap-highlight-color:transparent}
 
-/* Full-screen stage that holds the screens + bottom nav. */
-body.native-app #appShell{
-  display:flex; flex-direction:column;
-  position:fixed; inset:0; z-index:400;
-  background:var(--app-bg);
-}
-body.native-app #appScreens{
-  flex:1; position:relative; overflow:hidden;
-}
-.app-screen{
-  position:absolute; inset:0;
-  padding-top:env(safe-area-inset-top);
-  overflow-y:auto; -webkit-overflow-scrolling:touch;
-  display:none; flex-direction:column;
-}
+body.native-app #appShell{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;background:var(--app-bg)}
+body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
+.app-screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
 .app-screen.on{display:flex}
 
-/* Bottom navigation — sits at the base of the flex column. Must override the
-   website's `nav{position:fixed;top:0}` rule, which this <nav> would otherwise
-   inherit and get pinned to the top of the screen. */
+/* ── Top bar (wizard/results) ── */
+.app-topbar{
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+  height:calc(var(--app-top-h) + env(safe-area-inset-top));
+  padding:env(safe-area-inset-top) 12px 0;
+  background:var(--app-surface);border-bottom:1px solid var(--app-line);
+}
+.app-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--app-text);letter-spacing:.5px}
+.app-logo span{color:var(--app-gold)}
+.app-logo.sm{font-size:20px;flex:1;text-align:center}
+.app-icon-btn,.app-theme-btn{
+  width:40px;height:40px;border-radius:12px;border:1px solid var(--app-line);
+  background:var(--app-surface-2);color:var(--app-text);font-size:17px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+
+/* ── HOME (no scroll) ── */
+#appHome{padding:0}
+.app-home-top{
+  display:flex;justify-content:flex-end;align-items:center;gap:8px;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 0;
+}
+.app-lang{
+  width:auto;padding:8px 10px;border-radius:10px;border:1px solid var(--app-line);
+  background:var(--app-surface-2);color:var(--app-text);font-size:13px;font-weight:600;min-height:0;
+}
+.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 24px;text-align:center}
+.app-logo-lg{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--app-text)}
+.app-home-center .app-logo{font-size:34px}
+.app-home-mascot{width:230px;max-width:70%;height:auto;filter:drop-shadow(0 16px 30px rgba(11,15,26,.22))}
+.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.12;color:var(--app-text)}
+.app-home-tag em{font-style:italic;color:var(--app-gold-deep)}
+.app-home-cta-wrap{padding:0 22px calc(26px + env(safe-area-inset-bottom))}
+.app-cta{
+  width:100%;min-height:56px;border:none;border-radius:16px;
+  background:var(--app-gold);color:var(--app-navy);
+  font-family:'Inter',sans-serif;font-size:17px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 8px 20px rgba(201,169,110,.4);
+}
+
+/* ── WIZARD body (relocated #planner) ── */
+#appWizardBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 4px calc(16px + env(safe-area-inset-bottom))}
+body.native-app #appWizardBody .planner{padding:12px 0 0;min-height:0;background:none}
+body.native-app #appWizardBody .card{box-shadow:none;border:none;padding:6px 16px 20px;max-width:none;margin:0}
+body.native-app #appWizardBody #planner > h2,
+body.native-app #appWizardBody #planner > p{display:none}
+
+/* ── RESULTS body (relocated #result) ── */
+#appResultsBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--app-nav-h) + env(safe-area-inset-bottom) + 10px)}
+body.native-app #appResultsBody .tabs{display:none !important}
+body.native-app #appResultsBody .result{padding:0}
+body.native-app #appResultsBody .rhero{height:210px;margin:0 0 6px;border-radius:0}
+body.native-app #appResultsBody #result{display:block}
+body.native-app #appResultsBody .rtabs,
+body.native-app #appResultsBody .tp{padding-left:16px;padding-right:16px}
+
+/* Day title largest; slot labels uppercase; body >=17px; gold left border. */
+body.native-app #appResultsBody .rhero-dest{font-size:34px}
+body.native-app #appResultsBody .ts{border-left:3px solid var(--app-gold);padding-left:15px;margin-bottom:18px}
+body.native-app #appResultsBody .tt{font-size:12.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--app-gold-deep);margin-bottom:5px}
+body.native-app #appResultsBody .td,
+body.native-app #appResultsBody .info-val{font-size:17px;line-height:1.55;color:var(--app-text)}
+body.native-app #appResultsBody .td .slot-time{font-weight:800;color:var(--app-text)}
+
+/* Horizontal swipe rails for the card categories. */
+body.native-app #staysContent,
+body.native-app #carsContent,
+body.native-app #attractionsContent,
+body.native-app #flightsContent{
+  display:flex;gap:14px;overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;padding:4px 16px 14px;scrollbar-width:none;flex-wrap:nowrap;
+}
+body.native-app #staysContent::-webkit-scrollbar,
+body.native-app #carsContent::-webkit-scrollbar,
+body.native-app #attractionsContent::-webkit-scrollbar,
+body.native-app #flightsContent::-webkit-scrollbar{display:none}
+body.native-app #staysContent > .fc,
+body.native-app #carsContent > .fc,
+body.native-app #attractionsContent > .fc,
+body.native-app #flightsContent > .fc{flex:0 0 86%;scroll-snap-align:center;margin:0}
+body.native-app #staysContent > .bls,
+body.native-app #flightsContent > .bls,
+body.native-app #staysContent > div[style*="justify-content:space-between"],
+body.native-app #carsContent > .info-t,
+body.native-app #carsContent > p{flex:0 0 100%;order:-1}
+
+/* Tips & Weather trigger chip (floats top-right inside the itinerary panel). */
+.app-tips-chip{
+  position:absolute;top:calc(var(--app-top-h) + env(safe-area-inset-top) + 8px);right:12px;z-index:30;
+  display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:22px;
+  background:var(--app-surface);border:1px solid var(--app-line);box-shadow:0 3px 10px rgba(11,15,26,.14);
+  font-size:12px;font-weight:700;color:var(--app-text);cursor:pointer;
+}
+
+/* ── 5-tab bottom nav ── */
 body.native-app #appBottomNav{
-  position:relative; top:auto; left:auto; right:auto; z-index:auto;
-  backdrop-filter:none;
-  display:flex; align-items:stretch;
+  position:relative;flex-shrink:0;display:flex;align-items:stretch;z-index:410;
   height:calc(var(--app-nav-h) + env(safe-area-inset-bottom));
   padding-bottom:env(safe-area-inset-bottom);
-  background:var(--app-surface);
-  border-top:1px solid var(--app-line);
-  box-shadow:0 -2px 12px rgba(11,15,26,.05);
+  background:var(--app-surface);border-top:1px solid var(--app-line);
+  box-shadow:0 -2px 12px rgba(11,15,26,.06);
 }
 .app-nav-btn{
-  flex:1; border:none; background:none; cursor:pointer;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
-  font-family:'Inter',sans-serif; color:var(--app-text-soft);
-  font-size:11px; font-weight:600; padding:8px 4px 6px;
-  position:relative; transition:color .15s;
+  flex:1;border:none;background:none;cursor:pointer;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-family:'Inter',sans-serif;font-size:10.5px;font-weight:700;color:var(--app-text-soft);padding:8px 2px 6px;
 }
-.app-nav-btn .ic{font-size:22px; line-height:1}
-.app-nav-btn.on{color:var(--app-navy)}
-.app-nav-btn.on .ic{transform:translateY(-1px)}
-.app-nav-btn .badge{
-  position:absolute; top:4px; right:calc(50% - 22px);
-  min-width:17px; height:17px; padding:0 4px; border-radius:9px;
-  background:#e0533d; color:#fff; font-size:10px; font-weight:700;
-  display:none; align-items:center; justify-content:center;
-}
-.app-nav-btn .badge.show{display:flex}
+.app-nav-btn .ic{font-size:21px;line-height:1}
+.app-nav-btn.on{color:var(--app-gold-deep)}
 
-/* ── HOME / EXPLORE screen ─────────────────────────────────────── */
-#appHome{ background:linear-gradient(180deg,#FFFFFF 0%,#F6F7F9 100%); }
-.app-home-inner{
-  flex:1; display:flex; flex-direction:column;
-  padding:calc(24px + env(safe-area-inset-top)) 22px 24px;
+/* ── Floating draggable cart ball ── */
+#appCartBall{
+  position:fixed;bottom:calc(var(--app-nav-h) + env(safe-area-inset-bottom) + 16px);right:16px;z-index:700;
+  width:58px;height:58px;border-radius:50%;border:none;cursor:grab;
+  background:var(--app-navy);color:#fff;font-size:26px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(11,15,26,.35);touch-action:none;
 }
-.app-home-hi{font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--app-gold-deep)}
-.app-home-title{font-family:'Cormorant Garamond',serif; font-size:34px; line-height:1.12; color:var(--app-navy); margin:6px 0 2px}
-.app-home-title em{font-style:italic; color:var(--app-gold-deep)}
-.app-mascot-wrap{display:flex; justify-content:center; margin:6px 0 2px}
-.app-mascot{width:190px; max-width:56%; height:auto; filter:drop-shadow(0 12px 22px rgba(11,15,26,.18))}
-.app-mascot-fallback{font-size:96px; text-align:center}
-/* Big search/plan entry card. */
-.app-search-card{
-  margin-top:14px; background:var(--app-surface); border:1px solid var(--app-line);
-  border-radius:20px; padding:18px; box-shadow:0 8px 24px rgba(11,15,26,.08);
+#appCartBall:active{cursor:grabbing}
+.app-cart-badge{
+  position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;
+  background:#e0533d;color:#fff;font-size:12px;font-weight:800;
+  display:none;align-items:center;justify-content:center;border:2px solid var(--app-surface);
 }
-.app-search-card label{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--app-text-soft); margin-bottom:6px}
-.app-search-fake{
-  display:flex; align-items:center; gap:10px; width:100%;
-  background:var(--app-surface-2); border:1px solid var(--app-line); border-radius:14px;
-  padding:15px 16px; font-size:16px; color:var(--app-text-soft); cursor:pointer; text-align:left;
+.app-cart-badge.show{display:flex}
+
+/* ── Slide-up sheets ── */
+.app-sheet-scrim{position:fixed;inset:0;z-index:800;background:rgba(11,15,26,.5)}
+.app-sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:810;
+  max-height:88vh;display:flex;flex-direction:column;
+  background:var(--app-surface);border-radius:22px 22px 0 0;
+  box-shadow:0 -12px 40px rgba(11,15,26,.3);
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  padding-bottom:env(safe-area-inset-bottom);
 }
-.app-cta{
-  margin-top:12px; width:100%; min-height:54px; border:none; border-radius:14px;
-  background:var(--app-navy); color:#fff; font-family:'Inter',sans-serif;
-  font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
-  box-shadow:0 6px 16px rgba(11,15,26,.22);
+.app-sheet.on{transform:translateY(0)}
+.app-sheet-grip{width:40px;height:4px;border-radius:2px;background:var(--app-line);margin:10px auto 4px}
+.app-sheet-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 16px 12px;font-size:19px;font-weight:800;color:var(--app-text);
+  border-bottom:1px solid var(--app-line);
 }
-.app-chip-row{display:flex; gap:8px; overflow-x:auto; margin-top:18px; padding-bottom:4px; scrollbar-width:none}
-.app-chip-row::-webkit-scrollbar{display:none}
-.app-chip{
-  flex:0 0 auto; padding:9px 15px; border-radius:22px; background:var(--app-surface);
-  border:1px solid var(--app-line); font-size:13px; font-weight:600; color:var(--app-navy); cursor:pointer;
-  box-shadow:0 2px 6px rgba(11,15,26,.05);
+.app-sheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 20px}
+#appSheetChat .app-sheet-body{display:flex;flex-direction:column}
+body.native-app #appChatBody #chatMessages{flex:1;overflow-y:auto;margin-bottom:10px;min-height:200px}
+body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !important;color:var(--app-text) !important;border:1px solid var(--app-line) !important}
+
+/* Full-width weather strip inside the Tips & Weather sheet. */
+.app-wx-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.app-wx-strip::-webkit-scrollbar{display:none}
+.app-wx-day{
+  flex:0 0 auto;min-width:64px;text-align:center;padding:10px 8px;border-radius:14px;
+  background:var(--app-surface-2);border:1px solid var(--app-line);
 }
-.app-section-h{font-size:15px; font-weight:800; color:var(--app-navy); margin:22px 2px 10px}
-/* Placeholder empty-states for tabs not yet built out (filled in later slices). */
-.app-empty{
-  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:14px; padding:40px 30px; text-align:center; color:var(--app-text-soft);
-}
-.app-empty .em{font-size:64px}
-.app-empty .et{font-size:17px; font-weight:700; color:var(--app-navy)}
-.app-empty .ed{font-size:14px; line-height:1.5; max-width:280px}
+.app-wx-day .d{font-size:11px;font-weight:700;color:var(--app-text-soft)}
+.app-wx-day .i{font-size:22px;margin:3px 0}
+.app-wx-day .t{font-size:13px;font-weight:800;color:var(--app-text)}
 </style>
 <!-- Google Analytics 4 — replace GA_MEASUREMENT_ID with the real ID from
      your GA4 property (Admin > Data Streams > your stream > Measurement ID,
@@ -490,70 +561,93 @@ body.native-app #appBottomNav{
 <div id="appShell" style="display:none">
   <div id="appScreens">
 
-    <!-- EXPLORE / HOME -->
-    <section class="app-screen on" id="appHome" data-tab="explore">
-      <div class="app-home-inner">
-        <div class="app-home-hi" data-i18n="app_home_hi">Welcome to Zenvoy</div>
-        <div class="app-home-title" data-i18n="app_home_title">Where to <em>next?</em></div>
-        <div class="app-mascot-wrap">
-          <img class="app-mascot" src="assets/mascot.png" alt="Zenvoy mascot"
-               onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
-          <div class="app-mascot-fallback" style="display:none">🤖</div>
-        </div>
-        <div class="app-search-card">
-          <label data-i18n="app_home_search_label">Plan a new trip</label>
-          <button class="app-search-fake" onclick="appStartPlanning()">
-            🔍 <span data-i18n="app_home_search_ph">Search a destination…</span>
-          </button>
-          <button class="app-cta" onclick="appStartPlanning()">
-            <span data-i18n="app_home_cta">Plan my trip</span> →
-          </button>
-        </div>
-        <div class="app-section-h" data-i18n="app_home_popular">Popular right now</div>
-        <div class="app-chip-row" id="appHomeChips"></div>
+    <!-- HOME — full screen, no scroll: logo + mascot + single CTA -->
+    <section class="app-screen on" id="appHome" data-screen="home">
+      <div class="app-home-top">
+        <select id="appLangSel" class="app-lang" onchange="setLang(this.value);appTranslateShell()" aria-label="Language">
+          <option value="pt">🇧🇷 PT</option><option value="en">🇺🇸 EN</option>
+          <option value="es">🇪🇸 ES</option><option value="fr">🇫🇷 FR</option><option value="it">🇮🇹 IT</option>
+        </select>
+        <button class="app-theme-btn" id="appThemeBtn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
+      </div>
+      <div class="app-home-center">
+        <div class="app-logo">Zen <span>✈</span> Voy</div>
+        <img class="app-home-mascot" src="assets/mascot.png" alt="Zenvoy"
+             onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
+        <div class="app-mascot-fallback" style="display:none;font-size:120px">🤖</div>
+        <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
+      </div>
+      <div class="app-home-cta-wrap">
+        <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
       </div>
     </section>
 
-    <!-- MY TRIP -->
-    <section class="app-screen" id="appTrip" data-tab="trip">
-      <div class="app-empty" id="appTripEmpty">
-        <div class="em">✈️</div>
-        <div class="et" data-i18n="app_trip_empty_t">No trip yet</div>
-        <div class="ed" data-i18n="app_trip_empty_d">Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.</div>
-        <button class="app-cta" style="max-width:220px" onclick="appGoTab('explore')"><span data-i18n="app_home_cta">Plan my trip</span> →</button>
+    <!-- WIZARD — full-screen steps (hosts the relocated #planner) -->
+    <section class="app-screen" id="appWizard" data-screen="wizard">
+      <div class="app-topbar">
+        <button class="app-icon-btn" onclick="appGoScreen('home')" aria-label="Back">←</button>
+        <div class="app-logo sm">Zen <span>✈</span> Voy</div>
+        <button class="app-theme-btn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
       </div>
+      <div id="appWizardBody"><!-- #planner is moved in here at runtime --></div>
     </section>
 
-    <!-- MY BAG -->
-    <section class="app-screen" id="appBag" data-tab="bag">
-      <div class="app-empty" id="appBagEmpty">
-        <div class="em">🧳</div>
-        <div class="et" data-i18n="app_bag_empty_t">Your bag is empty</div>
-        <div class="ed" data-i18n="app_bag_empty_d">Add flights, stays and cars from your trip and they'll collect here.</div>
+    <!-- RESULTS — top bar + result panels + (5-tab bottom nav below) -->
+    <section class="app-screen" id="appResults" data-screen="results">
+      <div class="app-topbar">
+        <button class="app-icon-btn" onclick="appGoScreen('home')" aria-label="Home">🏠</button>
+        <div class="app-logo sm">Zen <span>✈</span> Voy</div>
+        <button class="app-icon-btn" onclick="appOpenSheet('chat')" aria-label="Chat">💬</button>
+        <button class="app-theme-btn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
       </div>
-    </section>
-
-    <!-- CHAT -->
-    <section class="app-screen" id="appChat" data-tab="chat">
-      <div class="app-empty">
-        <div class="em">💬</div>
-        <div class="et" data-i18n="app_chat_empty_t">Travel assistant</div>
-        <div class="ed" data-i18n="app_chat_empty_d">Ask me anything about your trip — I'm here to help.</div>
-      </div>
+      <div id="appResultsBody"><!-- #result is moved in here at runtime --></div>
     </section>
 
   </div>
 
-  <nav id="appBottomNav" role="tablist">
-    <button class="app-nav-btn on" role="tab" data-tab="explore" onclick="appGoTab('explore')">
-      <span class="ic">🔍</span><span data-i18n="app_nav_explore">Explore</span></button>
-    <button class="app-nav-btn" role="tab" data-tab="trip" onclick="appGoTab('trip')">
-      <span class="ic">✈️</span><span data-i18n="app_nav_trip">My Trip</span></button>
-    <button class="app-nav-btn" role="tab" data-tab="bag" onclick="appGoTab('bag')">
-      <span class="ic">🧳</span><span class="badge" id="appBagBadge">0</span><span data-i18n="app_nav_bag">My Bag</span></button>
-    <button class="app-nav-btn" role="tab" data-tab="chat" onclick="appGoTab('chat')">
-      <span class="ic">💬</span><span data-i18n="app_nav_chat">Chat</span></button>
+  <!-- 5-tab category navigation — visible only on the Results screen -->
+  <nav id="appBottomNav" role="tablist" style="display:none">
+    <button class="app-nav-btn on" role="tab" data-cat="itin" onclick="appPickCategory('itin')">
+      <span class="ic">🗓️</span><span data-i18n="app_cat_itin">Roteiro</span></button>
+    <button class="app-nav-btn" role="tab" data-cat="stays" onclick="appPickCategory('stays')">
+      <span class="ic">🏨</span><span data-i18n="app_cat_stays">Hotéis</span></button>
+    <button class="app-nav-btn" role="tab" data-cat="cars" onclick="appPickCategory('cars')">
+      <span class="ic">🚗</span><span data-i18n="app_cat_cars">Carros</span></button>
+    <button class="app-nav-btn" role="tab" data-cat="attractions" onclick="appPickCategory('attractions')">
+      <span class="ic">🎭</span><span data-i18n="app_cat_attractions">Atrações</span></button>
+    <button class="app-nav-btn" role="tab" data-cat="flights" onclick="appPickCategory('flights')">
+      <span class="ic">✈️</span><span data-i18n="app_cat_flights">Voos</span></button>
   </nav>
+
+  <!-- Floating draggable cart ball -->
+  <button id="appCartBall" style="display:none" onclick="appOpenSheet('mala')" aria-label="Mala">
+    🧳<span class="app-cart-badge" id="appCartBadge">0</span>
+  </button>
+
+  <!-- Slide-up sheets (Mala, Tips & Weather, Chat) -->
+  <div class="app-sheet-scrim" id="appSheetScrim" style="display:none" onclick="appCloseSheet()"></div>
+
+  <div class="app-sheet" id="appSheetMala">
+    <div class="app-sheet-grip"></div>
+    <div class="app-sheet-head"><span data-i18n="app_nav_bag">Minha Mala</span>
+      <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
+    <div class="app-sheet-body"><div id="appMalaContent"></div></div>
+  </div>
+
+  <div class="app-sheet" id="appSheetTips">
+    <div class="app-sheet-grip"></div>
+    <div class="app-sheet-head"><span data-i18n="app_tips_weather">Dicas &amp; Clima</span>
+      <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
+    <div class="app-sheet-body"><div id="appTipsWeather"></div></div>
+  </div>
+
+  <div class="app-sheet" id="appSheetChat">
+    <div class="app-sheet-grip"></div>
+    <div class="app-sheet-head">
+      <span style="display:flex;align-items:center;gap:8px"><img src="assets/mascot.png" alt="" style="width:28px;height:28px;border-radius:50%" onerror="this.style.display='none'"><span data-i18n="app_chat_empty_t">Assistente Zenvoy</span></span>
+      <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
+    <div class="app-sheet-body" id="appChatBody"><!-- chat messages + input moved here at runtime --></div>
+  </div>
 </div>
 
 
@@ -2022,7 +2116,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help."
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -2084,7 +2178,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -4564,11 +4658,16 @@ function renderCart() {
     }
   }
 
-  // Same content shown in both the Cart tab and the floating modal
+  // Same content shown in the Cart tab, the floating modal, and (in the native
+  // app) the Mala screen.
   var tabContainer = document.getElementById('cartContent');
   if (tabContainer) tabContainer.innerHTML = h;
   var modalContainer = document.getElementById('cartModalContent');
   if (modalContainer) modalContainer.innerHTML = h;
+  var malaContainer = document.getElementById('appMalaContent');
+  if (malaContainer) malaContainer.innerHTML = h;
+  var cartBadge = document.getElementById('appCartBadge');
+  if (cartBadge) { cartBadge.textContent = itemCount; cartBadge.classList.toggle('show', itemCount > 0); }
 
   // If regen is running, re-disable the freshly rendered button — renderCart()
   // rebuilds the DOM from scratch so the disabled state is otherwise lost.
@@ -4758,7 +4857,13 @@ function renderResult(p, travelers, budget, days, from) {
   res.style.display = 'block';
   hideBuildingScreen();
   showTab('itin', document.querySelector('.tab'));
-  setTimeout(function(){ res.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
+  // In the native app, reveal the Resultado screen (category dropdown + panels)
+  // and jump there; on the web this is a no-op and the page scrolls as before.
+  if (document.body.classList.contains('native-app')) {
+    appOnResultReady();
+  } else {
+    setTimeout(function(){ res.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
+  }
 }
 
 // ── DAY-BY-DAY NAVIGATION ──────────────────────────────────────
@@ -5429,7 +5534,12 @@ function renderCars(cars, dest) {
 }
 
 function renderBudget(bb, total) {
-  var labels = {flights:'✈️ Flights',accommodation:'🏨 Accommodation',food:'🍽️ Food',activities:'🎭 Activities',transport:'🚌 Transport',shopping:'🛍️ Shopping'};
+  var _bd = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var labels = {
+    flights:'✈️ '+(_bd.bud_flights||'Flights'), accommodation:'🏨 '+(_bd.bud_accommodation||'Accommodation'),
+    food:'🍽️ '+(_bd.bud_food||'Food'), activities:'🎭 '+(_bd.bud_activities||'Activities'),
+    transport:'🚌 '+(_bd.bud_transport||'Transport'), shopping:'🛍️ '+(_bd.bud_shopping||'Shopping')
+  };
   var sum = Object.values(bb||{}).reduce(function(a,b){return a+b;},0) || total;
   var h = '';
   Object.entries(bb||{}).forEach(function(e) {
@@ -5676,37 +5786,195 @@ function appIsNative() {
     if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function'
         && window.Capacitor.isNativePlatform()) return true;
   } catch (e) {}
-  // ?app=1 forces the shell on in a normal browser, for previewing the app UI.
   return /[?&]app=1\b/.test(window.location.search);
 }
 
-var APP_POPULAR = ['Rio de Janeiro', 'Paris', 'Tokyo', 'Lisbon', 'New York', 'Cancún', 'Barcelona', 'Chicago'];
-
-function appGoTab(name) {
+// ── Screen switching: home / wizard / results ──
+function appGoScreen(name) {
   document.querySelectorAll('#appScreens .app-screen').forEach(function (s) {
-    s.classList.toggle('on', s.getAttribute('data-tab') === name);
+    s.classList.toggle('on', s.getAttribute('data-screen') === name);
   });
-  document.querySelectorAll('#appBottomNav .app-nav-btn').forEach(function (b) {
-    b.classList.toggle('on', b.getAttribute('data-tab') === name);
-  });
-  // Scroll the newly shown screen back to top.
+  var nav = document.getElementById('appBottomNav');
+  var ball = document.getElementById('appCartBall');
+  var onResults = name === 'results';
+  if (nav) nav.style.display = onResults ? 'flex' : 'none';
+  if (ball) ball.style.display = onResults ? 'flex' : 'none';
+  if (name === 'wizard') { startNewTrip(); }
   var active = document.querySelector('#appScreens .app-screen.on');
-  if (active) active.scrollTop = 0;
+  if (active) { var sc = active.querySelector('[id$="Body"]'); if (sc) sc.scrollTop = 0; }
 }
 
-// Explore CTA → open the planning flow. Slice 1: reveals the existing wizard,
-// relocated into the My Trip screen so it lives inside the app shell with the
-// bottom nav. Results (which render into the same #planner subtree) will get
-// their own card-rail treatment in the next slice.
-function appStartPlanning() {
-  var trip = document.getElementById('appTrip');
-  var planner = document.getElementById('planner');
-  var empty = document.getElementById('appTripEmpty');
-  if (trip && planner && planner.parentNode !== trip) trip.appendChild(planner);
-  if (empty) empty.style.display = 'none';
-  if (planner) planner.style.display = '';
-  startNewTrip();          // reset to a fresh wizard at step 1
-  appGoTab('trip');
+// ── Result category tabs (bottom nav on results) ──
+var APP_CATS = { itin: '🗓️', flights: '✈️', stays: '🏨', cars: '🚗', attractions: '🎭' };
+function appPickCategory(cat) {
+  document.querySelectorAll('#appBottomNav .app-nav-btn').forEach(function (b) {
+    b.classList.toggle('on', b.getAttribute('data-cat') === cat);
+  });
+  var btn = document.querySelector('#appResultsBody .tab[onclick*="\'' + cat + '\'"]');
+  if (typeof showTab === 'function') showTab(cat, btn || document.createElement('button'));
+  appEnsureTipsChip(cat);
+  if (cat === 'itin') appEnhanceTimes();
+  var body = document.getElementById('appResultsBody');
+  if (body) body.scrollTop = 0;
+}
+
+// The Tips & Weather chip lives only on the itinerary category.
+function appEnsureTipsChip(cat) {
+  var panel = document.getElementById('tab-itin');
+  var existing = document.getElementById('appTipsChip');
+  if (cat === 'itin' && panel) {
+    if (!existing) {
+      var chip = document.createElement('button');
+      chip.id = 'appTipsChip'; chip.className = 'app-tips-chip';
+      chip.setAttribute('onclick', "appOpenSheet('tips')");
+      chip.innerHTML = '💡 <span data-i18n="app_tips_weather">Dicas &amp; Clima</span>';
+      document.getElementById('appResults').appendChild(chip);
+      if (typeof translatePage === 'function') translatePage();
+    } else { existing.style.display = 'inline-flex'; }
+  } else if (existing) { existing.style.display = 'none'; }
+}
+
+// Bold the leading clock time in each itinerary slot ("At 09:30" / "Às 18h").
+// Operates on the leading text node only, so it never disturbs the badges/links.
+function appEnhanceTimes() {
+  var slots = document.querySelectorAll('#tab-itin [id^="slot-content-"]');
+  slots.forEach(function (el) {
+    if (el.querySelector('.slot-time')) return;              // already done
+    var node = el.firstChild;
+    if (!node || node.nodeType !== 3) return;                // must be a leading text node
+    var m = node.nodeValue.match(/^\s*((?:At|Às|À|Around|By|Por volta das)\s+)?(\d{1,2}(?::\d{2})?\s?(?:am|pm|h|hs)?)\b[,:]?\s*/i);
+    if (!m || !m[2]) return;
+    var span = document.createElement('strong');
+    span.className = 'slot-time';
+    span.textContent = m[0].replace(/\s+$/, ' ');
+    node.nodeValue = node.nodeValue.slice(m[0].length);
+    el.insertBefore(span, node);
+  });
+}
+
+// Called from renderResult() once a trip exists.
+function appOnResultReady() {
+  if (!document.body.classList.contains('native-app')) return;
+  appGoScreen('results');
+  appPickCategory('itin');
+  if (typeof renderCart === 'function') renderCart();
+}
+
+// ── Slide-up sheets (mala / tips / chat) ──
+function appOpenSheet(which) {
+  if (which === 'tips') appRenderTipsWeather();
+  var id = which === 'mala' ? 'appSheetMala' : which === 'tips' ? 'appSheetTips' : 'appSheetChat';
+  var sheet = document.getElementById(id);
+  var scrim = document.getElementById('appSheetScrim');
+  if (scrim) scrim.style.display = 'block';
+  if (sheet) { sheet.style.display = 'flex'; requestAnimationFrame(function () { sheet.classList.add('on'); }); }
+  if (which === 'chat' && typeof renderChatMessages === 'function') renderChatMessages();
+}
+function appCloseSheet() {
+  document.querySelectorAll('.app-sheet').forEach(function (s) {
+    s.classList.remove('on');
+    setTimeout(function () { s.style.display = 'none'; }, 280);
+  });
+  var scrim = document.getElementById('appSheetScrim');
+  if (scrim) scrim.style.display = 'none';
+}
+
+// Weather (5-day) + insider tips, rendered into the Tips & Weather sheet.
+function appRenderTipsWeather() {
+  var host = document.getElementById('appTipsWeather');
+  if (!host) return;
+  var p = window.planData || {};
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var h = '<div id="appWxHost"></div>';
+  var gems = p.gems || [];
+  if (gems.length) {
+    h += '<div class="app-section-h" style="margin-top:6px">' + (dict.tab_tips || 'Tips') + '</div>';
+    h += gems.map(function (g) {
+      return '<div class="gem"><div class="gem-t">' + escapeHtml(g.title || '') + '</div><div class="gem-d">"' + escapeHtml(g.tip || g) + '"</div></div>';
+    }).join('');
+  }
+  host.innerHTML = h;
+  // Reuse the existing OpenWeather fetch, but render into our strip.
+  appFetchWeatherStrip(p.destination || (p.legCities && p.legCities[0]) || '');
+}
+async function appFetchWeatherStrip(dest) {
+  var host = document.getElementById('appWxHost');
+  if (!host || !dest) return;
+  try {
+    var city = destQuery ? destQuery(dest) : dest;
+    var res = await fetch(apiUrl('/.netlify/functions/weather') + '?city=' + encodeURIComponent(city));
+    if (!res.ok) return;
+    var data = await res.json();
+    var days = (data && data.daily) || (data && data.forecast) || [];
+    if (!days.length && data && data.list) days = data.list.slice(0, 5);
+    if (!days.length) return;
+    var html = '<div class="app-wx-strip">' + days.slice(0, 5).map(function (d) {
+      var t = d.temp && (d.temp.day || d.temp.max) || d.main && d.main.temp || d.temp || '';
+      var ic = d.weather && d.weather[0] && d.weather[0].main || d.condition || '';
+      var emoji = /rain/i.test(ic) ? '🌧️' : /cloud/i.test(ic) ? '☁️' : /snow/i.test(ic) ? '❄️' : /storm|thunder/i.test(ic) ? '⛈️' : '☀️';
+      var dn = d.dt ? new Date(d.dt * 1000).toLocaleDateString(undefined, { weekday: 'short' }) : (d.day || '');
+      return '<div class="app-wx-day"><div class="d">' + escapeHtml(dn) + '</div><div class="i">' + emoji + '</div><div class="t">' + (t ? Math.round(t) + '°' : '') + '</div></div>';
+    }).join('') + '</div>';
+    host.innerHTML = html;
+  } catch (e) {}
+}
+
+// ── Draggable cart ball (snaps to nearest corner) ──
+function appInitCartBall() {
+  var ball = document.getElementById('appCartBall');
+  if (!ball) return;
+  var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  function down(e) {
+    dragging = true; moved = false;
+    var pt = e.touches ? e.touches[0] : e;
+    var r = ball.getBoundingClientRect();
+    sx = pt.clientX; sy = pt.clientY; ox = r.left; oy = r.top;
+    ball.style.transition = 'none';
+  }
+  function move(e) {
+    if (!dragging) return;
+    var pt = e.touches ? e.touches[0] : e;
+    var dx = pt.clientX - sx, dy = pt.clientY - sy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+    ball.style.left = (ox + dx) + 'px'; ball.style.top = (oy + dy) + 'px';
+    ball.style.right = 'auto'; ball.style.bottom = 'auto';
+    if (e.cancelable) e.preventDefault();
+  }
+  function up() {
+    if (!dragging) return;
+    dragging = false;
+    ball.style.transition = 'left .2s, top .2s';
+    var r = ball.getBoundingClientRect(), m = 16;
+    var left = (r.left + r.width / 2) < window.innerWidth / 2;
+    var navH = 62 + 24;
+    var top = Math.min(Math.max(r.top, 60), window.innerHeight - r.height - navH);
+    ball.style.left = (left ? m : window.innerWidth - r.width - m) + 'px';
+    ball.style.top = top + 'px';
+    ball.style.right = 'auto'; ball.style.bottom = 'auto';
+  }
+  ball.addEventListener('touchstart', down, { passive: true });
+  ball.addEventListener('touchmove', move, { passive: false });
+  ball.addEventListener('touchend', up);
+  ball.addEventListener('mousedown', down);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', up);
+  // Suppress the click that follows a drag.
+  ball.addEventListener('click', function (e) { if (moved) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+}
+
+// ── Theme toggle (light/dark), reusing the site's mechanism ──
+function appToggleTheme() {
+  if (typeof toggleThemeMode === 'function') toggleThemeMode();
+  else {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (dark) document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  appSyncThemeButtons();
+}
+function appSyncThemeButtons() {
+  var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.querySelectorAll('.app-theme-btn').forEach(function (b) { b.textContent = dark ? '☀️' : '🌙'; });
 }
 
 function appInitShell() {
@@ -5715,26 +5983,44 @@ function appInitShell() {
   var shell = document.getElementById('appShell');
   if (shell) shell.style.display = 'flex';
 
-  // Popular-destination chips on the home screen.
-  var chipWrap = document.getElementById('appHomeChips');
-  if (chipWrap) {
-    chipWrap.innerHTML = APP_POPULAR.map(function (c) {
-      return '<button class="app-chip" onclick="appPickPopular(\'' + escapeJsAttr(c) + '\')">' + escapeHtml(c) + '</button>';
-    }).join('');
+  // Relocate reused UI into the app screens (runtime only; web DOM untouched).
+  var planner = document.getElementById('planner');
+  var wizBody = document.getElementById('appWizardBody');
+  if (planner && wizBody && planner.parentNode !== wizBody) wizBody.appendChild(planner);
+  var result = document.getElementById('result');
+  var resBody = document.getElementById('appResultsBody');
+  if (result && resBody && result.parentNode !== resBody) resBody.appendChild(result);
+  var chatBody = document.getElementById('appChatBody');
+  var chatMsgs = document.getElementById('chatMessages');
+  if (chatBody && chatMsgs) {
+    var inputRow = chatMsgs.nextElementSibling;
+    chatBody.appendChild(chatMsgs);
+    if (inputRow) chatBody.appendChild(inputRow);
   }
-  appGoTab('explore');
+
+  // Language selector reflects current language.
+  var ls = document.getElementById('appLangSel');
+  if (ls) ls.value = appLang;
+
+  // Re-bold times whenever the day/rhythm re-renders the itinerary content.
+  var resBody = document.getElementById('appResultsBody');
+  if (resBody && window.MutationObserver) {
+    var pending = null;
+    new MutationObserver(function () {
+      clearTimeout(pending);
+      pending = setTimeout(function () {
+        if (document.getElementById('tab-itin') && document.getElementById('tab-itin').classList.contains('on')) appEnhanceTimes();
+      }, 60);
+    }).observe(resBody, { childList: true, subtree: true });
+  }
+
+  appInitCartBall();
+  appSyncThemeButtons();
+  appGoScreen('home');
+  if (typeof renderCart === 'function') renderCart();
   appTranslateShell();
 }
 
-// A tapped popular chip pre-fills the destination and jumps into planning.
-function appPickPopular(city) {
-  appStartPlanning();
-  var toEl = document.getElementById('toCity');
-  if (toEl) { toEl.value = city; selectedToAirport = null; }
-}
-
-// The shell's data-i18n nodes use the same TRANSLATIONS dictionary; translatePage
-// already walks all [data-i18n], so this just re-runs it after the shell mounts.
 function appTranslateShell() { if (typeof translatePage === 'function') translatePage(); }
 
 appInitShell();
