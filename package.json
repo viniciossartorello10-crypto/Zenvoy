@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "cp index.html www/index.html",
+    "build": "cp index.html www/index.html && mkdir -p www/assets && cp -R assets/ www/assets/",
     "sync": "npm run build && npx cap sync android",
     "open:android": "npx cap open android"
   },
@@ -25,7 +25,11 @@
   "homepage": "https://github.com/viniciossartorello10-crypto/Zenvoy#readme",
   "dependencies": {
     "@capacitor/android": "^8.5.0",
+    "@capacitor/app": "^8.1.1",
     "@capacitor/cli": "^8.5.0",
-    "@capacitor/core": "^8.5.0"
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.3",
+    "pngjs": "^7.0.0"
   }
 }

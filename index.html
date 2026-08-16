@@ -385,29 +385,38 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 }
 
 /* ── HOME (no scroll) ── */
-#appHome{padding:0}
+#appHome{padding:0;overflow:hidden;
+  background:radial-gradient(120% 70% at 50% 12%, rgba(201,169,110,.16), transparent 60%), var(--app-bg)}
+body.native-app[data-theme="dark"] #appHome{
+  background:radial-gradient(120% 70% at 50% 12%, rgba(201,169,110,.20), transparent 62%),
+             linear-gradient(180deg,#141A26 0%,#0F1420 100%)}
 .app-home-top{
-  display:flex;justify-content:flex-end;align-items:center;gap:8px;
-  padding:calc(10px + env(safe-area-inset-top)) 14px 0;
+  display:flex;justify-content:flex-end;align-items:center;gap:8px;position:relative;z-index:2;
+  padding:calc(12px + env(safe-area-inset-top)) 16px 0;
 }
 .app-lang{
-  width:auto;padding:8px 10px;border-radius:10px;border:1px solid var(--app-line);
-  background:var(--app-surface-2);color:var(--app-text);font-size:13px;font-weight:600;min-height:0;
+  width:auto;padding:9px 12px;border-radius:12px;border:1px solid var(--app-line);
+  background:var(--app-surface);color:var(--app-text);font-size:13px;font-weight:700;min-height:0;
 }
-.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 24px;text-align:center}
-.app-logo-lg{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--app-text)}
-.app-home-center .app-logo{font-size:34px}
-.app-home-mascot{width:230px;max-width:70%;height:auto;filter:drop-shadow(0 16px 30px rgba(11,15,26,.22))}
-.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.12;color:var(--app-text)}
+.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px;text-align:center;position:relative;z-index:1}
+.app-home-center .app-logo{font-size:30px;letter-spacing:1px}
+.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:2px 0}
+.app-mascot-glow::before{content:'';position:absolute;width:290px;height:290px;border-radius:50%;
+  background:radial-gradient(circle, rgba(201,169,110,.28), rgba(201,169,110,.05) 55%, transparent 70%)}
+.app-home-mascot{width:250px;max-width:74%;height:auto;position:relative;z-index:1;
+  filter:drop-shadow(0 22px 34px rgba(0,0,0,.32))}
+.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1.1;color:var(--app-text);margin-top:2px}
 .app-home-tag em{font-style:italic;color:var(--app-gold-deep)}
-.app-home-cta-wrap{padding:0 22px calc(26px + env(safe-area-inset-bottom))}
+.app-home-sub{font-size:15px;line-height:1.5;color:var(--app-text-soft);max-width:300px}
+.app-home-cta-wrap{padding:0 22px calc(28px + env(safe-area-inset-bottom));position:relative;z-index:2}
 .app-cta{
-  width:100%;min-height:56px;border:none;border-radius:16px;
-  background:var(--app-gold);color:var(--app-navy);
+  width:100%;min-height:58px;border:none;border-radius:18px;
+  background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;
   font-family:'Inter',sans-serif;font-size:17px;font-weight:800;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 8px 20px rgba(201,169,110,.4);
+  display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.2px;
+  box-shadow:0 10px 26px rgba(201,169,110,.45);
 }
+.app-cta:active{transform:translateY(1px)}
 
 /* ── WIZARD body (relocated #planner) ── */
 #appWizardBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 4px calc(16px + env(safe-area-inset-bottom))}
@@ -572,10 +581,13 @@ body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !importa
       </div>
       <div class="app-home-center">
         <div class="app-logo">Zen <span>✈</span> Voy</div>
-        <img class="app-home-mascot" src="assets/mascot.png" alt="Zenvoy"
-             onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
-        <div class="app-mascot-fallback" style="display:none;font-size:120px">🤖</div>
+        <div class="app-mascot-glow">
+          <img class="app-home-mascot" src="assets/mascot.png" alt="Zenvoy"
+               onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
+          <div class="app-mascot-fallback" style="display:none;font-size:120px">🤖</div>
+        </div>
         <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
+        <div class="app-home-sub" data-i18n="app_home_sub">Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.</div>
       </div>
       <div class="app-home-cta-wrap">
         <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
@@ -2116,7 +2128,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -2178,7 +2190,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
