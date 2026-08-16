@@ -384,40 +384,54 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 
-/* ── HOME (no scroll) ── */
-#appHome{padding:0;overflow:hidden;
-  background:radial-gradient(120% 70% at 50% 12%, rgba(201,169,110,.16), transparent 60%), var(--app-bg)}
-body.native-app[data-theme="dark"] #appHome{
-  background:radial-gradient(120% 70% at 50% 12%, rgba(201,169,110,.20), transparent 62%),
-             linear-gradient(180deg,#141A26 0%,#0F1420 100%)}
+/* ── HOME — immersive dark hero (always navy, like the website hero) ── */
+#appHome{padding:0;overflow:hidden;position:relative;
+  background:radial-gradient(130% 60% at 50% 8%, rgba(201,169,110,.16), transparent 60%),
+             linear-gradient(180deg,#0C111C 0%,#0B0F1A 100%)}
+/* Subtle world map behind everything. */
+.app-home-map{position:absolute;inset:-4%;z-index:0;pointer-events:none;opacity:.9}
+.app-home-map svg{width:100%;height:100%}
+.app-home-map path{fill:#C9A96E;opacity:.14}
+/* Small plane drifting slowly across the sky. */
+.app-home-plane{position:absolute;top:20%;left:-12%;z-index:1;font-size:24px;pointer-events:none;
+  animation:app-plane-fly 20s linear infinite;opacity:.9}
+@keyframes app-plane-fly{
+  0%{left:-12%;top:22%;transform:rotate(6deg)}
+  50%{top:16%;transform:rotate(6deg)}
+  100%{left:112%;top:24%;transform:rotate(6deg)}
+}
+@media(prefers-reduced-motion: reduce){.app-home-plane{animation:none}}
 .app-home-top{
-  display:flex;justify-content:flex-end;align-items:center;gap:8px;position:relative;z-index:2;
+  display:flex;justify-content:flex-end;align-items:center;gap:8px;position:relative;z-index:3;
   padding:calc(12px + env(safe-area-inset-top)) 16px 0;
 }
-.app-lang{
-  width:auto;padding:9px 12px;border-radius:12px;border:1px solid var(--app-line);
-  background:var(--app-surface);color:var(--app-text);font-size:13px;font-weight:700;min-height:0;
+#appHome .app-icon-btn,#appHome .app-theme-btn,#appHome .app-lang{
+  background:rgba(255,255,255,.08) !important;border:1px solid rgba(255,255,255,.16) !important;color:#F5F2EC !important;
 }
-.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 24px;text-align:center;position:relative;z-index:1;min-height:0}
-.app-home-center .app-logo{font-size:28px;letter-spacing:1px}
-.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:0}
+.app-lang{width:auto;padding:9px 12px;border-radius:12px;font-size:13px;font-weight:700;min-height:0}
+.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px 0;text-align:center;position:relative;z-index:2;min-height:0}
+.app-home-center .app-logo.lg{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:#F5F2EC;letter-spacing:1.5px;margin-top:-8px}
+.app-home-center .app-logo.lg span{color:var(--app-gold)}
+.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:4px 0 0}
 .app-mascot-glow::before{content:'';position:absolute;width:230px;height:230px;border-radius:50%;
-  background:radial-gradient(circle, rgba(201,169,110,.28), rgba(201,169,110,.05) 55%, transparent 70%)}
-.app-home-mascot{width:186px;max-width:56%;height:auto;position:relative;z-index:1;
-  filter:drop-shadow(0 18px 28px rgba(0,0,0,.3))}
-.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.1;color:var(--app-text);margin-top:0}
-.app-home-tag em{font-style:italic;color:var(--app-gold-deep)}
-.app-home-sub{font-size:14px;line-height:1.45;color:var(--app-text-soft);max-width:300px}
-/* Inspiration rail — horizontal photo cards (no vertical scroll on home). */
-.app-home-inspo{flex-shrink:0;position:relative;z-index:1;padding:0 0 6px}
-.app-inspo-h{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--app-text-soft);padding:0 18px 8px}
-.app-home-rail{display:flex;gap:10px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.app-home-rail::-webkit-scrollbar{display:none}
-.app-inspo-card{flex:0 0 auto;width:118px;height:78px;border-radius:14px;overflow:hidden;position:relative;cursor:pointer;
-  background-size:cover;background-position:center;box-shadow:0 4px 12px rgba(11,15,26,.18)}
-.app-inspo-card::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 40%, rgba(11,15,26,.72))}
-.app-inspo-card span{position:absolute;left:9px;bottom:7px;z-index:1;color:#fff;font-size:12.5px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.app-home-cta-wrap{padding:10px 22px calc(24px + env(safe-area-inset-bottom));position:relative;z-index:2}
+  background:radial-gradient(circle, rgba(201,169,110,.30), rgba(201,169,110,.06) 55%, transparent 70%)}
+.app-home-mascot{width:188px;max-width:58%;height:auto;position:relative;z-index:1;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.4))}
+.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.1;color:#F5F2EC;margin-top:2px}
+.app-home-tag em{font-style:italic;color:var(--app-gold)}
+.app-home-sub{font-size:14px;line-height:1.5;color:#A8B2C4;max-width:300px}
+/* Bottom block: scrolling destination ticker + CTA. */
+.app-home-bottom{flex-shrink:0;position:relative;z-index:2}
+.app-home-ticker{width:100%;overflow:hidden;margin-bottom:6px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.app-home-ticker-track{display:flex;width:max-content;gap:16px;animation:app-ticker 34s linear infinite;padding:6px 0}
+.app-home-ticker-track button{background:none;border:none;padding:0;cursor:pointer;
+  font-family:'Cormorant Garamond',serif;font-size:19px;color:#A8B2C4;white-space:nowrap;letter-spacing:.03em}
+.app-home-ticker-track .dot{color:var(--app-gold);opacity:.7}
+@keyframes app-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion: reduce){.app-home-ticker-track{animation:none}}
+.app-home-cta-wrap{padding:6px 22px calc(24px + env(safe-area-inset-bottom));position:relative;z-index:2}
 .app-cta{
   width:100%;min-height:58px;border:none;border-radius:18px;
   background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;
@@ -491,12 +505,24 @@ body.native-app #flightsContent > .fc,
 body.native-app #attractionsContent > .fc{margin:0 0 12px}
 
 /* Tips & Weather trigger chip (floats top-right inside the itinerary panel). */
-.app-tips-chip{
+.app-itin-chips{
   position:absolute;top:calc(var(--app-top-h) + env(safe-area-inset-top) + 8px);right:12px;z-index:30;
-  display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:22px;
-  background:var(--app-surface);border:1px solid var(--app-line);box-shadow:0 3px 10px rgba(11,15,26,.14);
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+}
+.app-tips-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:999px;
+  background:var(--app-surface);border:1px solid var(--app-line);box-shadow:0 4px 12px rgba(11,15,26,.16);
   font-size:12px;font-weight:700;color:var(--app-text);cursor:pointer;
 }
+/* Food Guide sheet layout. */
+.app-food-sec{margin-bottom:22px}
+.app-food-h{font-size:15px;font-weight:800;color:var(--app-gold-deep);margin-bottom:8px}
+.app-food-row{padding:11px 0;border-bottom:1px solid var(--app-line)}
+.app-food-row:last-child{border-bottom:none}
+.app-food-name{font-size:16px;font-weight:700;color:var(--app-text)}
+.app-food-detail{font-size:14px;color:var(--app-text-soft);margin-top:2px;line-height:1.4}
+.app-food-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px;font-size:13px;color:var(--app-text-soft);font-weight:600}
+.app-food-empty{color:var(--app-text-soft);text-align:center;padding:30px}
 
 /* ── 5-tab bottom nav ── */
 body.native-app #appBottomNav{
@@ -692,6 +718,8 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
 
     <!-- HOME — full screen, no scroll: logo + mascot + single CTA -->
     <section class="app-screen on" id="appHome" data-screen="home">
+      <div class="app-home-map" id="appHomeMap" aria-hidden="true"></div>
+      <div class="app-home-plane" id="appHomePlane" aria-hidden="true">✈️</div>
       <div class="app-home-top">
         <button class="app-icon-btn" onclick="toggleSideMenu(true)" aria-label="Menu">☰</button>
         <div style="flex:1"></div>
@@ -702,21 +730,22 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
         <button class="app-theme-btn" id="appThemeBtn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
       </div>
       <div class="app-home-center">
-        <div class="app-logo">Zen <span>✈</span> Voy</div>
+        <div class="app-logo lg">Zen <span>✈</span> Voy</div>
         <div class="app-mascot-glow">
           <img class="app-home-mascot" src="assets/mascot.png" alt="Zenvoy"
                onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
-          <div class="app-mascot-fallback" style="display:none;font-size:120px">🤖</div>
+          <div class="app-mascot-fallback" style="display:none;font-size:110px">🤖</div>
         </div>
         <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
         <div class="app-home-sub" data-i18n="app_home_sub">Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.</div>
       </div>
-      <div class="app-home-inspo">
-        <div class="app-inspo-h" data-i18n="app_home_popular">Inspiração</div>
-        <div class="app-home-rail" id="appHomeRail"></div>
-      </div>
-      <div class="app-home-cta-wrap">
-        <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
+      <div class="app-home-bottom">
+        <div class="app-home-ticker" aria-label="Destinations">
+          <div class="app-home-ticker-track" id="appHomeTickerTrack"></div>
+        </div>
+        <div class="app-home-cta-wrap">
+          <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
+        </div>
       </div>
     </section>
 
@@ -779,6 +808,13 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     <div class="app-sheet-head"><span data-i18n="app_tips_weather">Dicas &amp; Clima</span>
       <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
     <div class="app-sheet-body"><div id="appTipsWeather"></div></div>
+  </div>
+
+  <div class="app-sheet" id="appSheetFood">
+    <div class="app-sheet-grip"></div>
+    <div class="app-sheet-head"><span>🍽️ <span data-i18n="app_food_guide">Guia Gastronômico</span></span>
+      <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
+    <div class="app-sheet-body"><div id="appFoodContent"></div></div>
   </div>
 
   <div class="app-sheet" id="appSheetChat">
@@ -2256,7 +2292,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_food_guide: 'Food Guide', app_food_empty: 'No food guide for this trip yet.', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -2269,7 +2305,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
-    food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_streetfood_title: '🛺 Comida de rua',
+    food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
@@ -2318,7 +2354,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_food_guide: 'Guia Gastronômico', app_food_empty: 'Ainda não há guia gastronômico para esta viagem.', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -5959,16 +5995,24 @@ function appGoScreen(name) {
   if (active) { var sc = active.querySelector('[id$="Body"]'); if (sc) sc.scrollTop = 0; }
 }
 
-// Home inspiration rail — tappable destination photo cards.
-var APP_INSPO = ['Rio de Janeiro', 'Paris', 'Lisbon', 'Tokyo', 'New York', 'Cancún', 'Barcelona', 'Rome'];
-function appBuildHomeRail() {
-  var rail = document.getElementById('appHomeRail');
-  if (!rail) return;
-  rail.innerHTML = APP_INSPO.map(function (c) {
-    var img = (typeof getImg === 'function') ? getImg(c, 240, 160) : '';
-    return '<div class="app-inspo-card" style="background-image:url(\'' + img + '\')" onclick="appPickDestination(\'' + escapeJsAttr(c) + '\')">'
-      + '<span>' + escapeHtml(c) + '</span></div>';
-  }).join('');
+// Home destination ticker — infinite scroll, each name tappable.
+var APP_TICKER = ['Barcelona', 'London', 'Chicago', 'Tokyo', 'Rome', 'Bali', 'Paris',
+  'New York', 'Lisbon', 'Cancún', 'Dubai', 'Cape Town', 'Rio de Janeiro', 'Amsterdam'];
+function appBuildHome() {
+  // Clone the website's world-map SVG as a subtle background behind the hero.
+  var map = document.getElementById('appHomeMap');
+  if (map && !map.firstChild) {
+    var src = document.querySelector('.hero-worldmap-full svg');
+    if (src) map.appendChild(src.cloneNode(true));
+  }
+  // Infinite ticker: two copies back-to-back so the -50% keyframe loops seamlessly.
+  var track = document.getElementById('appHomeTickerTrack');
+  if (track) {
+    var one = APP_TICKER.map(function (c) {
+      return '<button onclick="appPickDestination(\'' + escapeJsAttr(c) + '\')">' + escapeHtml(c) + '</button><span class="dot">·</span>';
+    }).join('');
+    track.innerHTML = one + one;
+  }
 }
 function appPickDestination(city) {
   appGoScreen('wizard');
@@ -5990,20 +6034,60 @@ function appPickCategory(cat) {
   if (body) body.scrollTop = 0;
 }
 
-// The Tips & Weather chip lives only on the itinerary category.
+// The Tips&Weather and Food Guide chips live only on the itinerary category,
+// floating top-right (same pattern), stacked in one container.
 function appEnsureTipsChip(cat) {
   var panel = document.getElementById('tab-itin');
-  var existing = document.getElementById('appTipsChip');
+  var wrap = document.getElementById('appItinChips');
   if (cat === 'itin' && panel) {
-    if (!existing) {
-      var chip = document.createElement('button');
-      chip.id = 'appTipsChip'; chip.className = 'app-tips-chip';
-      chip.setAttribute('onclick', "appOpenSheet('tips')");
-      chip.innerHTML = '💡 <span data-i18n="app_tips_weather">Dicas &amp; Clima</span>';
-      document.getElementById('appResults').appendChild(chip);
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'appItinChips'; wrap.className = 'app-itin-chips';
+      wrap.innerHTML =
+        '<button class="app-tips-chip" onclick="appOpenSheet(\'food\')">🍽️ <span data-i18n="app_food_guide">Guia Gastronômico</span></button>'
+        + '<button class="app-tips-chip" onclick="appOpenSheet(\'tips\')">💡 <span data-i18n="app_tips_weather">Dicas &amp; Clima</span></button>';
+      document.getElementById('appResults').appendChild(wrap);
       if (typeof translatePage === 'function') translatePage();
-    } else { existing.style.display = 'inline-flex'; }
-  } else if (existing) { existing.style.display = 'none'; }
+    } else { wrap.style.display = 'flex'; }
+  } else if (wrap) { wrap.style.display = 'none'; }
+}
+
+// Renders the AI's food_guide into the Food Guide sheet — clean, readable
+// sections (must-try, breakfast, lunch, snack, dinner, street food). Each
+// entry shows place/dish, neighborhood and price.
+function appRenderFoodGuide() {
+  var host = document.getElementById('appFoodContent');
+  if (!host) return;
+  var p = window.planData || {};
+  var fg = p.food_guide;
+  // Multi-destination stores food per leg; fall back to a merged/first one.
+  if (!fg && typeof filterFoodGuideByCity === 'function' && p.isMultiDest && currentCityTab) {
+    fg = filterFoodGuideByCity(p.food_guide, currentCityTab);
+  }
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  if (!fg) { host.innerHTML = '<p class="app-food-empty">' + (dict.app_food_empty || 'No food guide for this trip yet.') + '</p>'; return; }
+
+  function section(title, items, fmt) {
+    if (!items || !items.length) return '';
+    var rows = items.map(function (it) {
+      var f = fmt(it);
+      return '<div class="app-food-row"><div class="app-food-name">' + escapeHtml(f.name || '') + '</div>'
+        + (f.detail ? '<div class="app-food-detail">' + escapeHtml(f.detail) + '</div>' : '')
+        + '<div class="app-food-meta">'
+        + (f.area ? '<span>📍 ' + escapeHtml(f.area) + '</span>' : '')
+        + (f.price ? '<span>' + escapeHtml(localizePriceText(f.price)) + '</span>' : '')
+        + '</div></div>';
+    }).join('');
+    return '<div class="app-food-sec"><div class="app-food-h">' + title + '</div>' + rows + '</div>';
+  }
+  var h = '';
+  h += section(dict.food_musttry_title || '🍜 Must-try dishes', fg.must_try, function (i) { return { name: i.name, detail: i.desc, area: i.where, price: i.price }; });
+  h += section(dict.food_breakfast_title || '☕ Breakfast', fg.breakfast, function (i) { return { name: i.name, detail: i.specialty, area: i.area, price: i.price }; });
+  h += section(dict.food_lunch_title || '🌞 Lunch', fg.lunch, function (i) { return { name: i.name, detail: i.dish, area: i.area, price: i.price }; });
+  h += section(dict.food_snack_title || '🥐 Afternoon snack', fg.afternoon_snack, function (i) { return { name: i.name, detail: i.specialty, area: i.area, price: i.price }; });
+  h += section(dict.food_dinner_title || '🌙 Dinner', fg.dinner, function (i) { return { name: i.name, detail: (i.dish || '') + (i.cuisine ? ' · ' + i.cuisine : ''), area: i.area, price: i.price }; });
+  h += section(dict.food_street_title || '🛺 Street food', fg.street_food, function (i) { return { name: i.name, detail: '', area: i.where, price: i.price }; });
+  host.innerHTML = h || '<p class="app-food-empty">' + (dict.app_food_empty || 'No food guide for this trip yet.') + '</p>';
 }
 
 // Bold the leading clock time in each itinerary slot ("At 09:30" / "Às 18h").
@@ -6087,7 +6171,9 @@ function appOnResultReady() {
 // ── Slide-up sheets (mala / tips / chat) ──
 function appOpenSheet(which) {
   if (which === 'tips') appRenderTipsWeather();
-  var id = which === 'mala' ? 'appSheetMala' : which === 'tips' ? 'appSheetTips' : 'appSheetChat';
+  if (which === 'food') appRenderFoodGuide();
+  var id = which === 'mala' ? 'appSheetMala' : which === 'tips' ? 'appSheetTips'
+    : which === 'food' ? 'appSheetFood' : 'appSheetChat';
   var sheet = document.getElementById(id);
   var scrim = document.getElementById('appSheetScrim');
   if (scrim) scrim.style.display = 'block';
@@ -6284,7 +6370,7 @@ function appInitShell() {
 
   appInitCartBall();
   appSyncThemeButtons();
-  appBuildHomeRail();
+  appBuildHome();
   appGoScreen('home');
   if (typeof renderCart === 'function') renderCart();
   appTranslateShell();
