@@ -398,17 +398,26 @@ body.native-app[data-theme="dark"] #appHome{
   width:auto;padding:9px 12px;border-radius:12px;border:1px solid var(--app-line);
   background:var(--app-surface);color:var(--app-text);font-size:13px;font-weight:700;min-height:0;
 }
-.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px;text-align:center;position:relative;z-index:1}
-.app-home-center .app-logo{font-size:30px;letter-spacing:1px}
-.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:2px 0}
-.app-mascot-glow::before{content:'';position:absolute;width:290px;height:290px;border-radius:50%;
+.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 24px;text-align:center;position:relative;z-index:1;min-height:0}
+.app-home-center .app-logo{font-size:28px;letter-spacing:1px}
+.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:0}
+.app-mascot-glow::before{content:'';position:absolute;width:230px;height:230px;border-radius:50%;
   background:radial-gradient(circle, rgba(201,169,110,.28), rgba(201,169,110,.05) 55%, transparent 70%)}
-.app-home-mascot{width:250px;max-width:74%;height:auto;position:relative;z-index:1;
-  filter:drop-shadow(0 22px 34px rgba(0,0,0,.32))}
-.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1.1;color:var(--app-text);margin-top:2px}
+.app-home-mascot{width:186px;max-width:56%;height:auto;position:relative;z-index:1;
+  filter:drop-shadow(0 18px 28px rgba(0,0,0,.3))}
+.app-home-tag{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.1;color:var(--app-text);margin-top:0}
 .app-home-tag em{font-style:italic;color:var(--app-gold-deep)}
-.app-home-sub{font-size:15px;line-height:1.5;color:var(--app-text-soft);max-width:300px}
-.app-home-cta-wrap{padding:0 22px calc(28px + env(safe-area-inset-bottom));position:relative;z-index:2}
+.app-home-sub{font-size:14px;line-height:1.45;color:var(--app-text-soft);max-width:300px}
+/* Inspiration rail — horizontal photo cards (no vertical scroll on home). */
+.app-home-inspo{flex-shrink:0;position:relative;z-index:1;padding:0 0 6px}
+.app-inspo-h{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--app-text-soft);padding:0 18px 8px}
+.app-home-rail{display:flex;gap:10px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.app-home-rail::-webkit-scrollbar{display:none}
+.app-inspo-card{flex:0 0 auto;width:118px;height:78px;border-radius:14px;overflow:hidden;position:relative;cursor:pointer;
+  background-size:cover;background-position:center;box-shadow:0 4px 12px rgba(11,15,26,.18)}
+.app-inspo-card::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 40%, rgba(11,15,26,.72))}
+.app-inspo-card span{position:absolute;left:9px;bottom:7px;z-index:1;color:#fff;font-size:12.5px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.app-home-cta-wrap{padding:10px 22px calc(24px + env(safe-area-inset-bottom));position:relative;z-index:2}
 .app-cta{
   width:100%;min-height:58px;border:none;border-radius:18px;
   background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;
@@ -437,6 +446,8 @@ body.native-app #appResultsBody #result{display:block}
 body.native-app #appResultsBody .tp{padding-left:16px;padding-right:16px}
 /* Destination name + dates + travelers, shown BELOW the photo. */
 .app-res-info{padding:14px 16px 4px}
+.app-res-nrow{display:flex;align-items:center;gap:11px}
+.app-res-nrow img{width:38px;height:38px;flex-shrink:0}
 .app-res-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--app-text);line-height:1.1}
 .app-res-meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:7px;font-size:14px;color:var(--app-text-soft);font-weight:600}
 
@@ -588,6 +599,8 @@ body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !importa
     <!-- HOME — full screen, no scroll: logo + mascot + single CTA -->
     <section class="app-screen on" id="appHome" data-screen="home">
       <div class="app-home-top">
+        <button class="app-icon-btn" onclick="toggleSideMenu(true)" aria-label="Menu">☰</button>
+        <div style="flex:1"></div>
         <select id="appLangSel" class="app-lang" onchange="setLang(this.value);appTranslateShell()" aria-label="Language">
           <option value="pt">🇧🇷 PT</option><option value="en">🇺🇸 EN</option>
           <option value="es">🇪🇸 ES</option><option value="fr">🇫🇷 FR</option><option value="it">🇮🇹 IT</option>
@@ -603,6 +616,10 @@ body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !importa
         </div>
         <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
         <div class="app-home-sub" data-i18n="app_home_sub">Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.</div>
+      </div>
+      <div class="app-home-inspo">
+        <div class="app-inspo-h" data-i18n="app_home_popular">Inspiração</div>
+        <div class="app-home-rail" id="appHomeRail"></div>
       </div>
       <div class="app-home-cta-wrap">
         <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
@@ -658,7 +675,9 @@ body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !importa
     <div class="app-sheet-grip"></div>
     <div class="app-sheet-head"><span data-i18n="app_nav_bag">Minha Mala</span>
       <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
-    <div class="app-sheet-body"><div id="appMalaContent"></div></div>
+    <div class="app-sheet-body"><div id="appMalaContent"></div>
+      <button class="app-cta" style="margin-top:14px" onclick="appShareTrip()">📤 <span data-i18n="app_share">Salvar & Compartilhar</span></button>
+    </div>
   </div>
 
   <div class="app-sheet" id="appSheetTips">
@@ -2143,7 +2162,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -2205,7 +2224,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -3412,13 +3431,28 @@ var ZENVOY_MASCOT_SVG = '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="
   '<g transform="translate(30,7) rotate(45) scale(0.32)"><g transform="translate(-12,-12)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2.5 1.5V22l4-1 4 1v-1.5L13 19v-5.5l8 2.5z" fill="#C9A96E"/></g></g>' +
   '</svg>';
 
+// Assistant avatar: the real mascot PNG inside the native app, the inline SVG
+// on the website (which keeps its dark chat modal). Also used on the building
+// screen so the mascot is present while a trip is generated.
+function mascotAvatar(size) {
+  if (document.body.classList.contains('native-app')) {
+    return '<img src="assets/mascot.png" alt="Zenvoy" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--app-surface-2)">';
+  }
+  return ZENVOY_MASCOT_SVG;
+}
+
 function renderChatMessages() {
   var el = document.getElementById('chatMessages');
+  var native = document.body.classList.contains('native-app');
+  // In the app the chat sits on a light sheet, so the assistant bubble needs a
+  // light surface + dark text (the website's white-on-dark bubble would vanish).
+  var asstBg = native ? 'var(--app-surface-2)' : 'rgba(255,255,255,.08)';
+  var asstFg = native ? 'var(--app-text)' : '#fff';
   el.innerHTML = chatHistory.map(function(m) {
     var isUser = m.role === 'user';
-    var bubble = '<div style="align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';max-width:75%;background:' + (isUser ? 'var(--gold)' : 'rgba(255,255,255,.08)') + ';color:' + (isUser ? 'var(--navy)' : '#fff') + ';padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;white-space:pre-wrap">' + escapeHtml(m.content) + '</div>';
+    var bubble = '<div style="align-self:' + (isUser ? 'flex-end' : 'flex-start') + ';max-width:75%;background:' + (isUser ? 'var(--gold)' : asstBg) + ';color:' + (isUser ? 'var(--navy)' : asstFg) + ';padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;white-space:pre-wrap">' + escapeHtml(m.content) + '</div>';
     if (isUser) return '<div style="align-self:flex-end">' + bubble + '</div>';
-    return '<div style="display:flex;gap:8px;align-items:flex-end;align-self:flex-start">' + ZENVOY_MASCOT_SVG + bubble + '</div>';
+    return '<div style="display:flex;gap:8px;align-items:flex-end;align-self:flex-start">' + mascotAvatar(34) + bubble + '</div>';
   }).join('');
   el.scrollTop = el.scrollHeight;
 }
@@ -4125,7 +4159,7 @@ function showBuildingScreen() {
   var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = 'none';
   var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'block';
   var mascotEl = document.getElementById('buildingMascot');
-  if (mascotEl && !mascotEl.innerHTML) mascotEl.innerHTML = ZENVOY_MASCOT_SVG;
+  if (mascotEl) mascotEl.innerHTML = document.body.classList.contains('native-app') ? mascotAvatar(76) : ZENVOY_MASCOT_SVG;
 }
 // ── TRIP PACKAGES (Best Experience / Smart Budget / Adventure) ────────────
 // Reuses the accommodations (4 tiers) and cars (4 categories) the AI already
@@ -5831,6 +5865,23 @@ function appGoScreen(name) {
   if (active) { var sc = active.querySelector('[id$="Body"]'); if (sc) sc.scrollTop = 0; }
 }
 
+// Home inspiration rail — tappable destination photo cards.
+var APP_INSPO = ['Rio de Janeiro', 'Paris', 'Lisbon', 'Tokyo', 'New York', 'Cancún', 'Barcelona', 'Rome'];
+function appBuildHomeRail() {
+  var rail = document.getElementById('appHomeRail');
+  if (!rail) return;
+  rail.innerHTML = APP_INSPO.map(function (c) {
+    var img = (typeof getImg === 'function') ? getImg(c, 240, 160) : '';
+    return '<div class="app-inspo-card" style="background-image:url(\'' + img + '\')" onclick="appPickDestination(\'' + escapeJsAttr(c) + '\')">'
+      + '<span>' + escapeHtml(c) + '</span></div>';
+  }).join('');
+}
+function appPickDestination(city) {
+  appGoScreen('wizard');
+  var toEl = document.getElementById('toCity');
+  if (toEl) { toEl.value = city; if (typeof selectedToAirport !== 'undefined') selectedToAirport = null; }
+}
+
 // ── Result category tabs (bottom nav on results) ──
 var APP_CATS = { itin: '🗓️', flights: '✈️', stays: '🏨', cars: '🚗', attractions: '🎭' };
 function appPickCategory(cat) {
@@ -5925,7 +5976,7 @@ function appRenderResultHeader() {
   var trav = t ? (t + ' ' + (t > 1 ? (dict.app_travelers || 'travelers') : (dict.app_traveler || 'traveler'))) : '';
   var el = document.getElementById('appResInfo');
   if (!el) { el = document.createElement('div'); el.id = 'appResInfo'; el.className = 'app-res-info'; rhero.parentNode.insertBefore(el, rhero.nextSibling); }
-  el.innerHTML = '<div class="app-res-name">' + escapeHtml(name) + '</div>'
+  el.innerHTML = '<div class="app-res-nrow">' + mascotAvatar(38) + '<div class="app-res-name">' + escapeHtml(name) + '</div></div>'
     + '<div class="app-res-meta">' + (dates ? '<span>📅 ' + escapeHtml(dates) + '</span>' : '')
     + (trav ? '<span>👤 ' + escapeHtml(trav) + '</span>' : '') + '</div>';
 }
@@ -5996,6 +6047,50 @@ async function appFetchWeatherStrip(dest) {
     }).join('') + '</div>';
     host.innerHTML = html;
   } catch (e) {}
+}
+
+// ── Save & Share the selected trip via the native Android share sheet ──
+// Builds a readable summary (destination, dates, chosen flight/hotel/car, and
+// the day-by-day themes) and hands it to Capacitor's Share plugin, which opens
+// the OS share sheet (WhatsApp, email, etc.). Falls back to the Web Share API,
+// then to the print dialog (which offers "Save as PDF") on the web.
+function appBuildTripSummary() {
+  var p = window.planData || {};
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var L = [];
+  L.push('✈️ Zenvoy — ' + ((p.isMultiDest && p.legCities && p.legCities[0]) || p.destination || ''));
+  if (p.checkIn && p.checkOut) L.push('📅 ' + appFmtDate(p.checkIn) + ' → ' + appFmtDate(p.checkOut));
+  if (p.travelers) L.push('👤 ' + p.travelers + ' ' + (p.travelers > 1 ? (dict.app_travelers || 'travelers') : (dict.app_traveler || 'traveler')));
+  var c = (typeof tripCart !== 'undefined') ? tripCart : null;
+  if (c) {
+    var sel = [];
+    if (c.flight) sel.push('✈️ ' + (c.flight.airline || 'Flight') + ' — ' + formatPrice(c.flight.price));
+    Object.keys(c.stays || {}).forEach(function (k) { var s = c.stays[k]; sel.push('🏨 ' + (s.name || 'Hotel') + ' — ' + formatPrice(s.price_night) + '/noite'); });
+    Object.keys(c.cars || {}).forEach(function (k) { var car = c.cars[k]; sel.push('🚗 ' + (car.name || 'Car') + ' — ' + formatPrice(car.price) + '/dia'); });
+    if (sel.length) { L.push(''); L.push(dict.app_nav_bag || 'My Bag'); L = L.concat(sel); }
+  }
+  var days = (p.days && p.days.length) ? p.days : (window._days || []);
+  if (days.length) {
+    L.push(''); L.push('🗓️ ' + (dict.app_cat_itin || 'Itinerary') + ':');
+    days.forEach(function (d) { L.push('  ' + (dict.app_cat_itin === 'Roteiro' ? 'Dia' : 'Day') + ' ' + d.day + ': ' + (d.theme || '')); });
+  }
+  L.push(''); L.push('— zenvoytravel.netlify.app');
+  return L.join('\n');
+}
+async function appShareTrip() {
+  var p = window.planData || {};
+  var title = 'Zenvoy — ' + (p.destination || 'Trip');
+  var text = appBuildTripSummary();
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) {
+      await window.Capacitor.Plugins.Share.share({ title: title, text: text, dialogTitle: title });
+      return;
+    }
+    if (navigator.share) { await navigator.share({ title: title, text: text }); return; }
+  } catch (e) {
+    if (e && /abort|cancel/i.test((e.name || '') + (e.message || ''))) return; // user dismissed
+  }
+  if (typeof printItinerary === 'function') printItinerary(); // web fallback → Save as PDF
 }
 
 // ── Draggable cart ball (snaps to nearest corner) ──
@@ -6095,6 +6190,7 @@ function appInitShell() {
 
   appInitCartBall();
   appSyncThemeButtons();
+  appBuildHomeRail();
   appGoScreen('home');
   if (typeof renderCart === 'function') renderCart();
   appTranslateShell();
