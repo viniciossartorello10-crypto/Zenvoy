@@ -385,22 +385,16 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 }
 
 /* ── HOME — immersive dark hero (always navy, like the website hero) ── */
-#appHome{padding:0;overflow:hidden;position:relative;
+/* Note: no position override here — the base .app-screen is position:absolute;
+   inset:0 (fills the shell) and already provides the positioning context for
+   the absolutely-placed map/globe. */
+#appHome{padding:0;overflow:hidden;
   background:radial-gradient(130% 60% at 50% 8%, rgba(201,169,110,.16), transparent 60%),
              linear-gradient(180deg,#0C111C 0%,#0B0F1A 100%)}
 /* Subtle world map behind everything. */
-.app-home-map{position:absolute;inset:-4%;z-index:0;pointer-events:none;opacity:.9}
+.app-home-map{position:absolute;inset:-4%;z-index:0;pointer-events:none}
 .app-home-map svg{width:100%;height:100%}
 .app-home-map path{fill:#C9A96E;opacity:.14}
-/* Small plane drifting slowly across the sky. */
-.app-home-plane{position:absolute;top:20%;left:-12%;z-index:1;font-size:24px;pointer-events:none;
-  animation:app-plane-fly 20s linear infinite;opacity:.9}
-@keyframes app-plane-fly{
-  0%{left:-12%;top:22%;transform:rotate(6deg)}
-  50%{top:16%;transform:rotate(6deg)}
-  100%{left:112%;top:24%;transform:rotate(6deg)}
-}
-@media(prefers-reduced-motion: reduce){.app-home-plane{animation:none}}
 .app-home-top{
   display:flex;justify-content:flex-end;align-items:center;gap:8px;position:relative;z-index:3;
   padding:calc(12px + env(safe-area-inset-top)) 16px 0;
@@ -409,29 +403,30 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
   background:rgba(255,255,255,.08) !important;border:1px solid rgba(255,255,255,.16) !important;color:#F5F2EC !important;
 }
 .app-lang{width:auto;padding:9px 12px;border-radius:12px;font-size:13px;font-weight:700;min-height:0}
-.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px 0;text-align:center;position:relative;z-index:2;min-height:0}
-.app-home-center .app-logo.lg{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:#F5F2EC;letter-spacing:1.5px;margin-top:-8px}
+.app-home-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 24px 0;text-align:center;position:relative;z-index:2;min-height:0}
+.app-home-center .app-logo.lg{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#F5F2EC;letter-spacing:1.5px;margin-top:-6px}
 .app-home-center .app-logo.lg span{color:var(--app-gold)}
-.app-mascot-glow{position:relative;display:flex;align-items:center;justify-content:center;margin:4px 0 0}
-.app-mascot-glow::before{content:'';position:absolute;width:230px;height:230px;border-radius:50%;
-  background:radial-gradient(circle, rgba(201,169,110,.30), rgba(201,169,110,.06) 55%, transparent 70%)}
-.app-home-mascot{width:188px;max-width:58%;height:auto;position:relative;z-index:1;
-  filter:drop-shadow(0 18px 30px rgba(0,0,0,.4))}
+/* Rotating globe + orbiting plane, cloned from the website hero. */
+.app-home-globe{position:relative;width:250px;height:250px;max-width:66vw;max-height:66vw}
+.app-home-globe svg{width:100%;height:100%;overflow:visible}
 .app-home-tag{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.1;color:#F5F2EC;margin-top:2px}
 .app-home-tag em{font-style:italic;color:var(--app-gold)}
 .app-home-sub{font-size:14px;line-height:1.5;color:#A8B2C4;max-width:300px}
-/* Bottom block: scrolling destination ticker + CTA. */
+/* Bottom block: auto-scrolling destination PHOTO cards + CTA. */
 .app-home-bottom{flex-shrink:0;position:relative;z-index:2}
-.app-home-ticker{width:100%;overflow:hidden;margin-bottom:6px;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-.app-home-ticker-track{display:flex;width:max-content;gap:16px;animation:app-ticker 34s linear infinite;padding:6px 0}
-.app-home-ticker-track button{background:none;border:none;padding:0;cursor:pointer;
-  font-family:'Cormorant Garamond',serif;font-size:19px;color:#A8B2C4;white-space:nowrap;letter-spacing:.03em}
-.app-home-ticker-track .dot{color:var(--app-gold);opacity:.7}
-@keyframes app-ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media(prefers-reduced-motion: reduce){.app-home-ticker-track{animation:none}}
-.app-home-cta-wrap{padding:6px 22px calc(24px + env(safe-area-inset-bottom));position:relative;z-index:2}
+.app-home-photos{width:100%;overflow:hidden;margin-bottom:12px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.app-home-photos-track{display:flex;width:max-content;gap:12px;padding:2px 12px;animation:app-photos 42s linear infinite}
+.app-home-photos-track:active{animation-play-state:paused}
+.app-photo-card{flex:0 0 auto;width:128px;height:86px;border-radius:16px;overflow:hidden;position:relative;cursor:pointer;
+  background:#1A2130 center/cover no-repeat;box-shadow:0 6px 16px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08)}
+.app-photo-card::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 42%, rgba(11,15,26,.78))}
+.app-photo-card span{position:absolute;left:11px;bottom:9px;z-index:1;color:#fff;font-size:13px;font-weight:700;
+  text-shadow:0 1px 4px rgba(0,0,0,.6);font-family:'Inter',sans-serif}
+@keyframes app-photos{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion: reduce){.app-home-photos-track{animation:none}}
+.app-home-cta-wrap{padding:2px 22px calc(24px + env(safe-area-inset-bottom));position:relative;z-index:2}
 .app-cta{
   width:100%;min-height:58px;border:none;border-radius:18px;
   background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;
@@ -719,7 +714,6 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     <!-- HOME — full screen, no scroll: logo + mascot + single CTA -->
     <section class="app-screen on" id="appHome" data-screen="home">
       <div class="app-home-map" id="appHomeMap" aria-hidden="true"></div>
-      <div class="app-home-plane" id="appHomePlane" aria-hidden="true">✈️</div>
       <div class="app-home-top">
         <button class="app-icon-btn" onclick="toggleSideMenu(true)" aria-label="Menu">☰</button>
         <div style="flex:1"></div>
@@ -731,17 +725,13 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
       </div>
       <div class="app-home-center">
         <div class="app-logo lg">Zen <span>✈</span> Voy</div>
-        <div class="app-mascot-glow">
-          <img class="app-home-mascot" src="assets/mascot.png" alt="Zenvoy"
-               onerror="this.style.display='none';var f=this.parentNode.querySelector('.app-mascot-fallback');if(f)f.style.display='block'">
-          <div class="app-mascot-fallback" style="display:none;font-size:110px">🤖</div>
-        </div>
+        <div class="app-home-globe" id="appHomeGlobe" aria-hidden="true"></div>
         <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
         <div class="app-home-sub" data-i18n="app_home_sub">Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.</div>
       </div>
       <div class="app-home-bottom">
-        <div class="app-home-ticker" aria-label="Destinations">
-          <div class="app-home-ticker-track" id="appHomeTickerTrack"></div>
+        <div class="app-home-photos" aria-label="Destinations">
+          <div class="app-home-photos-track" id="appHomePhotosTrack"></div>
         </div>
         <div class="app-home-cta-wrap">
           <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
@@ -5999,17 +5989,25 @@ function appGoScreen(name) {
 var APP_TICKER = ['Barcelona', 'London', 'Chicago', 'Tokyo', 'Rome', 'Bali', 'Paris',
   'New York', 'Lisbon', 'Cancún', 'Dubai', 'Cape Town', 'Rio de Janeiro', 'Amsterdam'];
 function appBuildHome() {
-  // Clone the website's world-map SVG as a subtle background behind the hero.
+  // Clone the website hero's world map (background) and rotating globe + orbiting
+  // plane (center) so the app entry matches the site.
   var map = document.getElementById('appHomeMap');
   if (map && !map.firstChild) {
-    var src = document.querySelector('.hero-worldmap-full svg');
-    if (src) map.appendChild(src.cloneNode(true));
+    var wm = document.querySelector('.hero-worldmap-full svg');
+    if (wm) map.appendChild(wm.cloneNode(true));
   }
-  // Infinite ticker: two copies back-to-back so the -50% keyframe loops seamlessly.
-  var track = document.getElementById('appHomeTickerTrack');
-  if (track) {
+  var globe = document.getElementById('appHomeGlobe');
+  if (globe && !globe.firstChild) {
+    var gsvg = document.querySelector('.hero-bg-anim svg');
+    if (gsvg) globe.appendChild(gsvg.cloneNode(true));
+  }
+  // Destination PHOTO cards, auto-scrolling; two copies so -50% loops seamlessly.
+  var track = document.getElementById('appHomePhotosTrack');
+  if (track && !track.firstChild) {
     var one = APP_TICKER.map(function (c) {
-      return '<button onclick="appPickDestination(\'' + escapeJsAttr(c) + '\')">' + escapeHtml(c) + '</button><span class="dot">·</span>';
+      var img = (typeof getImg === 'function') ? getImg(c, 256, 172) : '';
+      return '<div class="app-photo-card" style="background-image:url(\'' + img + '\')" onclick="appPickDestination(\'' + escapeJsAttr(c) + '\')">'
+        + '<span>' + escapeHtml(c) + '</span></div>';
     }).join('');
     track.innerHTML = one + one;
   }
