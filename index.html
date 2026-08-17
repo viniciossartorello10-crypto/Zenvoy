@@ -553,9 +553,38 @@ body.native-app #appResultsBody .td,
 body.native-app #appResultsBody .info-val{font-size:17px;line-height:1.55;color:var(--app-text)}
 body.native-app #appResultsBody .td .slot-time{font-weight:800;color:var(--app-text)}
 
-/* Small itinerary slot thumbnail — floats left, text wraps beside it. */
-body.native-app .app-slot-photo{float:left;width:112px;height:82px;object-fit:cover;border-radius:12px;
-  margin:2px 13px 6px 0;box-shadow:var(--app-shadow-soft);background:var(--app-surface-2)}
+/* ── Native itinerary: sticky header + clean photo cards ── */
+body.native-app #tab-itin{padding:0 !important}
+.app-itin-head{position:sticky;top:0;z-index:12;background:var(--app-bg);
+  padding:12px 16px 12px;border-bottom:1px solid var(--app-line);box-shadow:0 4px 14px rgba(11,15,26,.05)}
+.app-itin-rhythm{display:flex;gap:8px;margin-bottom:10px}
+.app-itin-rhythm button{flex:1;padding:10px 4px;border-radius:999px;border:1.5px solid var(--app-line);
+  background:var(--app-surface);font-size:12px;font-weight:700;color:var(--app-text);cursor:pointer;white-space:nowrap}
+.app-itin-rhythm button.on{background:var(--app-navy);color:#fff;border-color:var(--app-navy)}
+.app-itin-daynav{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:10px}
+.app-itin-daynav button{width:38px;height:38px;border-radius:50%;border:1px solid var(--app-line);
+  background:var(--app-surface);font-size:16px;color:var(--app-text);cursor:pointer}
+.app-itin-daynav .lbl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--app-text-soft);min-width:120px;text-align:center}
+.app-itin-chips{display:flex;gap:10px}
+.app-itin-chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:11px 8px;border-radius:14px;border:1px solid var(--app-line);background:var(--app-surface);
+  font-size:12.5px;font-weight:700;color:var(--app-text);cursor:pointer;box-shadow:var(--app-shadow-soft)}
+.app-itin-cards{padding:16px}
+.app-itin-daytitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--app-text);margin:2px 2px 16px}
+.app-slot-card{background:var(--app-surface);border:1px solid var(--app-line);border-radius:16px;
+  box-shadow:var(--app-shadow);margin-bottom:16px;overflow:hidden}
+.app-slot-card .lb{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--app-gold-deep);padding:16px 16px 0}
+.app-slot-card .ph{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;margin-top:12px;background:var(--app-surface-2)}
+.app-slot-card .bd{padding:14px 16px 16px}
+.app-slot-card .nm{font-size:18px;font-weight:800;color:var(--app-text);line-height:1.28}
+.app-slot-card .ds{font-size:14px;color:var(--app-text-soft);line-height:1.5;margin-top:5px}
+.app-slot-card .meta{font-size:13px;color:var(--app-text-soft);margin-top:8px;line-height:1.6}
+.app-slot-card .acts{display:flex;gap:10px;margin-top:14px}
+.app-slot-card .acts a{flex:1;text-align:center;padding:11px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none}
+.app-slot-card .acts .ta{background:#00A680;color:#fff}
+.app-slot-card .acts .mp{background:transparent;border:1.5px solid var(--app-line);color:var(--app-text)}
 /* Photo-forward attraction cards (Airbnb-style). */
 body.native-app .app-attr-card{padding:0 !important;overflow:hidden}
 body.native-app .app-attr-photo{width:100%;height:172px;display:flex;align-items:center;justify-content:center;
@@ -573,15 +602,6 @@ body.native-app #flightsContent > .fc,
 body.native-app #attractionsContent > .fc{margin:0 0 14px}
 
 /* Tips & Weather trigger chip (floats top-right inside the itinerary panel). */
-.app-itin-chips{
-  position:absolute;top:calc(var(--app-top-h) + env(safe-area-inset-top) + 8px);right:12px;z-index:30;
-  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
-}
-.app-tips-chip{
-  display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:999px;
-  background:var(--app-surface);border:1px solid var(--app-line);box-shadow:0 4px 12px rgba(11,15,26,.16);
-  font-size:12px;font-weight:700;color:var(--app-text);cursor:pointer;
-}
 /* Food Guide sheet layout. */
 .app-food-sec{margin-bottom:22px}
 .app-food-h{font-size:15px;font-weight:800;color:var(--app-gold-deep);margin-bottom:8px}
@@ -6350,8 +6370,7 @@ function appPickCategory(cat) {
   });
   var btn = document.querySelector('#appResultsBody .tab[onclick*="\'' + cat + '\'"]');
   if (typeof showTab === 'function') showTab(cat, btn || document.createElement('button'));
-  appEnsureTipsChip(cat);
-  if (cat === 'itin') { appEnhanceTimes(); appFixItineraryLinks(); appEnrichItinPhotos(); }
+  if (cat === 'itin') appRenderItinerary();
   var body = document.getElementById('appResultsBody');
   if (body) body.scrollTop = 0;
 }
@@ -6529,6 +6548,127 @@ function appEnrichAttractionPhotos(meta) {
         el.classList.add('has-photo');
       });
     }, i * 250);
+  });
+}
+
+// ── NATIVE ITINERARY (clean cards, replaces the reused website itinerary) ──
+// Splits a slot's text into a place name, a short description, and its price.
+function appSlotParts(text, isFood) {
+  var t = String(text || '').replace(/^\s*(?:at|às|à)\s+\d{1,2}(?::\d{2})?\s?(?:am|pm|h|hs)?\b[,:]?\s*/i, '').trim();
+  var price = '';
+  var pm = t.match(/(?:R\$|US\$|\$|€|£)\s?\d[\d.,]*(?:\s?pp)?/i);
+  if (pm) price = pm[0];
+  if (isFood) {
+    var parts = t.split(/\s[—–-]\s/);
+    var name = parts[0].trim();
+    var desc = parts.slice(1).join(' - ').replace(price, '').replace(/\s{2,}/g, ' ')
+      .replace(/\s*[-—–]\s*$/, '').replace(/^\s*[-—–]\s*/, '').trim();
+    return { name: name, desc: desc, price: price, query: name };
+  }
+  // Activity: prefer the place after the last " at " (usually the named venue),
+  // else the first clause. Keep the full sentence as the description.
+  var name = '';
+  var at = t.toLowerCase().lastIndexOf(' at ');
+  if (at > -1) name = t.slice(at + 4).split(/[.,;]/)[0].trim();
+  if (!name || name.length > 44) name = t.split(/[.,;]/)[0].trim();
+  return { name: name, desc: t, price: price, query: name };
+}
+// True when a TripAdvisor result plausibly matches the slot text (guards against
+// the "massage photo for a morning walk" mismatch).
+function appNameMatches(taName, text) {
+  if (!taName) return false;
+  var n = normalizeForSearch(taName), t = normalizeForSearch(text);
+  if (t.indexOf(n) >= 0) return true;
+  var words = n.split(/\s+/).filter(function (w) { return w.length >= 4; }).sort(function (a, b) { return b.length - a.length; });
+  return words.slice(0, 2).some(function (w) { return t.indexOf(w) >= 0; });
+}
+function appUnsplash(q) {
+  return fetch(apiUrl('/.netlify/functions/unsplash-car-image'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q }) })
+    .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { return d && d.imageUrl ? d.imageUrl : null; }).catch(function () { return null; });
+}
+
+function appRenderItinerary() {
+  if (!document.body.classList.contains('native-app')) return false;
+  var itin = document.getElementById('tab-itin'); if (!itin) return true;
+  var days = window._days || [];
+  if (!days.length) { itin.innerHTML = ''; return true; }
+  var rk = window._rk || 'balanced', dest = window._dest || '';
+  if (currentDayIndex >= days.length) currentDayIndex = 0;
+  var d = days[currentDayIndex], r = d[rk] || d.balanced || d.early_bird || {};
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+
+  var RH = [['early_bird', '🌅', dict.rt_early], ['balanced', '☀️', dict.rt_balanced], ['night_owl', '🌙', dict.rt_night]];
+  var head = '<div class="app-itin-head"><div class="app-itin-rhythm">'
+    + RH.map(function (x) { var lb = (x[2] || x[0]).replace(/^[^\s]+\s/, ''); return '<button class="' + (rk === x[0] ? 'on' : '') + '" onclick="appItinSetRhythm(\'' + x[0] + '\')">' + x[1] + ' ' + escapeHtml(lb) + '</button>'; }).join('')
+    + '</div><div class="app-itin-daynav">'
+    + '<button onclick="appItinDay(-1)"' + (currentDayIndex === 0 ? ' disabled style="opacity:.35"' : '') + '>←</button>'
+    + '<div class="lbl">' + (appLang === 'pt' ? 'Dia' : 'Day') + ' ' + (currentDayIndex + 1) + ' / ' + days.length + '</div>'
+    + '<button onclick="appItinDay(1)"' + (currentDayIndex === days.length - 1 ? ' disabled style="opacity:.35"' : '') + '>→</button></div>'
+    + '<div class="app-itin-chips">'
+    + '<button onclick="appOpenSheet(\'food\')">🍽️ <span data-i18n="app_food_guide">Guia Gastronômico</span></button>'
+    + '<button onclick="appOpenSheet(\'tips\')">💡 <span data-i18n="app_tips_weather">Dicas &amp; Clima</span></button>'
+    + '</div></div>';
+
+  var slots = [['Breakfast', r.breakfast, dict.slot_breakfast], ['Morning', r.morning, dict.slot_morning],
+    ['Lunch', r.lunch, dict.slot_lunch], ['Afternoon', r.afternoon, dict.slot_afternoon],
+    ['Dinner', r.dinner, dict.slot_dinner], ['Night', r.night, dict.slot_night]];
+  var cards = '<div class="app-itin-cards"><div class="app-itin-daytitle">' + escapeHtml(d.theme || '') + '</div>';
+  var meta = [];
+  slots.forEach(function (s, idx) {
+    if (!s[1]) return;
+    var isFood = s[0] === 'Breakfast' || s[0] === 'Lunch' || s[0] === 'Dinner';
+    var p = appSlotParts(s[1], isFood);
+    var cid = 'app-slot-' + idx;
+    var query = (p.query || p.name || '').trim();
+    var mapsUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(query + ' ' + dest);
+    var taUrl = 'https://www.tripadvisor.com/Search?q=' + encodeURIComponent(query + ' ' + dest);
+    var nameLine = p.name && p.name.length ? p.name : localizePriceText(s[1]);
+    var descLine = (p.desc && p.desc !== p.name) ? localizePriceText(p.desc) : '';
+    var priceLine = p.price ? localizePriceText(p.price) : '';
+    cards += '<div class="app-slot-card" id="' + cid + '">'
+      + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
+      + '<img class="ph" id="' + cid + '-ph" style="display:none" alt="">'
+      + '<div class="bd"><div class="nm">' + escapeHtml(nameLine) + '</div>'
+      + (descLine ? '<div class="ds">' + escapeHtml(descLine) + '</div>' : '')
+      + (priceLine ? '<div class="meta">🎟️ ' + escapeHtml(priceLine) + '</div>' : '')
+      + '<div class="meta" id="' + cid + '-meta"></div>'
+      + '<div class="acts"><a class="ta" id="' + cid + '-ta" href="' + taUrl + '" target="_blank">TripAdvisor →</a>'
+      + '<a class="mp" href="' + mapsUrl + '" target="_blank">📍 Maps →</a></div></div></div>';
+    meta.push({ cid: cid, query: query, text: s[1], dest: dest, isFood: isFood });
+  });
+  cards += '</div>';
+  itin.innerHTML = head + cards;
+  if (typeof translatePage === 'function') translatePage();
+  appEnrichSlotCards(meta);
+  return true;
+}
+function appItinSetRhythm(r) { window._rk = r; appRenderItinerary(); }
+function appItinDay(delta) { var days = window._days || []; var n = currentDayIndex + delta; if (n < 0 || n >= days.length) return; currentDayIndex = n; appRenderItinerary(); }
+
+// Photos + rating/address, matched to the exact place. Empty rather than wrong.
+function appEnrichSlotCards(meta) {
+  meta.forEach(function (m, i) {
+    if (!m.query) return;
+    setTimeout(function () {
+      getTripAdvisorInfo(m.query + ' ' + m.dest, m.isFood ? 'restaurants' : 'attractions').then(function (info) {
+        var phEl = document.getElementById(m.cid + '-ph');
+        if (info && appNameMatches(info.name, m.text)) {
+          if (info.photoUrl && phEl) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = info.photoUrl; phEl.style.display = 'block'; }
+          var metaEl = document.getElementById(m.cid + '-meta');
+          if (metaEl) {
+            var parts = '';
+            if (info.rating) parts += '<div>⭐ ' + escapeHtml(info.rating) + (info.numReviews ? ' (' + escapeHtml(info.numReviews) + ')' : '') + '</div>';
+            if (info.address) parts += '<div>📍 ' + escapeHtml(info.address) + '</div>';
+            metaEl.innerHTML = parts;
+          }
+          var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = info.webUrl;
+        } else if (phEl && m.query.length > 3) {
+          appUnsplash(m.query + ' ' + m.dest).then(function (url) {
+            if (url) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = url; phEl.style.display = 'block'; }
+          });
+        }
+      });
+    }, i * 260);
   });
 }
 
@@ -6758,7 +6898,7 @@ function appInitShell() {
     new MutationObserver(function () {
       clearTimeout(pending);
       pending = setTimeout(function () {
-        if (document.getElementById('tab-itin') && document.getElementById('tab-itin').classList.contains('on')) { appEnhanceTimes(); appFixItineraryLinks(); appEnrichItinPhotos(); }
+        /* native itinerary is rendered by appRenderItinerary(); no per-mutation work needed */
       }, 60);
     }).observe(resBody, { childList: true, subtree: true });
   }
