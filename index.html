@@ -436,12 +436,87 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 }
 .app-cta:active{transform:translateY(1px)}
 
-/* ── WIZARD body (relocated #planner) ── */
-#appWizardBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 4px calc(16px + env(safe-area-inset-bottom))}
-body.native-app #appWizardBody .planner{padding:12px 0 0;min-height:0;background:none}
-body.native-app #appWizardBody .card{box-shadow:none;border:none;padding:6px 16px 20px;max-width:none;margin:0}
-body.native-app #appWizardBody #planner > h2,
-body.native-app #appWizardBody #planner > p{display:none}
+/* ── WIZARD body (relocated #planner) — kept hidden; only its inputs are used ── */
+#appWizardBody{display:none !important}
+
+/* ── TINDER-STYLE WIZARD ── */
+#appTinder{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--app-bg)}
+.tin-top{display:flex;align-items:center;gap:12px;flex-shrink:0;
+  padding:calc(14px + env(safe-area-inset-top)) 18px 6px}
+.tin-back{width:42px;height:42px;flex-shrink:0;border-radius:50%;border:1px solid var(--app-line);
+  background:var(--app-surface);color:var(--app-text);font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.tin-progress{flex:1;height:6px;border-radius:3px;background:var(--app-surface-2);overflow:hidden}
+.tin-bar{height:100%;width:10%;border-radius:3px;background:linear-gradient(90deg,#E2C99A,#C9A96E);
+  transition:width .35s cubic-bezier(.4,0,.2,1)}
+.tin-count{flex-shrink:0;font-size:13px;font-weight:700;color:var(--app-text-soft);min-width:38px;text-align:right}
+.tin-stage{flex:1;position:relative;overflow:hidden}
+/* Each question card fills the stage; slides in from the right. */
+.tin-card{position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:8px 22px calc(20px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tin-card.slide-in{animation:tin-slide-in .34s cubic-bezier(.4,0,.2,1)}
+.tin-card.slide-back{animation:tin-slide-back .34s cubic-bezier(.4,0,.2,1)}
+@keyframes tin-slide-in{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes tin-slide-back{from{transform:translateX(-60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion: reduce){.tin-card.slide-in,.tin-card.slide-back{animation:none}}
+.tin-q{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.15;color:var(--app-text);
+  margin:18px 0 6px;font-weight:600}
+.tin-sub{font-size:15px;color:var(--app-text-soft);margin-bottom:20px}
+.tin-body{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
+/* Option tiles grid. */
+.tin-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.tin-tiles.one{grid-template-columns:1fr}
+.tin-tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  padding:18px 16px;border-radius:20px;border:1.5px solid var(--app-line);background:var(--app-surface);
+  cursor:pointer;text-align:left;box-shadow:var(--app-shadow-soft);transition:transform .12s,border-color .15s,background .15s}
+.tin-tile:active{transform:scale(.97)}
+.tin-tile .em{font-size:30px;line-height:1}
+.tin-tile .lb{font-size:15px;font-weight:700;color:var(--app-text)}
+.tin-tile .ds{font-size:12px;color:var(--app-text-soft);font-weight:500}
+.tin-tile.on{border-color:var(--app-gold);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
+.tin-tile.on .lb{color:var(--app-gold-deep)}
+/* Number selector row. */
+.tin-nums{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.tin-num{width:64px;height:64px;border-radius:20px;border:1.5px solid var(--app-line);background:var(--app-surface);
+  font-size:22px;font-weight:800;color:var(--app-text);cursor:pointer;box-shadow:var(--app-shadow-soft)}
+.tin-num.on{border-color:var(--app-gold);background:var(--app-gold);color:var(--app-navy)}
+/* Search field + autocomplete. */
+.tin-search{position:relative;margin-top:4px}
+.tin-search input{width:100%;padding:18px 18px !important;border-radius:18px !important;font-size:17px !important;
+  border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
+.tin-ac{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:44vh;overflow-y:auto}
+.tin-ac button{display:flex;align-items:center;gap:12px;width:100%;padding:15px 16px;border-radius:16px;
+  border:1px solid var(--app-line);background:var(--app-surface);cursor:pointer;text-align:left;
+  font-size:16px;font-weight:600;color:var(--app-text)}
+.tin-ac button .fl{font-size:20px}
+.tin-ac button .ct{font-size:12px;color:var(--app-text-soft);font-weight:500;margin-left:auto}
+/* Date inputs. */
+.tin-dates{display:flex;flex-direction:column;gap:14px;margin-top:4px}
+.tin-dates label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--app-text-soft);margin-bottom:6px;display:block}
+.tin-dates input{width:100%;padding:16px 18px !important;border-radius:16px !important;font-size:16px !important;
+  border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
+.tin-textarea{width:100%;min-height:120px;padding:16px 18px;border-radius:18px;border:1.5px solid var(--app-line);
+  background:var(--app-surface);color:var(--app-text);font-family:'Inter',sans-serif;font-size:16px;resize:none;outline:none;margin-top:4px}
+/* Footer actions (continue / skip / surprise). */
+.tin-actions{flex-shrink:0;display:flex;flex-direction:column;gap:10px;padding-top:16px}
+.tin-primary{width:100%;min-height:56px;border:none;border-radius:16px;
+  background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;font-size:16px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(201,169,110,.4)}
+.tin-primary:disabled{opacity:.4;box-shadow:none}
+.tin-ghost{width:100%;min-height:50px;border:1.5px solid var(--app-line);border-radius:16px;background:var(--app-surface);
+  color:var(--app-text);font-size:15px;font-weight:700;cursor:pointer}
+
+/* Building overlay. */
+#appBuilding{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;padding:40px;text-align:center;background:var(--app-bg)}
+.app-build-mascot-wrap{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center}
+.app-build-ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(201,169,110,.25);
+  border-top-color:var(--app-gold);animation:tin-spin 1s linear infinite}
+@keyframes tin-spin{to{transform:rotate(360deg)}}
+.app-build-mascot{width:104px;height:104px;object-fit:contain;animation:tin-bob 2.4s ease-in-out infinite}
+@keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.app-build-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--app-text)}
+.app-build-status{font-size:14px;color:var(--app-text-soft);min-height:20px;max-width:280px}
 
 /* ── RESULTS body (relocated #result) ── */
 #appResultsBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--app-nav-h) + env(safe-area-inset-bottom) + 10px)}
@@ -478,26 +553,15 @@ body.native-app #appResultsBody .td,
 body.native-app #appResultsBody .info-val{font-size:17px;line-height:1.55;color:var(--app-text)}
 body.native-app #appResultsBody .td .slot-time{font-weight:800;color:var(--app-text)}
 
-/* Horizontal swipe rails — STAYS + CARS only. */
+/* All result categories scroll vertically (cards stack top-to-bottom). */
 body.native-app #staysContent,
-body.native-app #carsContent{
-  display:flex;gap:14px;overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;padding:4px 16px 14px;scrollbar-width:none;flex-wrap:nowrap;
-}
-body.native-app #staysContent::-webkit-scrollbar,
-body.native-app #carsContent::-webkit-scrollbar{display:none}
-body.native-app #staysContent > .fc,
-body.native-app #carsContent > .fc{flex:0 0 86%;scroll-snap-align:center;margin:0}
-/* Any non-card child (intro text, sort control, links row) spans the full
-   width and sits above the swipe rail rather than becoming a rail item. */
-body.native-app #staysContent > :not(.fc),
-body.native-app #carsContent > :not(.fc){flex:0 0 100%;order:-1;scroll-snap-align:none}
-
-/* Flights + Attractions — vertical scrolling list (not swipe). */
+body.native-app #carsContent,
 body.native-app #flightsContent,
 body.native-app #attractionsContent{display:block;padding:4px 16px 16px}
+body.native-app #staysContent > .fc,
+body.native-app #carsContent > .fc,
 body.native-app #flightsContent > .fc,
-body.native-app #attractionsContent > .fc{margin:0 0 12px}
+body.native-app #attractionsContent > .fc{margin:0 0 14px}
 
 /* Tips & Weather trigger chip (floats top-right inside the itinerary panel). */
 .app-itin-chips{
@@ -739,14 +803,29 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
       </div>
     </section>
 
-    <!-- WIZARD — full-screen steps (hosts the relocated #planner) -->
+    <!-- WIZARD — Tinder-style one-question-per-screen card flow -->
     <section class="app-screen" id="appWizard" data-screen="wizard">
-      <div class="app-topbar">
-        <button class="app-icon-btn" onclick="appGoScreen('home')" aria-label="Back">←</button>
-        <div class="app-logo sm">Zen <span>✈</span> Voy</div>
-        <button class="app-theme-btn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
+      <div id="appTinder">
+        <div class="tin-top">
+          <button class="tin-back" id="tinBack" onclick="appWizBack()" aria-label="Back">←</button>
+          <div class="tin-progress"><div class="tin-bar" id="tinBar"></div></div>
+          <div class="tin-count" id="tinCount"></div>
+        </div>
+        <div class="tin-stage" id="tinStage"></div>
       </div>
-      <div id="appWizardBody"><!-- #planner is moved in here at runtime --></div>
+      <!-- Building overlay (mascot + status), shown while the AI generates -->
+      <div id="appBuilding" style="display:none">
+        <div class="app-build-mascot-wrap">
+          <div class="app-build-ring"></div>
+          <img class="app-build-mascot" src="assets/mascot.png" alt=""
+               onerror="this.style.display='none'">
+        </div>
+        <div class="app-build-title" data-i18n="building_title">Building your trip...</div>
+        <div class="app-build-status" id="appBuildStatus"></div>
+      </div>
+      <!-- The website wizard stays in the DOM (hidden) so its inputs exist for
+           generatePlan(); the card flow above writes into them. -->
+      <div id="appWizardBody" style="display:none"><!-- #planner moved here at runtime --></div>
     </section>
 
     <!-- RESULTS — top bar + result panels + (5-tab bottom nav below) -->
@@ -4402,6 +4481,10 @@ function hideBuildingScreen() {
 // If generation fails, bring the wizard back (instead of leaving the person
 // staring at a spinner forever) so they can see the error banner and retry.
 function restoreWizardAfterError() {
+  if (document.body.classList.contains('native-app')) {
+    if (typeof appWizStopBuilding === 'function') appWizStopBuilding();
+    return; // the Tinder card is still on screen; the error banner shows above it
+  }
   var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'none';
   document.querySelectorAll('.wizard-step').forEach(function(s) { s.style.display = ''; }); // let CSS classes (.active) take back over
   var progress = document.getElementById('wizardProgress'); if (progress) progress.style.display = '';
@@ -5980,7 +6063,7 @@ function appGoScreen(name) {
   var onResults = name === 'results';
   if (nav) nav.style.display = onResults ? 'flex' : 'none';
   if (ball) ball.style.display = onResults ? 'flex' : 'none';
-  if (name === 'wizard') { startNewTrip(); }
+  if (name === 'wizard') { appWizStart(); }
   var active = document.querySelector('#appScreens .app-screen.on');
   if (active) { var sc = active.querySelector('[id$="Body"]'); if (sc) sc.scrollTop = 0; }
 }
@@ -6013,9 +6096,223 @@ function appBuildHome() {
   }
 }
 function appPickDestination(city) {
+  appWizPrefillTo = city;   // consumed by appWizStart()
   appGoScreen('wizard');
-  var toEl = document.getElementById('toCity');
-  if (toEl) { toEl.value = city; if (typeof selectedToAirport !== 'undefined') selectedToAirport = null; }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TINDER-STYLE WIZARD — one question per full screen, tap to advance.
+// Collects into appWizState, then maps into the existing #planner inputs and
+// calls generatePlan(), reusing all the generation logic unchanged.
+// ══════════════════════════════════════════════════════════════════
+var appWizState = {};
+var appWizIndex = 0;
+var appWizPrefillTo = '';
+var _appBuildTimer = null;
+
+var APP_WIZ = [
+  { id: 'from', type: 'city', q: { pt: 'De onde você está saindo?', en: 'Where are you flying from?', es: '¿Desde dónde viajas?', fr: "D'où partez-vous ?", it: 'Da dove parti?' } },
+  { id: 'to', type: 'city', surprise: true, q: { pt: 'Para onde você quer ir?', en: 'Where do you want to go?', es: '¿A dónde quieres ir?', fr: 'Où voulez-vous aller ?', it: 'Dove vuoi andare?' } },
+  { id: 'dates', type: 'dates', q: { pt: 'Quando você vai viajar?', en: 'When are you traveling?', es: '¿Cuándo viajas?', fr: 'Quand voyagez-vous ?', it: 'Quando viaggi?' } },
+  { id: 'travelers', type: 'nums', opts: ['1', '2', '3', '4', '5+'], q: { pt: 'Quantos viajantes?', en: 'How many travelers?', es: '¿Cuántos viajeros?', fr: 'Combien de voyageurs ?', it: 'Quanti viaggiatori?' } },
+  { id: 'stay', type: 'tiles', q: { pt: 'Onde você vai ficar?', en: 'Where will you stay?', es: '¿Dónde te alojarás?', fr: 'Où logerez-vous ?', it: 'Dove alloggerai?' }, opts: [
+    { v: 'Any', em: '✨', pt: 'Tanto faz', en: 'Any' }, { v: 'Hotel', em: '🏨', pt: 'Hotel', en: 'Hotel' },
+    { v: 'Airbnb', em: '🏠', pt: 'Airbnb', en: 'Airbnb' }, { v: 'Hostel', em: '🎒', pt: 'Hostel', en: 'Hostel' },
+    { v: 'Resort', em: '🏖️', pt: 'Resort', en: 'Resort' }, { v: 'Villa', em: '🏡', pt: 'Villa', en: 'Villa' } ] },
+  { id: 'budget', type: 'tiles', q: { pt: 'Qual é o seu orçamento?', en: "What's your budget?", es: '¿Cuál es tu presupuesto?', fr: 'Quel est votre budget ?', it: 'Qual è il tuo budget?' }, opts: [
+    { v: 'budget', em: '🎒', pt: 'Econômico', en: 'Budget' }, { v: 'moderate', em: '💫', pt: 'Moderado', en: 'Moderate' },
+    { v: 'premium', em: '✨', pt: 'Premium', en: 'Premium' }, { v: 'luxury', em: '👑', pt: 'Luxo', en: 'Luxury' } ] },
+  { id: 'style', type: 'tiles', q: { pt: 'Qual é o seu estilo?', en: "What's your travel style?", es: '¿Cuál es tu estilo?', fr: 'Quel est votre style ?', it: 'Qual è il tuo stile?' }, opts: [
+    { v: 'Adventure', em: '🧗', pt: 'Aventura', en: 'Adventure' }, { v: 'Relaxation', em: '🌴', pt: 'Relaxar', en: 'Relaxation' },
+    { v: 'Luxury', em: '💎', pt: 'Luxo', en: 'Luxury' }, { v: 'Party & nightlife', em: '🎉', pt: 'Balada', en: 'Party' },
+    { v: 'Family', em: '👨‍👩‍👧', pt: 'Família', en: 'Family' }, { v: 'Business', em: '💼', pt: 'Negócios', en: 'Business' },
+    { v: 'Solo travel', em: '🧭', pt: 'Solo', en: 'Solo' }, { v: 'Romantic couple', em: '💕', pt: 'Casal', en: 'Couple' } ] },
+  { id: 'interests', type: 'multi', q: { pt: 'O que mais te interessa?', en: 'What interests you most?', es: '¿Qué te interesa más?', fr: "Qu'est-ce qui vous intéresse ?", it: 'Cosa ti interessa di più?' }, opts: [
+    { v: 'Food', em: '🍽️', pt: 'Gastronomia', en: 'Food' }, { v: 'Beaches', em: '🏖️', pt: 'Praias', en: 'Beaches' },
+    { v: 'Nightlife', em: '🍸', pt: 'Vida noturna', en: 'Nightlife' }, { v: 'Museums & art', em: '🎨', pt: 'Museus', en: 'Museums' },
+    { v: 'Nature', em: '🌿', pt: 'Natureza', en: 'Nature' }, { v: 'Shopping', em: '🛍️', pt: 'Compras', en: 'Shopping' },
+    { v: 'History', em: '🏛️', pt: 'História', en: 'History' }, { v: 'Hidden gems', em: '💎', pt: 'Segredos locais', en: 'Hidden gems' } ] },
+  { id: 'rhythm', type: 'tiles', one: true, q: { pt: 'Qual é o seu ritmo diário?', en: "What's your daily rhythm?", es: '¿Cuál es tu ritmo diario?', fr: 'Quel est votre rythme ?', it: 'Qual è il tuo ritmo?' }, opts: [
+    { v: 'early_bird', em: '🌅', pt: 'Madrugador', en: 'Early bird', dpt: 'De pé às 7h, manhãs cheias', den: 'Up at 7am, packed mornings' },
+    { v: 'balanced', em: '☀️', pt: 'Equilibrado', en: 'Balanced', dpt: 'Uma mistura de tudo', den: 'A mix of early & lazy starts' },
+    { v: 'night_owl', em: '🌙', pt: 'Coruja noturna', en: 'Night owl', dpt: 'Começa tarde, foco na noite', den: 'Late starts, nightlife focus' } ] },
+  { id: 'notes', type: 'text', skip: true, q: { pt: 'Mais alguma coisa?', en: 'Anything else?', es: '¿Algo más?', fr: 'Autre chose ?', it: 'Qualcos\'altro?' } }
+];
+function _wl(o) { return (o && (o[appLang] || o.en)) || ''; }
+
+function appWizStart() {
+  appWizState = { travelers: '2', stay: 'Any', budgetLevel: 'moderate', style: 'Adventure', interests: [], rhythm: 'balanced', notes: '' };
+  // Sensible default dates: today + a week out.
+  var t = new Date(), r = new Date(); r.setDate(t.getDate() + 7);
+  appWizState.dep = t.toISOString().split('T')[0];
+  appWizState.ret = r.toISOString().split('T')[0];
+  if (appWizPrefillTo) { appWizState.to = appWizPrefillTo; appWizPrefillTo = ''; }
+  var b = document.getElementById('appBuilding'); if (b) b.style.display = 'none';
+  appWizIndex = 0;
+  appWizRender('in');
+}
+
+function appWizBack() {
+  if (appWizIndex <= 0) { appGoScreen('home'); return; }
+  appWizIndex--;
+  appWizRender('back');
+}
+function appWizAdvance() {
+  if (appWizIndex >= APP_WIZ.length - 1) { appWizFinish(); return; }
+  appWizIndex++;
+  appWizRender('in');
+}
+
+function appWizRender(dir) {
+  var step = APP_WIZ[appWizIndex];
+  var stage = document.getElementById('tinStage');
+  if (!stage) return;
+  // Progress.
+  var pct = Math.round(((appWizIndex + 1) / APP_WIZ.length) * 100);
+  var bar = document.getElementById('tinBar'); if (bar) bar.style.width = pct + '%';
+  var cnt = document.getElementById('tinCount'); if (cnt) cnt.textContent = (appWizIndex + 1) + '/' + APP_WIZ.length;
+
+  var body = '';
+  if (step.type === 'city') {
+    var val = (step.id === 'from' ? appWizState.from : appWizState.to) || '';
+    body = '<div class="tin-search"><input id="tinCityInput" type="text" autocomplete="off" '
+      + 'placeholder="' + (appLang === 'pt' ? 'Buscar cidade…' : 'Search a city…') + '" '
+      + 'value="' + escapeHtml(val) + '" oninput="appWizCitySearch(\'' + step.id + '\')"></div>'
+      + '<div class="tin-ac" id="tinAc"></div>';
+    if (step.surprise) body += '<div class="tin-actions"><button class="tin-ghost" onclick="appWizSurprise()">✨ '
+      + (appLang === 'pt' ? 'Surpreenda-me!' : 'Surprise me!') + '</button></div>';
+  } else if (step.type === 'dates') {
+    body = '<div class="tin-dates">'
+      + '<div><label>' + (appLang === 'pt' ? 'Ida' : 'Departure') + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizSyncDates()"></div>'
+      + '<div><label>' + (appLang === 'pt' ? 'Volta' : 'Return') + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizSyncDates()"></div>'
+      + '</div><div class="tin-actions"><button class="tin-primary" id="tinDatesGo" onclick="appWizAdvance()">' + (appLang === 'pt' ? 'Continuar' : 'Continue') + ' →</button></div>';
+  } else if (step.type === 'nums') {
+    body = '<div class="tin-nums">' + step.opts.map(function (n) {
+      return '<button class="tin-num' + (appWizState.travelers === n ? ' on' : '') + '" onclick="appWizPick(\'travelers\',\'' + n + '\',true)">' + n + '</button>';
+    }).join('') + '</div>';
+  } else if (step.type === 'tiles') {
+    body = '<div class="tin-tiles' + (step.one ? ' one' : '') + '">' + step.opts.map(function (o) {
+      var sel = appWizState[step.id] === o.v;
+      return '<button class="tin-tile' + (sel ? ' on' : '') + '" onclick="appWizPick(\'' + step.id + '\',\'' + escapeJsAttr(o.v) + '\',true)">'
+        + '<span class="em">' + o.em + '</span><span class="lb">' + escapeHtml(_wl(o)) + '</span>'
+        + (o.den || o.dpt ? '<span class="ds">' + escapeHtml(appLang === 'pt' ? (o.dpt || '') : (o.den || '')) + '</span>' : '') + '</button>';
+    }).join('') + '</div>';
+  } else if (step.type === 'multi') {
+    body = '<div class="tin-tiles">' + step.opts.map(function (o) {
+      var sel = appWizState.interests.indexOf(o.v) !== -1;
+      return '<button class="tin-tile' + (sel ? ' on' : '') + '" onclick="appWizToggleInterest(this,\'' + escapeJsAttr(o.v) + '\')">'
+        + '<span class="em">' + o.em + '</span><span class="lb">' + escapeHtml(_wl(o)) + '</span></button>';
+    }).join('') + '</div>'
+      + '<div class="tin-actions"><button class="tin-primary" id="tinMultiGo" onclick="appWizAdvance()"' + (appWizState.interests.length ? '' : ' disabled') + '>'
+      + (appLang === 'pt' ? 'Continuar' : 'Continue') + ' →</button></div>';
+  } else if (step.type === 'text') {
+    body = '<textarea class="tin-textarea" id="tinNotes" placeholder="' + (appLang === 'pt' ? 'ex.: aniversário, comida picante, evitar longas caminhadas…' : 'e.g. anniversary, love spicy food, avoid long walks…') + '" oninput="appWizState.notes=this.value">' + escapeHtml(appWizState.notes || '') + '</textarea>'
+      + '<div class="tin-actions"><button class="tin-primary" onclick="appWizFinish()">' + (appLang === 'pt' ? 'Criar meu roteiro' : 'Create my trip') + ' ✨</button>'
+      + '<button class="tin-ghost" onclick="appWizFinish()">' + (appLang === 'pt' ? 'Pular' : 'Skip') + '</button></div>';
+  }
+
+  var html = '<div class="tin-card ' + (dir === 'back' ? 'slide-back' : 'slide-in') + '">'
+    + '<div class="tin-q">' + escapeHtml(_wl(step.q)) + '</div>'
+    + '<div class="tin-body">' + body + '</div></div>';
+  stage.innerHTML = html;
+}
+
+function appWizPick(key, val, advance) {
+  appWizState[key] = val;
+  if (advance) setTimeout(appWizAdvance, 180); else appWizRender('in');
+}
+function appWizToggleInterest(el, v) {
+  var arr = appWizState.interests, i = arr.indexOf(v);
+  if (i === -1) arr.push(v); else arr.splice(i, 1);
+  el.classList.toggle('on');
+  var go = document.getElementById('tinMultiGo'); if (go) go.disabled = arr.length === 0;
+}
+function appWizSurprise() { appWizState.surprise = true; appWizState.to = ''; appWizAdvance(); }
+function appWizSyncDates() {
+  var go = document.getElementById('tinDatesGo');
+  if (go) go.disabled = !(appWizState.dep && appWizState.ret);
+}
+
+// City autocomplete from the CITIES table (accent-insensitive).
+function appWizCitySearch(which) {
+  var inp = document.getElementById('tinCityInput');
+  var ac = document.getElementById('tinAc');
+  if (!inp || !ac) return;
+  var q = (typeof normalizeForSearch === 'function' ? normalizeForSearch(inp.value) : inp.value.toLowerCase()).trim();
+  if (which === 'from') appWizState.from = inp.value; else appWizState.to = inp.value;
+  if (q.length < 2) { ac.innerHTML = ''; return; }
+  var matches = CITIES.filter(function (c) {
+    var cc = typeof normalizeForSearch === 'function' ? normalizeForSearch(c.city) : c.city.toLowerCase();
+    var co = typeof normalizeForSearch === 'function' ? normalizeForSearch(c.country) : c.country.toLowerCase();
+    return cc.indexOf(q) >= 0 || co.indexOf(q) >= 0;
+  }).slice(0, 8);
+  ac.innerHTML = matches.map(function (c) {
+    return '<button onclick="appWizChooseCity(\'' + which + '\',\'' + escapeJsAttr(c.city) + '\')">'
+      + '<span class="fl">' + (c.flag || '📍') + '</span><span>' + escapeHtml(c.city) + '</span><span class="ct">' + escapeHtml(c.country) + '</span></button>';
+  }).join('');
+}
+function appWizChooseCity(which, city) {
+  if (which === 'from') appWizState.from = city; else appWizState.to = city;
+  appWizAdvance();
+}
+
+// Injects the chosen style/interests as hidden selected pills so getStyle()/
+// getInterests() (read by generatePlan) return the native selections verbatim.
+function appWizInjectPill(boxId, label, single) {
+  var box = document.getElementById(boxId); if (!box) return;
+  if (single) box.querySelectorAll('.pill.on').forEach(function (p) { p.classList.remove('on'); });
+  var b = document.createElement('button');
+  b.className = 'pill on appwiz-injected'; b.style.display = 'none'; b.textContent = label;
+  box.appendChild(b);
+}
+function appWizSetSelect(id, val) {
+  var sel = document.getElementById(id); if (!sel) return;
+  var opt = Array.prototype.filter.call(sel.options, function (o) { return o.value === val || o.textContent === val; })[0];
+  if (!opt) { opt = document.createElement('option'); opt.value = val; opt.textContent = val; sel.appendChild(opt); }
+  sel.value = opt.value;
+}
+
+var APP_BUDGET_NUM = { budget: 1500, moderate: 3500, premium: 7000, luxury: 15000 };
+
+function appWizFinish() {
+  var s = appWizState;
+  function setVal(id, v) { var e = document.getElementById(id); if (e && v != null) e.value = v; }
+  setVal('fromCity', s.from || '');
+  setVal('toCity', s.surprise ? '' : (s.to || ''));
+  setVal('depDate', s.dep || '');
+  setVal('retDate', s.ret || '');
+  setVal('travelers', (s.travelers || '2').replace('+', ''));
+  appWizSetSelect('stayType', s.stay || 'Any');
+  appWizSetSelect('budgetLevel', s.budgetLevel || 'moderate');
+  setVal('budget', APP_BUDGET_NUM[s.budgetLevel || 'moderate']);
+  setVal('extraNotes', s.notes || '');
+  if (typeof surpriseMode !== 'undefined') surpriseMode = !!s.surprise;
+  if (typeof selectedFromAirport !== 'undefined') selectedFromAirport = null;
+  if (typeof selectedToAirport !== 'undefined') selectedToAirport = null;
+  if (typeof rhythm !== 'undefined') rhythm = s.rhythm || 'balanced';
+  // Clear any previously injected wizard pills, then inject the current picks.
+  document.querySelectorAll('.appwiz-injected').forEach(function (p) { p.remove(); });
+  appWizInjectPill('stylePills', s.style || 'Adventure', true);
+  (s.interests && s.interests.length ? s.interests : ['Food']).forEach(function (v) { appWizInjectPill('interestPills', v, false); });
+
+  var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
+  appWizCycleStatus();
+  if (typeof generatePlan === 'function') generatePlan();
+}
+
+function appWizCycleStatus() {
+  var el = document.getElementById('appBuildStatus');
+  if (!el) return;
+  var msgs = appLang === 'pt'
+    ? ['Escolhendo os melhores lugares…', 'Montando seu roteiro dia a dia…', 'Buscando hotéis e voos…', 'Adicionando segredos locais…']
+    : ['Choosing the best places…', 'Building your day-by-day plan…', 'Finding hotels and flights…', 'Adding local secrets…'];
+  var i = 0; el.textContent = msgs[0];
+  clearInterval(_appBuildTimer);
+  _appBuildTimer = setInterval(function () { i = (i + 1) % msgs.length; el.textContent = msgs[i]; }, 2600);
+}
+function appWizStopBuilding() {
+  clearInterval(_appBuildTimer);
+  var b = document.getElementById('appBuilding'); if (b) b.style.display = 'none';
 }
 
 // ── Result category tabs (bottom nav on results) ──
@@ -6160,6 +6457,7 @@ function appRenderResultHeader() {
 // Called from renderResult() once a trip exists.
 function appOnResultReady() {
   if (!document.body.classList.contains('native-app')) return;
+  appWizStopBuilding();
   appGoScreen('results');
   appRenderResultHeader();
   appPickCategory('itin');
