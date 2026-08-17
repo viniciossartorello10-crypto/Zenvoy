@@ -5394,10 +5394,17 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
 }
 
 function renderCurrentDay() {
+  // In the native app the itinerary is drawn by appRenderItinerary(), which
+  // replaces #tab-itin (so #dayCards no longer exists). Re-route there.
+  if (document.body.classList.contains('native-app') && typeof appRenderItinerary === 'function') {
+    appRenderItinerary();
+    return;
+  }
   var days = window._days || [];
   var rk = window._rk || 'balanced';
   var dest = window._dest || '';
   var dc = document.getElementById('dayCards');
+  if (!dc) return;                              // #dayCards not present — nothing to draw
   var label = document.getElementById('dayNavLabel');
   var prevBtn = document.getElementById('dayPrevBtn');
   var nextBtn = document.getElementById('dayNextBtn');
