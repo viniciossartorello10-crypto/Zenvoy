@@ -532,6 +532,13 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 @keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .app-build-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--app-text)}
 .app-build-status{font-size:14px;color:var(--app-text-soft);min-height:20px;max-width:280px}
+.app-build-err{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;max-width:340px}
+.app-build-err-ic{font-size:46px}
+.app-build-err-t{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--app-text)}
+.app-build-err-m{font-size:14px;line-height:1.5;color:var(--app-text-soft)}
+.app-build-err-btn{margin-top:6px;min-height:52px;padding:0 30px;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;font-size:15px;font-weight:800;
+  box-shadow:0 8px 20px rgba(201,169,110,.4)}
 
 /* ── RESULTS body (relocated #result) ── */
 #appResultsBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--app-nav-h) + env(safe-area-inset-bottom) + 10px)}
@@ -901,6 +908,12 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
         </div>
         <div class="app-build-title" data-i18n="building_title">Building your trip...</div>
         <div class="app-build-status" id="appBuildStatus"></div>
+        <div class="app-build-err" id="appBuildErr" style="display:none">
+          <div class="app-build-err-ic">⚠️</div>
+          <div class="app-build-err-t" id="appBuildErrTitle"></div>
+          <div class="app-build-err-m" id="appBuildErrMsg"></div>
+          <button class="app-build-err-btn" id="appBuildErrBtn" onclick="appDismissBuildError()"></button>
+        </div>
       </div>
       <!-- The website wizard stays in the DOM (hidden) so its inputs exist for
            generatePlan(); the card flow above writes into them. -->
@@ -3875,10 +3888,51 @@ function chunkDayRanges(totalDays, chunkSize) {
 
 // ── ERROR BANNER (visible on-screen feedback when AI generation fails) ──
 function showErrorBanner(msg) {
+  // In the native app the website error banner lives inside the hidden #planner,
+  // so it would never be seen. If we're mid-generation (the building overlay is
+  // up), surface the failure right there instead — otherwise the app would just
+  // silently drop back to the wizard with no explanation.
+  if (document.body.classList.contains('native-app')) {
+    var ov = document.getElementById('appBuilding');
+    if (ov && getComputedStyle(ov).display !== 'none' && typeof appNativeError === 'function') {
+      appNativeError(msg);
+      return;
+    }
+  }
   var b = document.getElementById('errorBanner');
   if (!b) return;
   b.textContent = '⚠️ ' + msg;
   b.style.display = 'block';
+}
+
+// Shows a visible error state inside the native building overlay (replacing the
+// spinner) with a button to go back and retry. Returns false off-native.
+function appNativeError(msg) {
+  var b = document.getElementById('appBuilding');
+  if (!b) return false;
+  clearInterval(_appBuildTimer);
+  var pt = appLang === 'pt';
+  var wrap = b.querySelector('.app-build-mascot-wrap'); if (wrap) wrap.style.display = 'none';
+  var title = b.querySelector('.app-build-title'); if (title) title.style.display = 'none';
+  var status = document.getElementById('appBuildStatus'); if (status) status.style.display = 'none';
+  var t = document.getElementById('appBuildErrTitle'); if (t) t.textContent = pt ? 'Algo deu errado' : 'Something went wrong';
+  var m = document.getElementById('appBuildErrMsg'); if (m) m.textContent = msg || (pt ? 'Não foi possível montar sua viagem. Tente novamente.' : 'We couldn\'t build your trip. Please try again.');
+  var btn = document.getElementById('appBuildErrBtn'); if (btn) btn.textContent = pt ? 'Voltar e tentar de novo' : 'Back — try again';
+  var err = document.getElementById('appBuildErr'); if (err) err.style.display = 'flex';
+  b.style.display = 'flex';
+  return true;
+}
+// Back button on the native error state — hide the overlay (revealing the
+// wizard's last step, inputs intact) and restore the spinner for next time.
+function appDismissBuildError() {
+  var b = document.getElementById('appBuilding');
+  var err = document.getElementById('appBuildErr'); if (err) err.style.display = 'none';
+  if (b) {
+    var wrap = b.querySelector('.app-build-mascot-wrap'); if (wrap) wrap.style.display = '';
+    var title = b.querySelector('.app-build-title'); if (title) title.style.display = '';
+    var status = document.getElementById('appBuildStatus'); if (status) status.style.display = '';
+    b.style.display = 'none';
+  }
 }
 function hideErrorBanner() {
   var b = document.getElementById('errorBanner');
@@ -4489,6 +4543,19 @@ function renderPackageChooser(packages, currencyCode) {
 function showPackageChooser(planData, travelers, total, days, from) {
   pendingPlanArgs = { planData: planData, travelers: travelers, total: total, days: days, from: from };
   currentPackages = computeTripPackages(planData, days);
+
+  // The package chooser is a website-only screen that lives inside #planner —
+  // in the native app it's buried under #appShell and the "Montando sua
+  // viagem…" overlay, so showing it here would hang the app forever (the user
+  // can never see or tap it, so renderResult() never runs). Native skips it and
+  // goes straight to the results with a balanced default tier; every option is
+  // still available in the Stays/Cars tabs.
+  if (document.body.classList.contains('native-app')) {
+    var defaultIdx = currentPackages.length > 2 ? 2 : 0; // 'adventure' (mid) when present
+    selectPackage(defaultIdx);
+    return;
+  }
+
   var buildingEl = document.getElementById('buildingScreen'); if (buildingEl) buildingEl.style.display = 'none';
   var chooserEl = document.getElementById('packageChooser'); if (chooserEl) chooserEl.style.display = 'block';
   renderPackageChooser(currentPackages);
@@ -4561,8 +4628,13 @@ function hideBuildingScreen() {
 // staring at a spinner forever) so they can see the error banner and retry.
 function restoreWizardAfterError() {
   if (document.body.classList.contains('native-app')) {
-    if (typeof appWizStopBuilding === 'function') appWizStopBuilding();
-    return; // the Tinder card is still on screen; the error banner shows above it
+    // If the failure is now shown as a visible error card inside the building
+    // overlay (see appNativeError), leave it up so the user actually sees it —
+    // its own "back" button dismisses it. Otherwise just stop the spinner.
+    var err = document.getElementById('appBuildErr');
+    var errShown = err && getComputedStyle(err).display !== 'none';
+    if (!errShown && typeof appWizStopBuilding === 'function') appWizStopBuilding();
+    return;
   }
   var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'none';
   document.querySelectorAll('.wizard-step').forEach(function(s) { s.style.display = ''; }); // let CSS classes (.active) take back over
@@ -6220,6 +6292,18 @@ function appGoScreen(name) {
   if (active) { var sc = active.querySelector('[id$="Body"]'); if (sc) sc.scrollTop = 0; }
 }
 
+// Custom top-down airplane for the orbiting globe — a sleek gold silhouette
+// (fuselage, swept wings, tail fin) drawn entirely in SVG, with a translucent
+// navy copy behind it for a subtle drop shadow. Nose points +x so it flies
+// forward along the orbit. Sits inside the .hero-plane group at the top of the
+// route (translate 200,46), scaled up from the emoji's footprint.
+var _APP_PLANE_PATH = 'M18,0 L3,-1.6 L0,-2 L-4,-12 L-7,-12 L-3,-2.4 L-10,-2.4 L-13,-6 L-15,-6 L-13.5,-1.4 L-16,-1 L-16,1 L-13.5,1.4 L-15,6 L-13,6 L-10,2.4 L-3,2.4 L-7,12 L-4,12 L0,2 L3,1.6 Z';
+var APP_PLANE_MARKUP =
+  '<g transform="translate(200,46) scale(1.35)">'
+  + '<path transform="translate(1.4,2.6)" fill="#0d1730" opacity="0.5" d="' + _APP_PLANE_PATH + '"/>'
+  + '<path fill="#C9A96E" d="' + _APP_PLANE_PATH + '"/>'
+  + '</g>';
+
 // Home destination ticker — infinite scroll, each name tappable.
 var APP_TICKER = ['Barcelona', 'London', 'Chicago', 'Tokyo', 'Rome', 'Bali', 'Paris',
   'New York', 'Lisbon', 'Cancún', 'Dubai', 'Cape Town', 'Rio de Janeiro', 'Amsterdam'];
@@ -6234,7 +6318,17 @@ function appBuildHome() {
   var globe = document.getElementById('appHomeGlobe');
   if (globe && !globe.firstChild) {
     var gsvg = document.querySelector('.hero-bg-anim svg');
-    if (gsvg) globe.appendChild(gsvg.cloneNode(true));
+    if (gsvg) {
+      globe.appendChild(gsvg.cloneNode(true));
+      // Swap the orbiting ✈️ emoji for a custom, top-down SVG airplane — gold
+      // with a soft navy shadow for depth. Edited on the CLONE only, so the
+      // website hero keeps its original emoji untouched. The existing
+      // .hero-plane group already orbits the globe; the plane's nose points +x
+      // (the travel direction at the top of the clockwise orbit), so it always
+      // reads as flying forward along the route as the group rotates.
+      var pl = globe.querySelector('.hero-plane');
+      if (pl) pl.innerHTML = APP_PLANE_MARKUP;
+    }
   }
   // Destination PHOTO cards, auto-scrolling; two copies so -50% loops seamlessly.
   var track = document.getElementById('appHomePhotosTrack');
