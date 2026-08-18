@@ -648,6 +648,16 @@ body.native-app .app-hotel-card{padding:0 !important;overflow:hidden}
 .app-hotel-photo{position:relative;width:100%;height:180px;display:flex;align-items:center;justify-content:center;
   background-size:cover;background-position:center}
 .app-hotel-emoji{font-size:60px}
+/* Swipeable hotel photo gallery (exterior, rooms, pool…) with dot indicators. */
+.app-gal{position:relative;width:100%;height:100%;overflow:hidden}
+.app-gal-track{display:flex;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.app-gal-track::-webkit-scrollbar{display:none}
+.app-gal-img{min-width:100%;width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:center;display:block}
+.app-gal-dots{position:absolute;bottom:9px;left:0;right:0;display:flex;justify-content:center;gap:5px;pointer-events:none}
+.app-gal-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);
+  box-shadow:0 1px 2px rgba(0,0,0,.35);transition:width .2s,background .2s}
+.app-gal-dots span.on{width:18px;border-radius:3px;background:#fff}
 .app-hotel-live{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;color:#fff;
   background:rgba(20,140,90,.92);padding:4px 10px;border-radius:999px;letter-spacing:.04em}
 .app-hotel-body{padding:16px}
@@ -3143,6 +3153,30 @@ async function taLocationPhotos(locationId) {
   }
 }
 
+// Like taLocationPhotos but returns up to `max` distinct photo URLs (exterior,
+// rooms, pool, common areas — whatever TripAdvisor has) for a swipeable gallery.
+async function taLocationPhotosMulti(locationId, max) {
+  if (!locationId) return [];
+  try {
+    var url = apiUrl('/.netlify/functions/tripadvisor-photos')
+      + '?locationId=' + encodeURIComponent(locationId) + '&language=en';
+    var res = await fetch(url, { headers: { 'accept': 'application/json' } });
+    if (!res.ok) return [];
+    var data = await res.json();
+    var arr = (data && data.data) || [];
+    var out = [];
+    for (var i = 0; i < arr.length && out.length < (max || 8); i++) {
+      var im = arr[i] && arr[i].images;
+      var u = im && ((im.large && im.large.url) || (im.medium && im.medium.url) || (im.original && im.original.url));
+      if (u && out.indexOf(u) === -1) out.push(u);
+    }
+    return out;
+  } catch (e) {
+    console.error('TripAdvisor photos lookup failed:', e);
+    return [];
+  }
+}
+
 async function getTripAdvisorInfo(query, category) {
   var cacheKey = category + ':' + query.toLowerCase();
   if (cacheKey in taCache) return taCache[cacheKey];
@@ -3151,8 +3185,10 @@ async function getTripAdvisorInfo(query, category) {
   if (!found) { taCache[cacheKey] = null; return null; }
 
   var details = await taLocationDetails(found.location_id);
-  var photoUrl = await taLocationPhotos(found.location_id);
+  var photos = await taLocationPhotosMulti(found.location_id, 8);
+  var photoUrl = photos[0] || null;
   var result = {
+    photos: photos,
     name: found.name,
     rating: details && details.rating ? details.rating : null,
     numReviews: details && details.num_reviews ? details.num_reviews : null,
@@ -5389,11 +5425,18 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
 
         // Populate the photo, if this slot has a photo container and TripAdvisor returned one
         var gotPhoto = false;
-        if (photoEl && info && info.photoUrl) {
-          photoEl.innerHTML = ''; // clear the emoji/category-color placeholder underneath
-          photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
-          photoEl.style.background = "url('" + info.photoUrl + "') center/cover";
-          photoEl.style.display = 'block';
+        var photoList = (info && info.photos && info.photos.length) ? info.photos : (info && info.photoUrl ? [info.photoUrl] : []);
+        if (photoEl && photoList.length) {
+          // Native hotel cards get a swipeable multi-photo gallery; everything
+          // else (website stays, etc.) keeps the single background image.
+          if (meta.photoOnly && photoList.length > 1 && typeof appBuildGallery === 'function') {
+            appBuildGallery(photoEl, photoList);
+          } else {
+            photoEl.innerHTML = ''; // clear the emoji/category-color placeholder underneath
+            photoEl.style.backgroundImage = "url('" + photoList[0] + "')";
+            photoEl.style.background = "url('" + photoList[0] + "') center/cover";
+            photoEl.style.display = 'block';
+          }
           gotPhoto = true;
         }
 
@@ -6445,7 +6488,6 @@ var _appBuildTimer = null;
 
 var APP_WIZ = [
   { id: 'trip', type: 'trip', q: { pt: 'Sua viagem', en: 'Your trip', es: 'Tu viaje', fr: 'Votre voyage', it: 'Il tuo viaggio' } },
-  { id: 'travelers', type: 'nums', opts: ['1', '2', '3', '4', '5+'], q: { pt: 'Quantos viajantes?', en: 'How many travelers?', es: '¿Cuántos viajeros?', fr: 'Combien de voyageurs ?', it: 'Quanti viaggiatori?' } },
   { id: 'stay', type: 'tiles', q: { pt: 'Onde você vai ficar?', en: 'Where will you stay?', es: '¿Dónde te alojarás?', fr: 'Où logerez-vous ?', it: 'Dove alloggerai?' }, opts: [
     { v: 'Any', em: '✨', pt: 'Tanto faz', en: 'Any' }, { v: 'Hotel', em: '🏨', pt: 'Hotel', en: 'Hotel' },
     { v: 'Airbnb', em: '🏠', pt: 'Airbnb', en: 'Airbnb' }, { v: 'Hostel', em: '🎒', pt: 'Hostel', en: 'Hostel' },
@@ -6512,8 +6554,12 @@ function appWizRender(dir) {
       ret: appLang === 'pt' ? 'Volta' : 'Return',
       search: appLang === 'pt' ? 'Buscar cidade…' : 'Search a city…',
       surprise: appLang === 'pt' ? '✨ Surpreenda-me' : '✨ Surprise me',
+      travelers: appLang === 'pt' ? 'Viajantes' : 'Travelers',
       go: appLang === 'pt' ? 'Continuar' : 'Continue'
     };
+    var travTiles = ['1', '2', '3', '4', '5+'].map(function (n) {
+      return '<button type="button" class="tin-num' + (appWizState.travelers === n ? ' on' : '') + '" onclick="appWizPickTravelers(\'' + n + '\')">' + n + '</button>';
+    }).join('');
     body = '<div class="tin-trip">'
       + '<div class="tin-field"><label>' + L.from + '</label>'
       + '<div class="tin-search"><input id="tinFrom" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.from || '') + '" oninput="appWizTripSearch(\'from\')"></div>'
@@ -6525,7 +6571,9 @@ function appWizRender(dir) {
       + '<div class="tin-datepair">'
       + '<div class="tin-field"><label>' + L.dep + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizTripValidate()"></div>'
       + '<div class="tin-field"><label>' + L.ret + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizTripValidate()"></div>'
-      + '</div></div>'
+      + '</div>'
+      + '<div class="tin-field"><label>' + L.travelers + '</label><div class="tin-nums" id="tinTripNums">' + travTiles + '</div></div>'
+      + '</div>'
       + '<div class="tin-actions"><button class="tin-primary" id="tinTripGo" onclick="appWizTripContinue()"' + ((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret ? '' : ' disabled') + '>' + L.go + ' →</button></div>';
   } else if (step.type === 'nums') {
     body = '<div class="tin-nums">' + step.opts.map(function (n) {
@@ -6641,6 +6689,11 @@ function appWizTripValidate() {
 function appWizTripContinue() {
   if (!((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret)) return;
   appWizAdvance();
+}
+function appWizPickTravelers(n) {
+  appWizState.travelers = n;
+  var box = document.getElementById('tinTripNums');
+  if (box) Array.prototype.forEach.call(box.children, function (b) { b.classList.toggle('on', b.textContent === n); });
 }
 
 // Injects the chosen style/interests as hidden selected pills so getStyle()/
@@ -6952,6 +7005,30 @@ function appNameMatches(taName, text) {
 function appUnsplash(q) {
   return fetch(apiUrl('/.netlify/functions/unsplash-car-image'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q }) })
     .then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { return d && d.imageUrl ? d.imageUrl : null; }).catch(function () { return null; });
+}
+
+// Renders a horizontally-swipeable photo gallery (with Instagram-style dot
+// indicators) into a photo container. Used for hotel cards with 2+ photos.
+function appBuildGallery(photoEl, photos) {
+  if (!photoEl || !photos || !photos.length) return;
+  var imgs = photos.map(function (u) {
+    return '<img class="app-gal-img" src="' + escapeHtml(u) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">';
+  }).join('');
+  var dots = photos.map(function (_, i) { return '<span' + (i === 0 ? ' class="on"' : '') + '></span>'; }).join('');
+  photoEl.style.background = 'none';
+  photoEl.style.backgroundImage = 'none';
+  photoEl.style.display = 'block';
+  photoEl.innerHTML = '<div class="app-gal">'
+    + '<div class="app-gal-track" onscroll="appGalSync(this)">' + imgs + '</div>'
+    + '<div class="app-gal-dots">' + dots + '</div></div>';
+}
+// Keeps the dot indicators in sync as the user swipes the gallery.
+function appGalSync(track) {
+  if (!track || !track.clientWidth) return;
+  var idx = Math.round(track.scrollLeft / track.clientWidth);
+  var dots = track.parentElement && track.parentElement.querySelector('.app-gal-dots');
+  if (!dots) return;
+  Array.prototype.forEach.call(dots.children, function (d, i) { d.classList.toggle('on', i === idx); });
 }
 
 function appRenderItinerary() {
