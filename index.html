@@ -459,20 +459,35 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 @keyframes tin-slide-in{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes tin-slide-back{from{transform:translateX(-60px);opacity:0}to{transform:translateX(0);opacity:1}}
 @media(prefers-reduced-motion: reduce){.tin-card.slide-in,.tin-card.slide-back{animation:none}}
+/* Content is vertically centered as a block; when it's taller than the stage
+   the auto margins collapse to 0 so it top-aligns and scrolls normally. */
+.tin-inner{margin:auto 0;width:100%;display:flex;flex-direction:column}
 .tin-q{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.15;color:var(--app-text);
-  margin:18px 0 6px;font-weight:600}
-.tin-sub{font-size:15px;color:var(--app-text-soft);margin-bottom:20px}
-.tin-body{flex:1;display:flex;flex-direction:column;justify-content:flex-start}
+  margin:0 0 18px;font-weight:600;text-align:center}
+.tin-sub{font-size:15px;color:var(--app-text-soft);margin-bottom:20px;text-align:center}
+.tin-body{display:flex;flex-direction:column}
 /* Option tiles grid. */
 .tin-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 .tin-tiles.one{grid-template-columns:1fr}
-.tin-tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;
-  padding:18px 16px;border-radius:20px;border:1.5px solid var(--app-line);background:var(--app-surface);
-  cursor:pointer;text-align:left;box-shadow:var(--app-shadow-soft);transition:transform .12s,border-color .15s,background .15s}
+.tin-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:104px;
+  padding:18px 14px;border-radius:20px;border:1.5px solid var(--app-line);background:var(--app-surface);
+  cursor:pointer;text-align:center;box-shadow:var(--app-shadow-soft);transition:transform .12s,border-color .15s,background .15s}
+.tin-tiles.one .tin-tile{min-height:120px;flex-direction:row;gap:14px;justify-content:flex-start;text-align:left;padding:20px 22px}
+.tin-tiles.one .tin-tile .em{font-size:34px}
 .tin-tile:active{transform:scale(.97)}
 .tin-tile .em{font-size:30px;line-height:1}
 .tin-tile .lb{font-size:15px;font-weight:700;color:var(--app-text)}
 .tin-tile .ds{font-size:12px;color:var(--app-text-soft);font-weight:500}
+/* Combined trip screen (origin + destination + dates). */
+.tin-trip{display:flex;flex-direction:column;gap:16px;margin-top:4px}
+.tin-field{display:flex;flex-direction:column;min-width:0}
+.tin-field > label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--app-text-soft);margin-bottom:7px}
+.tin-field input[type=date]{width:100%;min-width:0;box-sizing:border-box;padding:15px 14px !important;border-radius:14px !important;font-size:15px !important;
+  border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
+.tin-datepair{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+.tin-surprise{align-self:flex-start;margin-top:9px;padding:8px 15px;border-radius:999px;border:1px solid var(--app-line);
+  background:transparent;color:var(--app-text-soft);font-size:13px;font-weight:600;cursor:pointer}
+.tin-surprise.on{border-color:var(--app-gold);color:var(--app-gold-deep);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
 .tin-tile.on{border-color:var(--app-gold);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
 .tin-tile.on .lb{color:var(--app-gold-deep)}
 /* Number selector row. */
@@ -585,6 +600,41 @@ body.native-app #tab-itin{padding:0 !important}
 .app-slot-card .acts a{flex:1;text-align:center;padding:11px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none}
 .app-slot-card .acts .ta{background:#00A680;color:#fff}
 .app-slot-card .acts .mp{background:transparent;border:1.5px solid var(--app-line);color:var(--app-text)}
+/* "See another option" — subtle cycle control under eligible slot cards. */
+.app-slot-alt{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
+.app-slot-altbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:999px;
+  border:1px solid var(--app-line);background:transparent;color:var(--app-text-soft);
+  font-size:13px;font-weight:600;cursor:pointer;transition:transform .12s,border-color .15s}
+.app-slot-altbtn:active{transform:scale(.96)}
+.app-slot-altbtn:disabled{opacity:.55}
+.app-slot-ind{font-size:12px;font-weight:700;color:var(--app-text-soft);opacity:.75;letter-spacing:.02em}
+/* Native hotel card — full photo, info, three equal booking pills, add button. */
+body.native-app .app-hotel-card{padding:0 !important;overflow:hidden}
+.app-hotel-photo{position:relative;width:100%;height:180px;display:flex;align-items:center;justify-content:center;
+  background-size:cover;background-position:center}
+.app-hotel-emoji{font-size:60px}
+.app-hotel-live{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;color:#fff;
+  background:rgba(20,140,90,.92);padding:4px 10px;border-radius:999px;letter-spacing:.04em}
+.app-hotel-body{padding:16px}
+.app-hotel-name{font-size:19px;font-weight:800;color:var(--app-text);line-height:1.28}
+.app-hotel-sub{font-size:13px;color:var(--app-text-soft);margin-top:4px}
+.app-hotel-sub em{color:var(--app-gold-deep);font-style:normal;font-weight:600}
+.app-hotel-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:10px;flex-wrap:wrap}
+.app-hotel-stars{font-size:14px;color:var(--app-gold-deep);letter-spacing:2px}
+.app-hotel-price{font-family:'Cormorant Garamond',serif;font-size:25px;color:var(--app-text);white-space:nowrap}
+.app-hotel-price .pn{font-family:'Inter',sans-serif;font-size:11px;color:var(--app-text-soft)}
+.app-hotel-why{font-size:13px;color:var(--app-text-soft);font-style:italic;margin:10px 0 0;line-height:1.5}
+.app-hotel-tags{margin-top:10px}
+.app-hotel-booking{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
+.app-hotel-pill{display:flex;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:0 4px;border-radius:14px;
+  font-size:12.5px;font-weight:700;text-decoration:none;text-align:center;box-sizing:border-box;white-space:nowrap;overflow:hidden;
+  border:1.5px solid var(--app-line);background:transparent;color:var(--app-text)}
+.app-hotel-pill.primary{background:var(--app-gold);border-color:var(--app-gold);color:var(--app-navy);
+  box-shadow:0 4px 12px rgba(201,169,110,.35)}
+.app-hotel-add{width:100%;min-height:52px;margin-top:10px;border-radius:14px;border:1.5px solid var(--app-gold);
+  background:linear-gradient(135deg,rgba(201,169,110,.14),rgba(201,169,110,.04));color:var(--app-gold-deep);
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer}
+.app-hotel-add.on{border-color:var(--app-line);background:var(--app-surface-2);color:var(--app-text-soft)}
 /* Photo-forward attraction cards (Airbnb-style). */
 body.native-app .app-attr-card{padding:0 !important;overflow:hidden}
 body.native-app .app-attr-photo{width:100%;height:172px;display:flex;align-items:center;justify-content:center;
@@ -5191,6 +5241,7 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
           }
         }
 
+        if (meta.photoOnly) return; // native card wants only the photo, no rating box
         if (!info.rating && !info.address && !info.priceLevel) return; // nothing useful to show
 
         var parts = [];
@@ -5559,6 +5610,38 @@ function renderStays(accs, dest) {
     var stayStyle = STAY_TYPE_STYLE[a.type] || STAY_TYPE_STYLE['Hotel'];
     var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
     var inCart = isStayInCart(a);
+
+    // ── Native app: clean vertical card — full photo, info, three equal
+    // booking pills, then a full-width add-to-trip button. No TripAdvisor box.
+    if (document.body.classList.contains('native-app')) {
+      var nPhoto = (a.isReal && a.photoUrl)
+        ? 'background-image:url(\'' + a.photoUrl + '\');background-size:cover;background-position:center'
+        : 'background:' + stayStyle.gradient;
+      var nMaps = 'https://www.google.com/maps/search/' + encodeURIComponent(a.name + ' ' + (a.area ? a.area + ' ' : '') + dest);
+      h += '<div class="fc app-hotel-card">';
+      h += '<div id="' + photoSlotId + '" class="app-hotel-photo" style="' + nPhoto + '">'
+        + ((a.isReal && a.photoUrl) ? '' : '<span class="app-hotel-emoji">' + stayStyle.emoji + '</span>')
+        + (a.isReal ? '<span class="app-hotel-live">● LIVE</span>' : '') + '</div>';
+      h += '<span id="' + slotId + '" style="display:none"></span>';
+      h += '<div class="app-hotel-body">';
+      h += '<div class="app-hotel-name">' + escapeHtml(a.name) + '</div>';
+      h += '<div class="app-hotel-sub">' + (a.area ? '📍 ' + escapeHtml(a.area) + ' · ' : '') + '<em>' + escapeHtml(a.type) + '</em></div>';
+      h += '<div class="app-hotel-row"><span class="app-hotel-stars">' + stars + '</span>'
+        + '<span class="app-hotel-price">' + formatPrice(a.price_night) + '<span class="pn">/' + (appLang === 'pt' ? 'noite' : 'night') + '</span></span></div>';
+      if (a.why) h += '<p class="app-hotel-why">' + escapeHtml(a.why) + '</p>';
+      if (a.highlights && a.highlights.length) h += '<div class="app-hotel-tags">' + a.highlights.map(function (t) { return '<span class="acc-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>';
+      h += '<div class="app-hotel-booking">'
+        + '<a href="' + bookingHotelUrl(a.name, dest) + '" target="_blank" class="app-hotel-pill primary">Booking</a>'
+        + '<a href="' + hotelsComHotelUrl(dest, a.name) + '" target="_blank" class="app-hotel-pill">Hotels</a>'
+        + '<a href="' + nMaps + '" target="_blank" class="app-hotel-pill">📍 Maps</a>'
+        + '</div>';
+      h += '<button type="button" class="app-hotel-add' + (inCart ? ' on' : '') + '" onclick="toggleStayCart(window._stays[' + accs.indexOf(a) + '])">'
+        + (inCart ? dict.cart_added : dict.cart_add) + '</button>';
+      h += '</div></div>';
+      if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: getQueryLocationForItem(a.name, dest), category: 'hotels', photoOnly: true });
+      return;
+    }
+
     h += '<div class="fc" style="padding:16px">';
     h += '<div class="car-card-row" style="display:flex;gap:18px;align-items:center">';
     // Real Duffel results already have a photo — show it immediately.
@@ -6165,9 +6248,7 @@ var appWizPrefillTo = '';
 var _appBuildTimer = null;
 
 var APP_WIZ = [
-  { id: 'from', type: 'city', q: { pt: 'De onde você está saindo?', en: 'Where are you flying from?', es: '¿Desde dónde viajas?', fr: "D'où partez-vous ?", it: 'Da dove parti?' } },
-  { id: 'to', type: 'city', surprise: true, q: { pt: 'Para onde você quer ir?', en: 'Where do you want to go?', es: '¿A dónde quieres ir?', fr: 'Où voulez-vous aller ?', it: 'Dove vuoi andare?' } },
-  { id: 'dates', type: 'dates', q: { pt: 'Quando você vai viajar?', en: 'When are you traveling?', es: '¿Cuándo viajas?', fr: 'Quand voyagez-vous ?', it: 'Quando viaggi?' } },
+  { id: 'trip', type: 'trip', q: { pt: 'Sua viagem', en: 'Your trip', es: 'Tu viaje', fr: 'Votre voyage', it: 'Il tuo viaggio' } },
   { id: 'travelers', type: 'nums', opts: ['1', '2', '3', '4', '5+'], q: { pt: 'Quantos viajantes?', en: 'How many travelers?', es: '¿Cuántos viajeros?', fr: 'Combien de voyageurs ?', it: 'Quanti viaggiatori?' } },
   { id: 'stay', type: 'tiles', q: { pt: 'Onde você vai ficar?', en: 'Where will you stay?', es: '¿Dónde te alojarás?', fr: 'Où logerez-vous ?', it: 'Dove alloggerai?' }, opts: [
     { v: 'Any', em: '✨', pt: 'Tanto faz', en: 'Any' }, { v: 'Hotel', em: '🏨', pt: 'Hotel', en: 'Hotel' },
@@ -6227,19 +6308,29 @@ function appWizRender(dir) {
   var cnt = document.getElementById('tinCount'); if (cnt) cnt.textContent = (appWizIndex + 1) + '/' + APP_WIZ.length;
 
   var body = '';
-  if (step.type === 'city') {
-    var val = (step.id === 'from' ? appWizState.from : appWizState.to) || '';
-    body = '<div class="tin-search"><input id="tinCityInput" type="text" autocomplete="off" '
-      + 'placeholder="' + (appLang === 'pt' ? 'Buscar cidade…' : 'Search a city…') + '" '
-      + 'value="' + escapeHtml(val) + '" oninput="appWizCitySearch(\'' + step.id + '\')"></div>'
-      + '<div class="tin-ac" id="tinAc"></div>';
-    if (step.surprise) body += '<div class="tin-actions"><button class="tin-ghost" onclick="appWizSurprise()">✨ '
-      + (appLang === 'pt' ? 'Surpreenda-me!' : 'Surprise me!') + '</button></div>';
-  } else if (step.type === 'dates') {
-    body = '<div class="tin-dates">'
-      + '<div><label>' + (appLang === 'pt' ? 'Ida' : 'Departure') + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizSyncDates()"></div>'
-      + '<div><label>' + (appLang === 'pt' ? 'Volta' : 'Return') + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizSyncDates()"></div>'
-      + '</div><div class="tin-actions"><button class="tin-primary" id="tinDatesGo" onclick="appWizAdvance()">' + (appLang === 'pt' ? 'Continuar' : 'Continue') + ' →</button></div>';
+  if (step.type === 'trip') {
+    var L = {
+      from: appLang === 'pt' ? 'Saindo de' : 'Leaving from',
+      to: appLang === 'pt' ? 'Indo para' : 'Going to',
+      dep: appLang === 'pt' ? 'Ida' : 'Departure',
+      ret: appLang === 'pt' ? 'Volta' : 'Return',
+      search: appLang === 'pt' ? 'Buscar cidade…' : 'Search a city…',
+      surprise: appLang === 'pt' ? '✨ Surpreenda-me' : '✨ Surprise me',
+      go: appLang === 'pt' ? 'Continuar' : 'Continue'
+    };
+    body = '<div class="tin-trip">'
+      + '<div class="tin-field"><label>' + L.from + '</label>'
+      + '<div class="tin-search"><input id="tinFrom" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.from || '') + '" oninput="appWizTripSearch(\'from\')"></div>'
+      + '<div class="tin-ac" id="tinAcFrom"></div></div>'
+      + '<div class="tin-field"><label>' + L.to + '</label>'
+      + '<div class="tin-search"><input id="tinTo" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.surprise ? '' : (appWizState.to || '')) + '" oninput="appWizTripSearch(\'to\')"></div>'
+      + '<div class="tin-ac" id="tinAcTo"></div>'
+      + '<button class="tin-surprise" onclick="appWizSurpriseTrip()">' + L.surprise + '</button></div>'
+      + '<div class="tin-datepair">'
+      + '<div class="tin-field"><label>' + L.dep + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizTripValidate()"></div>'
+      + '<div class="tin-field"><label>' + L.ret + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizTripValidate()"></div>'
+      + '</div></div>'
+      + '<div class="tin-actions"><button class="tin-primary" id="tinTripGo" onclick="appWizTripContinue()"' + ((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret ? '' : ' disabled') + '>' + L.go + ' →</button></div>';
   } else if (step.type === 'nums') {
     body = '<div class="tin-nums">' + step.opts.map(function (n) {
       return '<button class="tin-num' + (appWizState.travelers === n ? ' on' : '') + '" onclick="appWizPick(\'travelers\',\'' + n + '\',true)">' + n + '</button>';
@@ -6266,8 +6357,9 @@ function appWizRender(dir) {
   }
 
   var html = '<div class="tin-card ' + (dir === 'back' ? 'slide-back' : 'slide-in') + '">'
+    + '<div class="tin-inner">'
     + '<div class="tin-q">' + escapeHtml(_wl(step.q)) + '</div>'
-    + '<div class="tin-body">' + body + '</div></div>';
+    + '<div class="tin-body">' + body + '</div></div></div>';
   stage.innerHTML = html;
 }
 
@@ -6307,6 +6399,51 @@ function appWizCitySearch(which) {
 }
 function appWizChooseCity(which, city) {
   if (which === 'from') appWizState.from = city; else appWizState.to = city;
+  appWizAdvance();
+}
+
+// ── Combined trip screen (origin + destination + dates on one card) ──
+function appWizTripSearch(which) {
+  var inp = document.getElementById(which === 'from' ? 'tinFrom' : 'tinTo');
+  var ac = document.getElementById(which === 'from' ? 'tinAcFrom' : 'tinAcTo');
+  if (!inp || !ac) return;
+  if (which === 'from') appWizState.from = inp.value;
+  else { appWizState.to = inp.value; if (inp.value) appWizState.surprise = false; }
+  appWizTripValidate();
+  var q = (typeof normalizeForSearch === 'function' ? normalizeForSearch(inp.value) : inp.value.toLowerCase()).trim();
+  if (q.length < 2) { ac.innerHTML = ''; return; }
+  var matches = CITIES.filter(function (c) {
+    var cc = typeof normalizeForSearch === 'function' ? normalizeForSearch(c.city) : c.city.toLowerCase();
+    var co = typeof normalizeForSearch === 'function' ? normalizeForSearch(c.country) : c.country.toLowerCase();
+    return cc.indexOf(q) >= 0 || co.indexOf(q) >= 0;
+  }).slice(0, 6);
+  ac.innerHTML = matches.map(function (c) {
+    return '<button onclick="appWizTripChoose(\'' + which + '\',\'' + escapeJsAttr(c.city) + '\')">'
+      + '<span class="fl">' + (c.flag || '📍') + '</span><span>' + escapeHtml(c.city) + '</span><span class="ct">' + escapeHtml(c.country) + '</span></button>';
+  }).join('');
+}
+function appWizTripChoose(which, city) {
+  var inp = document.getElementById(which === 'from' ? 'tinFrom' : 'tinTo');
+  var ac = document.getElementById(which === 'from' ? 'tinAcFrom' : 'tinAcTo');
+  if (inp) inp.value = city;
+  if (ac) ac.innerHTML = '';
+  if (which === 'from') appWizState.from = city;
+  else { appWizState.to = city; appWizState.surprise = false; }
+  appWizTripValidate();
+}
+function appWizSurpriseTrip() {
+  appWizState.surprise = true; appWizState.to = '';
+  var inp = document.getElementById('tinTo'); if (inp) inp.value = '';
+  var ac = document.getElementById('tinAcTo'); if (ac) ac.innerHTML = '';
+  var btn = document.querySelector('.tin-surprise'); if (btn) btn.classList.add('on');
+  appWizTripValidate();
+}
+function appWizTripValidate() {
+  var go = document.getElementById('tinTripGo');
+  if (go) go.disabled = !((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret);
+}
+function appWizTripContinue() {
+  if (!((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret)) return;
   appWizAdvance();
 }
 
@@ -6620,34 +6757,101 @@ function appRenderItinerary() {
     ['Lunch', r.lunch, dict.slot_lunch], ['Afternoon', r.afternoon, dict.slot_afternoon],
     ['Dinner', r.dinner, dict.slot_dinner], ['Night', r.night, dict.slot_night]];
   var cards = '<div class="app-itin-cards"><div class="app-itin-daytitle">' + escapeHtml(d.theme || '') + '</div>';
-  var meta = [];
+  var dayTheme = d.theme || '';
+  window._appSlotAlt = {}; // fresh per render — alternatives don't carry between days/rhythms
   slots.forEach(function (s, idx) {
     if (!s[1]) return;
     var isFood = s[0] === 'Breakfast' || s[0] === 'Lunch' || s[0] === 'Dinner';
-    var p = appSlotParts(s[1], isFood);
     var cid = 'app-slot-' + idx;
-    var query = (p.query || p.name || '').trim();
-    var mapsUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(query + ' ' + dest);
-    var taUrl = 'https://www.tripadvisor.com/Search?q=' + encodeURIComponent(query + ' ' + dest);
-    var nameLine = p.name && p.name.length ? p.name : localizePriceText(s[1]);
-    var descLine = (p.desc && p.desc !== p.name) ? localizePriceText(p.desc) : '';
-    var priceLine = p.price ? localizePriceText(p.price) : '';
+    var canAlt = s[0] !== 'Night'; // night just shows the single best pick
+    window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false };
     cards += '<div class="app-slot-card" id="' + cid + '">'
       + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
       + '<img class="ph" id="' + cid + '-ph" style="display:none" alt="">'
-      + '<div class="bd"><div class="nm">' + escapeHtml(nameLine) + '</div>'
-      + (descLine ? '<div class="ds">' + escapeHtml(descLine) + '</div>' : '')
-      + (priceLine ? '<div class="meta">🎟️ ' + escapeHtml(priceLine) + '</div>' : '')
-      + '<div class="meta" id="' + cid + '-meta"></div>'
-      + '<div class="acts"><a class="ta" id="' + cid + '-ta" href="' + taUrl + '" target="_blank">TripAdvisor →</a>'
-      + '<a class="mp" href="' + mapsUrl + '" target="_blank">📍 Maps →</a></div></div></div>';
-    meta.push({ cid: cid, query: query, text: s[1], dest: dest, isFood: isFood });
+      + '<div class="bd"><div id="' + cid + '-content"></div>'
+      + (canAlt
+        ? '<div class="app-slot-alt"><button class="app-slot-altbtn" id="' + cid + '-altbtn" onclick="appSlotCycle(\'' + cid + '\')">'
+          + '<span id="' + cid + '-altlbl">🔄 ' + (appLang === 'pt' ? 'Ver outra sugestão' : 'See another option') + '</span></button>'
+          + '<span class="app-slot-ind" id="' + cid + '-ind" style="display:none"></span></div>'
+        : '')
+      + '</div></div>';
   });
   cards += '</div>';
   itin.innerHTML = head + cards;
   if (typeof translatePage === 'function') translatePage();
-  appEnrichSlotCards(meta);
+  // Fill text content for each slot, then enrich photos/ratings (staggered).
+  var enrichMeta = [];
+  Object.keys(window._appSlotAlt).forEach(function (cid) {
+    appSlotFill(cid, false);
+    var st = window._appSlotAlt[cid];
+    var p = appSlotParts(st.texts[st.index], st.isFood);
+    enrichMeta.push({ cid: cid, query: (p.query || p.name || '').trim(), text: st.texts[st.index], dest: st.dest, isFood: st.isFood });
+  });
+  appEnrichSlotCards(enrichMeta);
   return true;
+}
+
+// Renders one slot card's inner content (name/desc/price/links + indicator)
+// from its current option. doEnrich=true also re-loads its photo/rating.
+function appSlotFill(cid, doEnrich) {
+  var st = window._appSlotAlt && window._appSlotAlt[cid]; if (!st) return;
+  var text = st.texts[st.index];
+  var p = appSlotParts(text, st.isFood);
+  var query = (p.query || p.name || '').trim();
+  var dest = st.dest;
+  var mapsUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(query + ' ' + dest);
+  var taUrl = 'https://www.tripadvisor.com/Search?q=' + encodeURIComponent(query + ' ' + dest);
+  var nameLine = p.name && p.name.length ? p.name : localizePriceText(text);
+  var descLine = (p.desc && p.desc !== p.name) ? localizePriceText(p.desc) : '';
+  var priceLine = p.price ? localizePriceText(p.price) : '';
+  var el = document.getElementById(cid + '-content');
+  if (el) {
+    el.innerHTML = '<div class="nm">' + escapeHtml(nameLine) + '</div>'
+      + (descLine ? '<div class="ds">' + escapeHtml(descLine) + '</div>' : '')
+      + (priceLine ? '<div class="meta">🎟️ ' + escapeHtml(priceLine) + '</div>' : '')
+      + '<div class="meta" id="' + cid + '-meta"></div>'
+      + '<div class="acts"><a class="ta" id="' + cid + '-ta" href="' + taUrl + '" target="_blank">TripAdvisor →</a>'
+      + '<a class="mp" href="' + mapsUrl + '" target="_blank">📍 Maps →</a></div>';
+  }
+  var ind = document.getElementById(cid + '-ind');
+  if (ind) {
+    if (st.texts.length > 1) { ind.style.display = ''; ind.textContent = (st.index + 1) + (appLang === 'pt' ? ' de ' : ' of ') + st.texts.length; }
+    else ind.style.display = 'none';
+  }
+  if (doEnrich) {
+    var ph = document.getElementById(cid + '-ph'); if (ph) { ph.style.display = 'none'; ph.src = ''; }
+    appEnrichOne({ cid: cid, query: query, text: text, dest: dest, isFood: st.isFood });
+  }
+}
+
+// Swap a slot for another AI suggestion. Pages through already-fetched options
+// first, fetches a fresh one on demand (up to a small cap), then wraps to the
+// first — so the traveler can always cycle without unbounded AI calls.
+var APP_SLOT_ALT_CAP = 4;
+async function appSlotCycle(cid) {
+  var st = window._appSlotAlt && window._appSlotAlt[cid]; if (!st || st.busy) return;
+  if (st.index < st.texts.length - 1) { st.index++; appSlotFade(cid); return; }
+  if (st.texts.length >= APP_SLOT_ALT_CAP) { st.index = 0; appSlotFade(cid); return; }
+  st.busy = true;
+  var btn = document.getElementById(cid + '-altbtn');
+  var lbl = document.getElementById(cid + '-altlbl');
+  var prev = lbl ? lbl.textContent : '';
+  if (btn) btn.disabled = true;
+  if (lbl) lbl.textContent = (appLang === 'pt' ? 'Buscando…' : 'Finding…');
+  try {
+    var nt = await fetchAlternativeOption(st.slotLabel, st.dest, null, st.texts, st.dayTheme);
+    if (nt) { st.texts.push(nt); st.index = st.texts.length - 1; }
+  } catch (e) { console.error('slot alternative failed:', e); }
+  st.busy = false;
+  if (btn) btn.disabled = false;
+  if (lbl) lbl.textContent = prev || ('🔄 ' + (appLang === 'pt' ? 'Ver outra sugestão' : 'See another option'));
+  appSlotFade(cid);
+}
+function appSlotFade(cid) {
+  var card = document.getElementById(cid);
+  if (!card) { appSlotFill(cid, true); return; }
+  card.style.transition = 'opacity .18s'; card.style.opacity = '0';
+  setTimeout(function () { appSlotFill(cid, true); card.style.opacity = '1'; }, 180);
 }
 function appItinSetRhythm(r) { window._rk = r; appRenderItinerary(); }
 function appItinDay(delta) { var days = window._days || []; var n = currentDayIndex + delta; if (n < 0 || n >= days.length) return; currentDayIndex = n; appRenderItinerary(); }
@@ -6656,26 +6860,28 @@ function appItinDay(delta) { var days = window._days || []; var n = currentDayIn
 function appEnrichSlotCards(meta) {
   meta.forEach(function (m, i) {
     if (!m.query) return;
-    setTimeout(function () {
-      getTripAdvisorInfo(m.query + ' ' + m.dest, m.isFood ? 'restaurants' : 'attractions').then(function (info) {
-        var phEl = document.getElementById(m.cid + '-ph');
-        if (info && appNameMatches(info.name, m.text)) {
-          if (info.photoUrl && phEl) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = info.photoUrl; phEl.style.display = 'block'; }
-          var metaEl = document.getElementById(m.cid + '-meta');
-          if (metaEl) {
-            var parts = '';
-            if (info.rating) parts += '<div>⭐ ' + escapeHtml(info.rating) + (info.numReviews ? ' (' + escapeHtml(info.numReviews) + ')' : '') + '</div>';
-            if (info.address) parts += '<div>📍 ' + escapeHtml(info.address) + '</div>';
-            metaEl.innerHTML = parts;
-          }
-          var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = info.webUrl;
-        } else if (phEl && m.query.length > 3) {
-          appUnsplash(m.query + ' ' + m.dest).then(function (url) {
-            if (url) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = url; phEl.style.display = 'block'; }
-          });
-        }
+    setTimeout(function () { appEnrichOne(m); }, i * 260);
+  });
+}
+function appEnrichOne(m) {
+  if (!m.query) return;
+  getTripAdvisorInfo(m.query + ' ' + m.dest, m.isFood ? 'restaurants' : 'attractions').then(function (info) {
+    var phEl = document.getElementById(m.cid + '-ph');
+    if (info && appNameMatches(info.name, m.text)) {
+      if (info.photoUrl && phEl) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = info.photoUrl; phEl.style.display = 'block'; }
+      var metaEl = document.getElementById(m.cid + '-meta');
+      if (metaEl) {
+        var parts = '';
+        if (info.rating) parts += '<div>⭐ ' + escapeHtml(info.rating) + (info.numReviews ? ' (' + escapeHtml(info.numReviews) + ')' : '') + '</div>';
+        if (info.address) parts += '<div>📍 ' + escapeHtml(info.address) + '</div>';
+        metaEl.innerHTML = parts;
+      }
+      var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = info.webUrl;
+    } else if (phEl && m.query.length > 3) {
+      appUnsplash(m.query + ' ' + m.dest).then(function (url) {
+        if (url) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = url; phEl.style.display = 'block'; }
       });
-    }, i * 260);
+    }
   });
 }
 
