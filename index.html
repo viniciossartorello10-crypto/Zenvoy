@@ -532,6 +532,12 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 @keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .app-build-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--app-text)}
 .app-build-status{font-size:14px;color:var(--app-text-soft);min-height:20px;max-width:280px}
+/* Animated origin→destination route on the loading screen. */
+.app-build-route{width:min(320px,82vw)}
+.app-build-route svg{width:100%;height:auto;display:block;overflow:visible}
+.app-build-route-labels{display:flex;justify-content:space-between;margin-top:2px;padding:0 6px}
+.app-build-route-labels span{font-size:13px;font-weight:800;color:var(--app-text);max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-build-route-labels span:last-child{text-align:right}
 .app-build-err{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;max-width:340px}
 .app-build-err-ic{font-size:46px}
 .app-build-err-t{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--app-text)}
@@ -616,7 +622,7 @@ body.native-app #tab-itin{padding:0 !important}
   font-size:12.5px;font-weight:700;color:var(--app-text);cursor:pointer;box-shadow:var(--app-shadow-soft)}
 .app-itin-cards{padding:16px}
 .app-itin-daytitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--app-text);margin:2px 2px 16px}
-.app-slot-card{background:var(--app-surface);border:1px solid var(--app-line);border-radius:16px;
+.app-slot-card{background:var(--app-surface);border:1px solid var(--app-line);border-left:3px solid var(--app-gold);border-radius:16px;
   box-shadow:var(--app-shadow);margin-bottom:16px;overflow:hidden}
 .app-slot-card .lb{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
   color:var(--app-gold-deep);padding:16px 16px 0}
@@ -929,6 +935,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
                onerror="this.style.display='none'">
         </div>
         <div class="app-build-title" data-i18n="building_title">Building your trip...</div>
+        <div class="app-build-route" id="appBuildRoute" style="display:none"></div>
         <div class="app-build-status" id="appBuildStatus"></div>
         <div class="app-build-err" id="appBuildErr" style="display:none">
           <div class="app-build-err-ic">⚠️</div>
@@ -2483,7 +2490,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_food_guide: 'Food Guide', app_food_empty: 'No food guide for this trip yet.', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'My Bag', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your bag is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Bag', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_food_guide: 'Food Guide', app_food_empty: 'No food guide for this trip yet.', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping', res_live: 'Live prices from Duffel:', res_stays_est: 'All prices estimated per night. Tap to find real-time availability.', res_flights_est: 'Prices are estimates. Compare real deals:', res_cars_est: 'Estimated car rental options — compare real deals:', res_cars_compare: 'Compare car rental deals for {c}:', sort_recommended: 'Sort: Recommended', sort_price_asc: 'Sort: Price low to high', sort_price_desc: 'Sort: Price high to low'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -2545,7 +2552,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_food_guide: 'Guia Gastronômico', app_food_empty: 'Ainda não há guia gastronômico para esta viagem.', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Minha Mala', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Sua mala está vazia', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Mala', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_food_guide: 'Guia Gastronômico', app_food_empty: 'Ainda não há guia gastronômico para esta viagem.', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras', res_live: 'Preços ao vivo da Duffel:', res_stays_est: 'Preços estimados por noite. Toque para ver disponibilidade em tempo real.', res_flights_est: 'Preços estimados. Compare ofertas reais:', res_cars_est: 'Opções estimadas de aluguel — compare ofertas reais:', res_cars_compare: 'Compare aluguéis de carro em {c}:', sort_recommended: 'Ordenar: Recomendados', sort_price_asc: 'Ordenar: Menor preço', sort_price_desc: 'Ordenar: Maior preço'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -3945,6 +3952,7 @@ function appNativeError(msg) {
   var wrap = b.querySelector('.app-build-mascot-wrap'); if (wrap) wrap.style.display = 'none';
   var title = b.querySelector('.app-build-title'); if (title) title.style.display = 'none';
   var status = document.getElementById('appBuildStatus'); if (status) status.style.display = 'none';
+  var route = document.getElementById('appBuildRoute'); if (route) route.style.display = 'none';
   var t = document.getElementById('appBuildErrTitle'); if (t) t.textContent = pt ? 'Algo deu errado' : 'Something went wrong';
   var m = document.getElementById('appBuildErrMsg'); if (m) m.textContent = msg || (pt ? 'Não foi possível montar sua viagem. Tente novamente.' : 'We couldn\'t build your trip. Please try again.');
   var btn = document.getElementById('appBuildErrBtn'); if (btn) btn.textContent = pt ? 'Voltar e tentar de novo' : 'Back — try again';
@@ -5377,19 +5385,33 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
     setTimeout(function() {
       getTripAdvisorInfo(meta.placeName + ' ' + meta.dest, meta.category).then(function(info) {
         var badge = document.getElementById(meta.slotId);
-        if (!badge || !info) return; // element may no longer be on screen (user navigated away)
+        var photoEl = meta.photoSlotId ? document.getElementById(meta.photoSlotId) : null;
 
         // Populate the photo, if this slot has a photo container and TripAdvisor returned one
-        if (meta.photoSlotId && info.photoUrl) {
-          var photoEl = document.getElementById(meta.photoSlotId);
-          if (photoEl) {
-            photoEl.innerHTML = ''; // clear the emoji/category-color placeholder underneath
-            photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
-            photoEl.style.background = "url('" + info.photoUrl + "') center/cover";
-            photoEl.style.display = 'block';
-          }
+        var gotPhoto = false;
+        if (photoEl && info && info.photoUrl) {
+          photoEl.innerHTML = ''; // clear the emoji/category-color placeholder underneath
+          photoEl.style.backgroundImage = "url('" + info.photoUrl + "')";
+          photoEl.style.background = "url('" + info.photoUrl + "') center/cover";
+          photoEl.style.display = 'block';
+          gotPhoto = true;
         }
 
+        // Native hotel cards (photoOnly): TripAdvisor rate-limits bursts and
+        // misses lesser-known/AI-estimated properties, which used to leave the
+        // card blank. Fall back to an Unsplash photo — same safety net the
+        // itinerary cards already have — so a hotel is never left without one.
+        if (meta.photoOnly && !gotPhoto && photoEl && typeof appUnsplash === 'function') {
+          appUnsplash(meta.placeName + ' hotel ' + (meta.dest || '')).then(function(url) {
+            if (url && photoEl) {
+              photoEl.innerHTML = '';
+              photoEl.style.background = "url('" + url + "') center/cover";
+              photoEl.style.display = 'block';
+            }
+          });
+        }
+
+        if (!badge || !info) return; // element may no longer be on screen (user navigated away)
         if (meta.photoOnly) return; // native card wants only the photo, no rating box
         if (!info.rating && !info.address && !info.priceLevel) return; // nothing useful to show
 
@@ -5722,11 +5744,12 @@ function renderStays(accs, dest) {
 
   var hasReal = sorted.some(function(a){ return a.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'All prices estimated per night. Click to find real-time availability.')+'</p>';
+  var _sd = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? (_sd.res_live||'Live prices from Duffel:') : (_sd.res_stays_est||'All prices estimated per night.'))+'</p>';
   h += '<select onchange="staySortOrder=this.value;renderStays(window._stays,window._staysDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
-  h += '<option value="default"'+(staySortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
-  h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
-  h += '<option value="price_desc"'+(staySortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
+  h += '<option value="default"'+(staySortOrder==='default'?' selected':'')+'>'+(_sd.sort_recommended||'Sort: Recommended')+'</option>';
+  h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>'+(_sd.sort_price_asc||'Sort: Price low to high')+'</option>';
+  h += '<option value="price_desc"'+(staySortOrder==='price_desc'?' selected':'')+'>'+(_sd.sort_price_desc||'Sort: Price high to low')+'</option>';
   h += '</select></div>';
 
   // Limited-time 2026 Getaway Deals promo (NA program, highest EPC) — a single
@@ -5916,11 +5939,12 @@ function renderFlights(flights, from, dest) {
 
   var hasReal = sorted.some(function(f){ return f.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
-  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? 'Live prices from Duffel:' : 'Prices are estimates. Compare real deals:')+'</p>';
+  var _fd = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  h += '<p style="font-size:13px;color:var(--body-text);margin:0">'+(hasReal ? (_fd.res_live||'Live prices from Duffel:') : (_fd.res_flights_est||'Prices are estimates. Compare real deals:'))+'</p>';
   h += '<select onchange="flightSortOrder=this.value;renderFlights(window._flights,window._flightsFrom,window._flightsDest)" style="width:auto;padding:6px 10px;font-size:12px;border-radius:20px">';
-  h += '<option value="default"'+(flightSortOrder==='default'?' selected':'')+'>Sort: Recommended</option>';
-  h += '<option value="price_asc"'+(flightSortOrder==='price_asc'?' selected':'')+'>Sort: Price low to high</option>';
-  h += '<option value="price_desc"'+(flightSortOrder==='price_desc'?' selected':'')+'>Sort: Price high to low</option>';
+  h += '<option value="default"'+(flightSortOrder==='default'?' selected':'')+'>'+(_fd.sort_recommended||'Sort: Recommended')+'</option>';
+  h += '<option value="price_asc"'+(flightSortOrder==='price_asc'?' selected':'')+'>'+(_fd.sort_price_asc||'Sort: Price low to high')+'</option>';
+  h += '<option value="price_desc"'+(flightSortOrder==='price_desc'?' selected':'')+'>'+(_fd.sort_price_desc||'Sort: Price high to low')+'</option>';
   h += '</select></div>';
   h += '<div class="bls" style="margin-bottom:16px"><a href="'+bookingFlightUrl(destIata(from), destIata(dest))+'" target="_blank" class="bl bl-featured">Booking.com</a><a href="https://www.skyscanner.com/transport/flights/'+encodeURIComponent(from.split(',')[0])+'/'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-sk">Skyscanner</a><a href="https://flights.google.com" target="_blank" class="bl bl-gf">Google Flights</a><a href="https://www.kayak.com/flights/'+encodeURIComponent(from.split(',')[0])+'-'+encodeURIComponent(dest.split(',')[0])+'/" target="_blank" class="bl bl-ky">Kayak</a></div>';
   sorted.forEach(function(f) {
@@ -6016,12 +6040,12 @@ function renderCars(cars, dest) {
   if (!cars || !cars.length) {
     // No real Duffel data (no token, no coverage, or the call failed) —
     // show a simple, always-useful fallback rather than an empty tab.
-    container.innerHTML = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">Compare car rental deals for ' + escapeHtml(destShort) + ':</p>' + fallbackLinks;
+    container.innerHTML = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + ((dict.res_cars_compare||'Compare car rental deals for {c}:').replace('{c}', escapeHtml(destShort))) + '</p>' + fallbackLinks;
     return;
   }
 
   var hasReal = cars.some(function(c) { return c.isReal; });
-  var h = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + (hasReal ? 'Live prices from Duffel:' : 'Estimated car rental options — compare real deals:') + '</p>' + fallbackLinks;
+  var h = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + (hasReal ? (dict.res_live||'Live prices from Duffel:') : (dict.res_cars_est||'Estimated car rental options — compare real deals:')) + '</p>' + fallbackLinks;
 
   // Group by category (Compact/SUV/Sports car/Economy/etc.) so options are
   // organized instead of one flat list, matching how a rental site presents them.
@@ -6054,7 +6078,8 @@ function renderCars(cars, dest) {
       if (c.why) h += '<p style="font-size:13px;color:var(--body-text);font-style:italic;margin-top:10px;margin-bottom:0">' + escapeHtml(c.why) + '</p>';
       h += '</div>';
       h += '<div style="flex-shrink:0;text-align:right;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:130px">';
-      h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">' + formatPrice(c.price) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
+      var carPrice = (c.price != null ? c.price : c.price_day); // AI cars carry price_day; only generatePlan normalizes it, so fall back here too
+      h += '<div><span style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text)">' + formatPrice(carPrice) + '</span><span style="font-size:11px;color:var(--muted)"> /' + (dict.car_per_day_label || 'day') + '</span></div>';
       h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
       h += '</div>';
       h += '</div>';
@@ -6658,6 +6683,7 @@ function appWizFinish() {
   (s.interests && s.interests.length ? s.interests : ['Food']).forEach(function (v) { appWizInjectPill('interestPills', v, false); });
 
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
+  appBuildRouteRender();
   appWizCycleStatus();
   if (typeof generatePlan === 'function') generatePlan();
 }
@@ -6675,6 +6701,32 @@ function appWizCycleStatus() {
 function appWizStopBuilding() {
   clearInterval(_appBuildTimer);
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'none';
+}
+
+// Draws the origin → destination route on the loading screen: a dashed arc
+// between two city dots with the custom SVG plane flying along it (nose auto-
+// rotated to the travel direction). Reuses the same _APP_PLANE_PATH as the globe.
+function appBuildRouteRender() {
+  var host = document.getElementById('appBuildRoute');
+  if (!host) return;
+  var fromV = (((document.getElementById('fromCity') || {}).value) || (appWizState && appWizState.from) || '').split(',')[0].trim();
+  var surprise = (typeof surpriseMode !== 'undefined' && surpriseMode) || (appWizState && appWizState.surprise);
+  var toV = surprise ? (appLang === 'pt' ? 'Surpresa' : 'Surprise')
+    : ((((document.getElementById('toCity') || {}).value) || (appWizState && appWizState.to) || '').split(',')[0].trim());
+  if (!fromV) fromV = (appLang === 'pt' ? 'Sua cidade' : 'Home');
+  if (!toV) toV = '?';
+  var plane = '<g>'
+    + '<path transform="translate(1,2) scale(0.9)" fill="#0d1730" opacity="0.4" d="' + _APP_PLANE_PATH + '"/>'
+    + '<path transform="scale(0.9)" fill="#C9A96E" d="' + _APP_PLANE_PATH + '"/>'
+    + '<animateMotion dur="2.8s" repeatCount="indefinite" rotate="auto" calcMode="linear">'
+    + '<mpath xlink:href="#appBuildArc"/></animateMotion></g>';
+  host.innerHTML =
+    '<svg viewBox="0 0 320 74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'
+    + '<path id="appBuildArc" d="M22,60 Q160,6 298,60" fill="none" stroke="#C9A96E" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round" opacity="0.5"/>'
+    + '<circle cx="22" cy="60" r="5" fill="#C9A96E"/><circle cx="298" cy="60" r="5" fill="#C9A96E"/>'
+    + plane + '</svg>'
+    + '<div class="app-build-route-labels"><span>' + escapeHtml(fromV) + '</span><span>' + escapeHtml(toV) + '</span></div>';
+  host.style.display = 'block';
 }
 
 // ── Result category tabs (bottom nav on results) ──
