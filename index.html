@@ -4668,10 +4668,14 @@ async function generatePlan() {
     // Attractions, gems and the food guide all benefit from the same recall
     // the itinerary uses, so they name the same real places rather than
     // drifting to generic category examples.
+    // Flights/stays/cars don't depend on the destination-intel recall, so kick
+    // that call off immediately and let it run WHILE the intel is still
+    // resolving — only the food/tips call actually needs the intel block.
+    var corePromise = generateWithRepair(corePrompt, 'flights/stays/cars', 16000);
     var destIntel = await destIntelPromise;
     var groundedExtrasPrompt = extrasPrompt + destIntelBlock(destIntel, dest);
     var overviewParts = await Promise.all([
-      generateWithRepair(corePrompt, 'flights/stays/cars', 16000),
+      corePromise,
       generateWithRepair(groundedExtrasPrompt, 'food/tips', 8000)
     ]);
     var overview = Object.assign({}, overviewParts[0], overviewParts[1]);
@@ -4685,12 +4689,14 @@ async function generatePlan() {
     // because one chunk had trouble. A failed chunk gets one retry, and if
     // that also fails, only THAT chunk's days get a clearly-labeled
     // placeholder while the rest of the real itinerary is preserved.
-    var allDays = [];
-    var chunkWarnings = [];
+    // Day chunks are independent of one another, so fire them ALL at once and
+    // await together — a long trip is then bounded by its slowest single chunk,
+    // not the sum of every chunk's latency. (Same concurrency the multi-
+    // destination path already uses.) Per-chunk failure handling is preserved.
     var ranges = chunkDayRanges(days, 3);
-    for (var ci = 0; ci < ranges.length; ci++) {
-      var rangeStart = ranges[ci][0], rangeEnd = ranges[ci][1];
-      setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_building_days.replace('{r}', rangeStart+'–'+rangeEnd).replace('{d}', days));
+    setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_building_days.replace('{r}', '1–'+days).replace('{d}', days));
+    var chunkPromises = ranges.map(function (range) {
+      var rangeStart = range[0], rangeEnd = range[1];
 
       // Day 1 / last-day flight-arrival logistics are temporarily disabled —
       // they were causing some slots to come back as "N/A" when the AI
@@ -4728,14 +4734,23 @@ async function generatePlan() {
         'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.'
         + destIntelBlock(destIntel, overview.destination);
 
-      var parsedDays = await generateDayChunk(dayPrompt, rangeStart, rangeEnd);
-      if (parsedDays) {
-        allDays = allDays.concat(parsedDays);
+      return generateDayChunk(dayPrompt, rangeStart, rangeEnd).then(function (parsedDays) {
+        return { rangeStart: rangeStart, rangeEnd: rangeEnd, days: parsedDays };
+      });
+    });
+
+    // Promise.all preserves input order, so the days come back already sorted.
+    var chunkResults = await Promise.all(chunkPromises);
+    var allDays = [];
+    var chunkWarnings = [];
+    chunkResults.forEach(function (r) {
+      if (r.days) {
+        allDays = allDays.concat(r.days);
       } else {
-        chunkWarnings.push('Days '+rangeStart+'–'+rangeEnd);
-        allDays = allDays.concat(placeholderDaysFor(rangeStart, rangeEnd, overview.destination));
+        chunkWarnings.push('Days '+r.rangeStart+'–'+r.rangeEnd);
+        allDays = allDays.concat(placeholderDaysFor(r.rangeStart, r.rangeEnd, overview.destination));
       }
-    }
+    });
 
     if (chunkWarnings.length) {
       showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_partial_chunk.replace('{p}', chunkWarnings.join(', ')));
