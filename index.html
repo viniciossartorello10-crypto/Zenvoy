@@ -539,6 +539,28 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .app-build-err-btn{margin-top:6px;min-height:52px;padding:0 30px;border-radius:16px;border:none;cursor:pointer;
   background:linear-gradient(135deg,#E2C99A,#C9A96E);color:#1A1206;font-size:15px;font-weight:800;
   box-shadow:0 8px 20px rgba(201,169,110,.4)}
+/* Package chooser — three full-height tier cards shown before the results. */
+#appChooser{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;background:var(--app-bg);
+  padding:calc(env(safe-area-inset-top) + 26px) 20px calc(env(safe-area-inset-bottom) + 20px)}
+#appChooser.on{display:flex}
+.app-chooser-h{text-align:center;margin-bottom:18px;flex-shrink:0}
+.app-chooser-t{font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:600;color:var(--app-text);line-height:1.12}
+.app-chooser-s{font-size:14px;color:var(--app-text-soft);margin-top:8px;line-height:1.4}
+.app-chooser-cards{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0}
+.app-pkg{flex:1;width:100%;display:flex;align-items:center;gap:16px;padding:20px;border-radius:22px;text-align:left;
+  border:1.5px solid var(--app-line);background:var(--app-surface);box-shadow:var(--app-shadow);cursor:pointer;
+  font-family:'Inter',sans-serif;transition:transform .12s,border-color .15s,background .15s}
+.app-pkg:active{transform:scale(.985)}
+.app-pkg.feat{border-color:var(--app-gold);background:linear-gradient(135deg,rgba(201,169,110,.15),rgba(201,169,110,.03))}
+.app-pkg-em{font-size:44px;line-height:1;flex-shrink:0}
+.app-pkg-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.app-pkg-name{font-size:19px;font-weight:800;color:var(--app-text);line-height:1.2}
+.app-pkg-tag{font-size:13px;color:var(--app-text-soft);line-height:1.4}
+.app-pkg-badge{align-self:flex-start;margin-top:4px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--app-navy);background:var(--app-gold);padding:3px 10px;border-radius:999px}
+.app-pkg-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+.app-pkg-price{font-family:'Cormorant Garamond',serif;font-size:27px;color:var(--app-text);line-height:1}
+.app-pkg-plabel{font-size:11px;color:var(--app-text-soft);margin-top:3px}
 
 /* ── RESULTS body (relocated #result) ── */
 #appResultsBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--app-nav-h) + env(safe-area-inset-bottom) + 10px)}
@@ -914,6 +936,14 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
           <div class="app-build-err-m" id="appBuildErrMsg"></div>
           <button class="app-build-err-btn" id="appBuildErrBtn" onclick="appDismissBuildError()"></button>
         </div>
+      </div>
+      <!-- Package chooser (three tiers) — shown after generation, before results -->
+      <div id="appChooser">
+        <div class="app-chooser-h">
+          <div class="app-chooser-t" id="appChooserTitle"></div>
+          <div class="app-chooser-s" id="appChooserSub"></div>
+        </div>
+        <div class="app-chooser-cards" id="appChooserCards"></div>
       </div>
       <!-- The website wizard stays in the DOM (hidden) so its inputs exist for
            generatePlan(); the card flow above writes into them. -->
@@ -4544,21 +4574,53 @@ function showPackageChooser(planData, travelers, total, days, from) {
   pendingPlanArgs = { planData: planData, travelers: travelers, total: total, days: days, from: from };
   currentPackages = computeTripPackages(planData, days);
 
-  // The package chooser is a website-only screen that lives inside #planner —
-  // in the native app it's buried under #appShell and the "Montando sua
-  // viagem…" overlay, so showing it here would hang the app forever (the user
-  // can never see or tap it, so renderResult() never runs). Native skips it and
-  // goes straight to the results with a balanced default tier; every option is
-  // still available in the Stays/Cars tabs.
+  // The website chooser lives inside #planner, invisible in the native app —
+  // so native gets its own full-screen chooser overlay (appShowChooser). Both
+  // paths funnel into selectPackage(), which renders the results.
   if (document.body.classList.contains('native-app')) {
-    var defaultIdx = currentPackages.length > 2 ? 2 : 0; // 'adventure' (mid) when present
-    selectPackage(defaultIdx);
+    appShowChooser();
     return;
   }
 
   var buildingEl = document.getElementById('buildingScreen'); if (buildingEl) buildingEl.style.display = 'none';
   var chooserEl = document.getElementById('packageChooser'); if (chooserEl) chooserEl.style.display = 'block';
   renderPackageChooser(currentPackages);
+}
+
+// Native package chooser — three full-height tier cards (emoji, title, tagline,
+// price) shown over the building overlay once generation finishes. Tapping a
+// card runs the same selectPackage() the website uses, then reveals the results.
+function appShowChooser() {
+  var pkgs = currentPackages || [];
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var titleEl = document.getElementById('appChooserTitle');
+  var subEl = document.getElementById('appChooserSub');
+  if (titleEl) titleEl.textContent = dict.pkg_title || 'Choose your trip style';
+  if (subEl) subEl.textContent = dict.pkg_subtitle || '';
+  var host = document.getElementById('appChooserCards');
+  if (host) {
+    host.innerHTML = pkgs.map(function (pkg, i) {
+      var feat = pkg.key === 'best_experience';
+      return '<button type="button" class="app-pkg' + (feat ? ' feat' : '') + '" onclick="appChoosePackage(' + i + ')">'
+        + '<span class="app-pkg-em">' + pkg.emoji + '</span>'
+        + '<span class="app-pkg-mid">'
+        + '<span class="app-pkg-name">' + escapeHtml(dict['pkg_' + pkg.key + '_title'] || pkg.key) + '</span>'
+        + '<span class="app-pkg-tag">' + escapeHtml(dict['pkg_' + pkg.key + '_tag'] || '') + '</span>'
+        + (feat ? '<span class="app-pkg-badge">' + (appLang === 'pt' ? 'Recomendado' : 'Recommended') + '</span>' : '')
+        + '</span>'
+        + '<span class="app-pkg-right">'
+        + '<span class="app-pkg-price">' + escapeHtml(formatPrice(pkg.total)) + '</span>'
+        + '<span class="app-pkg-plabel">' + escapeHtml(dict.pkg_total_label || 'total trip') + '</span>'
+        + '</span></button>';
+    }).join('');
+  }
+  clearInterval(_appBuildTimer);
+  var b = document.getElementById('appBuilding'); if (b) b.style.display = 'none';
+  var ch = document.getElementById('appChooser'); if (ch) ch.classList.add('on');
+}
+function appChoosePackage(idx) {
+  var ch = document.getElementById('appChooser'); if (ch) ch.classList.remove('on');
+  selectPackage(idx);
 }
 
 function selectPackage(idx) {
