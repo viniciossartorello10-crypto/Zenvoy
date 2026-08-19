@@ -129,8 +129,9 @@ h1 em{font-style:italic;color:var(--gold)}
 .wizard-msg-text{font-size:15px;color:#fff;line-height:1.5;font-weight:500}
 .building-screen{text-align:center;padding:50px 20px}
 .building-spinner{width:56px;height:56px;border:3px solid rgba(201,169,110,.2);border-top-color:var(--gold);border-radius:50%;margin:0 auto 24px;animation:building-spin 1s linear infinite}
-.building-mascot-wrap{position:relative;width:100px;height:100px;margin:0 auto 20px}
-.building-mascot-ring{position:absolute;inset:0;border:3px dashed rgba(201,169,110,.35);border-radius:50%;animation:building-spin 6s linear infinite}
+.building-mascot-wrap{position:relative;width:auto;height:auto;margin:0 auto 20px;line-height:0}
+.building-mascot-ring{display:none} /* the mascot's orbiting plane replaces the spinner ring */
+.building-mascot-bounce{position:static;inset:auto;animation:none} /* mascot has its own animation */
 .building-mascot-bounce{position:absolute;inset:12px;display:flex;align-items:center;justify-content:center;animation:mascot-think 1.1s ease-in-out infinite}
 .building-mascot-bounce svg{width:100%;height:100%}
 @keyframes mascot-think{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
@@ -210,6 +211,8 @@ input::placeholder{color:#aaa}
 .dc-body{padding:18px}
 .dlabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text);margin-bottom:4px}
 .dth{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:12px}
+.slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
+  margin:14px 0 2px;background-size:cover;background-position:center}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
@@ -732,12 +735,12 @@ body.native-app .app-hotel-card{padding:0 !important;overflow:hidden}
   background:linear-gradient(135deg,rgba(201,169,110,.14),rgba(201,169,110,.04));color:var(--app-gold-deep);
   font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer}
 .app-hotel-add.on{border-color:var(--app-line);background:var(--app-surface-2);color:var(--app-text-soft)}
-/* Photo-forward attraction cards (Airbnb-style). */
-body.native-app .app-attr-card{padding:0 !important;overflow:hidden}
-body.native-app .app-attr-photo{width:100%;height:172px;display:flex;align-items:center;justify-content:center;
-  font-size:46px;color:#fff;background:linear-gradient(135deg,var(--app-gold),#8a6d3b);background-size:cover;background-position:center}
-body.native-app .app-attr-photo.has-photo{font-size:0}
-body.native-app .app-attr-body{padding:16px}
+/* Photo-forward attraction cards (Airbnb-style) — shared by app and website. */
+.app-attr-card{padding:0 !important;overflow:hidden}
+.app-attr-photo{width:100%;height:172px;display:flex;align-items:center;justify-content:center;
+  font-size:46px;color:#fff;background:linear-gradient(135deg,var(--gold,var(--app-gold,#C9A96E)),#8a6d3b);background-size:cover;background-position:center}
+.app-attr-photo.has-photo{font-size:0}
+.app-attr-body{padding:16px}
 /* All result categories scroll vertically (cards stack top-to-bottom). */
 body.native-app #staysContent,
 body.native-app #carsContent,
@@ -3848,10 +3851,8 @@ var ZENVOY_MASCOT_SVG = '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="
 // on the website (which keeps its dark chat modal). Also used on the building
 // screen so the mascot is present while a trip is generated.
 function mascotAvatar(size) {
-  if (document.body.classList.contains('native-app')) {
-    return appMascot(size, 'mini');
-  }
-  return ZENVOY_MASCOT_SVG;
+  // Animated mini mascot (breathing) on both the app and the website.
+  return appMascot(size, 'mini');
 }
 
 // Builds the animated mascot markup: breathing/floating body, blinking eyes, an
@@ -4630,7 +4631,7 @@ function showBuildingScreen() {
   var nav = document.getElementById('wizardNavRow'); if (nav) nav.style.display = 'none';
   var screen = document.getElementById('buildingScreen'); if (screen) screen.style.display = 'block';
   var mascotEl = document.getElementById('buildingMascot');
-  if (mascotEl) mascotEl.innerHTML = document.body.classList.contains('native-app') ? mascotAvatar(76) : ZENVOY_MASCOT_SVG;
+  if (mascotEl) mascotEl.innerHTML = appMascot(120); // animated mascot (breathing, orbiting plane, sparkles)
 }
 // ── TRIP PACKAGES (Best Experience / Smart Budget / Adventure) ────────────
 // Reuses the accommodations (4 tiers) and cars (4 categories) the AI already
@@ -5474,9 +5475,9 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
         var gotPhoto = false;
         var photoList = (info && info.photos && info.photos.length) ? info.photos : (info && info.photoUrl ? [info.photoUrl] : []);
         if (photoEl && photoList.length) {
-          // Native hotel cards get a swipeable multi-photo gallery; everything
-          // else (website stays, etc.) keeps the single background image.
-          if (meta.photoOnly && photoList.length > 1 && typeof appBuildGallery === 'function') {
+          // Hotel cards (app and website) get a swipeable multi-photo gallery;
+          // other single-photo slots keep the background image.
+          if ((meta.photoOnly || meta.gallery) && photoList.length > 1 && typeof appBuildGallery === 'function') {
             appBuildGallery(photoEl, photoList);
           } else {
             photoEl.innerHTML = ''; // clear the emoji/category-color placeholder underneath
@@ -5587,7 +5588,9 @@ function refreshSlotDom(day, idx, slotLabel, dest) {
   if (slotLabel === 'Afternoon' || slotLabel === 'Morning') h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent(placeName), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
   h += '</div>';
   wrap.innerHTML = h;
-  enrichSlotsWithTripAdvisor([{ slotId: slotId, placeName: placeName, dest: dest, category: taCategory }]);
+  var pe = document.getElementById('slot-photo-' + key);
+  if (pe) { pe.style.display = 'none'; pe.innerHTML = ''; pe.style.background = ''; }
+  enrichSlotsWithTripAdvisor([{ slotId: slotId, placeName: placeName, dest: dest, category: taCategory, photoSlotId: 'slot-photo-' + key, gallery: true }]);
 
   // Update the arrow-enabled state and dot counter
   var leftBtn = document.getElementById('slot-left-' + key);
@@ -5668,7 +5671,8 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
   var isFood = slotLabel === 'Breakfast' || slotLabel === 'Lunch' || slotLabel === 'Dinner';
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
 
-  var h = '<div class="ts"><div class="tt">' + escapeHtml(displayLabel || slotLabel) + '</div><div class="td">';
+  var h = '<div class="slot-photo" id="slot-photo-' + key + '" style="display:none"></div>';
+  h += '<div class="ts"><div class="tt">' + escapeHtml(displayLabel || slotLabel) + '</div><div class="td">';
   h += '<div id="slot-content-' + key + '">' + escapeHtml(localizePriceText(text)) + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
   if (isFood) h += '<a id="ta-badge-' + key + '-link" href="https://www.tripadvisor.com/Search?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-ta">' + dict.bl_reviews + '</a>';
@@ -5740,7 +5744,7 @@ function renderCurrentDay() {
     var placeName = (s[1].split(' at ')[1] || s[1].split('—')[0] || s[1]).split('.')[0].trim().slice(0,60);
     var isFood = s[0]==='Dinner'||s[0]==='Lunch'||s[0]==='Breakfast';
     var taCategory = isFood ? 'restaurants' : 'attractions';
-    slotMeta.push({ slotId: 'ta-badge-'+slotKeyFor(d.day, idx), placeName: placeName, dest: dest, category: taCategory });
+    slotMeta.push({ slotId: 'ta-badge-'+slotKeyFor(d.day, idx), placeName: placeName, dest: dest, category: taCategory, photoSlotId: 'slot-photo-'+slotKeyFor(d.day, idx), gallery: true });
   });
   html += '</div></div>';
   dc.innerHTML = html;
@@ -5929,15 +5933,18 @@ function renderStays(accs, dest) {
     h += '<button type="button" onclick="toggleStayCart(window._stays['+accs.indexOf(a)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
     h += '</div>';
     h += '</div>';
-    h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)">';
-    h += '<a href="'+bookingHotelUrl(a.name, dest)+'" target="_blank" class="bl bl-featured">Booking.com</a>';
-    h += '<a href="'+hotelsComHotelUrl(dest, a.name)+'" target="_blank" class="bl bl-bk">Hotels.com</a>';
+    var wMaps = 'https://www.google.com/maps/search/' + encodeURIComponent(a.name + ' ' + (a.area ? a.area + ' ' : '') + dest);
+    h += '<div class="app-hotel-booking" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)">';
+    h += '<a href="'+bookingHotelUrl(a.name, dest)+'" target="_blank" class="app-hotel-pill primary">Booking.com</a>';
+    h += '<a href="'+hotelsComHotelUrl(dest, a.name)+'" target="_blank" class="app-hotel-pill">Hotels.com</a>';
+    h += '<a href="'+wMaps+'" target="_blank" class="app-hotel-pill">📍 Maps</a>';
     h += '</div>';
     h += '</div>';
     // Only queue TripAdvisor enrichment for AI-estimated results — real
     // Duffel results already have their own photo/rating data, no need to
-    // spend a TripAdvisor lookup on them.
-    if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: getQueryLocationForItem(a.name, dest), category: 'hotels' });
+    // spend a TripAdvisor lookup on them. gallery:true builds a swipeable
+    // multi-photo gallery from the extra TripAdvisor photos.
+    if (!a.isReal) staySlotMeta.push({ slotId: slotId, photoSlotId: photoSlotId, placeName: a.name, dest: getQueryLocationForItem(a.name, dest), category: 'hotels', gallery: true });
   });
   document.getElementById('staysContent').innerHTML = h;
   enrichSlotsWithTripAdvisor(staySlotMeta);
@@ -6216,7 +6223,6 @@ function renderAttractions(attractions, dest) {
   var h = '';
 
   if (atts.length) {
-    var _attrIsNative = document.body.classList.contains('native-app');
     var _attrMeta = [];
     atts.forEach(function(a, idx) {
       var name = a.name || 'Attraction';
@@ -6231,28 +6237,17 @@ function renderAttractions(attractions, dest) {
       var linksHtml = '<div class="bls" style="margin-top:10px">'
         + (bookUrl ? '<a href="' + bookUrl + '" target="_blank" class="bl bl-featured">Booking.com</a>' : '')
         + '<a href="' + gygUrl + '" target="_blank" class="bl' + (bookUrl ? ' bl-vi' : ' bl-featured') + '" style="background:#BA5D00">GetYourGuide</a></div>';
-      if (_attrIsNative) {
-        // Photo-forward card (Airbnb-style): full-width photo, text below.
-        var pid = 'ta-photo-attr-' + idx;
-        h += '<div class="fc app-attr-card">';
-        h += '<div class="app-attr-photo" id="' + pid + '">🎡</div>';
-        h += '<div class="app-attr-body">';
-        h += '<strong style="font-size:17px;line-height:1.3">' + escapeHtml(name) + '</strong>';
-        if (metaLine) h += '<div style="font-size:12px;color:var(--muted);margin-top:3px">' + metaLine + '</div>';
-        if (desc) h += '<p style="font-size:14px;color:var(--body-text);margin-top:8px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
-        h += linksHtml + '</div></div>';
-        _attrMeta.push({ photoSlotId: pid, query: name + ' ' + dest });
-      } else {
-        h += '<div class="fc" style="padding:16px;margin-bottom:0">';
-        h += '<div style="display:flex;gap:14px;align-items:flex-start">';
-        h += '<div style="width:64px;height:64px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,var(--gold),#8a6d3b)">🎡</div>';
-        h += '<div style="flex:1;min-width:0">';
-        h += '<strong style="font-size:16px;line-height:1.3">' + escapeHtml(name) + '</strong>';
-        if (metaLine) h += '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + metaLine + '</div>';
-        if (desc) h += '<p style="font-size:13px;color:var(--body-text);margin-top:6px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
-        h += linksHtml;
-        h += '</div></div></div>';
-      }
+      // Photo-forward card (Airbnb-style): full-width TripAdvisor photo, text
+      // below — shared by app and website for parity.
+      var pid = 'ta-photo-attr-' + idx;
+      h += '<div class="fc app-attr-card">';
+      h += '<div class="app-attr-photo" id="' + pid + '">🎡</div>';
+      h += '<div class="app-attr-body">';
+      h += '<strong style="font-size:17px;line-height:1.3">' + escapeHtml(name) + '</strong>';
+      if (metaLine) h += '<div style="font-size:12px;color:var(--muted);margin-top:3px">' + metaLine + '</div>';
+      if (desc) h += '<p style="font-size:14px;color:var(--body-text);margin-top:8px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
+      h += linksHtml + '</div></div>';
+      _attrMeta.push({ photoSlotId: pid, query: name + ' ' + dest });
     });
   }
 
@@ -7059,6 +7054,8 @@ function appBuildGallery(photoEl, photos) {
   photoEl.style.background = 'none';
   photoEl.style.backgroundImage = 'none';
   photoEl.style.display = 'block';
+  photoEl.style.position = 'relative'; // so the absolutely-filled gallery is contained
+  photoEl.style.overflow = 'hidden';
   photoEl.innerHTML = '<div class="app-gal">'
     + '<div class="app-gal-track" onscroll="appGalSync(this)">' + imgs + '</div>'
     + '<div class="app-gal-dots">' + dots + '</div></div>';
