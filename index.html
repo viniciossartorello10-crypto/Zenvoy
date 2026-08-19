@@ -626,7 +626,8 @@ body.native-app #tab-itin{padding:0 !important}
   box-shadow:var(--app-shadow);margin-bottom:16px;overflow:hidden}
 .app-slot-card .lb{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
   color:var(--app-gold-deep);padding:16px 16px 0}
-.app-slot-card .ph{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;margin-top:12px;background:var(--app-surface-2)}
+.app-slot-card .ph{position:relative;width:100%;aspect-ratio:16/9;display:block;margin-top:12px;
+  background-size:cover;background-position:center;overflow:hidden}
 .app-slot-card .bd{padding:14px 16px 16px}
 .app-slot-card .nm{font-size:18px;font-weight:800;color:var(--app-text);line-height:1.28}
 .app-slot-card .ds{font-size:14px;color:var(--app-text-soft);line-height:1.5;margin-top:5px}
@@ -649,7 +650,7 @@ body.native-app .app-hotel-card{padding:0 !important;overflow:hidden}
   background-size:cover;background-position:center}
 .app-hotel-emoji{font-size:60px}
 /* Swipeable hotel photo gallery (exterior, rooms, pool…) with dot indicators. */
-.app-gal{position:relative;width:100%;height:100%;overflow:hidden}
+.app-gal{position:absolute;inset:0;overflow:hidden}
 .app-gal-track{display:flex;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;
   scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .app-gal-track::-webkit-scrollbar{display:none}
@@ -7067,7 +7068,7 @@ function appRenderItinerary() {
     window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false };
     cards += '<div class="app-slot-card" id="' + cid + '">'
       + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
-      + '<img class="ph" id="' + cid + '-ph" style="display:none" alt="">'
+      + '<div class="ph" id="' + cid + '-ph" style="display:none"></div>'
       + '<div class="bd"><div id="' + cid + '-content"></div>'
       + (canAlt
         ? '<div class="app-slot-alt"><button class="app-slot-altbtn" id="' + cid + '-altbtn" onclick="appSlotCycle(\'' + cid + '\')">'
@@ -7119,7 +7120,7 @@ function appSlotFill(cid, doEnrich) {
     else ind.style.display = 'none';
   }
   if (doEnrich) {
-    var ph = document.getElementById(cid + '-ph'); if (ph) { ph.style.display = 'none'; ph.src = ''; }
+    var ph = document.getElementById(cid + '-ph'); if (ph) { ph.style.display = 'none'; ph.innerHTML = ''; ph.style.background = ''; }
     appEnrichOne({ cid: cid, query: query, text: text, dest: dest, isFood: st.isFood });
   }
 }
@@ -7167,8 +7168,19 @@ function appEnrichOne(m) {
   if (!m.query) return;
   getTripAdvisorInfo(m.query + ' ' + m.dest, m.isFood ? 'restaurants' : 'attractions').then(function (info) {
     var phEl = document.getElementById(m.cid + '-ph');
-    if (info && appNameMatches(info.name, m.text)) {
-      if (info.photoUrl && phEl) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = info.photoUrl; phEl.style.display = 'block'; }
+    // Only show a photo when TripAdvisor genuinely matches this place — up to 5
+    // photos as a swipeable gallery, a single static image for one, and nothing
+    // at all when there's no match (no broken image, no placeholder).
+    if (info && appNameMatches(info.name, m.text) && phEl) {
+      var photos = (info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info.photoUrl ? [info.photoUrl] : []);
+      if (photos.length > 1 && typeof appBuildGallery === 'function') {
+        appBuildGallery(phEl, photos);
+        phEl.style.display = 'block';
+      } else if (photos.length === 1) {
+        phEl.innerHTML = '';
+        phEl.style.background = "url('" + photos[0] + "') center/cover";
+        phEl.style.display = 'block';
+      }
       var metaEl = document.getElementById(m.cid + '-meta');
       if (metaEl) {
         var parts = '';
@@ -7177,10 +7189,6 @@ function appEnrichOne(m) {
         metaEl.innerHTML = parts;
       }
       var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = info.webUrl;
-    } else if (phEl && m.query.length > 3) {
-      appUnsplash(m.query + ' ' + m.dest).then(function (url) {
-        if (url) { phEl.onerror = function () { phEl.style.display = 'none'; }; phEl.src = url; phEl.style.display = 'block'; }
-      });
     }
   });
 }
