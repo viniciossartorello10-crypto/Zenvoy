@@ -4996,30 +4996,18 @@ async function generatePlan() {
       });
     });
 
-    // Promise.all preserves input order, so the days come back already sorted.
-    var chunkResults = await Promise.all(chunkPromises);
-    var allDays = [];
-    var chunkWarnings = [];
-    chunkResults.forEach(function (r) {
-      if (r.days) {
-        allDays = allDays.concat(r.days);
-      } else {
-        chunkWarnings.push('Days '+r.rangeStart+'–'+r.rangeEnd);
-        allDays = allDays.concat(placeholderDaysFor(r.rangeStart, r.rangeEnd, overview.destination));
-      }
-    });
-
-    if (chunkWarnings.length) {
-      showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_partial_chunk.replace('{p}', chunkWarnings.join(', ')));
-    }
-
+    // The day-by-day itinerary is the slowest AI call, and only the Itinerary
+    // tab needs it — so it runs in the BACKGROUND (see below) while the traveler
+    // sees the destination, hotels, flights and cars in ~15-20s instead of ~50s.
     planData = overview;
     planData.genCurrency = currentCurrencyCode;
     planData.genRate = currentRate;
-    planData.days = allDays;
+    planData.days = [];
+    planData.daysLoading = true;
     planData.checkIn = dep;
     planData.checkOut = ret;
     planData.travelers = travelers;
+    var _activePlan = planData; // guard: a stale background result must not clobber a newer trip
 
     // Normalize AI-generated car data: the prompt schema asks for "price_day"
     // but the renderer (and the real Duffel path) use "price" — without this,
@@ -5062,6 +5050,25 @@ async function generatePlan() {
       planData.accommodations = realStays.concat(aiStays);
     }
     if (realCars && realCars.length) planData.cars = realCars;
+
+    // Background: assemble the day-by-day itinerary as its chunks land, then
+    // re-render the Itinerary tab. Guarded so a stale result (user started a new
+    // trip, or navigated home) can't overwrite the current one.
+    Promise.all(chunkPromises).then(function (chunkResults) {
+      if (_activePlan !== planData) return;
+      var allDays = [], chunkWarnings = [];
+      chunkResults.forEach(function (r) {
+        if (r.days) allDays = allDays.concat(r.days);
+        else { chunkWarnings.push('Days ' + r.rangeStart + '–' + r.rangeEnd); allDays = allDays.concat(placeholderDaysFor(r.rangeStart, r.rangeEnd, overview.destination)); }
+      });
+      _activePlan.days = allDays;
+      _activePlan.daysLoading = false;
+      if (chunkWarnings.length) showErrorBanner((TRANSLATIONS[appLang] || TRANSLATIONS.en).err_partial_chunk.replace('{p}', chunkWarnings.join(', ')));
+      if (typeof renderDays === 'function') renderDays(allDays, (typeof rhythm !== 'undefined' ? rhythm : 'balanced') || 'balanced', overview.destination);
+    }).catch(function (e) {
+      console.error('Day generation failed in background:', e);
+      if (_activePlan === planData) { _activePlan.daysLoading = false; if (typeof renderDays === 'function') renderDays([], 'balanced', overview.destination); }
+    });
 
     showPackageChooser(planData, travelers, total, days, from);
   } catch (e) {
@@ -5713,6 +5720,15 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
   return h;
 }
 
+// Shown in the Itinerary tab while the day-by-day plan is still generating in
+// the background (the rest of the trip is already on screen).
+function itinLoadingHtml() {
+  var msg = ({ pt: 'Montando seu roteiro dia a dia…', en: 'Building your day-by-day itinerary…', es: 'Armando tu itinerario día a día…', fr: 'Création de votre itinéraire jour par jour…', it: 'Creazione del tuo itinerario giorno per giorno…' })[appLang] || 'Building your day-by-day itinerary…';
+  return '<div style="text-align:center;padding:44px 20px;color:var(--muted,#8a93a3)">'
+    + '<div style="width:34px;height:34px;margin:0 auto 16px;border-radius:50%;border:3px solid rgba(201,169,110,.25);border-top-color:#C9A96E;animation:tin-spin 1s linear infinite"></div>'
+    + '<div style="font-size:15px">' + msg + '</div></div>';
+}
+
 function renderCurrentDay() {
   // In the native app the itinerary is drawn by appRenderItinerary(), which
   // replaces #tab-itin (so #dayCards no longer exists). Re-route there.
@@ -5729,7 +5745,7 @@ function renderCurrentDay() {
   var prevBtn = document.getElementById('dayPrevBtn');
   var nextBtn = document.getElementById('dayNextBtn');
 
-  if (!days.length) { dc.innerHTML = ''; if(label) label.textContent = ''; return; }
+  if (!days.length) { dc.innerHTML = (window.planData && window.planData.daysLoading) ? itinLoadingHtml() : ''; if(label) label.textContent = ''; return; }
 
   var d = days[currentDayIndex];
   var r = d[rk] || d.balanced || d.early_bird || {};
@@ -7085,7 +7101,7 @@ function appRenderItinerary() {
   if (!document.body.classList.contains('native-app')) return false;
   var itin = document.getElementById('tab-itin'); if (!itin) return true;
   var days = window._days || [];
-  if (!days.length) { itin.innerHTML = ''; return true; }
+  if (!days.length) { itin.innerHTML = (window.planData && window.planData.daysLoading) ? '<div class="app-itin-cards">' + itinLoadingHtml() + '</div>' : ''; return true; }
   var rk = window._rk || 'balanced', dest = window._dest || '';
   if (currentDayIndex >= days.length) currentDayIndex = 0;
   var d = days[currentDayIndex], r = d[rk] || d.balanced || d.early_bird || {};
