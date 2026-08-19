@@ -407,7 +407,8 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .app-home-center .app-logo.lg{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#F5F2EC;letter-spacing:1.5px;margin-top:-6px}
 .app-home-center .app-logo.lg span{color:var(--app-gold)}
 /* Rotating globe + orbiting plane, cloned from the website hero. */
-.app-home-globe{position:relative;width:250px;height:250px;max-width:66vw;max-height:66vw}
+.app-home-globe{position:relative;width:250px;height:250px;max-width:66vw;max-height:66vw;
+  display:flex;align-items:center;justify-content:center}
 .app-home-globe svg{width:100%;height:100%;overflow:visible}
 .app-home-tag{font-family:'Cormorant Garamond',serif;font-size:32px;line-height:1.1;color:#F5F2EC;margin-top:2px}
 .app-home-tag em{font-style:italic;color:var(--app-gold)}
@@ -532,6 +533,47 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 @keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .app-build-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--app-text)}
 .app-build-status{font-size:14px;color:var(--app-text-soft);min-height:20px;max-width:280px}
+/* ── Animated mascot (breathing body, blinking eyes, orbiting plane crown,
+   floating sparkles) — a living travel companion. Pure CSS, no libraries. ── */
+.mx{position:relative;width:var(--mx-sz,140px);height:var(--mx-sz,140px);flex-shrink:0;display:inline-block;
+  --mx-r:calc(var(--mx-sz,140px) * 0.42)}
+.mx-body{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  transform-origin:center bottom;animation:mx-breathe 3s ease-in-out infinite}
+.mx-img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,.28))}
+@keyframes mx-breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.04)}}
+/* Blinking eyes — navy ellipses over the eye positions, normally invisible. */
+.mx-eye{position:absolute;top:37%;width:8.5%;height:5%;background:#0d1730;border-radius:50%;opacity:0;z-index:3;
+  animation:mx-blink 5.4s infinite}
+.mx-eye-l{left:36.5%}.mx-eye-r{left:55%}
+@keyframes mx-blink{0%,92%,100%{opacity:0}94%,96.5%{opacity:.85}}
+/* Plane "crown" orbiting the head in a tilted ellipse, scaling for depth. */
+.mx-halo{position:absolute;left:0;right:0;top:-6%;height:60%;transform:rotate(-14deg);pointer-events:none}
+.mx-plane{position:absolute;top:50%;left:50%;width:22%;animation:mx-orbit 4s linear infinite}
+.mx-plane svg{width:100%;height:auto;display:block;filter:drop-shadow(0 0 3px rgba(201,169,110,.85))}
+@keyframes mx-orbit{
+  0%{transform:translate(calc(-50% + var(--mx-r)), -50%) scale(1);z-index:2}
+  12.5%{transform:translate(calc(-50% + var(--mx-r)*.707), calc(-50% - var(--mx-r)*.354)) scale(.85);z-index:1}
+  25%{transform:translate(-50%, calc(-50% - var(--mx-r)*.5)) scale(.7);z-index:1}
+  37.5%{transform:translate(calc(-50% - var(--mx-r)*.707), calc(-50% - var(--mx-r)*.354)) scale(.85);z-index:1}
+  50%{transform:translate(calc(-50% - var(--mx-r)), -50%) scale(1);z-index:2}
+  62.5%{transform:translate(calc(-50% - var(--mx-r)*.707), calc(-50% + var(--mx-r)*.354)) scale(1.1);z-index:5}
+  75%{transform:translate(-50%, calc(-50% + var(--mx-r)*.5)) scale(1.2);z-index:5}
+  87.5%{transform:translate(calc(-50% + var(--mx-r)*.707), calc(-50% + var(--mx-r)*.354)) scale(1.1);z-index:5}
+  100%{transform:translate(calc(-50% + var(--mx-r)), -50%) scale(1);z-index:2}
+}
+/* Floating gold sparkles on staggered, offset timings so they feel random. */
+.mx-spark{position:absolute;color:#C9A96E;font-size:calc(var(--mx-sz,140px)*0.11);line-height:1;opacity:0;pointer-events:none;
+  text-shadow:0 0 6px rgba(201,169,110,.6);animation:mx-spark 2.8s ease-in-out infinite}
+@keyframes mx-spark{0%{opacity:0;transform:translateY(4px) scale(.5)}25%{opacity:1}55%{opacity:.9;transform:translateY(-10px) scale(1)}100%{opacity:0;transform:translateY(-22px) scale(.5)}}
+.mx-spark-1{top:12%;left:4%;animation-delay:.2s;animation-duration:2.6s}
+.mx-spark-2{top:26%;right:2%;animation-delay:1.2s;animation-duration:3s}
+.mx-spark-3{bottom:20%;left:0;animation-delay:2s;animation-duration:2.8s}
+.mx-spark-4{top:6%;right:20%;animation-delay:1.6s;animation-duration:3.2s}
+/* Mini variant (chat avatar): just the breathing body — orbit/sparkles/blink off. */
+.mx.mini{--mx-sz:var(--mx-mini,40px)}
+.mx.mini .mx-halo,.mx.mini .mx-spark,.mx.mini .mx-eye{display:none}
+.mx.mini .mx-img{filter:none;border-radius:50%;background:var(--app-surface-2)}
+@media(prefers-reduced-motion:reduce){.mx-body,.mx-plane,.mx-spark,.mx-eye{animation:none !important}.mx-eye{opacity:0}}
 /* Animated origin→destination route on the loading screen. */
 .app-build-route{width:min(320px,82vw)}
 .app-build-route svg{width:100%;height:auto;display:block;overflow:visible}
@@ -940,11 +982,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
       </div>
       <!-- Building overlay (mascot + status), shown while the AI generates -->
       <div id="appBuilding" style="display:none">
-        <div class="app-build-mascot-wrap">
-          <div class="app-build-ring"></div>
-          <img class="app-build-mascot" src="assets/mascot.png" alt=""
-               onerror="this.style.display='none'">
-        </div>
+        <div class="app-build-mascot-wrap" id="appBuildMascot"></div>
         <div class="app-build-title" data-i18n="building_title">Building your trip...</div>
         <div class="app-build-route" id="appBuildRoute" style="display:none"></div>
         <div class="app-build-status" id="appBuildStatus"></div>
@@ -3801,9 +3839,25 @@ var ZENVOY_MASCOT_SVG = '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="
 // screen so the mascot is present while a trip is generated.
 function mascotAvatar(size) {
   if (document.body.classList.contains('native-app')) {
-    return '<img src="assets/mascot.png" alt="Zenvoy" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--app-surface-2)">';
+    return appMascot(size, 'mini');
   }
   return ZENVOY_MASCOT_SVG;
+}
+
+// Builds the animated mascot markup: breathing/floating body, blinking eyes, an
+// orbiting gold-plane "crown", and floating sparkles. All animation is CSS. Pass
+// cls 'mini' for a lightweight breathing-only avatar (chat/result header).
+function appMascot(size, cls) {
+  var sz = size || 140;
+  var path = (typeof _APP_PLANE_PATH !== 'undefined') ? _APP_PLANE_PATH : '';
+  var plane = '<svg viewBox="-18 -14 36 28" xmlns="http://www.w3.org/2000/svg"><path fill="#C9A96E" d="' + path + '"/></svg>';
+  return '<div class="mx ' + (cls || '') + '" style="--mx-sz:' + sz + 'px" aria-hidden="true">'
+    + '<div class="mx-halo"><div class="mx-plane">' + plane + '</div></div>'
+    + '<div class="mx-body"><img class="mx-img" src="assets/mascot.png" alt="" onerror="this.style.opacity=0">'
+    + '<span class="mx-eye mx-eye-l"></span><span class="mx-eye mx-eye-r"></span></div>'
+    + '<span class="mx-spark mx-spark-1">✦</span><span class="mx-spark mx-spark-2">✦</span>'
+    + '<span class="mx-spark mx-spark-3">✦</span><span class="mx-spark mx-spark-4">✦</span>'
+    + '</div>';
 }
 
 function renderChatMessages() {
@@ -6446,20 +6500,11 @@ function appBuildHome() {
     var wm = document.querySelector('.hero-worldmap-full svg');
     if (wm) map.appendChild(wm.cloneNode(true));
   }
+  // Animated mascot as the home hero — breathing, blinking, with the gold plane
+  // orbiting its head like a crown, over the cloned world-map background.
   var globe = document.getElementById('appHomeGlobe');
   if (globe && !globe.firstChild) {
-    var gsvg = document.querySelector('.hero-bg-anim svg');
-    if (gsvg) {
-      globe.appendChild(gsvg.cloneNode(true));
-      // Swap the orbiting ✈️ emoji for a custom, top-down SVG airplane — gold
-      // with a soft navy shadow for depth. Edited on the CLONE only, so the
-      // website hero keeps its original emoji untouched. The existing
-      // .hero-plane group already orbits the globe; the plane's nose points +x
-      // (the travel direction at the top of the clockwise orbit), so it always
-      // reads as flying forward along the route as the group rotates.
-      var pl = globe.querySelector('.hero-plane');
-      if (pl) pl.innerHTML = APP_PLANE_MARKUP;
-    }
+    globe.innerHTML = appMascot(176);
   }
   // Destination PHOTO cards, auto-scrolling; two copies so -50% loops seamlessly.
   var track = document.getElementById('appHomePhotosTrack');
@@ -6737,6 +6782,7 @@ function appWizFinish() {
   (s.interests && s.interests.length ? s.interests : ['Food']).forEach(function (v) { appWizInjectPill('interestPills', v, false); });
 
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
+  var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) mw.innerHTML = appMascot(122);
   appBuildRouteRender();
   appWizCycleStatus();
   if (typeof generatePlan === 'function') generatePlan();
