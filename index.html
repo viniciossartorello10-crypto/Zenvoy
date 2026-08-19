@@ -524,7 +524,16 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 
 /* Building overlay. */
 #appBuilding{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:18px;padding:40px;text-align:center;background:var(--app-bg)}
+  gap:18px;padding:40px;text-align:center;background:var(--app-bg);overflow:hidden}
+/* Faint world-map + route-glow backdrop behind the loading content. */
+.app-build-bg{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.13;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 42%, #000 55%, transparent 100%);
+          mask-image:radial-gradient(120% 90% at 50% 42%, #000 55%, transparent 100%)}
+.app-build-bg svg{width:150%;height:150%;object-fit:cover}
+#appBuilding::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 45% at 50% 40%, rgba(201,169,110,.10), transparent 70%)}
+#appBuilding > :not(.app-build-bg){position:relative;z-index:1}
 .app-build-mascot-wrap{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center}
 .app-build-ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(201,169,110,.25);
   border-top-color:var(--app-gold);animation:tin-spin 1s linear infinite}
@@ -982,6 +991,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
       </div>
       <!-- Building overlay (mascot + status), shown while the AI generates -->
       <div id="appBuilding" style="display:none">
+        <div class="app-build-bg" id="appBuildBg" aria-hidden="true"></div>
         <div class="app-build-mascot-wrap" id="appBuildMascot"></div>
         <div class="app-build-title" data-i18n="building_title">Building your trip...</div>
         <div class="app-build-route" id="appBuildRoute" style="display:none"></div>
@@ -4913,6 +4923,19 @@ async function generatePlan() {
     ]);
     var overview = Object.assign({}, overviewParts[0], overviewParts[1]);
 
+    // Kick off the real-data (Duffel) lookups NOW — all three in parallel with
+    // each other AND with the day-by-day generation below. They don't depend on
+    // the itinerary, so there's no reason to wait until after it (that made the
+    // total = days + flights + stays + cars, all in series). Each resolves to
+    // null on failure so the AI estimates remain the fallback; awaited once,
+    // just before the final plan is assembled.
+    var _duffelDest = to || overview.destination;
+    var duffelPromise = Promise.all([
+      searchDuffelFlights(from, _duffelDest, dep, ret, travelers, selectedFromAirport, selectedToAirport).catch(function (e) { console.error('Duffel flights skipped:', e); return null; }),
+      searchDuffelStays(_duffelDest, dep, ret, travelers).catch(function (e) { console.error('Duffel stays skipped:', e); return null; }),
+      searchDuffelCars(_duffelDest, dep, ret).catch(function (e) { console.error('Duffel cars skipped:', e); return null; })
+    ]);
+
     // CALL 2+ — the day-by-day itinerary, in chunks of up to 4 days per call.
     // This is the core of the product: every single day of the trip gets a
     // real morning/breakfast/lunch/afternoon/dinner/night plan with named places.
@@ -5024,51 +5047,20 @@ async function generatePlan() {
       });
     }
 
-    // Try to enrich with real flight offers from Duffel (optional — only if
-    // the person configured a token). Never blocks or breaks the trip if it
-    // fails; the AI's estimated flights remain as a fallback.
-    // Prefer the original typed/selected destination ("to") over the AI's
-    // returned destination string — "to" is guaranteed to match the CITIES
-    // list format exactly (it came from the autocomplete), while the AI may
-    // phrase the destination differently (e.g. "New York City, USA" instead
-    // of "New York, USA"), which would silently fail to match.
-    try {
-      var flightDestQuery = to || planData.destination;
-      var realFlights = await searchDuffelFlights(from, flightDestQuery, dep, ret, travelers, selectedFromAirport, selectedToAirport);
-      if (realFlights && realFlights.length) {
-        var aiFlights = (planData.flights || []).filter(function(f) { return !f.isReal; });
-        planData.flights = realFlights.concat(aiFlights);
-      }
-    } catch (flightErr) {
-      console.error('Duffel enrichment skipped:', flightErr);
+    // Merge the real Duffel results that have been loading in parallel with the
+    // itinerary. Real results lead (marked "LIVE"); AI estimates fill the rest
+    // out for variety. Any that failed are simply null and get skipped.
+    var duffelResults = await duffelPromise;
+    var realFlights = duffelResults[0], realStays = duffelResults[1], realCars = duffelResults[2];
+    if (realFlights && realFlights.length) {
+      var aiFlights = (planData.flights || []).filter(function (f) { return !f.isReal; });
+      planData.flights = realFlights.concat(aiFlights);
     }
-
-    // Same pattern for real hotel data — optional, never blocks the trip.
-    // Real Duffel results are merged in ALONGSIDE the AI's estimates rather
-    // than replacing them — the Duffel sandbox often only covers a handful
-    // of properties per city, so replacing entirely left travelers with too
-    // few options. Real ones are shown first (marked "LIVE"), AI estimates
-    // fill out the rest for variety.
-    try {
-      var stayDestQuery = to || planData.destination;
-      var realStays = await searchDuffelStays(stayDestQuery, dep, ret, travelers);
-      if (realStays && realStays.length) {
-        var aiStays = (planData.accommodations || []).filter(function(a) { return !a.isReal; });
-        planData.accommodations = realStays.concat(aiStays);
-      }
-    } catch (stayErr) {
-      console.error('Duffel Stays enrichment skipped:', stayErr);
+    if (realStays && realStays.length) {
+      var aiStays = (planData.accommodations || []).filter(function (a) { return !a.isReal; });
+      planData.accommodations = realStays.concat(aiStays);
     }
-
-    // Same pattern for real car rental data — optional, never blocks the trip.
-    // If unavailable, renderCars() falls back to external search links.
-    try {
-      var carDestQuery = to || planData.destination;
-      var realCars = await searchDuffelCars(carDestQuery, dep, ret);
-      if (realCars && realCars.length) planData.cars = realCars;
-    } catch (carErr) {
-      console.error('Duffel Cars enrichment skipped:', carErr);
-    }
+    if (realCars && realCars.length) planData.cars = realCars;
 
     showPackageChooser(planData, travelers, total, days, from);
   } catch (e) {
@@ -6783,6 +6775,8 @@ function appWizFinish() {
 
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
   var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) mw.innerHTML = appMascot(122);
+  var bg = document.getElementById('appBuildBg');
+  if (bg && !bg.firstChild) { var wm = document.querySelector('.hero-worldmap-full svg'); if (wm) bg.appendChild(wm.cloneNode(true)); }
   appBuildRouteRender();
   appWizCycleStatus();
   if (typeof generatePlan === 'function') generatePlan();
