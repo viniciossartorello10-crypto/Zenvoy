@@ -55,7 +55,7 @@
    badge were all hardcoded to near-black values that vanished against the
    dark card surface — every one of them is now a variable with a real dark
    value. --body-text sits at 9.9:1 on --card-bg, --muted at 6.5:1. */
-[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.11);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15);--gold-text:#E2C99A}
+[data-theme="dark"]{--page-bg:#12161F;--card-bg:#1B2130;--page-text:#F0EDE6;--muted:#9AA5B8;--body-text:#C3CCDB;--hairline:rgba(255,255,255,.14);--border:rgba(255,255,255,.20);--surface-tint:rgba(255,255,255,.06);--live:#6FD37A;--live-bg:rgba(111,211,122,.15);--gold-text:#E2C99A}
 body{font-family:'Inter',sans-serif;background:var(--page-bg);color:var(--page-text);transition:background .2s,color .2s}
 /* ── Mobile / native shell ──────────────────────────────────────
    Nothing on the page should scroll horizontally, and taps shouldn't flash the
@@ -346,7 +346,7 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
 /* ══ NATIVE APP SHELL — scoped under body.native-app (Capacitor only) ══ */
 body.native-app{
   --app-bg:#FFFFFF; --app-surface:#FFFFFF; --app-surface-2:#F6F7F9;
-  --app-text:#1A1D24; --app-text-soft:#6A7280; --app-line:#ECEEF1;
+  --app-text:#1A1D24; --app-text-soft:#6A7280; --app-line:rgba(0,0,0,.08);
   --app-navy:#0B0F1A; --app-gold:#C9A96E; --app-gold-deep:#7D6234;
   --app-nav-h:62px; --app-top-h:52px;
   background:var(--app-bg); color:var(--app-text); overflow:hidden;
@@ -355,7 +355,7 @@ body.native-app{
    ancestor, not the body itself. */
 html[data-theme="dark"] body.native-app{
   --app-bg:#12161F; --app-surface:#1B2130; --app-surface-2:#232B3A;
-  --app-text:#F0EDE6; --app-text-soft:#9AA5B8; --app-line:rgba(255,255,255,.10);
+  --app-text:#F0EDE6; --app-text-soft:#9AA5B8; --app-line:rgba(255,255,255,.14);
   --app-gold-deep:#E2C99A;
 }
 body.native-app > nav,
@@ -489,6 +489,20 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .tin-field input[type=date]{width:100%;min-width:0;box-sizing:border-box;padding:15px 14px !important;border-radius:14px !important;font-size:15px !important;
   border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
 .tin-datepair{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+/* Extra-destination rows (multi-city trips). */
+.tin-legs{display:flex;flex-direction:column;gap:10px}
+.tin-legs:not(:empty){margin-top:4px}
+.tin-leg{display:flex;align-items:center;gap:8px}
+.tin-leg-city{flex:1;min-width:0;padding:13px 14px !important;border-radius:14px !important;font-size:15px !important;
+  border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
+.tin-leg-days{display:flex;align-items:center;gap:6px;flex-shrink:0;font-size:13px;font-weight:700;color:var(--app-text-soft)}
+.tin-leg-days button{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--app-line);background:var(--app-surface);
+  color:var(--app-text);font-size:18px;line-height:1;cursor:pointer;flex-shrink:0}
+.tin-leg-days span{min-width:52px;text-align:center}
+.tin-leg-rm{width:30px;height:30px;border-radius:50%;border:none;background:transparent;color:var(--app-text-soft);
+  font-size:20px;line-height:1;cursor:pointer;flex-shrink:0}
+.tin-addleg{align-self:flex-start;margin-top:2px;padding:9px 15px;border-radius:999px;border:1px dashed var(--app-line);
+  background:transparent;color:var(--app-text-soft);font-size:13px;font-weight:600;cursor:pointer}
 .tin-surprise{align-self:flex-start;margin-top:9px;padding:8px 15px;border-radius:999px;border:1px solid var(--app-line);
   background:transparent;color:var(--app-text-soft);font-size:13px;font-weight:600;cursor:pointer}
 .tin-surprise.on{border-color:var(--app-gold);color:var(--app-gold-deep);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
@@ -3823,6 +3837,14 @@ function toggleFaqModal(show) {
 
 var chatHistory = []; // [{role:'user'|'assistant', content:''}]
 function toggleChatModal(show) {
+  // In the native app the chat's DOM (#chatMessages/#chatInput) was relocated
+  // into the bottom sheet, so the website modal is empty there — route to the
+  // sheet instead. This is the ONLY chat entry point from the home screen, so
+  // without this the "Fale com a IA" menu item opened a dead, empty modal.
+  if (show && document.body.classList.contains('native-app') && typeof appOpenSheet === 'function') {
+    appOpenSheet('chat');
+    return;
+  }
   document.getElementById('chatModalOverlay').style.display = show ? 'flex' : 'none';
   if (show && !chatHistory.length) {
     var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
@@ -6575,7 +6597,7 @@ var APP_WIZ = [
 function _wl(o) { return (o && (o[appLang] || o.en)) || ''; }
 
 function appWizStart() {
-  appWizState = { travelers: '2', stay: 'Any', budgetLevel: 'moderate', style: 'Adventure', interests: [], rhythm: 'balanced', notes: '' };
+  appWizState = { travelers: '2', stay: 'Any', budgetLevel: 'moderate', style: 'Adventure', interests: [], rhythm: 'balanced', notes: '', legs: [] };
   // Sensible default dates: today + a week out.
   var t = new Date(), r = new Date(); r.setDate(t.getDate() + 7);
   appWizState.dep = t.toISOString().split('T')[0];
@@ -6629,6 +6651,8 @@ function appWizRender(dir) {
       + '<div class="tin-search"><input id="tinTo" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.surprise ? '' : (appWizState.to || '')) + '" oninput="appWizTripSearch(\'to\')"></div>'
       + '<div class="tin-ac" id="tinAcTo"></div>'
       + '<button class="tin-surprise" onclick="appWizSurpriseTrip()">' + L.surprise + '</button></div>'
+      + '<div class="tin-legs" id="tinLegs"></div>'
+      + '<button type="button" class="tin-addleg" id="tinAddLeg" onclick="appWizAddLeg()">+ ' + (appLang === 'pt' ? 'Adicionar outro destino' : 'Add another destination') + '</button>'
       + '<div class="tin-datepair">'
       + '<div class="tin-field"><label>' + L.dep + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizTripValidate()"></div>'
       + '<div class="tin-field"><label>' + L.ret + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizTripValidate()"></div>'
@@ -6666,6 +6690,7 @@ function appWizRender(dir) {
     + '<div class="tin-q">' + escapeHtml(_wl(step.q)) + '</div>'
     + '<div class="tin-body">' + body + '</div></div></div>';
   stage.innerHTML = html;
+  if (step.type === 'trip') appWizRenderLegs();
 }
 
 function appWizPick(key, val, advance) {
@@ -6757,6 +6782,38 @@ function appWizPickTravelers(n) {
   if (box) Array.prototype.forEach.call(box.children, function (b) { b.classList.toggle('on', b.textContent === n); });
 }
 
+// ── Multi-destination legs on the trip screen ──
+var APP_MAX_LEGS = 2; // up to 2 EXTRA cities (3 total) — keeps the wizard tidy
+function appWizRenderLegs() {
+  var box = document.getElementById('tinLegs'); if (!box) return;
+  if (!appWizState.legs) appWizState.legs = [];
+  // A shared datalist gives each extra-city input native autocomplete.
+  if (!document.getElementById('tinCityList') && typeof CITIES !== 'undefined') {
+    var dl = document.createElement('datalist'); dl.id = 'tinCityList';
+    dl.innerHTML = CITIES.map(function (c) { return '<option value="' + escapeHtml(c.city + ', ' + c.country) + '">'; }).join('');
+    document.body.appendChild(dl);
+  }
+  var daysLbl = appLang === 'pt' ? 'dias' : 'days';
+  box.innerHTML = appWizState.legs.map(function (l, i) {
+    return '<div class="tin-leg">'
+      + '<input class="tin-leg-city" list="tinCityList" placeholder="' + (appLang === 'pt' ? 'Próximo destino…' : 'Next destination…') + '" value="' + escapeHtml(l.city || '') + '" oninput="appWizLegCity(' + i + ',this.value)">'
+      + '<div class="tin-leg-days"><button type="button" onclick="appWizLegDays(' + i + ',-1)">−</button><span>' + (l.days || 3) + ' ' + daysLbl + '</span><button type="button" onclick="appWizLegDays(' + i + ',1)">+</button></div>'
+      + '<button type="button" class="tin-leg-rm" onclick="appWizRemoveLeg(' + i + ')" aria-label="Remove">×</button>'
+      + '</div>';
+  }).join('');
+  var addBtn = document.getElementById('tinAddLeg');
+  if (addBtn) addBtn.style.display = appWizState.legs.length >= APP_MAX_LEGS ? 'none' : '';
+}
+function appWizAddLeg() {
+  if (!appWizState.legs) appWizState.legs = [];
+  if (appWizState.legs.length >= APP_MAX_LEGS) return;
+  appWizState.legs.push({ city: '', days: 3 });
+  appWizRenderLegs();
+}
+function appWizRemoveLeg(i) { appWizState.legs.splice(i, 1); appWizRenderLegs(); }
+function appWizLegCity(i, v) { if (appWizState.legs[i]) appWizState.legs[i].city = v; }
+function appWizLegDays(i, delta) { var l = appWizState.legs[i]; if (!l) return; l.days = Math.max(1, (l.days || 3) + delta); appWizRenderLegs(); }
+
 // Injects the chosen style/interests as hidden selected pills so getStyle()/
 // getInterests() (read by generatePlan) return the native selections verbatim.
 function appWizInjectPill(boxId, label, single) {
@@ -6783,6 +6840,11 @@ function appWizFinish() {
   setVal('depDate', s.dep || '');
   setVal('retDate', s.ret || '');
   setVal('travelers', (s.travelers || '2').replace('+', ''));
+  // Multi-destination: any extra legs with a city routes generatePlan() to the
+  // multi-city generator (it reads the global extraLegs array, city-first).
+  extraLegs = (s.legs || []).filter(function (l) { return l.city && l.city.trim(); })
+    .map(function (l) { return { city: l.city.trim(), days: l.days || 3, arriveDate: '', departDate: '' }; });
+  if (typeof mainDestDaysOverride !== 'undefined') mainDestDaysOverride = null;
   appWizSetSelect('stayType', s.stay || 'Any');
   appWizSetSelect('budgetLevel', s.budgetLevel || 'moderate');
   setVal('budget', APP_BUDGET_NUM[s.budgetLevel || 'moderate']);
@@ -7299,7 +7361,15 @@ function appOpenSheet(which) {
   var scrim = document.getElementById('appSheetScrim');
   if (scrim) scrim.style.display = 'block';
   if (sheet) { sheet.style.display = 'flex'; requestAnimationFrame(function () { sheet.classList.add('on'); }); }
-  if (which === 'chat' && typeof renderChatMessages === 'function') renderChatMessages();
+  if (which === 'chat') {
+    // Seed the friendly greeting so the assistant "speaks first" instead of the
+    // sheet opening blank (which reads as broken).
+    if (!chatHistory.length) {
+      var _cd = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+      chatHistory.push({ role: 'assistant', content: _cd.chat_greeting || TRANSLATIONS.en.chat_greeting });
+    }
+    if (typeof renderChatMessages === 'function') renderChatMessages();
+  }
 }
 function appCloseSheet() {
   document.querySelectorAll('.app-sheet').forEach(function (s) {
