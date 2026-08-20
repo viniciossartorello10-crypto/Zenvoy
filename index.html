@@ -833,6 +833,26 @@ body.native-app #appBottomNav{
 }
 .app-sheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 20px}
 #appSheetChat .app-sheet-body{display:flex;flex-direction:column}
+/* Zenvoy Premium sheet. */
+.prem-sub{font-size:15px;color:var(--app-text-soft);text-align:center;margin:2px 0 18px;line-height:1.4}
+.prem-benefits{display:flex;flex-direction:column;gap:14px}
+.prem-b{display:flex;gap:13px;align-items:flex-start}
+.prem-b-ic{font-size:24px;line-height:1.2;flex-shrink:0;width:30px;text-align:center}
+.prem-b-t{font-size:16px;font-weight:800;color:var(--app-text)}
+.prem-b-d{font-size:13px;color:var(--app-text-soft);line-height:1.45;margin-top:2px}
+.prem-price{text-align:center;margin:22px 0 4px;padding:16px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.05));border:1px solid var(--app-gold)}
+.prem-price-main{font-family:'Cormorant Garamond',serif;font-size:38px;color:var(--app-text);line-height:1}
+.prem-price-main span{font-family:'Inter',sans-serif;font-size:14px;color:var(--app-text-soft)}
+.prem-price-year{font-size:13px;font-weight:600;color:var(--app-gold-deep);margin-top:6px}
+.prem-cta{margin-top:20px}
+.prem-cta label{display:block;font-size:14px;font-weight:700;color:var(--app-text);margin-bottom:10px;text-align:center}
+.prem-form{display:flex;gap:8px}
+.prem-form input{flex:1;min-width:0;padding:14px 16px !important;border-radius:14px !important;font-size:15px !important;
+  border:1.5px solid var(--app-line) !important;background:var(--app-surface) !important;color:var(--app-text) !important}
+.prem-form button{flex-shrink:0;padding:0 20px;border:none;border-radius:14px;background:var(--app-gold);color:var(--app-navy);
+  font-size:15px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif}
+.prem-note{font-size:12px;color:var(--app-text-soft);text-align:center;margin-top:10px;opacity:.8}
 body.native-app #appChatBody #chatMessages{flex:1;overflow-y:auto;margin-bottom:10px;min-height:200px}
 body.native-app #appChatBody #chatInput{background:var(--app-surface-2) !important;color:var(--app-text) !important;border:1px solid var(--app-line) !important}
 
@@ -985,6 +1005,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
           <option value="es">🇪🇸 ES</option><option value="fr">🇫🇷 FR</option><option value="it">🇮🇹 IT</option>
         </select>
         <button class="app-theme-btn" id="appThemeBtn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
+        <button class="app-icon-btn" onclick="appOpenSheet('premium')" aria-label="Premium">👤</button>
       </div>
       <div class="app-home-center">
         <div class="app-logo lg">Zen <span>✈</span> Voy</div>
@@ -1104,7 +1125,19 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
       <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
     <div class="app-sheet-body" id="appChatBody"><!-- chat messages + input moved here at runtime --></div>
   </div>
+
+  <div class="app-sheet" id="appSheetPremium">
+    <div class="app-sheet-grip"></div>
+    <div class="app-sheet-head"><span>✨ Zenvoy <span style="color:var(--app-gold-deep)">Premium</span></span>
+      <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
+    <div class="app-sheet-body" id="appPremiumBody"></div>
+  </div>
 </div>
+
+<!-- Hidden form so Netlify detects & captures the Premium waitlist leads. -->
+<form name="premium-waitlist" netlify netlify-honeypot="bot-field" hidden>
+  <input type="email" name="email"><input type="text" name="lang"><input type="text" name="bot-field">
+</form>
 
 
 <nav style="position:absolute;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
@@ -1810,8 +1843,19 @@ var AFFILIATE_IDS = {
   booking: '',       // Booking.com Partner Hub > your property/affiliate ID -> aid=XXXXXX
   viator: '',        // Viator partner dashboard -> pid=PXXXXXXX
   getyourguide: '',  // GetYourGuide Partner Portal -> partner_id=XXXXX
-  discovercars: ''   // DiscoverCars affiliate dashboard -> a_aid=XXXXX
+  discovercars: '',  // DiscoverCars affiliate dashboard -> a_aid=XXXXX
+  tripadvisor: ''    // TripAdvisor affiliate (apply at tripadvisor.com/affiliates) -> partner id
 };
+
+// Wraps any TripAdvisor URL (a restaurant/attraction listing or a search) with
+// the affiliate tracking param once an ID is set in AFFILIATE_IDS.tripadvisor.
+// No-op until then, so links stay valid and unmonetized. NOTE: this is a
+// placeholder — confirm the exact param name/format TripAdvisor gives you on
+// approval (their program is separate from the Content API used for photos).
+function taAffUrl(url) {
+  if (!url || !AFFILIATE_IDS.tripadvisor) return url;
+  return withAffiliateParam(url, 'm', AFFILIATE_IDS.tripadvisor);
+}
 
 // ── AFFILIATE PROGRAMS (single source of truth) ──────────────────
 // Two approved Booking.com programs — Brazil and North America — selected by
@@ -5554,14 +5598,14 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
         var html = '<div class="ta-card">';
         html += '<div class="ta-card-top">' + parts.join(' · ') + '</div>';
         if (info.address) html += '<div class="ta-card-addr">📍 ' + escapeHtml(info.address) + '</div>';
-        if (info.webUrl && /^https?:\/\//i.test(info.webUrl)) html += '<a href="' + escapeHtml(info.webUrl) + '" target="_blank" class="ta-card-link">View on TripAdvisor →</a>';
+        if (info.webUrl && /^https?:\/\//i.test(info.webUrl)) html += '<a href="' + escapeHtml(taAffUrl(info.webUrl)) + '" target="_blank" class="ta-card-link">View on TripAdvisor →</a>';
         html += '</div>';
         badge.innerHTML = html;
         badge.classList.add('ta-card-wrap');
 
         // Also swap any plain "Reviews"/"TripAdvisor" link for the exact listing
         var link = document.getElementById(meta.slotId + '-link');
-        if (link && info.webUrl) link.href = info.webUrl;
+        if (link && info.webUrl) link.href = taAffUrl(info.webUrl);
       });
     }, idx * 200); // stagger by 200ms per item
   });
@@ -7349,7 +7393,7 @@ function appEnrichOne(m) {
         if (info.address) parts += '<div>📍 ' + escapeHtml(info.address) + '</div>';
         metaEl.innerHTML = parts;
       }
-      var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = info.webUrl;
+      var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = taAffUrl(info.webUrl);
     }
   });
 }
@@ -7389,8 +7433,9 @@ function appOnResultReady() {
 function appOpenSheet(which) {
   if (which === 'tips') appRenderTipsWeather();
   if (which === 'food') appRenderFoodGuide();
+  if (which === 'premium') appRenderPremium();
   var id = which === 'mala' ? 'appSheetMala' : which === 'tips' ? 'appSheetTips'
-    : which === 'food' ? 'appSheetFood' : 'appSheetChat';
+    : which === 'food' ? 'appSheetFood' : which === 'premium' ? 'appSheetPremium' : 'appSheetChat';
   var sheet = document.getElementById(id);
   var scrim = document.getElementById('appSheetScrim');
   if (scrim) scrim.style.display = 'block';
@@ -7412,6 +7457,46 @@ function appCloseSheet() {
   });
   var scrim = document.getElementById('appSheetScrim');
   if (scrim) scrim.style.display = 'none';
+}
+
+// ── Zenvoy Premium (lead-capture placeholder; no real auth yet) ──
+function appRenderPremium() {
+  var host = document.getElementById('appPremiumBody'); if (!host) return;
+  function t(o) { return o[appLang] || o.en; }
+  var benefits = [
+    { ic: '🧭', ti: { pt: 'Modo Concierge', en: 'Concierge Mode' }, de: { pt: '3 opções de viagem com comparação por IA ("qual é a melhor pra você e por quê"), com regenerações ilimitadas.', en: '3 trip options with AI comparison ("which is best for you and why"), unlimited regenerations.' } },
+    { ic: '🗓️', ti: { pt: 'Roteiro em tempo real', en: 'Real-time itinerary' }, de: { pt: 'Depois de escolher voo + hotel, gere um roteiro novo com os horários reais do voo e o check-in do hotel.', en: 'After adding a flight + hotel, generate a new itinerary using real flight times and hotel check-in.' } },
+    { ic: '🔔', ti: { pt: 'Alertas de preço', en: 'Price alerts' }, de: { pt: 'Salve uma viagem e receba um aviso quando voos ou hotéis baixarem de preço.', en: 'Save a trip and get notified when flights or hotels drop in price.' } },
+    { ic: '☁️', ti: { pt: 'Salvar & sincronizar', en: 'Save & sync trips' }, de: { pt: 'Salve roteiros ilimitados, acesse de qualquer dispositivo e compartilhe com seus companheiros de viagem.', en: 'Save unlimited itineraries, access from any device, share with travel companions.' } },
+    { ic: '📴', ti: { pt: 'Acesso offline', en: 'Offline access' }, de: { pt: 'Seu roteiro completo disponível mesmo sem internet.', en: 'Your full itinerary available even without an internet connection.' } }
+  ];
+  var h = '<div class="prem-sub">' + t({ pt: 'Desbloqueie o planejador de viagens definitivo.', en: 'Unlock the ultimate travel planner.' }) + '</div>';
+  h += '<div class="prem-benefits">' + benefits.map(function (b) {
+    return '<div class="prem-b"><span class="prem-b-ic">' + b.ic + '</span><div><div class="prem-b-t">' + escapeHtml(t(b.ti)) + '</div><div class="prem-b-d">' + escapeHtml(t(b.de)) + '</div></div></div>';
+  }).join('') + '</div>';
+  h += '<div class="prem-price"><div class="prem-price-main">R$ 9,90<span>/' + t({ pt: 'mês', en: 'mo' }) + '</span></div>'
+    + '<div class="prem-price-year">' + t({ pt: 'ou R$ 79,90/ano — R$ 6,65/mês, 33% de desconto', en: 'or R$ 79.90/year — R$ 6.65/mo, save 33%' }) + '</div></div>';
+  h += '<div class="prem-cta"><label>' + t({ pt: 'Seja o primeiro a saber quando o Premium chegar', en: 'Be the first to know when Premium launches' }) + '</label>'
+    + '<div class="prem-form"><input id="appPremiumEmail" type="email" inputmode="email" placeholder="' + t({ pt: 'Seu melhor email', en: 'Your best email' }) + '" onkeydown="if(event.key===\'Enter\')appPremiumNotify()">'
+    + '<button onclick="appPremiumNotify()">' + t({ pt: 'Avise-me', en: 'Notify me' }) + '</button></div>'
+    + '<div class="prem-note">' + t({ pt: 'Sem spam. Só um aviso quando lançar.', en: 'No spam. Just one heads-up at launch.' }) + '</div></div>';
+  host.innerHTML = h;
+}
+function appPremiumNotify() {
+  var inp = document.getElementById('appPremiumEmail');
+  var email = ((inp && inp.value) || '').trim();
+  if (!/.+@.+\..+/.test(email)) { if (inp) { inp.focus(); inp.style.borderColor = '#e0533d'; } return; }
+  // Netlify Forms capture (works once deployed; a 404 on localhost is harmless).
+  fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'form-name=premium-waitlist&email=' + encodeURIComponent(email) + '&lang=' + encodeURIComponent(appLang) }).catch(function () {});
+  try { localStorage.setItem('zenvoy_premium_waitlist', email); } catch (e) {}
+  if (typeof gtag === 'function') gtag('event', 'premium_waitlist_signup');
+  var host = document.getElementById('appPremiumBody'); if (!host) return;
+  var pt = appLang === 'pt';
+  host.innerHTML = '<div style="text-align:center;padding:44px 20px">'
+    + '<div style="font-size:52px">🎉</div>'
+    + '<div style="font-family:\'Cormorant Garamond\',serif;font-size:27px;color:var(--app-text);margin-top:12px">' + (pt ? 'Você está na lista!' : "You're on the list!") + '</div>'
+    + '<div style="font-size:14px;color:var(--app-text-soft);margin-top:8px;line-height:1.5">' + (pt ? 'Avisaremos assim que o Zenvoy Premium chegar.' : "We'll let you know the moment Zenvoy Premium launches.") + '</div></div>';
 }
 
 // Weather (5-day) + insider tips, rendered into the Tips & Weather sheet.
