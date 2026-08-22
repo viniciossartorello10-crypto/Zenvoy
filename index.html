@@ -186,6 +186,22 @@ h1 em{font-style:italic;color:var(--gold)}
 /* Tappable date trigger field (replaces the two native date inputs) */
 .date-trigger{width:100%;text-align:left;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);cursor:pointer;display:flex;align-items:center;gap:10px}
 .date-trigger .dt-ph{color:#aaa}
+/* Full-screen itinerary map */
+.im-overlay{position:fixed;inset:0;z-index:100000;background:var(--page-bg);display:none;flex-direction:column}
+.im-overlay.on{display:flex}
+.im-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--card-bg);flex-shrink:0;z-index:10}
+.im-close{width:38px;height:38px;flex-shrink:0;border:1px solid var(--border);background:var(--page-bg);border-radius:10px;font-size:16px;color:var(--page-text);cursor:pointer}
+.im-title{font-weight:800;font-size:16px;color:var(--page-text);flex:1}
+.im-daynav{display:flex;align-items:center;gap:8px}
+.im-daynav button{width:34px;height:34px;border:1px solid var(--border);background:var(--page-bg);border-radius:9px;font-size:15px;color:var(--page-text);cursor:pointer}
+.im-daynav button:disabled{opacity:.35;cursor:default}
+.im-daynav span{font-size:13px;font-weight:700;color:var(--page-text);min-width:56px;text-align:center}
+.im-canvas{flex:1;width:100%;background:#e8eef2;z-index:1}
+.im-legend{flex-shrink:0;max-height:34vh;overflow-y:auto;padding:10px 14px 16px;border-top:1px solid var(--border);background:var(--card-bg)}
+.im-legrow{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:13.5px;color:var(--page-text)}
+.im-legnum{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#1a1206;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+.im-pin{background:var(--gold);color:#1a1206;font-weight:800;border:2px solid #fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.im-hotel{font-size:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
 .ac-wrap{position:relative}
 input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
@@ -248,6 +264,19 @@ input::placeholder{color:#aaa}
 .dc-body{padding:18px}
 .dlabel{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text);margin-bottom:4px}
 .dth{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;margin-bottom:12px}
+/* Part 3: big bold DIA header + 3-dot menu + map button + geo chips */
+.day-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:relative}
+.dlabel-big{font-size:30px;font-weight:900;letter-spacing:.02em;color:var(--gold-text);line-height:1;font-family:'Inter',sans-serif}
+.day-date{font-size:12px;font-weight:600;color:var(--muted);margin-top:6px;text-transform:capitalize}
+.day-menu-btn{width:36px;height:36px;flex-shrink:0;border:1px solid var(--border);background:var(--card-bg);border-radius:10px;font-size:20px;line-height:1;color:var(--page-text);cursor:pointer;padding:0}
+.day-menu-btn:hover{border-color:var(--gold)}
+.day-menu{position:absolute;top:42px;right:0;z-index:60;flex-direction:column;min-width:210px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px;gap:2px}
+.day-menu button{display:block;width:100%;text-align:left;background:transparent;border:none;padding:11px 12px;border-radius:8px;font-size:14px;color:var(--page-text);cursor:pointer;font-family:'Inter',sans-serif}
+.day-menu button:hover{background:rgba(201,169,110,.12)}
+.itin-map-btn{display:inline-flex;align-items:center;gap:6px;margin:0 0 14px;padding:9px 16px;border:1px solid var(--gold);background:rgba(201,169,110,.10);color:var(--gold-text);border-radius:22px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.itin-map-btn:hover{background:rgba(201,169,110,.20)}
+.geo-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.geo-chip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;color:var(--body-text);background:var(--page-bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
@@ -2670,6 +2699,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
     flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
+    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
@@ -2732,6 +2762,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
+    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
@@ -2794,6 +2825,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
     flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
+    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
@@ -2856,6 +2888,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
     flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
+    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
@@ -2918,6 +2951,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
     flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
+    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
@@ -5231,7 +5265,9 @@ async function generatePlan() {
         '[{"day":'+rangeStart+',"theme":"specific, evocative theme naming the area/neighborhood (and \'Day Trip to X\' if applicable)","img_kw":"one keyword for image search",'+
         '"early_bird":{"morning":"7am — main activity at a specific named place (with a timing reason if genuinely useful), then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — '+curSym()+'X","lunch":"specific restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — '+curSym()+'X","night":"a named venue this destination is actually known for, then a follow-up"},'+
         '"balanced":{"morning":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","breakfast":"cafe name — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"compound suggestion at a named place, then a follow-up"},'+
-        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"the specific, locally-famous nightlife venue this destination is really known for (name it), then a late-night follow-up"}}]\n\n'+
+        '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"the specific, locally-famous nightlife venue this destination is really known for (name it), then a late-night follow-up"},'+
+        '"stops":[{"name":"exact real name of the day\'s FIRST main stop","slot":"morning","lat":<real latitude as a decimal number>,"lng":<real longitude as a decimal number>,"duration_min":<typical minutes a visitor spends there, e.g. 90>}, ... one entry IN VISIT ORDER for each of this day\'s main places across morning/afternoon/dinner/night (aim for 4-6 stops)]}]\n\n'+
+        'The "stops" array is REQUIRED and powers a map + distance view: give the genuine, approximate real-world latitude/longitude of each named place (your best knowledge is fine — these are famous, mappable places), ordered the way the traveler would actually visit them through the day. Use the balanced-rhythm places for the stops. Every lat/lng must be a plain decimal number (e.g. -22.9519, not a string).\n\n'+
         'Continue this pattern for every day from '+rangeStart+' to '+rangeEnd+' inclusive.\n\n'+
         'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.'
         + destIntelBlock(destIntel, overview.destination);
@@ -5920,7 +5956,7 @@ async function cycleSlotOptionForceNew(day, idx, slotLabel, dest, dayTheme, cate
   refreshSlotDom(day, idx, slotLabel, dest);
 }
 
-function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) {
+function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel, geoChips) {
   var key = slotKeyFor(day, idx);
   window._slotOptions[key] = { texts: [text], index: 0, category: null };
 
@@ -5937,7 +5973,9 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
     if (slotAttrUrl) h += '<a href="' + slotAttrUrl + '" target="_blank" class="bl bl-featured">Booking.com</a>';
     h += '<a href="' + withAffiliateParam('https://www.getyourguide.com/s/?q=' + encodeURIComponent((text.split(' at ')[1] || text.split('\u2014')[0] || text).split('.')[0].trim().slice(0,60)), 'partner_id', AFFILIATE_IDS.getyourguide) + '" target="_blank" class="bl bl-vi">' + dict.bl_book + '</a>';
   }
-  h += '</div></div>';
+  h += '</div>';
+  if (geoChips) h += geoChips;   // Part 3: distance-from-hotel / walk-to-next / duration
+  h += '</div>';
 
   // Swap arrows — let the traveler page through alternatives or fetch a new one
   // escapeJsAttr (not a plain quote-replace) — dest/dayTheme are free-text
@@ -5967,6 +6005,65 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
 
 // Shown in the Itinerary tab while the day-by-day plan is still generating in
 // the background (the rest of the trip is already on screen).
+// ── Itinerary geo helpers (Part 3): honest straight-line distances/times ──────
+// Coordinates come from the AI's per-day "stops" array (real lat/lng of each
+// named place). Reference "hotel" point is the city center from CITY_COORDS —
+// an explicit approximation (no per-hotel geocoding), matching the spec.
+function haversineKm(a, b) {
+  if (!a || !b || a[0] == null || b[0] == null) return null;
+  var R = 6371, toR = Math.PI / 180;
+  var dLat = (b[0] - a[0]) * toR, dLng = (b[1] - a[1]) * toR;
+  var la1 = a[0] * toR, la2 = b[0] * toR;
+  var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return R * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function fmtKm(km) {
+  if (km == null) return '';
+  var v = km < 10 ? km.toFixed(1) : Math.round(km).toString();
+  if ((appLang || 'en') !== 'en') v = v.replace('.', ',');   // PT/ES/FR/IT decimal comma
+  return v + ' km';
+}
+// Below ~1.8 km we call it walkable and show a walk time (~4.8 km/h); farther,
+// we show a rough drive/transit time (~22 km/h urban average) with a car icon.
+function travelChip(km) {
+  if (km == null) return '';
+  if (km <= 1.8) { var wm = Math.max(1, Math.round(km / 4.8 * 60)); return '🚶 ' + wm + ' min'; }
+  var dm = Math.max(1, Math.round(km / 22 * 60)); return '🚗 ' + dm + ' min';
+}
+function fmtDuration(min) {
+  if (!min || min < 1) return '';
+  var h = Math.floor(min / 60), m = Math.round(min % 60);
+  if (h && m) return '~' + h + 'h' + (m < 10 ? '0' + m : m);
+  if (h) return '~' + h + 'h';
+  return '~' + m + ' min';
+}
+// Build the localized distance/walk/duration chips row for one slot, given its
+// stop (matched by slot name) and the next stop in visit order. Returns '' when
+// the AI didn't provide coordinates for this slot (graceful degradation).
+function slotGeoChips(stop, nextStop, hotelRef) {
+  if (!stop || stop.lat == null) return '';
+  var L = ({ pt: { hotel: 'do seu hotel', next: 'até o próximo' }, en: { hotel: 'from your hotel', next: 'to next' }, es: { hotel: 'de tu hotel', next: 'al siguiente' }, fr: { hotel: 'de votre hôtel', next: 'au suivant' }, it: { hotel: 'dal tuo hotel', next: 'al prossimo' } })[appLang] || { hotel: 'from your hotel', next: 'to next' };
+  var pt = [stop.lat, stop.lng];
+  var chips = [];
+  var dh = hotelRef ? haversineKm(hotelRef, pt) : null;
+  if (dh != null) chips.push('<span class="geo-chip">📍 ' + fmtKm(dh) + ' ' + L.hotel + '</span>');
+  var dur = fmtDuration(stop.duration_min);
+  if (dur) chips.push('<span class="geo-chip">⏱️ ' + dur + '</span>');
+  if (nextStop && nextStop.lat != null) {
+    var dn = haversineKm(pt, [nextStop.lat, nextStop.lng]);
+    var tc = travelChip(dn);
+    if (tc) chips.push('<span class="geo-chip">' + tc + ' ' + L.next + '</span>');
+  }
+  return chips.length ? '<div class="geo-chips">' + chips.join('') + '</div>' : '';
+}
+// Resolve the ordered stops for a day and index them by slot name.
+function dayStopsIndex(dayObj) {
+  var stops = (dayObj && Array.isArray(dayObj.stops)) ? dayObj.stops.filter(function (s) { return s && s.lat != null && s.lng != null; }) : [];
+  var bySlot = {};
+  stops.forEach(function (s) { if (s.slot) bySlot[String(s.slot).toLowerCase()] = s; });
+  return { ordered: stops, bySlot: bySlot };
+}
+
 function itinLoadingHtml() {
   var msg = ({ pt: 'Montando seu roteiro dia a dia…', en: 'Building your day-by-day itinerary…', es: 'Armando tu itinerario día a día…', fr: 'Création de votre itinéraire jour par jour…', it: 'Creazione del tuo itinerario giorno per giorno…' })[appLang] || 'Building your day-by-day itinerary…';
   // Progressive Trip.com-style skeleton: a small spinner header + shimmering
@@ -6004,15 +6101,37 @@ function renderCurrentDay() {
 
   window._slotOptions = {}; // fresh per day render — alternatives don't carry over between days
 
-  var html = '<div class="dc"><div class="dc-body">';
-  html += '<div class="dlabel">Day '+d.day+'</div>';
-  html += '<div class="dth">'+escapeHtml(d.theme||'Exploration')+'</div>';
   var slotDict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var hotelRef = (typeof cityToCoords === 'function') ? cityToCoords(dest) : null;   // city-center proxy
+  var stopsIdx = dayStopsIndex(d);
+  var meta = dayMetaFor(currentDayIndex);
   var slots = [['Breakfast',r.breakfast,slotDict.slot_breakfast],['Morning',r.morning,slotDict.slot_morning],['Lunch',r.lunch,slotDict.slot_lunch],['Afternoon',r.afternoon,slotDict.slot_afternoon],['Dinner',r.dinner,slotDict.slot_dinner],['Night',r.night,slotDict.slot_night]];
+
+  var html = '<div class="dc"><div class="dc-body">';
+  // Big, bold DIA N header with a 3-dot menu (rename / change date / add to calendar).
+  html += '<div class="day-head">';
+  html += '<div class="day-head-l"><div class="dlabel-big">' + escapeHtml(dayHeaderLabel(currentDayIndex, d.day)) + '</div>';
+  if (meta && meta.date) html += '<div class="day-date">' + escapeHtml(rcFmtFull(meta.date)) + '</div>';
+  html += '</div>';
+  html += '<button class="day-menu-btn" aria-label="Day options" onclick="toggleDayMenu(event)">⋮</button>';
+  html += '<div class="day-menu" id="dayMenu" style="display:none">'
+    + '<button onclick="dayRename()">✏️ ' + slotDict.day_rename + '</button>'
+    + '<button onclick="dayChangeDate()">📅 ' + slotDict.day_changedate + '</button>'
+    + '<button onclick="dayAddToCalendar()">🗓️ ' + slotDict.day_addcal + '</button>'
+    + '</div>';
+  html += '</div>';
+  html += '<div class="dth">'+escapeHtml((meta && meta.name) ? meta.name : (d.theme||'Exploration'))+'</div>';
+  // "Ver no mapa" — only meaningful when the AI gave us stop coordinates.
+  if (stopsIdx.ordered.length) html += '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + slotDict.view_on_map + '</button>';
+
   var slotMeta = []; // collected so we can enrich with TripAdvisor data after the initial render
   slots.forEach(function(s, idx) {
     if (!s[1]) return;
-    html += buildSlotHtml(d.day, s[0], s[1], idx, dest, d.theme, s[2]);
+    var stop = stopsIdx.bySlot[s[0].toLowerCase()];
+    var nextStop = null;
+    if (stop) { var oi = stopsIdx.ordered.indexOf(stop); if (oi > -1 && oi < stopsIdx.ordered.length - 1) nextStop = stopsIdx.ordered[oi + 1]; }
+    var chips = slotGeoChips(stop, nextStop, hotelRef);
+    html += buildSlotHtml(d.day, s[0], s[1], idx, dest, d.theme, s[2], chips);
     var placeName = (s[1].split(' at ')[1] || s[1].split('—')[0] || s[1]).split('.')[0].trim().slice(0,60);
     var isFood = s[0]==='Dinner'||s[0]==='Lunch'||s[0]==='Breakfast';
     var taCategory = isFood ? 'restaurants' : 'attractions';
@@ -6026,6 +6145,52 @@ function renderCurrentDay() {
   if (prevBtn) { prevBtn.disabled = currentDayIndex === 0; prevBtn.style.opacity = currentDayIndex === 0 ? '.35' : '1'; prevBtn.style.cursor = currentDayIndex === 0 ? 'default' : 'pointer'; }
   if (nextBtn) { nextBtn.disabled = currentDayIndex === days.length-1; nextBtn.style.opacity = currentDayIndex === days.length-1 ? '.35' : '1'; nextBtn.style.cursor = currentDayIndex === days.length-1 ? 'default' : 'pointer'; }
 }
+
+// ── Day header helpers + 3-dot menu actions (Part 3) ─────────────────────────
+var DAY_WORD = { pt: 'DIA', en: 'DAY', es: 'DÍA', fr: 'JOUR', it: 'GIORNO' };
+// Per-day user overrides (custom name, custom date) live on the plan so they
+// reset with each new trip and never leak across generations.
+function dayMetaStore() { var p = window.planData; if (!p) return {}; if (!p._dayMeta) p._dayMeta = {}; return p._dayMeta; }
+function dayMetaFor(idx) { return dayMetaStore()[idx] || null; }
+function dayHeaderLabel(idx, dayNum) { return (DAY_WORD[appLang] || DAY_WORD.en) + ' ' + dayNum; }
+// Full localized date for the header (e.g. "qua, 10 de set.").
+function rcFmtFull(iso) {
+  if (!iso) return '';
+  var loc = (typeof RC_LOCALE !== 'undefined' && RC_LOCALE[appLang]) || 'en-US';
+  var p = iso.split('-');
+  return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short' });
+}
+// Default ISO date for a given day index, derived from the trip's check-in date.
+function dayDefaultDate(idx) {
+  var ci = window.planData && window.planData.checkIn; if (!ci) return '';
+  var p = ci.split('-'); var d = new Date(+p[0], +p[1] - 1, +p[2]); d.setDate(d.getDate() + idx);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function toggleDayMenu(ev) {
+  if (ev) ev.stopPropagation();
+  var m = document.getElementById('dayMenu'); if (!m) return;
+  var open = m.style.display !== 'none';
+  m.style.display = open ? 'none' : 'flex';
+  if (!open) setTimeout(function () { document.addEventListener('click', _closeDayMenuOnce); }, 0);
+}
+function _closeDayMenuOnce() { var m = document.getElementById('dayMenu'); if (m) m.style.display = 'none'; document.removeEventListener('click', _closeDayMenuOnce); }
+function dayRename() {
+  var cur = dayMetaFor(currentDayIndex); var d = (window._days || [])[currentDayIndex] || {};
+  var name = window.prompt((TRANSLATIONS[appLang] || TRANSLATIONS.en).day_rename + ':', (cur && cur.name) || d.theme || '');
+  if (name == null) return;
+  var store = dayMetaStore(); store[currentDayIndex] = store[currentDayIndex] || {}; store[currentDayIndex].name = name.trim();
+  renderCurrentDay();
+}
+function dayChangeDate() {
+  var cur = dayMetaFor(currentDayIndex);
+  var existing = (cur && cur.date) || dayDefaultDate(currentDayIndex);
+  if (typeof RangeCal === 'undefined') { var v = window.prompt('YYYY-MM-DD:', existing); if (v) { var st = dayMetaStore(); st[currentDayIndex] = st[currentDayIndex] || {}; st[currentDayIndex].date = v.trim(); renderCurrentDay(); } return; }
+  // Reuse the range calendar in single-date mode: pick one day, store it.
+  RangeCal.open({ start: existing, end: existing, onPick: function (s) {
+    var st = dayMetaStore(); st[currentDayIndex] = st[currentDayIndex] || {}; st[currentDayIndex].date = s; renderCurrentDay();
+  } });
+}
+function dayAddToCalendar() { if (typeof addDayToCalendar === 'function') addDayToCalendar(currentDayIndex); }
 
 function goToDay(delta) {
   var days = window._days || [];
@@ -7496,7 +7661,23 @@ function appRenderItinerary() {
   var slots = [['Breakfast', r.breakfast, dict.slot_breakfast], ['Morning', r.morning, dict.slot_morning],
     ['Lunch', r.lunch, dict.slot_lunch], ['Afternoon', r.afternoon, dict.slot_afternoon],
     ['Dinner', r.dinner, dict.slot_dinner], ['Night', r.night, dict.slot_night]];
-  var cards = '<div class="app-itin-cards"><div class="app-itin-daytitle">' + escapeHtml(d.theme || '') + '</div>';
+  // Part 3: big DIA header + 3-dot menu + geo chips + map button (native)
+  var hotelRef = (typeof cityToCoords === 'function') ? cityToCoords(dest) : null;
+  var stopsIdx = dayStopsIndex(d);
+  var meta = dayMetaFor(currentDayIndex);
+  var dhead = '<div class="day-head"><div class="day-head-l">'
+    + '<div class="dlabel-big">' + escapeHtml(dayHeaderLabel(currentDayIndex, d.day)) + '</div>'
+    + (meta && meta.date ? '<div class="day-date">' + escapeHtml(rcFmtFull(meta.date)) + '</div>' : '')
+    + '</div>'
+    + '<button class="day-menu-btn" aria-label="Day options" onclick="toggleDayMenu(event)">⋮</button>'
+    + '<div class="day-menu" id="dayMenu" style="display:none">'
+    + '<button onclick="dayRename()">✏️ ' + dict.day_rename + '</button>'
+    + '<button onclick="dayChangeDate()">📅 ' + dict.day_changedate + '</button>'
+    + '<button onclick="dayAddToCalendar()">🗓️ ' + dict.day_addcal + '</button>'
+    + '</div></div>';
+  var cards = '<div class="app-itin-cards">' + dhead
+    + '<div class="app-itin-daytitle">' + escapeHtml((meta && meta.name) ? meta.name : (d.theme || '')) + '</div>'
+    + (stopsIdx.ordered.length ? '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + dict.view_on_map + '</button>' : '');
   var dayTheme = d.theme || '';
   window._appSlotAlt = {}; // fresh per render — alternatives don't carry between days/rhythms
   slots.forEach(function (s, idx) {
@@ -7504,7 +7685,9 @@ function appRenderItinerary() {
     var isFood = s[0] === 'Breakfast' || s[0] === 'Lunch' || s[0] === 'Dinner';
     var cid = 'app-slot-' + idx;
     var canAlt = s[0] !== 'Night'; // night just shows the single best pick
-    window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false };
+    var _stop = stopsIdx.bySlot[s[0].toLowerCase()], _next = null;
+    if (_stop) { var _oi = stopsIdx.ordered.indexOf(_stop); if (_oi > -1 && _oi < stopsIdx.ordered.length - 1) _next = stopsIdx.ordered[_oi + 1]; }
+    window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false, chips: slotGeoChips(_stop, _next, hotelRef) };
     cards += '<div class="app-slot-card" id="' + cid + '">'
       + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
       + '<div class="ph" id="' + cid + '-ph" style="display:none"></div>'
@@ -7549,6 +7732,7 @@ function appSlotFill(cid, doEnrich) {
     el.innerHTML = '<div class="nm">' + escapeHtml(nameLine) + '</div>'
       + (descLine ? '<div class="ds">' + escapeHtml(descLine) + '</div>' : '')
       + (priceLine ? '<div class="meta">🎟️ ' + escapeHtml(priceLine) + '</div>' : '')
+      + (st.chips || '')
       + '<div class="meta" id="' + cid + '-meta"></div>'
       + '<div class="acts"><a class="ta" id="' + cid + '-ta" href="' + taUrl + '" target="_blank">TripAdvisor →</a>'
       + '<a class="mp" href="' + mapsUrl + '" target="_blank">📍 Maps →</a></div>';
@@ -7817,6 +8001,79 @@ async function appShareTrip() {
   if (typeof printItinerary === 'function') printItinerary(); // web fallback → Save as PDF
 }
 
+// ── Add to calendar (Part 3): build an .ics for one day's activities ─────────
+// Website → downloads the .ics (opens in the OS calendar app). Android app →
+// opens the native share sheet so the file/text can be sent to Google Calendar.
+function _icsEsc(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+function _icsDT(iso, hh, mm) { var p = iso.split('-'); return p[0] + p[1] + p[2] + 'T' + String(hh).padStart(2, '0') + String(mm).padStart(2, '0') + '00'; }
+function _addMin(hh, mm, add) { var t = hh * 60 + mm + add; return [Math.floor(t / 60) % 24, t % 60]; }
+function buildDayIcs(idx) {
+  var days = window._days || (window.planData && window.planData.days) || [];
+  var d = days[idx]; if (!d) return null;
+  var rk = window._rk || 'balanced';
+  var r = d[rk] || d.balanced || d.early_bird || {};
+  var dateIso = (dayMetaFor(idx) && dayMetaFor(idx).date) || dayDefaultDate(idx) || (window.planData && window.planData.checkIn);
+  if (!dateIso) return null;
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var stopsIdx = dayStopsIndex(d);
+  // Default clock time + typical minutes per slot; overridden by a stop's duration_min.
+  var plan = [['Breakfast', r.breakfast, dict.slot_breakfast, 8, 0, 60], ['Morning', r.morning, dict.slot_morning, 10, 0, 120],
+    ['Lunch', r.lunch, dict.slot_lunch, 13, 0, 75], ['Afternoon', r.afternoon, dict.slot_afternoon, 15, 0, 150],
+    ['Dinner', r.dinner, dict.slot_dinner, 19, 30, 90], ['Night', r.night, dict.slot_night, 21, 30, 120]];
+  var dest = window._dest || (window.planData && window.planData.destination) || '';
+  var stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  var dayName = (dayMetaFor(idx) && dayMetaFor(idx).name) || d.theme || '';
+  var out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Zenvoy//Itinerary//EN', 'CALSCALE:GREGORIAN'];
+  plan.forEach(function (s, i) {
+    if (!s[1]) return;
+    var stop = stopsIdx.bySlot[s[0].toLowerCase()];
+    var dur = (stop && stop.duration_min) ? stop.duration_min : s[5];
+    var end = _addMin(s[3], s[4], dur);
+    var summary = s[2] + ' — ' + (dayName || dest);
+    out.push('BEGIN:VEVENT');
+    out.push('UID:zenvoy-' + dateIso + '-' + i + '@zenvoytravel');
+    out.push('DTSTAMP:' + stamp);
+    out.push('DTSTART:' + _icsDT(dateIso, s[3], s[4]));
+    out.push('DTEND:' + _icsDT(dateIso, end[0], end[1]));
+    out.push('SUMMARY:' + _icsEsc(summary));
+    out.push('DESCRIPTION:' + _icsEsc(String(s[1]) + (dest ? '\n' + dest : '')));
+    if (stop && stop.lat != null) out.push('GEO:' + stop.lat + ';' + stop.lng);
+    out.push('END:VEVENT');
+  });
+  out.push('END:VCALENDAR');
+  return out.join('\r\n');
+}
+async function addDayToCalendar(idx) {
+  var ics = buildDayIcs(idx);
+  if (!ics) { alert((TRANSLATIONS[appLang] || TRANSLATIONS.en).day_addcal); return; }
+  var fname = 'zenvoy-dia-' + (idx + 1) + '.ics';
+  // Native app: open the share sheet (Google Calendar, email, etc.).
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) {
+      var dataUrl = 'data:text/calendar;base64,' + btoa(unescape(encodeURIComponent(ics)));
+      try {
+        await window.Capacitor.Plugins.Share.share({ title: 'Zenvoy', url: dataUrl, dialogTitle: (TRANSLATIONS[appLang] || TRANSLATIONS.en).day_addcal });
+        return;
+      } catch (inner) {
+        // Some targets reject data: URLs — fall back to sharing the text.
+        await window.Capacitor.Plugins.Share.share({ title: 'Zenvoy', text: ics, dialogTitle: (TRANSLATIONS[appLang] || TRANSLATIONS.en).day_addcal });
+        return;
+      }
+    }
+  } catch (e) { if (e && /abort|cancel/i.test((e.name || '') + (e.message || ''))) return; }
+  // Website: download the .ics file.
+  try {
+    var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = fname;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  } catch (e2) {
+    // Last resort: navigator.share the text.
+    if (navigator.share) { try { await navigator.share({ title: 'Zenvoy', text: ics }); } catch (e3) {} }
+  }
+}
+
 // ── Draggable cart ball (snaps to nearest corner) ──
 function appInitCartBall() {
   var ball = document.getElementById('appCartBall');
@@ -8042,6 +8299,85 @@ function webSyncDateTrigger() {
   else trig.innerHTML = '📅 <span class="dt-ph">' + t.pick_start + '</span>';
 }
 
+// ── Itinerary map (Part 3): Leaflet + OpenStreetMap, lazy-loaded on first open ─
+var LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+var _leafletLoading = null, _imMap = null, _imLayers = [];
+function _loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (_leafletLoading) return _leafletLoading;
+  _leafletLoading = new Promise(function (resolve, reject) {
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = LEAFLET_CSS; document.head.appendChild(css);
+    var s = document.createElement('script'); s.src = LEAFLET_JS;
+    s.onload = function () { resolve(); };
+    s.onerror = function () { reject(new Error('leaflet load failed')); };
+    document.head.appendChild(s);
+  });
+  return _leafletLoading;
+}
+function openItinMap() {
+  var ov = document.getElementById('itinMapOverlay'); if (!ov) return;
+  ov.classList.add('on');
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  document.getElementById('imTitle').textContent = dict.map_title || 'Route map';
+  _loadLeaflet().then(function () {
+    if (!_imMap) {
+      _imMap = L.map('itinMapCanvas', { zoomControl: true, attributionControl: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, attribution: '© OpenStreetMap'
+      }).addTo(_imMap);
+    }
+    setTimeout(function () { _imMap.invalidateSize(); renderItinMap(); }, 60);
+  }).catch(function () {
+    document.getElementById('itinMapCanvas').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Map unavailable offline.</div>';
+  });
+}
+function closeItinMap() { var ov = document.getElementById('itinMapOverlay'); if (ov) ov.classList.remove('on'); }
+function itinMapDay(delta) {
+  var days = window._days || [];
+  var n = currentDayIndex + delta;
+  if (n < 0 || n >= days.length) return;
+  currentDayIndex = n;
+  renderItinMap();
+  // keep the underlying itinerary tab in sync
+  if (typeof renderCurrentDay === 'function' && document.getElementById('dayCards')) renderCurrentDay();
+  if (document.body.classList.contains('native-app') && typeof appRenderItinerary === 'function') appRenderItinerary();
+}
+function renderItinMap() {
+  if (!_imMap || !window.L) return;
+  var days = window._days || [];
+  var d = days[currentDayIndex]; if (!d) return;
+  var dest = window._dest || (window.planData && window.planData.destination) || '';
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var stops = dayStopsIndex(d).ordered;
+  // Clear previous layers
+  _imLayers.forEach(function (l) { _imMap.removeLayer(l); }); _imLayers = [];
+  var pts = [];
+  // Hotel marker (city-center proxy)
+  var hotel = (typeof cityToCoords === 'function') ? cityToCoords(dest) : null;
+  if (hotel) {
+    var hIcon = L.divIcon({ className: '', html: '<div class="im-hotel">🏨</div>', iconSize: [28, 28], iconAnchor: [14, 14] });
+    var hm = L.marker(hotel, { icon: hIcon }).addTo(_imMap); _imLayers.push(hm); pts.push(hotel);
+  }
+  // Numbered stop pins + connecting line
+  var line = [];
+  stops.forEach(function (s, i) {
+    var pt = [s.lat, s.lng];
+    var icon = L.divIcon({ className: '', html: '<div class="im-pin">' + (i + 1) + '</div>', iconSize: [28, 28], iconAnchor: [14, 14] });
+    var m = L.marker(pt, { icon: icon }).addTo(_imMap);
+    m.bindPopup('<b>' + (i + 1) + '. ' + (s.name || '') + '</b>');
+    _imLayers.push(m); pts.push(pt); line.push(pt);
+  });
+  if (line.length > 1) { var pl = L.polyline(line, { color: '#C9A96E', weight: 3, opacity: .85, dashArray: '6,6' }).addTo(_imMap); _imLayers.push(pl); }
+  if (pts.length) _imMap.fitBounds(pts, { padding: [50, 50], maxZoom: 15 });
+  // Day nav label + legend
+  document.getElementById('imDayLbl').textContent = (dict.app_cat_itin === 'Roteiro' || appLang === 'pt' ? 'Dia' : 'Day') + ' ' + (currentDayIndex + 1);
+  document.getElementById('imPrev').disabled = currentDayIndex === 0;
+  document.getElementById('imNext').disabled = currentDayIndex === days.length - 1;
+  var leg = document.getElementById('imLegend');
+  leg.innerHTML = stops.map(function (s, i) { return '<div class="im-legrow"><span class="im-legnum">' + (i + 1) + '</span><span>' + escapeHtml(s.name || '') + '</span></div>'; }).join('');
+}
+
 appInitShell();
 
 </script>
@@ -8060,6 +8396,21 @@ appInitShell();
       <button type="button" class="rc-done" id="rcDone" onclick="RangeCal.confirm()" disabled>Done</button>
     </div>
   </div>
+</div>
+
+<!-- Full-screen itinerary map (Leaflet + OpenStreetMap), shared by website + app -->
+<div class="im-overlay" id="itinMapOverlay">
+  <div class="im-head">
+    <button class="im-close" onclick="closeItinMap()" aria-label="Close">✕</button>
+    <div class="im-title" id="imTitle">Route map</div>
+    <div class="im-daynav">
+      <button id="imPrev" onclick="itinMapDay(-1)" aria-label="Previous day">←</button>
+      <span id="imDayLbl">Day 1</span>
+      <button id="imNext" onclick="itinMapDay(1)" aria-label="Next day">→</button>
+    </div>
+  </div>
+  <div class="im-canvas" id="itinMapCanvas"></div>
+  <div class="im-legend" id="imLegend"></div>
 </div>
 
 </body></html>
