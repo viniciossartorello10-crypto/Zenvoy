@@ -221,6 +221,28 @@ h1 em{font-style:italic;color:var(--gold)}
 .prem-cta2 input{width:100%;padding:13px 15px;border:1px solid var(--border);border-radius:12px;font-size:15px;background:var(--page-bg);color:var(--page-text);font-family:'Inter',sans-serif}
 .prem-cta2 button{width:100%;padding:14px;border:none;border-radius:12px;background:var(--gold);color:#1a1206;font-weight:800;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif}
 .prem-note2{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
+/* Post-booking Overview page mockup (vision placeholder) */
+.ovm-overlay{position:fixed;inset:0;z-index:100002;background:var(--page-bg);display:none;overflow-y:auto}
+.ovm-overlay.on{display:block}
+.ovm-shell{max-width:900px;margin:0 auto;min-height:100%}
+.ovm-hero{position:relative;height:230px;background:linear-gradient(135deg,#1a2235,#0b0f1a);display:flex;align-items:flex-end;background-size:cover;background-position:center}
+.ovm-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,15,26,.85),rgba(11,15,26,.15))}
+.ovm-hero-txt{position:relative;padding:22px 24px;color:#fff;z-index:2}
+.ovm-hero-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;line-height:1.05}
+.ovm-hero-sub{font-size:14px;opacity:.9;margin-top:4px}
+.ovm-close{position:absolute;top:16px;left:16px;z-index:3;width:38px;height:38px;border:none;background:rgba(0,0,0,.4);color:#fff;border-radius:10px;font-size:16px;cursor:pointer}
+.ovm-badge{position:absolute;top:18px;right:18px;z-index:3;background:var(--gold);color:#1a1206;font-weight:800;font-size:11px;letter-spacing:.08em;padding:5px 10px;border-radius:20px}
+.ovm-tabs{display:flex;gap:4px;overflow-x:auto;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card-bg);position:sticky;top:0;z-index:5}
+.ovm-tab{flex-shrink:0;padding:9px 16px;border:none;background:transparent;color:var(--muted);font-size:14px;font-weight:700;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.ovm-tab.on{background:var(--gold);color:#1a1206}
+.ovm-body{padding:20px 22px 40px}
+.ovm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.ovm-card{border:1px solid var(--border);border-radius:16px;padding:18px;background:var(--card-bg)}
+.ovm-card-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ovm-card-val{font-size:18px;font-weight:700;color:var(--page-text);line-height:1.3}
+.ovm-card-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.ovm-soon{text-align:center;padding:56px 20px;color:var(--muted)}
+.ovm-soon-ic{font-size:44px}
 .ac-wrap{position:relative}
 input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
@@ -1301,6 +1323,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     </div>
     <button onclick="toggleSideMenu(false);toggleAboutModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_about">✦ Quem somos</button>
     <button onclick="toggleSideMenu(false);startNewTrip()" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_plan">✈ Planeje sua viagem</button>
+    <button onclick="toggleSideMenu(false);openOverviewMockup()" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_overview">🧳 Minha viagem (prévia)</button>
     <button onclick="toggleSideMenu(false);toggleChatModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_chat">💬 Fale com a IA</button>
     <button onclick="toggleSideMenu(false);toggleHowModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_how">⚙ Como funciona</button>
     <button onclick="toggleSideMenu(false);toggleFaqModal(true)" style="text-align:left;background:none;border:none;color:#fff;font-size:15px;padding:12px 8px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;border-bottom:1px solid rgba(255,255,255,.08)" data-i18n="menu_faq">❓ Perguntas frequentes</button>
@@ -2753,7 +2776,7 @@ var TRANSLATIONS = {
     cap_title: 'Be first to travel smarter', cap_subtitle: 'Free forever for founding members. No credit card needed.',
     ph_email: 'your@email.com', cap_btn: 'Get early access', cap_success: "🎉 You're on the list!",
     change_key_btn: '🔑 Change key',
-    menu_title: 'Menu', menu_about: '✦ About us', menu_plan: '✈ Plan your trip', menu_chat: '💬 Talk to the AI', menu_how: '⚙ How it works', menu_faq: '❓ FAQ', menu_contact: '✉ Contact',
+    menu_title: 'Menu', menu_about: '✦ About us', menu_plan: '✈ Plan your trip', menu_overview: '🧳 My trip (preview)', menu_chat: '💬 Talk to the AI', menu_how: '⚙ How it works', menu_faq: '❓ FAQ', menu_contact: '✉ Contact',
     about_title: 'About us', about_body: 'Zenvoy was born from a simple idea: planning a trip shouldn\'t mean opening ten different tabs. We\'re an AI-powered travel platform that brings flights, stays, itineraries and local recommendations together in one place — built for travelers who\'d rather spend time enjoying the trip than organizing it.',
     how_title: 'How it works',
     how_step1: '<strong style="color:#fff">1. Tell us about your trip</strong><br>Destination, dates, budget and style — the AI builds a complete itinerary in seconds.',
@@ -2816,7 +2839,7 @@ var TRANSLATIONS = {
     cap_title: 'Seja o primeiro a viajar de forma mais inteligente', cap_subtitle: 'Grátis para sempre para membros fundadores. Sem cartão de crédito.',
     ph_email: 'seu@email.com', cap_btn: 'Garantir acesso antecipado', cap_success: '🎉 Você está na lista!',
     change_key_btn: '🔑 Trocar chave',
-    menu_title: 'Menu', menu_about: '✦ Quem somos', menu_plan: '✈ Planeje sua viagem', menu_chat: '💬 Fale com a IA', menu_how: '⚙ Como funciona', menu_faq: '❓ Perguntas frequentes', menu_contact: '✉ Contato',
+    menu_title: 'Menu', menu_about: '✦ Quem somos', menu_plan: '✈ Planeje sua viagem', menu_overview: '🧳 Minha viagem (prévia)', menu_chat: '💬 Fale com a IA', menu_how: '⚙ Como funciona', menu_faq: '❓ Perguntas frequentes', menu_contact: '✉ Contato',
     about_title: 'Quem somos', about_body: 'A Zenvoy nasceu de uma ideia simples: planejar uma viagem não devia significar abrir dez abas diferentes. Somos uma plataforma de viagem com inteligência artificial que reúne voos, hospedagem, roteiro e recomendações locais num só lugar — pensado para viajantes que querem gastar tempo aproveitando a viagem, não organizando ela.',
     how_title: 'Como funciona',
     how_step1: '<strong style="color:#fff">1. Conte sua viagem</strong><br>Destino, datas, orçamento e estilo — a IA monta um roteiro completo em segundos.',
@@ -2879,7 +2902,7 @@ var TRANSLATIONS = {
     cap_title: 'Sé el primero en viajar de forma más inteligente', cap_subtitle: 'Gratis para siempre para miembros fundadores. Sin tarjeta de crédito.',
     ph_email: 'tu@email.com', cap_btn: 'Obtener acceso anticipado', cap_success: '🎉 ¡Estás en la lista!',
     change_key_btn: '🔑 Cambiar clave',
-    menu_title: 'Menú', menu_about: '✦ Quiénes somos', menu_plan: '✈ Planea tu viaje', menu_chat: '💬 Habla con la IA', menu_how: '⚙ Cómo funciona', menu_faq: '❓ Preguntas frecuentes', menu_contact: '✉ Contacto',
+    menu_title: 'Menú', menu_about: '✦ Quiénes somos', menu_plan: '✈ Planea tu viaje', menu_overview: '🧳 Mi viaje (vista previa)', menu_chat: '💬 Habla con la IA', menu_how: '⚙ Cómo funciona', menu_faq: '❓ Preguntas frecuentes', menu_contact: '✉ Contacto',
     about_title: 'Quiénes somos', about_body: 'Zenvoy nació de una idea simple: planear un viaje no debería significar abrir diez pestañas diferentes. Somos una plataforma de viajes con inteligencia artificial que reúne vuelos, alojamiento, itinerario y recomendaciones locales en un solo lugar — pensada para viajeros que prefieren disfrutar el viaje en vez de organizarlo.',
     how_title: 'Cómo funciona',
     how_step1: '<strong style="color:#fff">1. Cuéntanos tu viaje</strong><br>Destino, fechas, presupuesto y estilo — la IA arma un itinerario completo en segundos.',
@@ -2942,7 +2965,7 @@ var TRANSLATIONS = {
     cap_title: 'Soyez le premier à voyager plus intelligemment', cap_subtitle: 'Gratuit pour toujours pour les membres fondateurs. Aucune carte de crédit requise.',
     ph_email: 'votre@email.com', cap_btn: 'Obtenir un accès anticipé', cap_success: '🎉 Vous êtes sur la liste !',
     change_key_btn: '🔑 Changer la clé',
-    menu_title: 'Menu', menu_about: '✦ Qui sommes-nous', menu_plan: '✈ Planifiez votre voyage', menu_chat: '💬 Parlez à l\'IA', menu_how: '⚙ Comment ça marche', menu_faq: '❓ Questions fréquentes', menu_contact: '✉ Contact',
+    menu_title: 'Menu', menu_about: '✦ Qui sommes-nous', menu_plan: '✈ Planifiez votre voyage', menu_overview: '🧳 Mon voyage (aperçu)', menu_chat: '💬 Parlez à l\'IA', menu_how: '⚙ Comment ça marche', menu_faq: '❓ Questions fréquentes', menu_contact: '✉ Contact',
     about_title: 'Qui sommes-nous', about_body: 'Zenvoy est né d\'une idée simple : planifier un voyage ne devrait pas signifier ouvrir dix onglets différents. Nous sommes une plateforme de voyage basée sur l\'IA qui réunit vols, hébergements, itinéraires et recommandations locales en un seul endroit — pensée pour les voyageurs qui préfèrent profiter du voyage plutôt que l\'organiser.',
     how_title: 'Comment ça marche',
     how_step1: '<strong style="color:#fff">1. Racontez votre voyage</strong><br>Destination, dates, budget et style — l\'IA crée un itinéraire complet en quelques secondes.',
@@ -3005,7 +3028,7 @@ var TRANSLATIONS = {
     cap_title: 'Sii il primo a viaggiare in modo più intelligente', cap_subtitle: 'Gratis per sempre per i membri fondatori. Nessuna carta di credito richiesta.',
     ph_email: 'tua@email.com', cap_btn: 'Ottieni accesso anticipato', cap_success: '🎉 Sei nella lista!',
     change_key_btn: '🔑 Cambia chiave',
-    menu_title: 'Menu', menu_about: '✦ Chi siamo', menu_plan: '✈ Pianifica il tuo viaggio', menu_chat: '💬 Parla con l\'IA', menu_how: '⚙ Come funziona', menu_faq: '❓ Domande frequenti', menu_contact: '✉ Contatti',
+    menu_title: 'Menu', menu_about: '✦ Chi siamo', menu_plan: '✈ Pianifica il tuo viaggio', menu_overview: '🧳 Il mio viaggio (anteprima)', menu_chat: '💬 Parla con l\'IA', menu_how: '⚙ Come funziona', menu_faq: '❓ Domande frequenti', menu_contact: '✉ Contatti',
     about_title: 'Chi siamo', about_body: 'Zenvoy è nata da un\'idea semplice: pianificare un viaggio non dovrebbe significare aprire dieci schede diverse. Siamo una piattaforma di viaggio con intelligenza artificiale che riunisce voli, alloggi, itinerario e consigli locali in un unico posto — pensata per chi preferisce godersi il viaggio invece di organizzarlo.',
     how_title: 'Come funziona',
     how_step1: '<strong style="color:#fff">1. Racconta il tuo viaggio</strong><br>Destinazione, date, budget e stile — l\'IA crea un itinerario completo in pochi secondi.',
@@ -8366,6 +8389,71 @@ function webPremiumNotify() {
     + '<div style="font-size:14px;color:var(--muted);margin-top:10px;line-height:1.5">' + (pt ? 'Avisaremos assim que o Zenvoy Premium chegar.' : "We'll let you know the moment Zenvoy Premium launches.") + '</div></div>';
 }
 
+// ── Post-booking Overview page mockup (Part 3 #5): design placeholder ────────
+// Vision for a saved-trip hub once real auth ships. Pulls whatever the current
+// session has (planData + cart); falls back to sample values so the mockup
+// always reads as complete. Non-Overview tabs are intentionally "coming soon".
+var _ovmTab = 'overview';
+function openOverviewMockup() {
+  var ov = document.getElementById('overviewMockup'); if (!ov) return;
+  var p = window.planData || {};
+  var pt = appLang === 'pt';
+  var name = p.destination || (pt ? 'Sua próxima viagem' : 'Your next trip');
+  document.getElementById('ovmName').textContent = name;
+  var subBits = [];
+  if (p.checkIn && p.checkOut) subBits.push(rcFmtFull(p.checkIn) + ' – ' + rcFmtFull(p.checkOut));
+  if (p.travelers) subBits.push(p.travelers + ' ' + (pt ? 'viajantes' : 'travelers'));
+  document.getElementById('ovmSub').textContent = subBits.join(' · ');
+  document.getElementById('ovmBadge').textContent = pt ? 'PRÉVIA' : 'PREVIEW';
+  // Hero photo (best-effort; gradient stays as fallback).
+  var hero = document.getElementById('ovmHero');
+  hero.style.backgroundImage = '';
+  if (p.destination && typeof getCityImage === 'function') {
+    getCityImage(p.destination).then(function (url) { if (url) hero.style.backgroundImage = "url('" + url + "')"; }).catch(function () {});
+  }
+  // Tabs
+  var tabs = [['overview', pt ? 'Visão geral' : 'Overview'], ['itin', pt ? 'Itinerário' : 'Itinerary'], ['map', 'Mapa'], ['flight', pt ? 'Voo' : 'Flight'], ['hotel', pt ? 'Hotel' : 'Hotel'], ['cart', pt ? 'Carrinho' : 'Cart']];
+  document.getElementById('ovmTabs').innerHTML = tabs.map(function (t) { return '<button class="ovm-tab' + (t[0] === 'overview' ? ' on' : '') + '" onclick="ovmTab(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('');
+  _ovmTab = 'overview';
+  ovmRenderBody();
+  ov.classList.add('on');
+}
+function closeOverviewMockup() { var ov = document.getElementById('overviewMockup'); if (ov) ov.classList.remove('on'); }
+function ovmTab(name) {
+  _ovmTab = name;
+  document.querySelectorAll('#ovmTabs .ovm-tab').forEach(function (b) { b.classList.toggle('on', b.getAttribute('onclick').indexOf("'" + name + "'") > -1); });
+  // Map tab jumps into the real Leaflet map (already built).
+  if (name === 'map') { if ((window._days || []).length) openItinMap(); return; }
+  ovmRenderBody();
+}
+function ovmRenderBody() {
+  var host = document.getElementById('ovmBody'); if (!host) return;
+  var pt = appLang === 'pt';
+  if (_ovmTab !== 'overview') {
+    var names = { itin: pt ? 'Itinerário' : 'Itinerary', flight: pt ? 'Voo' : 'Flight', hotel: 'Hotel', cart: pt ? 'Carrinho' : 'Cart' };
+    host.innerHTML = '<div class="ovm-soon"><div class="ovm-soon-ic">🚧</div><div style="margin-top:10px;font-size:16px;font-weight:700;color:var(--page-text)">' + (names[_ovmTab] || '') + '</div><div style="margin-top:6px">' + (pt ? 'Esta aba faz parte da visão do Overview pós-login — ainda em construção.' : 'This tab is part of the post-login Overview vision — still being built.') + '</div></div>';
+    return;
+  }
+  var p = window.planData || {};
+  var cart = (typeof tripCart !== 'undefined') ? tripCart : { flight: null, stays: {}, cars: {} };
+  var stayKeys = Object.keys(cart.stays || {});
+  var hotel = stayKeys.length ? cart.stays[stayKeys[0]] : (p.accommodations && p.accommodations[0]);
+  var flight = cart.flight || (p.flights && p.flights[0]);
+  var totalBudget = (typeof pendingPlanArgs !== 'undefined' && pendingPlanArgs && pendingPlanArgs.total) ? pendingPlanArgs.total : null;
+  function money(v) { return (typeof formatPrice === 'function') ? formatPrice(v) : ('$' + v); }
+  function card(lbl, val, sub) { return '<div class="ovm-card"><div class="ovm-card-lbl">' + lbl + '</div><div class="ovm-card-val">' + escapeHtml(val || '—') + '</div>' + (sub ? '<div class="ovm-card-sub">' + escapeHtml(sub) + '</div>' : '') + '</div>'; }
+  var L = { dates: pt ? 'Datas' : 'Dates', travelers: pt ? 'Viajantes' : 'Travelers', hotel: 'Hotel', flight: pt ? 'Voo' : 'Flight', budget: pt ? 'Orçamento total' : 'Total budget', nights: pt ? 'noites' : 'nights' };
+  var nights = (p.checkIn && p.checkOut) ? Math.round((new Date(p.checkOut) - new Date(p.checkIn)) / 86400000) : null;
+  var html = '<div class="ovm-cards">';
+  html += card(L.dates, (p.checkIn && p.checkOut) ? (rcFmtFull(p.checkIn) + ' – ' + rcFmtFull(p.checkOut)) : (pt ? 'A definir' : 'TBD'), nights ? (nights + ' ' + L.nights) : '');
+  html += card(L.travelers, p.travelers ? String(p.travelers) : '2', '');
+  html += card(L.hotel, hotel ? (hotel.name || '—') : (pt ? 'Nenhum selecionado' : 'None selected'), hotel && hotel.price_night ? money(hotel.price_night) + (pt ? '/noite' : '/night') : '');
+  html += card(L.flight, flight ? ((flight.airline || 'Flight') + (flight.from && flight.to ? ' · ' + flight.from + '→' + flight.to : '')) : (pt ? 'Nenhum selecionado' : 'None selected'), flight && flight.price ? money(flight.price) : '');
+  html += card(L.budget, totalBudget ? money(totalBudget) : (pt ? 'Estimado no planejador' : 'Estimated in planner'), '');
+  html += '</div>';
+  host.innerHTML = html;
+}
+
 // ── Itinerary map (Part 3): Leaflet + OpenStreetMap, lazy-loaded on first open ─
 var LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
@@ -8478,6 +8566,20 @@ appInitShell();
   </div>
   <div class="im-canvas" id="itinMapCanvas"></div>
   <div class="im-legend" id="imLegend"></div>
+</div>
+
+<!-- Post-booking Overview page mockup (Part 3 #5) — vision placeholder for saved trips -->
+<div class="ovm-overlay" id="overviewMockup">
+  <div class="ovm-shell">
+    <div class="ovm-hero" id="ovmHero">
+      <button class="ovm-close" onclick="closeOverviewMockup()" aria-label="Close">✕</button>
+      <span class="ovm-badge" id="ovmBadge">PRÉVIA</span>
+      <div class="ovm-hero-grad"></div>
+      <div class="ovm-hero-txt"><div class="ovm-hero-name" id="ovmName">Trip</div><div class="ovm-hero-sub" id="ovmSub"></div></div>
+    </div>
+    <div class="ovm-tabs" id="ovmTabs"></div>
+    <div class="ovm-body" id="ovmBody"></div>
+  </div>
 </div>
 
 <!-- Website premium / "save your trip" placeholder (lead capture, no real auth yet) -->
