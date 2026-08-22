@@ -613,6 +613,11 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
   border-top-color:var(--app-gold);animation:tin-spin 1s linear infinite}
 @keyframes tin-spin{to{transform:rotate(360deg)}}
 @keyframes sideMenuIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+/* Trip.com-style progressive skeleton for the itinerary while day chunks stream in. */
+@keyframes sk-shimmer{0%{background-position:-360px 0}100%{background-position:360px 0}}
+.sk-card{border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;background:var(--card-bg)}
+.sk-line{height:12px;border-radius:6px;margin:9px 0;background:linear-gradient(90deg,rgba(201,169,110,.10) 0px,rgba(201,169,110,.22) 180px,rgba(201,169,110,.10) 360px);background-size:720px 100%;animation:sk-shimmer 1.3s linear infinite}
+.sk-pill{display:inline-block;height:20px;width:120px;border-radius:20px;margin-bottom:6px;background:linear-gradient(90deg,rgba(201,169,110,.14) 0px,rgba(201,169,110,.30) 180px,rgba(201,169,110,.14) 360px);background-size:720px 100%;animation:sk-shimmer 1.3s linear infinite}
 @media(prefers-reduced-motion:reduce){#sideMenuPanel{animation:none}}
 .app-build-mascot{width:104px;height:104px;object-fit:contain;animation:tin-bob 2.4s ease-in-out infinite}
 @keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -5964,9 +5969,16 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel) 
 // the background (the rest of the trip is already on screen).
 function itinLoadingHtml() {
   var msg = ({ pt: 'Montando seu roteiro dia a dia…', en: 'Building your day-by-day itinerary…', es: 'Armando tu itinerario día a día…', fr: 'Création de votre itinéraire jour par jour…', it: 'Creazione del tuo itinerario giorno per giorno…' })[appLang] || 'Building your day-by-day itinerary…';
-  return '<div style="text-align:center;padding:44px 20px;color:var(--muted,#8a93a3)">'
-    + '<div style="width:34px;height:34px;margin:0 auto 16px;border-radius:50%;border:3px solid rgba(201,169,110,.25);border-top-color:#C9A96E;animation:tin-spin 1s linear infinite"></div>'
-    + '<div style="font-size:15px">' + msg + '</div></div>';
+  // Progressive Trip.com-style skeleton: a small spinner header + shimmering
+  // day cards, so the tab reads as "results are streaming in", not "empty/stuck".
+  var card = '<div class="sk-card"><span class="sk-pill"></span>'
+    + '<div class="sk-line" style="width:92%"></div><div class="sk-line" style="width:78%"></div>'
+    + '<div class="sk-line" style="width:85%"></div><div class="sk-line" style="width:64%"></div></div>';
+  return '<div style="padding:8px 2px 4px">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin:6px 4px 18px;color:var(--muted,#8a93a3)">'
+    + '<div style="width:26px;height:26px;flex-shrink:0;border-radius:50%;border:3px solid rgba(201,169,110,.25);border-top-color:#C9A96E;animation:tin-spin 1s linear infinite"></div>'
+    + '<div style="font-size:15px">' + msg + '</div></div>'
+    + card + card + card + '</div>';
 }
 
 function renderCurrentDay() {
