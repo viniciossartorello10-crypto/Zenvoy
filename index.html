@@ -202,6 +202,25 @@ h1 em{font-style:italic;color:var(--gold)}
 .im-legnum{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#1a1206;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
 .im-pin{background:var(--gold);color:#1a1206;font-weight:800;border:2px solid #fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .im-hotel{font-size:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+/* Website premium / save-your-trip modal */
+.prem-overlay{position:fixed;inset:0;z-index:100001;background:rgba(11,15,26,.6);display:none;align-items:center;justify-content:center;padding:20px}
+.prem-overlay.on{display:flex}
+.prem-modal{position:relative;background:var(--card-bg);color:var(--page-text);width:100%;max-width:440px;max-height:90vh;overflow-y:auto;border-radius:22px;padding:34px 28px 28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.prem-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:1px solid var(--border);background:var(--page-bg);border-radius:9px;font-size:15px;color:var(--page-text);cursor:pointer}
+.prem-hero{font-size:46px;text-align:center;line-height:1}
+.prem-h{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;text-align:center;margin:8px 0 4px;color:var(--page-text)}
+.prem-sub2{text-align:center;font-size:14px;color:var(--muted);margin-bottom:20px}
+.prem-list{list-style:none;padding:0;margin:0 0 22px}
+.prem-list li{display:flex;align-items:flex-start;gap:10px;padding:9px 0;font-size:14.5px;color:var(--page-text);border-bottom:1px solid var(--border)}
+.prem-ck{color:var(--gold-text);font-weight:800;flex-shrink:0}
+.prem-price2{text-align:center;margin-bottom:20px}
+.prem-price-big{font-size:34px;font-weight:800;color:var(--page-text)}
+.prem-price-per{font-size:15px;color:var(--muted)}
+.prem-price-yr{font-size:13px;color:var(--gold-text);margin-top:2px;font-weight:600}
+.prem-cta2{display:flex;gap:8px;flex-direction:column}
+.prem-cta2 input{width:100%;padding:13px 15px;border:1px solid var(--border);border-radius:12px;font-size:15px;background:var(--page-bg);color:var(--page-text);font-family:'Inter',sans-serif}
+.prem-cta2 button{width:100%;padding:14px;border:none;border-radius:12px;background:var(--gold);color:#1a1206;font-weight:800;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif}
+.prem-note2{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
 .ac-wrap{position:relative}
 input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
@@ -1260,6 +1279,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     <span>Voy</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;justify-self:end;flex-shrink:0">
+    <button id="profileBtn" onclick="webOpenPremium()" aria-label="Account" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;line-height:1">👤</button>
     <button id="themeToggleBtn" onclick="toggleThemeMode()" aria-label="Toggle dark mode" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;line-height:1">🌙</button>
     <select id="langSelect" onchange="setLang(this.value)" style="width:auto;max-width:140px;background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;flex-shrink:0">
       <option value="en" style="color:#000">🇺🇸 English</option>
@@ -8299,6 +8319,53 @@ function webSyncDateTrigger() {
   else trig.innerHTML = '📅 <span class="dt-ph">' + t.pick_start + '</span>';
 }
 
+// ── Website premium / "save your trip" placeholder (Part 3) ──────────────────
+// Mirrors the native appSheetPremium: benefits + price + waitlist lead capture.
+// Placeholder only — no real authentication yet.
+function webPremiumContent() {
+  var pt = appLang === 'pt', es = appLang === 'es', fr = appLang === 'fr', it = appLang === 'it';
+  function pick(o) { return o[appLang] || o.en; }
+  var heading = pick({ pt: 'Salve sua viagem', en: 'Save your trip', es: 'Guarda tu viaje', fr: 'Sauvegardez votre voyage', it: 'Salva il tuo viaggio' });
+  var benefits = [
+    { pt: 'Salvar itinerários ilimitados', en: 'Save unlimited itineraries', es: 'Guardar itinerarios ilimitados', fr: 'Enregistrer des itinéraires illimités', it: 'Salva itinerari illimitati' },
+    { pt: 'Acesso offline', en: 'Offline access', es: 'Acceso sin conexión', fr: 'Accès hors ligne', it: 'Accesso offline' },
+    { pt: 'Roteiro com horários reais do seu voo', en: 'Itinerary built around your real flight times', es: 'Itinerario con los horarios reales de tu vuelo', fr: 'Itinéraire selon les horaires réels de votre vol', it: "Itinerario con gli orari reali del tuo volo" },
+    { pt: 'Alertas de preço', en: 'Price alerts', es: 'Alertas de precio', fr: 'Alertes de prix', it: 'Avvisi sui prezzi' },
+    { pt: 'Modo Concierge (3 opções com análise de IA)', en: 'Concierge Mode (3 options with AI analysis)', es: 'Modo Concierge (3 opciones con análisis de IA)', fr: 'Mode Concierge (3 options avec analyse IA)', it: 'Modalità Concierge (3 opzioni con analisi IA)' }
+  ];
+  var h = '<div class="prem-hero">💎</div>';
+  h += '<h2 class="prem-h">' + heading + '</h2>';
+  h += '<div class="prem-sub2">' + pick({ pt: 'Desbloqueie o planejador de viagens definitivo.', en: 'Unlock the ultimate travel planner.', es: 'Desbloquea el planificador de viajes definitivo.', fr: 'Débloquez le planificateur de voyage ultime.', it: 'Sblocca il pianificatore di viaggi definitivo.' }) + '</div>';
+  h += '<ul class="prem-list">' + benefits.map(function (b) { return '<li><span class="prem-ck">✓</span>' + escapeHtml(pick(b)) + '</li>'; }).join('') + '</ul>';
+  h += '<div class="prem-price2"><span class="prem-price-big">R$ 9,90</span><span class="prem-price-per">/' + pick({ pt: 'mês', en: 'mo', es: 'mes', fr: 'mois', it: 'mese' }) + '</span>'
+    + '<div class="prem-price-yr">' + pick({ pt: 'ou R$ 79,90/ano', en: 'or R$ 79.90/year', es: 'o R$ 79,90/año', fr: 'ou R$ 79,90/an', it: 'o R$ 79,90/anno' }) + '</div></div>';
+  h += '<div class="prem-cta2"><input id="webPremiumEmail" type="email" inputmode="email" placeholder="'
+    + pick({ pt: 'Quero ser avisado quando lançar', en: 'Notify me when it launches', es: 'Avísame cuando se lance', fr: 'Prévenez-moi au lancement', it: 'Avvisami al lancio' })
+    + '" onkeydown="if(event.key===\'Enter\')webPremiumNotify()">'
+    + '<button onclick="webPremiumNotify()">' + pick({ pt: 'Quero ser avisado', en: 'Notify me', es: 'Avísame', fr: 'Prévenez-moi', it: 'Avvisami' }) + '</button></div>';
+  h += '<div class="prem-note2">' + pick({ pt: 'Placeholder — em breve. Sem spam.', en: 'Placeholder — coming soon. No spam.', es: 'Marcador — próximamente. Sin spam.', fr: 'Aperçu — bientôt. Pas de spam.', it: 'Anteprima — presto. Niente spam.' }) + '</div>';
+  return h;
+}
+function webOpenPremium() {
+  var ov = document.getElementById('webPremiumOverlay'); if (!ov) return;
+  document.getElementById('webPremiumBody').innerHTML = webPremiumContent();
+  ov.classList.add('on');
+}
+function webClosePremium() { var ov = document.getElementById('webPremiumOverlay'); if (ov) ov.classList.remove('on'); }
+function webPremiumNotify() {
+  var inp = document.getElementById('webPremiumEmail'); var email = inp ? inp.value.trim() : '';
+  if (!/.+@.+\..+/.test(email)) { if (inp) { inp.focus(); inp.style.borderColor = '#e0533d'; } return; }
+  fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'form-name=premium-waitlist&email=' + encodeURIComponent(email) + '&lang=' + encodeURIComponent(appLang) }).catch(function () {});
+  try { localStorage.setItem('zenvoy_premium_waitlist', email); } catch (e) {}
+  if (typeof gtag === 'function') gtag('event', 'premium_waitlist_signup');
+  var pt = appLang === 'pt';
+  document.getElementById('webPremiumBody').innerHTML = '<div style="text-align:center;padding:50px 20px">'
+    + '<div style="font-size:56px">🎉</div>'
+    + '<div style="font-family:\'Cormorant Garamond\',serif;font-size:28px;color:var(--page-text);margin-top:14px">' + (pt ? 'Você está na lista!' : "You're on the list!") + '</div>'
+    + '<div style="font-size:14px;color:var(--muted);margin-top:10px;line-height:1.5">' + (pt ? 'Avisaremos assim que o Zenvoy Premium chegar.' : "We'll let you know the moment Zenvoy Premium launches.") + '</div></div>';
+}
+
 // ── Itinerary map (Part 3): Leaflet + OpenStreetMap, lazy-loaded on first open ─
 var LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
@@ -8411,6 +8478,14 @@ appInitShell();
   </div>
   <div class="im-canvas" id="itinMapCanvas"></div>
   <div class="im-legend" id="imLegend"></div>
+</div>
+
+<!-- Website premium / "save your trip" placeholder (lead capture, no real auth yet) -->
+<div class="prem-overlay" id="webPremiumOverlay" onclick="if(event.target===this)webClosePremium()">
+  <div class="prem-modal" role="dialog" aria-modal="true">
+    <button class="prem-x" onclick="webClosePremium()" aria-label="Close">✕</button>
+    <div class="prem-modal-body" id="webPremiumBody"></div>
+  </div>
 </div>
 
 </body></html>
