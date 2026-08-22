@@ -318,6 +318,18 @@ input::placeholder{color:#aaa}
 .itin-map-btn:hover{background:rgba(201,169,110,.20)}
 .geo-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
 .geo-chip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;color:var(--body-text);background:var(--page-bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;white-space:nowrap}
+.geo-chip-time{background:rgba(201,169,110,.14);border-color:rgba(201,169,110,.4);color:var(--gold-text)}
+/* Day selector strip (Holicay-style day filter) */
+.day-strip{display:flex;gap:7px;overflow-x:auto;padding:2px 0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.day-strip::-webkit-scrollbar{display:none}
+.day-chip{flex-shrink:0;padding:7px 14px;border:1px solid var(--border);background:var(--card-bg);color:var(--body-text);border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.day-chip.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
+/* Daily route summary + button row */
+.route-summary{font-size:12.5px;color:var(--body-text);background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.route-summary strong{color:var(--gold-text)}
+.itin-btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.itin-btn-row .itin-map-btn{margin:0}
+.itin-gmaps-btn{border-color:var(--border);background:var(--page-bg);color:var(--body-text)}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
@@ -2742,7 +2754,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
     flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
-    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map',
+    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
@@ -2805,7 +2817,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
-    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro',
+    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
@@ -2868,7 +2880,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
     flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
-    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta',
+    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
@@ -2931,7 +2943,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
     flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
-    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire',
+    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
@@ -2994,7 +3006,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
     flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
-    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso',
+    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
@@ -5309,8 +5321,12 @@ async function generatePlan() {
         '"early_bird":{"morning":"7am — main activity at a specific named place (with a timing reason if genuinely useful), then a natural follow-up at another named spot","breakfast":"specific cafe name — signature dish — '+curSym()+'X","lunch":"specific restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up at another named spot","dinner":"specific restaurant name — signature dish — '+curSym()+'X","night":"a named venue this destination is actually known for, then a follow-up"},'+
         '"balanced":{"morning":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","breakfast":"cafe name — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"compound suggestion at a named place, then a follow-up"},'+
         '"night_owl":{"morning":"11am brunch at a named spot","breakfast":"brunch spot — signature dish — '+curSym()+'X","lunch":"restaurant name — signature dish — '+curSym()+'X","afternoon":"compound activity — main activity at a named place (with timing reason if useful), then a natural follow-up","dinner":"restaurant name — signature dish — '+curSym()+'X","night":"the specific, locally-famous nightlife venue this destination is really known for (name it), then a late-night follow-up"},'+
-        '"stops":[{"name":"exact real name of the day\'s FIRST main stop","slot":"morning","lat":<real latitude as a decimal number>,"lng":<real longitude as a decimal number>,"duration_min":<typical minutes a visitor spends there, e.g. 90>}, ... one entry IN VISIT ORDER for each of this day\'s main places across morning/afternoon/dinner/night (aim for 4-6 stops)]}]\n\n'+
-        'The "stops" array is REQUIRED and powers a map + distance view: give the genuine, approximate real-world latitude/longitude of each named place (your best knowledge is fine — these are famous, mappable places), ordered the way the traveler would actually visit them through the day. Use the balanced-rhythm places for the stops. Every lat/lng must be a plain decimal number (e.g. -22.9519, not a string).\n\n'+
+        '"stops":[{"name":"exact real name of the day\'s FIRST main stop","slot":"morning","lat":<real latitude as a decimal number>,"lng":<real longitude as a decimal number>,"start":"09:00","duration_min":<typical minutes a visitor spends there, e.g. 90>,"area":"neighborhood or short address"}, ... one entry IN ROUTE ORDER for each of this day\'s main places across morning/afternoon/dinner/night (aim for 4-6 stops)]}]\n\n'+
+        'The "stops" array is REQUIRED and powers a map, a schedule, and a distance view. Rules for it:\n'+
+        '- Give the genuine, approximate real-world latitude/longitude of each named place (your best knowledge is fine — these are famous, mappable places). Every lat/lng must be a plain decimal number (e.g. -22.9519, not a string).\n'+
+        '- ROUTE OPTIMIZATION: order the stops so the traveler moves efficiently through the area with MINIMAL backtracking — a logical geographic flow (e.g. progress along one direction, or a loop), keeping each day tightly clustered in one neighborhood or a few adjacent ones so little time is wasted in transit. This ordering is the single most important quality of a good day plan.\n'+
+        '- Give each stop a realistic "start" clock time in 24h "HH:MM" that respects opening hours, meal times (lunch around midday, dinner in the evening), and the duration of the previous stop plus travel between them. Times must increase through the day.\n'+
+        '- "area" is a short neighborhood name or street for that stop. Use the balanced-rhythm places for the stops.\n\n'+
         'Continue this pattern for every day from '+rangeStart+' to '+rangeEnd+' inclusive.\n\n'+
         'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.'
         + destIntelBlock(destIntel, overview.destination);
@@ -6068,10 +6084,13 @@ function fmtKm(km) {
 }
 // Below ~1.8 km we call it walkable and show a walk time (~4.8 km/h); farther,
 // we show a rough drive/transit time (~22 km/h urban average) with a car icon.
+function travelMinutes(km) {
+  if (km == null) return 0;
+  return km <= 1.8 ? Math.max(1, Math.round(km / 4.8 * 60)) : Math.max(1, Math.round(km / 22 * 60));
+}
 function travelChip(km) {
   if (km == null) return '';
-  if (km <= 1.8) { var wm = Math.max(1, Math.round(km / 4.8 * 60)); return '🚶 ' + wm + ' min'; }
-  var dm = Math.max(1, Math.round(km / 22 * 60)); return '🚗 ' + dm + ' min';
+  return (km <= 1.8 ? '🚶 ' : '🚗 ') + travelMinutes(km) + ' min';
 }
 function fmtDuration(min) {
   if (!min || min < 1) return '';
@@ -6080,14 +6099,47 @@ function fmtDuration(min) {
   if (h) return '~' + h + 'h';
   return '~' + m + ' min';
 }
-// Build the localized distance/walk/duration chips row for one slot, given its
-// stop (matched by slot name) and the next stop in visit order. Returns '' when
-// the AI didn't provide coordinates for this slot (graceful degradation).
+function _hhmm(mins) {
+  mins = ((Math.round(mins) % 1440) + 1440) % 1440;
+  var h = Math.floor(mins / 60), m = mins % 60;
+  return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+}
+function _parseHHMM(s) {
+  var m = /^(\d{1,2}):(\d{2})$/.exec(String(s || '').trim());
+  if (!m) return null; var h = +m[1], mm = +m[2];
+  if (h > 23 || mm > 59) return null; return h * 60 + mm;
+}
+// Fill each ordered stop with a scheduled start/end (minutes + "HH:MM–HH:MM").
+// Uses the AI's "start" where valid and monotonic; otherwise walks the clock
+// forward from the previous stop's end plus the travel time between them.
+function computeSchedule(ordered) {
+  var clock = 9 * 60; // default day start 09:00
+  for (var i = 0; i < ordered.length; i++) {
+    var s = ordered[i];
+    if (i > 0) {
+      var prev = ordered[i - 1];
+      var km = haversineKm([prev.lat, prev.lng], [s.lat, s.lng]);
+      clock += travelMinutes(km);
+    }
+    var aiStart = _parseHHMM(s.start);
+    if (aiStart != null && aiStart >= clock - 90) clock = aiStart; // trust AI time if plausible
+    else if (i === 0 && aiStart != null) clock = aiStart;
+    s._startMin = clock;
+    s._endMin = clock + (s.duration_min || 60);
+    s._time = _hhmm(s._startMin) + '–' + _hhmm(s._endMin);
+    clock = s._endMin;
+  }
+  return ordered;
+}
+// Build the localized time/distance/walk/duration chips row for one slot, given
+// its stop (matched by slot name) and the next stop in route order. Returns ''
+// when the AI didn't provide coordinates for this slot (graceful degradation).
 function slotGeoChips(stop, nextStop, hotelRef) {
   if (!stop || stop.lat == null) return '';
   var L = ({ pt: { hotel: 'do seu hotel', next: 'até o próximo' }, en: { hotel: 'from your hotel', next: 'to next' }, es: { hotel: 'de tu hotel', next: 'al siguiente' }, fr: { hotel: 'de votre hôtel', next: 'au suivant' }, it: { hotel: 'dal tuo hotel', next: 'al prossimo' } })[appLang] || { hotel: 'from your hotel', next: 'to next' };
   var pt = [stop.lat, stop.lng];
   var chips = [];
+  if (stop._time) chips.push('<span class="geo-chip geo-chip-time">🕐 ' + stop._time + '</span>');
   var dh = hotelRef ? haversineKm(hotelRef, pt) : null;
   if (dh != null) chips.push('<span class="geo-chip">📍 ' + fmtKm(dh) + ' ' + L.hotel + '</span>');
   var dur = fmtDuration(stop.duration_min);
@@ -6099,12 +6151,23 @@ function slotGeoChips(stop, nextStop, hotelRef) {
   }
   return chips.length ? '<div class="geo-chips">' + chips.join('') + '</div>' : '';
 }
-// Resolve the ordered stops for a day and index them by slot name.
+// Resolve the ordered stops for a day, compute the schedule, and index by slot.
 function dayStopsIndex(dayObj) {
   var stops = (dayObj && Array.isArray(dayObj.stops)) ? dayObj.stops.filter(function (s) { return s && s.lat != null && s.lng != null; }) : [];
+  computeSchedule(stops);
   var bySlot = {};
   stops.forEach(function (s) { if (s.slot) bySlot[String(s.slot).toLowerCase()] = s; });
   return { ordered: stops, bySlot: bySlot };
+}
+// Total straight-line route distance + walking/travel time for a day's stops,
+// starting from the hotel — used for the day route summary line.
+function dayRouteSummary(ordered, hotelRef) {
+  if (!ordered || !ordered.length) return null;
+  var dist = 0, travel = 0, visit = 0, pts = [];
+  if (hotelRef) pts.push(hotelRef);
+  ordered.forEach(function (s) { pts.push([s.lat, s.lng]); visit += (s.duration_min || 0); });
+  for (var i = 1; i < pts.length; i++) { var km = haversineKm(pts[i - 1], pts[i]); dist += km; travel += travelMinutes(km); }
+  return { km: dist, travelMin: travel, visitMin: visit };
 }
 
 function itinLoadingHtml() {
@@ -6151,6 +6214,8 @@ function renderCurrentDay() {
   var slots = [['Breakfast',r.breakfast,slotDict.slot_breakfast],['Morning',r.morning,slotDict.slot_morning],['Lunch',r.lunch,slotDict.slot_lunch],['Afternoon',r.afternoon,slotDict.slot_afternoon],['Dinner',r.dinner,slotDict.slot_dinner],['Night',r.night,slotDict.slot_night]];
 
   var html = '<div class="dc"><div class="dc-body">';
+  // Day selector strip — one-tap jump between days (Holicay-style "filter days").
+  html += dayStripHtml(days.length, currentDayIndex, 'goToDayIndex');
   // Big, bold DIA N header with a 3-dot menu (rename / change date / add to calendar).
   html += '<div class="day-head">';
   html += '<div class="day-head-l"><div class="dlabel-big">' + escapeHtml(dayHeaderLabel(currentDayIndex, d.day)) + '</div>';
@@ -6164,8 +6229,15 @@ function renderCurrentDay() {
     + '</div>';
   html += '</div>';
   html += '<div class="dth">'+escapeHtml((meta && meta.name) ? meta.name : (d.theme||'Exploration'))+'</div>';
-  // "Ver no mapa" — only meaningful when the AI gave us stop coordinates.
-  if (stopsIdx.ordered.length) html += '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + slotDict.view_on_map + '</button>';
+  // Route summary + map/directions buttons — only when the AI gave us coordinates.
+  if (stopsIdx.ordered.length) {
+    var _sum = dayRouteSummary(stopsIdx.ordered, hotelRef);
+    if (_sum) html += routeSummaryHtml(_sum);
+    html += '<div class="itin-btn-row">'
+      + '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + slotDict.view_on_map + '</button>'
+      + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + slotDict.open_gmaps + '</button>'
+      + '</div>';
+  }
 
   var slotMeta = []; // collected so we can enrich with TripAdvisor data after the initial render
   slots.forEach(function(s, idx) {
@@ -6234,6 +6306,56 @@ function dayChangeDate() {
   } });
 }
 function dayAddToCalendar() { if (typeof addDayToCalendar === 'function') addDayToCalendar(currentDayIndex); }
+function goToDayIndex(idx) {
+  var days = window._days || [];
+  if (idx < 0 || idx >= days.length || idx === currentDayIndex) return;
+  currentDayIndex = idx;
+  if (document.body.classList.contains('native-app') && typeof appRenderItinerary === 'function') appRenderItinerary();
+  else renderCurrentDay();
+}
+// Horizontal Day 1 | 2 | 3 … chip strip for one-tap day jumping.
+function dayStripHtml(count, current, fnName) {
+  if (count <= 1) return '';
+  var w = (DAY_WORD[appLang] || DAY_WORD.en);
+  var chips = '';
+  for (var i = 0; i < count; i++) {
+    chips += '<button class="day-chip' + (i === current ? ' on' : '') + '" onclick="' + fnName + '(' + i + ')">' + w.charAt(0) + w.slice(1).toLowerCase() + ' ' + (i + 1) + '</button>';
+  }
+  return '<div class="day-strip">' + chips + '</div>';
+}
+// Compact daily route summary line (total distance + on-the-move time).
+function routeSummaryHtml(sum) {
+  var L = ({ pt: { route: 'Rota do dia', move: 'em deslocamento' }, en: { route: 'Day route', move: 'in transit' }, es: { route: 'Ruta del día', move: 'en tránsito' }, fr: { route: 'Itinéraire du jour', move: 'en trajet' }, it: { route: 'Percorso del giorno', move: 'in transito' } })[appLang] || { route: 'Day route', move: 'in transit' };
+  return '<div class="route-summary">🧭 <strong>' + L.route + ':</strong> ' + fmtKm(sum.km) + ' · ' + fmtDuration(sum.travelMin) + ' ' + L.move + '</div>';
+}
+// Open the current day's route in Google Maps directions (free, no API key):
+// hotel → each stop in order. Works on web (new tab) and native (share/open).
+function dayGoogleMapsUrl(idx) {
+  var days = window._days || [];
+  var d = days[idx == null ? currentDayIndex : idx]; if (!d) return null;
+  var dest = window._dest || (window.planData && window.planData.destination) || '';
+  var ordered = dayStopsIndex(d).ordered; if (!ordered.length) return null;
+  var hotel = (typeof cityToCoords === 'function') ? cityToCoords(dest) : null;
+  var pts = [];
+  if (hotel) pts.push(hotel[0] + ',' + hotel[1]);
+  ordered.forEach(function (s) { pts.push(s.lat + ',' + s.lng); });
+  // origin = hotel (or first stop), destination = last stop, rest are waypoints.
+  var origin = pts[0], destination = pts[pts.length - 1];
+  var waypoints = pts.slice(1, -1).join('|');
+  var u = 'https://www.google.com/maps/dir/?api=1&travelmode=walking&origin=' + encodeURIComponent(origin) + '&destination=' + encodeURIComponent(destination);
+  if (waypoints) u += '&waypoints=' + encodeURIComponent(waypoints);
+  return u;
+}
+function openDayInGoogleMaps() {
+  var url = dayGoogleMapsUrl(currentDayIndex); if (!url) return;
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) {
+      // On native, share/open the link so it launches Google Maps or the browser.
+      window.open(url, '_system'); return;
+    }
+  } catch (e) {}
+  window.open(url, '_blank');
+}
 
 function goToDay(delta) {
   var days = window._days || [];
@@ -7718,9 +7840,16 @@ function appRenderItinerary() {
     + '<button onclick="dayChangeDate()">📅 ' + dict.day_changedate + '</button>'
     + '<button onclick="dayAddToCalendar()">🗓️ ' + dict.day_addcal + '</button>'
     + '</div></div>';
-  var cards = '<div class="app-itin-cards">' + dhead
+  var _appSum = stopsIdx.ordered.length ? dayRouteSummary(stopsIdx.ordered, hotelRef) : null;
+  var cards = '<div class="app-itin-cards">'
+    + dayStripHtml(days.length, currentDayIndex, 'goToDayIndex')
+    + dhead
     + '<div class="app-itin-daytitle">' + escapeHtml((meta && meta.name) ? meta.name : (d.theme || '')) + '</div>'
-    + (stopsIdx.ordered.length ? '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + dict.view_on_map + '</button>' : '');
+    + (_appSum ? routeSummaryHtml(_appSum) : '')
+    + (stopsIdx.ordered.length
+      ? '<div class="itin-btn-row"><button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + dict.view_on_map + '</button>'
+        + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + dict.open_gmaps + '</button></div>'
+      : '');
   var dayTheme = d.theme || '';
   window._appSlotAlt = {}; // fresh per render — alternatives don't carry between days/rhythms
   slots.forEach(function (s, idx) {
