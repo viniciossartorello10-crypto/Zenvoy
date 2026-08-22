@@ -561,6 +561,8 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .app-build-ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(201,169,110,.25);
   border-top-color:var(--app-gold);animation:tin-spin 1s linear infinite}
 @keyframes tin-spin{to{transform:rotate(360deg)}}
+@keyframes sideMenuIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){#sideMenuPanel{animation:none}}
 .app-build-mascot{width:104px;height:104px;object-fit:contain;animation:tin-bob 2.4s ease-in-out infinite}
 @keyframes tin-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .app-build-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--app-text)}
@@ -1140,7 +1142,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
 </form>
 
 
-<nav style="position:absolute;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:rgba(11,15,26,.95);backdrop-filter:blur(10px)">
   <button onclick="toggleSideMenu(true)" aria-label="Menu" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;justify-self:start">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
@@ -1166,7 +1168,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
 
 
 <div id="sideMenuOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)toggleSideMenu(false)" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(11,15,26,.6)">
-  <div style="position:absolute;top:0;right:0;bottom:0;width:280px;max-width:85vw;background:#1A2235;border-left:1px solid rgba(201,169,110,.25);padding:24px;display:flex;flex-direction:column;gap:6px">
+  <div id="sideMenuPanel" style="position:absolute;top:0;left:0;bottom:0;width:280px;max-width:85vw;background:#1A2235;border-right:1px solid rgba(201,169,110,.25);padding:24px;display:flex;flex-direction:column;gap:6px;animation:sideMenuIn .25s cubic-bezier(.4,0,.2,1)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <span style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff" data-i18n="menu_title">Menu</span>
       <button onclick="toggleSideMenu(false)" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
@@ -2137,13 +2139,18 @@ function bookingDealsUrl(dest) {
 // would push it over.
 function bookingCarUrl(dest) {
   var t = _tripCtx();
+  var iata = destIata(dest);
   var q = destQuery(dest);
   var pickup  = t.checkIn  ? t.checkIn  + 'T10:00:00' : '';
   var dropoff = t.checkOut ? t.checkOut + 'T10:00:00' : '';
-  var destUrl = _qsBudgeted('https://www.booking.com/cars/index.html',
-    [['aid', bookingAid()], ['ss', q], ['pickup_date', pickup], ['dropoff_date', dropoff]],
-    [['label', 'zenvoy_car_' + (_sid(q, 20) || 'search')]]);
-  return bookingDeepLink('cars', destUrl, q);
+  // Pre-filter to the destination AIRPORT when we have its IATA code; otherwise
+  // fall back to a free-text city search so the link always resolves.
+  var primary = iata
+    ? [['aid', bookingAid()], ['pickup_airport', iata], ['pickup_date', pickup], ['dropoff_date', dropoff]]
+    : [['aid', bookingAid()], ['ss', q], ['pickup_date', pickup], ['dropoff_date', dropoff]];
+  var destUrl = _qsBudgeted('https://www.booking.com/cars/index.html', primary,
+    [['label', 'zenvoy_car_' + (_sid(iata || q, 20) || 'search')]]);
+  return bookingDeepLink('cars', destUrl, iata || q);
 }
 
 // Flights: IATA pair + date. Falls back to the flights landing page only when
@@ -2151,14 +2158,19 @@ function bookingCarUrl(dest) {
 function bookingFlightUrl(fromIata, toIata, depDate, returnDate) {
   var t = _tripCtx();
   if (!fromIata || !toIata) {
-    return 'https://www.booking.com/flights/index.html?aid=' + bookingAid();
+    return bookingDeepLink('flights', 'https://www.booking.com/flights/index.html?aid=' + bookingAid(), 'flights');
   }
   var depart = depDate || t.checkIn || '';
-  var ret    = returnDate || t.checkOut || '';
-  var destUrl = _qsBudgeted('https://www.booking.com/flights/search.html',
+  // One-way trips (see the trip-type toggle) carry no return date.
+  var ret = (window._tripType === 'oneway') ? '' : (returnDate || t.checkOut || '');
+  // Verified working format: the route lives in the PATH, and the origin/
+  // destination airports are set with the ".AIRPORT" suffix (plain from_airport/
+  // to_airport params are ignored by Booking and geo-default to the user's city).
+  var path = 'https://www.booking.com/flights/' + fromIata.toLowerCase() + '-' + toIata.toLowerCase() + '/';
+  var destUrl = _qsBudgeted(path,
     [['aid', bookingAid()], ['type', ret ? 'ROUNDTRIP' : 'ONEWAY'],
-     ['from', fromIata], ['to', toIata], ['depart', depart]],
-    [['return', ret], ['adults', t.adults],
+     ['from', fromIata + '.AIRPORT'], ['to', toIata + '.AIRPORT'], ['depart', depart]],
+    [['return', ret], ['adults', t.adults], ['cabinClass', 'ECONOMY'],
      ['label', 'zenvoy_flight_' + _sid(fromIata + '_' + toIata, 20)]]);
   return bookingDeepLink('flights', destUrl, fromIata + '_' + toIata);
 }
@@ -3129,7 +3141,50 @@ var ICONIC_QUERY_OVERRIDES = {
   'reykjavik': 'Iceland northern lights aurora',
   'queenstown': 'Queenstown New Zealand mountains lake',
   'napa valley': 'Napa Valley vineyard rolling hills',
-  'aspen': 'Aspen Colorado ski mountains snow'
+  'aspen': 'Aspen Colorado ski mountains snow',
+  // Major world cities — a targeted query per city beats Wikipedia's generic
+  // (often wrong or dull) default article photo. Keys are the lowercased city
+  // name exactly as it appears before the comma in the destination string.
+  'tokyo': 'Tokyo Shibuya crossing night lights Japan',
+  'chicago': 'Chicago skyline Lake Michigan night',
+  'new york': 'New York City Manhattan skyline sunset',
+  'paris': 'Paris Eiffel Tower skyline sunset',
+  'london': 'London Big Ben Tower Bridge Thames',
+  'rome': 'Rome Colosseum golden hour',
+  'barcelona': 'Barcelona Sagrada Familia skyline',
+  'amsterdam': 'Amsterdam canals houses bikes',
+  'lisbon': 'Lisbon yellow tram Alfama viewpoint sunset',
+  'madrid': 'Madrid Gran Via plaza sunset',
+  'berlin': 'Berlin Brandenburg Gate skyline',
+  'prague': 'Prague Charles Bridge castle old town',
+  'vienna': 'Vienna Schonbrunn palace skyline',
+  'athens': 'Athens Acropolis Parthenon sunset',
+  'istanbul': 'Istanbul Hagia Sophia Bosphorus sunset',
+  'san francisco': 'San Francisco Golden Gate Bridge fog',
+  'los angeles': 'Los Angeles skyline palm trees sunset',
+  'miami': 'Miami South Beach art deco ocean',
+  'seattle': 'Seattle Space Needle skyline Mount Rainier',
+  'boston': 'Boston skyline Charles River',
+  'washington': 'Washington DC Capitol monuments cherry blossoms',
+  'toronto': 'Toronto CN Tower skyline Lake Ontario',
+  'vancouver': 'Vancouver skyline mountains harbour',
+  'rio de janeiro': 'Rio de Janeiro Christ the Redeemer Sugarloaf',
+  'são paulo': 'Sao Paulo skyline Avenida Paulista',
+  'sao paulo': 'Sao Paulo skyline Avenida Paulista',
+  'buenos aires': 'Buenos Aires Obelisco Caminito colorful',
+  'mexico city': 'Mexico City Palacio de Bellas Artes Zocalo',
+  'sydney': 'Sydney Opera House Harbour Bridge',
+  'melbourne': 'Melbourne skyline Yarra River',
+  'hong kong': 'Hong Kong skyline Victoria Harbour night',
+  'singapore': 'Singapore Marina Bay Sands skyline night',
+  'bangkok': 'Bangkok Grand Palace temple skyline',
+  'seoul': 'Seoul skyline Namsan Tower night',
+  'shanghai': 'Shanghai Pudong skyline the Bund night',
+  'beijing': 'Beijing Forbidden City Temple of Heaven',
+  'cape town': 'Cape Town Table Mountain ocean',
+  'marrakech': 'Marrakech medina Jemaa el-Fnaa sunset',
+  'edinburgh': 'Edinburgh Castle old town skyline',
+  'dublin': 'Dublin Ha penny Bridge Temple Bar'
 };
 
 async function getCityImage(dest) {
@@ -6248,7 +6303,7 @@ function renderCars(cars, dest) {
   }
 
   var hasReal = cars.some(function(c) { return c.isReal; });
-  var h = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + (hasReal ? (dict.res_live||'Live prices from Duffel:') : (dict.res_cars_est||'Estimated car rental options — compare real deals:')) + '</p>' + fallbackLinks;
+  var h = '<p style="font-size:13px;color:var(--body-text);margin-bottom:10px">' + (hasReal ? (dict.res_live||'Live prices from Duffel:') : (dict.res_cars_est||'Estimated car rental options — compare real deals:')) + '</p>';
 
   // Group by category (Compact/SUV/Sports car/Economy/etc.) so options are
   // organized instead of one flat list, matching how a rental site presents them.
@@ -6286,6 +6341,9 @@ function renderCars(cars, dest) {
       h += '<button type="button" onclick="toggleCarCart(window._cars['+cars.indexOf(c)+'])" style="border:1.5px solid '+(inCart?'var(--live)':'var(--gold)')+';background:'+(inCart?'var(--live-bg)':'var(--gold)')+';color:'+(inCart?'var(--live)':'var(--navy)')+';font-size:13px;font-weight:700;padding:9px 18px;border-radius:20px;cursor:pointer;font-family:\'Inter\',sans-serif;white-space:nowrap;box-shadow:'+(inCart?'none':'0 2px 6px rgba(201,169,110,.35)')+'">'+(inCart?dict.cart_added:dict.cart_add)+'</button>';
       h += '</div>';
       h += '</div>';
+      // Booking.com Cars link INSIDE each card (pre-filled to the destination
+      // airport + dates), so it sits with the car it books, not below the list.
+      h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)"><a href="' + bookingCarUrl(dest) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a></div>';
       h += '</div>';
     });
   });
