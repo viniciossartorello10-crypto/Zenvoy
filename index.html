@@ -149,6 +149,14 @@ h1 em{font-style:italic;color:var(--gold)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--body-text);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.web-counters{display:flex;flex-direction:column;gap:10px}
+.web-counter{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--page-bg)}
+.web-counter-l{font-size:15px;font-weight:600;color:var(--page-text)}
+.web-stepper{display:flex;align-items:center;gap:14px}
+.web-stepper span{min-width:22px;text-align:center;font-size:16px;font-weight:700;color:var(--page-text)}
+.web-stepper button{width:34px;height:34px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);color:var(--page-text);font-size:20px;line-height:1;font-weight:400;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,background .15s;flex-shrink:0}
+.web-stepper button:hover{border-color:var(--gold)}
+.web-stepper button:disabled{opacity:.35;cursor:default}
 .ac-wrap{position:relative}
 input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
@@ -516,6 +524,16 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .tin-tile.on .lb{color:var(--app-gold-deep)}
 /* Number selector row. */
 .tin-nums{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+/* Adults + children steppers. */
+.tin-counters{display:flex;flex-direction:column;gap:12px;margin-top:4px}
+.tin-counter{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;
+  border-radius:16px;border:1.5px solid var(--app-line);background:var(--app-surface)}
+.tin-counter-l{font-size:16px;font-weight:700;color:var(--app-text)}
+.tin-stepper{display:flex;align-items:center;gap:14px}
+.tin-stepper button{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--app-line);background:var(--app-surface);
+  color:var(--app-text);font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tin-stepper button:active{transform:scale(.9)}
+.tin-stepper span{min-width:22px;text-align:center;font-size:18px;font-weight:800;color:var(--app-text)}
 .tin-num{width:64px;height:64px;border-radius:20px;border:1.5px solid var(--app-line);background:var(--app-surface);
   font-size:22px;font-weight:800;color:var(--app-text);cursor:pointer;box-shadow:var(--app-shadow-soft)}
 .tin-num.on{border-color:var(--app-gold);background:var(--app-gold);color:var(--app-navy)}
@@ -1375,11 +1393,29 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
         <input type="date" id="retDate">
       </div>
     </div>
-    <div class="grid2" style="margin-bottom:16px">
-      <div class="field">
-        <label data-i18n="label_travelers">Travelers</label>
-        <input type="number" id="travelers" value="2" min="1" max="20">
+    <div class="field" style="margin-bottom:16px">
+      <label data-i18n="label_travelers">Travelers</label>
+      <input type="hidden" id="travelers" value="2">
+      <div class="web-counters">
+        <div class="web-counter">
+          <span class="web-counter-l" data-i18n="trav_adults">👨 Adults</span>
+          <div class="web-stepper">
+            <button type="button" onclick="webTrav('adults',-1)" aria-label="Fewer adults">−</button>
+            <span id="webAdults">2</span>
+            <button type="button" onclick="webTrav('adults',1)" aria-label="More adults">+</button>
+          </div>
+        </div>
+        <div class="web-counter">
+          <span class="web-counter-l" data-i18n="trav_children">👶 Children</span>
+          <div class="web-stepper">
+            <button type="button" onclick="webTrav('children',-1)" aria-label="Fewer children">−</button>
+            <span id="webChildren">0</span>
+            <button type="button" onclick="webTrav('children',1)" aria-label="More children">+</button>
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
       <div class="field">
         <label data-i18n="label_staytype">Stay type</label>
         <select id="stayType">
@@ -2602,7 +2638,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
-    label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers',
+    label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
     label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
     label_budgetlevel: 'Budget level',
@@ -2664,7 +2700,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
-    label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes',
+    label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
     label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Nível de orçamento',
@@ -2726,7 +2762,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
-    label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros',
+    label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
     label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
     label_budgetlevel: 'Nivel de presupuesto',
@@ -2788,7 +2824,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
-    label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs',
+    label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
     label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Niveau de budget',
@@ -2850,7 +2886,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
-    label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori',
+    label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
     label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
     label_budgetlevel: 'Livello di budget',
@@ -4428,6 +4464,30 @@ function estimateMultiDestBudget(total, numCities) {
   };
 }
 
+// Website adults/children counters — keep the hidden #travelers total and the
+// window._adults/_children globals in sync (same contract the native wizard uses
+// via appWizFinish, so affiliate deep-links and the AI brief see the same numbers).
+function webTrav(kind, delta) {
+  var ad = parseInt((document.getElementById('webAdults') || {}).textContent) || 2;
+  var ch = parseInt((document.getElementById('webChildren') || {}).textContent) || 0;
+  if (kind === 'adults') ad += delta; else ch += delta;
+  if (ad < 1) ad = 1;                      // at least one adult
+  if (ch < 0) ch = 0;
+  if (ad + ch > 12) { if (kind === 'adults') ad -= delta; else ch -= delta; } // max 12 total
+  var aEl = document.getElementById('webAdults'), cEl = document.getElementById('webChildren');
+  if (aEl) aEl.textContent = ad;
+  if (cEl) cEl.textContent = ch;
+  var t = document.getElementById('travelers'); if (t) t.value = String(ad + ch);
+  window._adults = ad; window._children = ch;
+  // Disable steppers at their limits for clear affordance.
+  var full = ad + ch >= 12;
+  var btns = document.querySelectorAll('.web-stepper button');
+  if (btns[0]) btns[0].disabled = ad <= 1;   // fewer adults
+  if (btns[1]) btns[1].disabled = full;      // more adults
+  if (btns[2]) btns[2].disabled = ch <= 0;   // fewer children
+  if (btns[3]) btns[3].disabled = full;      // more children
+}
+
 // Handles trips spanning multiple destinations (e.g. a European backpacking
 // route through several countries). Runs the same per-destination AI
 // generation used for single-destination trips, once per leg, then merges
@@ -4995,7 +5055,9 @@ async function generatePlan() {
   hideErrorBanner();
   showBuildingScreen();
 
-  var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travelers+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
+  var _ch = window._children || 0;
+  var travDesc = _ch > 0 ? ((window._adults || (travelers - _ch)) + ' adults + ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' (family trip — favor family-friendly options)') : travelers;
+  var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travDesc+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
   var extraNotesVal = (document.getElementById('extraNotes') || {}).value;
   // Wrapped in explicit delimiters + a data-not-instructions warning — this
   // field is raw free text from the traveler, so it must never be able to
@@ -6613,6 +6675,9 @@ window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
 
 translatePage();
+// Initialize the travelers-counter disabled states (−/+ affordances) to match
+// the default 2 adults / 0 children without changing the values.
+if (typeof webTrav === 'function') webTrav('adults', 0);
 // Also apply the currency for the saved language on load — translatePage()
 // only updates text, so without this the currency would stay stuck on USD
 // until the person manually re-selects a language from the dropdown.
@@ -6739,7 +6804,7 @@ var APP_WIZ = [
 function _wl(o) { return (o && (o[appLang] || o.en)) || ''; }
 
 function appWizStart() {
-  appWizState = { travelers: '2', stay: 'Any', budgetLevel: 'moderate', style: 'Adventure', interests: [], rhythm: 'balanced', notes: '', legs: [], tripType: 'round' };
+  appWizState = { travelers: '2', adults: 2, children: 0, stay: 'Any', budgetLevel: 'moderate', style: 'Adventure', interests: [], rhythm: 'balanced', notes: '', legs: [], tripType: 'round' };
   // Sensible default dates: today + a week out.
   var t = new Date(), r = new Date(); r.setDate(t.getDate() + 7);
   appWizState.dep = t.toISOString().split('T')[0];
@@ -6782,9 +6847,15 @@ function appWizRender(dir) {
       travelers: appLang === 'pt' ? 'Viajantes' : 'Travelers',
       go: appLang === 'pt' ? 'Continuar' : 'Continue'
     };
-    var travTiles = ['1', '2', '3', '4', '5+'].map(function (n) {
-      return '<button type="button" class="tin-num' + (appWizState.travelers === n ? ' on' : '') + '" onclick="appWizPickTravelers(\'' + n + '\')">' + n + '</button>';
-    }).join('');
+    var _tL = { adults: { pt: '👨 Adultos', en: '👨 Adults', es: '👨 Adultos', fr: '👨 Adultes', it: '👨 Adulti' }, children: { pt: '👶 Crianças', en: '👶 Children', es: '👶 Niños', fr: '👶 Enfants', it: '👶 Bambini' } };
+    function _travRow(kind) {
+      var val = kind === 'adults' ? (appWizState.adults || 2) : (appWizState.children || 0);
+      return '<div class="tin-counter"><span class="tin-counter-l">' + (_tL[kind][appLang] || _tL[kind].en) + '</span>'
+        + '<div class="tin-stepper"><button type="button" onclick="appWizTrav(\'' + kind + '\',-1)">−</button>'
+        + '<span id="tin' + (kind === 'adults' ? 'Adults' : 'Children') + '">' + val + '</span>'
+        + '<button type="button" onclick="appWizTrav(\'' + kind + '\',1)">+</button></div></div>';
+    }
+    var travTiles = _travRow('adults') + _travRow('children');
     body = '<div class="tin-trip">'
       + '<div class="tin-field"><label>' + L.from + '</label>'
       + '<div class="tin-search"><input id="tinFrom" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.from || '') + '" oninput="appWizTripSearch(\'from\')"></div>'
@@ -6804,7 +6875,7 @@ function appWizRender(dir) {
       + '<div class="tin-field"><label>' + L.dep + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizTripValidate()"></div>'
       + '<div class="tin-field"><label>' + L.ret + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizTripValidate()"></div>'
       + '</div>'
-      + '<div class="tin-field"><label>' + L.travelers + '</label><div class="tin-nums" id="tinTripNums">' + travTiles + '</div></div>'
+      + '<div class="tin-field"><label>' + L.travelers + '</label><div class="tin-counters" id="tinTripNums">' + travTiles + '</div></div>'
       + '</div>'
       + '<div class="tin-actions"><button class="tin-primary" id="tinTripGo" onclick="appWizTripContinue()"' + ((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret ? '' : ' disabled') + '>' + L.go + ' →</button></div>';
   } else if (step.type === 'nums') {
@@ -6923,10 +6994,17 @@ function appWizTripContinue() {
   if (!((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret)) return;
   appWizAdvance();
 }
-function appWizPickTravelers(n) {
-  appWizState.travelers = n;
-  var box = document.getElementById('tinTripNums');
-  if (box) Array.prototype.forEach.call(box.children, function (b) { b.classList.toggle('on', b.textContent === n); });
+function appWizPickTravelers(n) { appWizState.travelers = n; } // legacy no-op (counters replace tiles)
+// Adults + children steppers. Min 1 adult, max 12 total.
+function appWizTrav(kind, delta) {
+  var a = appWizState.adults || 2, c = appWizState.children || 0;
+  if (kind === 'adults') a = Math.max(1, a + delta);
+  else c = Math.max(0, c + delta);
+  if (a + c > 12) return;
+  appWizState.adults = a; appWizState.children = c;
+  appWizState.travelers = String(a + c);
+  var ae = document.getElementById('tinAdults'); if (ae) ae.textContent = a;
+  var ce = document.getElementById('tinChildren'); if (ce) ce.textContent = c;
 }
 
 // ── Multi-destination legs on the trip screen ──
@@ -6994,7 +7072,11 @@ function appWizFinish() {
   setVal('toCity', s.surprise ? '' : (s.to || ''));
   setVal('depDate', s.dep || '');
   setVal('retDate', s.ret || '');
-  setVal('travelers', (s.travelers || '2').replace('+', ''));
+  var _ad = s.adults || 2, _ch = s.children || 0;
+  setVal('travelers', String(_ad + _ch));
+  window._adults = _ad; window._children = _ch;
+  // Give the AI family context so the itinerary suits kids when present.
+  if (_ch > 0) s.notes = (s.notes ? s.notes + '. ' : '') + 'Traveling with ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' — include family-friendly options.';
   // Multi-destination: any extra legs with a city routes generatePlan() to the
   // multi-city generator (it reads the global extraLegs array, city-first).
   extraLegs = (s.legs || []).filter(function (l) { return l.city && l.city.trim(); })
