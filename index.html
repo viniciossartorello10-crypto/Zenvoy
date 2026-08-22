@@ -330,6 +330,29 @@ input::placeholder{color:#aaa}
 .itin-btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .itin-btn-row .itin-map-btn{margin:0}
 .itin-gmaps-btn{border-color:var(--border);background:var(--page-bg);color:var(--body-text)}
+/* PDF / print export: hidden on screen, the only thing shown when printing */
+#printRoot{display:none}
+@media print{
+  body.printing *{visibility:hidden}
+  body.printing #printRoot,body.printing #printRoot *{visibility:visible}
+  body.printing #printRoot{display:block;position:absolute;left:0;top:0;width:100%}
+}
+.pr-doc{font-family:'Inter',sans-serif;color:#111;padding:8px 4px}
+.pr-header{border-bottom:2px solid #c9a96e;padding-bottom:10px;margin-bottom:14px}
+.pr-brand{font-family:'Playfair Display',serif;font-size:15px;color:#c9a96e;letter-spacing:.04em}
+.pr-title{font-size:22px;font-weight:800;margin:4px 0 6px;color:#0b0f1a}
+.pr-meta{display:flex;gap:18px;font-size:12.5px;color:#444}
+.pr-day{page-break-inside:avoid;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e5e5}
+.pr-day-head{display:flex;align-items:baseline;gap:12px}
+.pr-day-n{font-size:17px;font-weight:800;color:#0b0f1a;background:#f3ecdd;border-left:4px solid #c9a96e;padding:3px 12px;border-radius:4px}
+.pr-day-date{font-size:12px;color:#777}
+.pr-day-theme{font-size:14px;font-weight:600;color:#333;margin:6px 0 4px}
+.pr-route{font-size:11.5px;color:#8a6d2f;margin-bottom:8px}
+.pr-slot{display:flex;gap:12px;padding:5px 0;border-top:1px dotted #eee}
+.pr-slot-l{flex:0 0 128px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#c9a96e}
+.pr-slot-t{flex:1;font-size:13px;color:#222;line-height:1.45}
+.pr-area{color:#888;font-size:11.5px}
+.pr-foot{margin-top:10px;font-size:11px;color:#aaa;text-align:center}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
@@ -2754,7 +2777,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
     flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
-    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps',
+    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', export_pdf: 'Save PDF',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
@@ -2817,7 +2840,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
-    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps',
+    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', export_pdf: 'Baixar PDF',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
@@ -2880,7 +2903,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
     flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
-    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps',
+    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', export_pdf: 'Guardar PDF',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
@@ -2943,7 +2966,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
     flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
-    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps',
+    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', export_pdf: 'Enregistrer PDF',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
@@ -3006,7 +3029,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
     flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
-    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps',
+    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', export_pdf: 'Salva PDF',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
@@ -6236,6 +6259,7 @@ function renderCurrentDay() {
     html += '<div class="itin-btn-row">'
       + '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + slotDict.view_on_map + '</button>'
       + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + slotDict.open_gmaps + '</button>'
+      + '<button class="itin-map-btn itin-gmaps-btn" onclick="exportItineraryPDF()">📄 ' + slotDict.export_pdf + '</button>'
       + '</div>';
   }
 
@@ -6355,6 +6379,70 @@ function openDayInGoogleMaps() {
     }
   } catch (e) {}
   window.open(url, '_blank');
+}
+
+// ── EXPORT FULL ITINERARY AS PDF (print view) ───────────────────────────────
+// Builds a clean, print-only document of every day (schedule + stops) and calls
+// window.print() — the browser's "Save as PDF" (web) or Android's system print
+// produces the file. No external libraries; works inside the Capacitor webview.
+function _tripDates() {
+  var p = window.planData || {};
+  return { ci: p.checkIn || '', co: p.checkOut || '' };
+}
+function buildItineraryPrintHtml() {
+  var days = window._days || [];
+  if (!days.length) return '';
+  var rk = window._rk || 'balanced';
+  var dest = window._dest || (window.planData && window.planData.destination) || '';
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var L = ({ pt: { trip: 'Roteiro', by: 'por Zenvoy', travelers: 'Viajantes', dates: 'Datas' },
+             en: { trip: 'Itinerary', by: 'by Zenvoy', travelers: 'Travelers', dates: 'Dates' },
+             es: { trip: 'Itinerario', by: 'por Zenvoy', travelers: 'Viajeros', dates: 'Fechas' },
+             fr: { trip: 'Itinéraire', by: 'par Zenvoy', travelers: 'Voyageurs', dates: 'Dates' },
+             it: { trip: 'Itinerario', by: 'di Zenvoy', travelers: 'Viaggiatori', dates: 'Date' } })[appLang] || { trip: 'Itinerary', by: 'by Zenvoy', travelers: 'Travelers', dates: 'Dates' };
+  var td = _tripDates();
+  var trav = (window.planData && window.planData.travelers) || document.getElementById('travelers') && document.getElementById('travelers').value || '';
+  var h = '<div class="pr-doc">';
+  h += '<div class="pr-header"><div class="pr-brand">Zen ✈ Voy</div>'
+     + '<h1 class="pr-title">' + escapeHtml(L.trip + ' · ' + dest) + '</h1>'
+     + '<div class="pr-meta">'
+     + (td.ci ? '<span>' + L.dates + ': ' + escapeHtml(rcFmtFull(td.ci)) + (td.co ? ' – ' + escapeHtml(rcFmtFull(td.co)) : '') + '</span>' : '')
+     + (trav ? '<span>' + L.travelers + ': ' + escapeHtml(String(trav)) + '</span>' : '')
+     + '</div></div>';
+  var slotLabels = [['breakfast', dict.slot_breakfast], ['morning', dict.slot_morning], ['lunch', dict.slot_lunch], ['afternoon', dict.slot_afternoon], ['dinner', dict.slot_dinner], ['night', dict.slot_night]];
+  days.forEach(function (d, i) {
+    var r = d[rk] || d.balanced || d.early_bird || {};
+    var meta = (typeof dayMetaFor === 'function') ? dayMetaFor(i) : null;
+    var idx = dayStopsIndex(d);
+    h += '<div class="pr-day">';
+    h += '<div class="pr-day-head"><span class="pr-day-n">' + (DAY_WORD[appLang] || DAY_WORD.en) + ' ' + (d.day || (i + 1)) + '</span>'
+       + (meta && meta.date ? '<span class="pr-day-date">' + escapeHtml(rcFmtFull(meta.date)) + '</span>' : '') + '</div>';
+    h += '<div class="pr-day-theme">' + escapeHtml((meta && meta.name) ? meta.name : (d.theme || '')) + '</div>';
+    var sum = idx.ordered.length ? dayRouteSummary(idx.ordered, (typeof cityToCoords === 'function') ? cityToCoords(dest) : null) : null;
+    if (sum) h += '<div class="pr-route">🧭 ' + fmtKm(sum.km) + ' · ' + fmtDuration(sum.travelMin) + '</div>';
+    slotLabels.forEach(function (sl) {
+      var text = r[sl[0]]; if (!text) return;
+      var stop = idx.bySlot[sl[0]];
+      var time = stop && stop._time ? stop._time : '';
+      h += '<div class="pr-slot"><div class="pr-slot-l">' + escapeHtml(sl[1]) + (time ? ' · ' + time : '') + '</div>'
+         + '<div class="pr-slot-t">' + escapeHtml(localizePriceText(text)) + (stop && stop.area ? ' <span class="pr-area">(' + escapeHtml(stop.area) + ')</span>' : '') + '</div></div>';
+    });
+    h += '</div>';
+  });
+  h += '<div class="pr-foot">' + escapeHtml(L.by + ' · zenvoy') + '</div></div>';
+  return h;
+}
+function exportItineraryPDF() {
+  if (!(window._days || []).length) return;
+  var root = document.getElementById('printRoot');
+  if (!root) { root = document.createElement('div'); root.id = 'printRoot'; document.body.appendChild(root); }
+  root.innerHTML = buildItineraryPrintHtml();
+  document.body.classList.add('printing');
+  var done = function () { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(function () { try { window.print(); } catch (e) { done(); } }, 60);
+  // Safety: clear the print state even if afterprint never fires (some webviews).
+  setTimeout(done, 4000);
 }
 
 function goToDay(delta) {
@@ -7848,7 +7936,8 @@ function appRenderItinerary() {
     + (_appSum ? routeSummaryHtml(_appSum) : '')
     + (stopsIdx.ordered.length
       ? '<div class="itin-btn-row"><button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + dict.view_on_map + '</button>'
-        + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + dict.open_gmaps + '</button></div>'
+        + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + dict.open_gmaps + '</button>'
+        + '<button class="itin-map-btn itin-gmaps-btn" onclick="exportItineraryPDF()">📄 ' + dict.export_pdf + '</button></div>'
       : '');
   var dayTheme = d.theme || '';
   window._appSlotAlt = {}; // fresh per render — alternatives don't carry between days/rhythms
