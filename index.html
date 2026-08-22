@@ -157,6 +157,35 @@ h1 em{font-style:italic;color:var(--gold)}
 .web-stepper button{width:34px;height:34px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);color:var(--page-text);font-size:20px;line-height:1;font-weight:400;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,background .15s;flex-shrink:0}
 .web-stepper button:hover{border-color:var(--gold)}
 .web-stepper button:disabled{opacity:.35;cursor:default}
+/* Shared range date picker */
+.rc-overlay{position:fixed;inset:0;z-index:99999;background:rgba(11,15,26,.55);display:none;align-items:flex-end;justify-content:center}
+.rc-overlay.on{display:flex}
+.rc-sheet{background:var(--card-bg);color:var(--page-text);width:100%;max-width:480px;max-height:90vh;border-radius:24px 24px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -8px 40px rgba(0,0,0,.3)}
+@media(min-width:600px){.rc-overlay{align-items:center}.rc-sheet{border-radius:24px;max-height:82vh}}
+.rc-head{padding:20px 22px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.rc-title{font-size:19px;font-weight:800;color:var(--page-text)}
+.rc-sub{font-size:13px;color:var(--muted);margin-top:5px;min-height:16px}
+.rc-dow{display:grid;grid-template-columns:repeat(7,1fr);padding:10px 16px 0;flex-shrink:0}
+.rc-dow span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.rc-scroll{overflow-y:auto;padding:4px 16px 14px;flex:1;-webkit-overflow-scrolling:touch}
+.rc-month-name{font-size:15px;font-weight:800;margin:16px 4px 10px;text-align:center;color:var(--page-text)}
+.rc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.rc-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:12px;cursor:pointer;user-select:none;color:var(--page-text)}
+.rc-day.empty{visibility:hidden;pointer-events:none}
+.rc-day.past{color:var(--muted);opacity:.35;pointer-events:none}
+.rc-day.inrange{background:rgba(201,169,110,.20);border-radius:0}
+.rc-day.sel{background:var(--gold);color:#1a1206;font-weight:800}
+.rc-day.range-start{border-radius:12px 0 0 12px}
+.rc-day.range-end{border-radius:0 12px 12px 0}
+.rc-day.range-start.range-end{border-radius:12px}
+.rc-foot{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0}
+.rc-foot button{flex:1;padding:15px;border-radius:14px;font-weight:800;font-size:15px;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.rc-clear{background:transparent!important;border:1px solid var(--border)!important;color:var(--page-text)}
+.rc-done{background:var(--navy);color:#fff}
+.rc-done:disabled{opacity:.4;cursor:default}
+/* Tappable date trigger field (replaces the two native date inputs) */
+.date-trigger{width:100%;text-align:left;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);cursor:pointer;display:flex;align-items:center;gap:10px}
+.date-trigger .dt-ph{color:#aaa}
 .ac-wrap{position:relative}
 input,select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:'Inter',sans-serif;color:var(--page-text);background:var(--page-bg);outline:none;transition:border-color .2s}
 input:focus,select:focus{border-color:var(--gold);background:var(--card-bg)}
@@ -522,6 +551,10 @@ body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
 .tin-surprise.on{border-color:var(--app-gold);color:var(--app-gold-deep);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
 .tin-tile.on{border-color:var(--app-gold);background:linear-gradient(135deg,rgba(201,169,110,.16),rgba(201,169,110,.06))}
 .tin-tile.on .lb{color:var(--app-gold-deep)}
+/* Tappable dates trigger (opens shared range calendar). */
+.tin-date-trigger{width:100%;text-align:left;padding:16px 18px;border-radius:16px;border:1.5px solid var(--app-line);
+  background:var(--app-surface);color:var(--app-text);font-size:16px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;margin-top:4px}
+.tin-date-trigger .dt-ph{color:var(--app-text-soft);font-weight:500}
 /* Number selector row. */
 .tin-nums{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
 /* Adults + children steppers. */
@@ -1383,15 +1416,11 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     </div>
 
     <div class="wizard-step" data-step="2">
-    <div class="grid2" id="tripDatesRow" style="margin-bottom:16px">
-      <div class="field" id="depField">
-        <label data-i18n="label_departure">Departure</label>
-        <input type="date" id="depDate">
-      </div>
-      <div class="field" id="retField">
-        <label data-i18n="label_return">Return</label>
-        <input type="date" id="retDate">
-      </div>
+    <div class="field" id="tripDatesRow" style="margin-bottom:16px">
+      <label data-i18n="label_dates">Dates</label>
+      <input type="hidden" id="depDate">
+      <input type="hidden" id="retDate">
+      <button type="button" class="date-trigger" id="webDateTrigger" onclick="webOpenDates()"></button>
     </div>
     <div class="field" style="margin-bottom:16px">
       <label data-i18n="label_travelers">Travelers</label>
@@ -2638,7 +2667,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
-    label_departure: 'Departure', label_return: 'Return', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
+    label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
     label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
     label_budgetlevel: 'Budget level',
@@ -2700,7 +2729,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
-    label_departure: 'Ida', label_return: 'Volta', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
+    label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
     label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Nível de orçamento',
@@ -2762,7 +2791,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
-    label_departure: 'Ida', label_return: 'Vuelta', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
+    label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
     label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
     label_budgetlevel: 'Nivel de presupuesto',
@@ -2824,7 +2853,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
-    label_departure: 'Départ', label_return: 'Retour', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
+    label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
     label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Niveau de budget',
@@ -2886,7 +2915,7 @@ var TRANSLATIONS = {
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
-    label_departure: 'Partenza', label_return: 'Ritorno', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
+    label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
     label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
     label_budgetlevel: 'Livello di budget',
@@ -3099,6 +3128,7 @@ function setLang(l) {
   appLang = l;
   localStorage.setItem('zenvoy_lang', l);
   translatePage();
+  if (typeof webSyncDateTrigger === 'function') webSyncDateTrigger();
 
   // Update currency to match the new language, then re-render any
   // currently-visible prices so the change is reflected immediately
@@ -6678,6 +6708,17 @@ translatePage();
 // Initialize the travelers-counter disabled states (−/+ affordances) to match
 // the default 2 adults / 0 children without changing the values.
 if (typeof webTrav === 'function') webTrav('adults', 0);
+// Seed sensible default dates (today + a week) and render the date trigger.
+// Deferred so RC_I18N / webSyncDateTrigger (defined later in this script) exist.
+setTimeout(function () {
+  var dp = document.getElementById('depDate'), rt = document.getElementById('retDate');
+  if (dp && rt && !dp.value) {
+    var a = new Date(), b = new Date(); b.setDate(a.getDate() + 7);
+    function iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    dp.value = iso(a); rt.value = iso(b);
+  }
+  if (typeof webSyncDateTrigger === 'function') webSyncDateTrigger();
+}, 0);
 // Also apply the currency for the saved language on load — translatePage()
 // only updates text, so without this the currency would stay stuck on USD
 // until the person manually re-selects a language from the dropdown.
@@ -6871,10 +6912,8 @@ function appWizRender(dir) {
       + '<button type="button" class="' + (appWizState.tripType !== 'oneway' ? 'on' : '') + '" onclick="appWizSetTripType(\'round\')">' + (appLang === 'pt' ? 'Ida e volta' : 'Round trip') + '</button>'
       + '<button type="button" class="' + (appWizState.tripType === 'oneway' ? 'on' : '') + '" onclick="appWizSetTripType(\'oneway\')">' + (appLang === 'pt' ? 'Só ida' : 'One way') + '</button>'
       + '</div></div>'
-      + '<div class="tin-datepair">'
-      + '<div class="tin-field"><label>' + L.dep + '</label><input type="date" id="tinDep" value="' + (appWizState.dep || '') + '" onchange="appWizState.dep=this.value;appWizTripValidate()"></div>'
-      + '<div class="tin-field"><label>' + L.ret + '</label><input type="date" id="tinRet" value="' + (appWizState.ret || '') + '" onchange="appWizState.ret=this.value;appWizTripValidate()"></div>'
-      + '</div>'
+      + '<div class="tin-field"><label>' + (appLang === 'pt' ? 'Datas' : L.dep + ' — ' + L.ret) + '</label>'
+      + '<button type="button" class="tin-date-trigger" id="tinDateTrigger" onclick="appWizOpenDates()">' + appWizDateLabel() + '</button></div>'
       + '<div class="tin-field"><label>' + L.travelers + '</label><div class="tin-counters" id="tinTripNums">' + travTiles + '</div></div>'
       + '</div>'
       + '<div class="tin-actions"><button class="tin-primary" id="tinTripGo" onclick="appWizTripContinue()"' + ((appWizState.from || appWizState.surprise) && appWizState.dep && appWizState.ret ? '' : ' disabled') + '>' + L.go + ' →</button></div>';
@@ -7039,9 +7078,22 @@ function appWizSetTripType(t) {
   appWizState.tripType = t;
   var box = document.getElementById('tinTripType');
   if (box) { box.children[0].classList.toggle('on', t !== 'oneway'); box.children[1].classList.toggle('on', t === 'oneway'); }
-  // One-way: the "Return" date now just marks how long the stay is, not a flight.
-  var retLbl = document.querySelector('#tinRet') ? document.querySelector('#tinRet').closest('.tin-field').querySelector('label') : null;
-  if (retLbl) retLbl.textContent = (t === 'oneway') ? (appLang === 'pt' ? 'Fim da viagem' : 'Trip ends') : (appLang === 'pt' ? 'Volta' : 'Return');
+}
+// Native wizard: single tappable dates field → shared range calendar.
+function appWizDateLabel() {
+  var t = RC_I18N[appLang] || RC_I18N.en;
+  if (appWizState.dep && appWizState.ret) return '📅 ' + rcFmt(appWizState.dep) + ' — ' + rcFmt(appWizState.ret);
+  return '📅 <span class="dt-ph">' + t.pick_start + '</span>';
+}
+function appWizOpenDates() {
+  RangeCal.open({
+    start: appWizState.dep, end: appWizState.ret,
+    onPick: function (s, e) {
+      appWizState.dep = s; appWizState.ret = e;
+      var trig = document.getElementById('tinDateTrigger'); if (trig) trig.innerHTML = appWizDateLabel();
+      if (typeof appWizTripValidate === 'function') appWizTripValidate();
+    }
+  });
 }
 function appWizRemoveLeg(i) { appWizState.legs.splice(i, 1); appWizRenderLegs(); }
 function appWizLegCity(i, v) { if (appWizState.legs[i]) appWizState.legs[i].city = v; }
@@ -7858,9 +7910,144 @@ function appInitShell() {
 
 function appTranslateShell() { if (typeof translatePage === 'function') translatePage(); }
 
+// ── Shared Airbnb-style range date picker ────────────────────────────────────
+// One overlay reused by both the website planner and the native wizard. Tap a
+// start day, then an end day; the range highlights between them. onPick receives
+// the two ISO (YYYY-MM-DD) strings. Fully localized via appLang.
+var RC_I18N = {
+  en: { title: 'Select dates', pick_start: 'Select your departure date', pick_end: 'Select your return date', nights: 'nights', night: 'night', clear: 'Clear', done: 'Done', dow: ['S','M','T','W','T','F','S'] },
+  pt: { title: 'Escolha as datas', pick_start: 'Selecione a data de ida', pick_end: 'Selecione a data de volta', nights: 'noites', night: 'noite', clear: 'Limpar', done: 'Confirmar', dow: ['D','S','T','Q','Q','S','S'] },
+  es: { title: 'Elige las fechas', pick_start: 'Selecciona la fecha de ida', pick_end: 'Selecciona la fecha de vuelta', nights: 'noches', night: 'noche', clear: 'Borrar', done: 'Confirmar', dow: ['D','L','M','X','J','V','S'] },
+  fr: { title: 'Choisir les dates', pick_start: 'Sélectionnez la date de départ', pick_end: 'Sélectionnez la date de retour', nights: 'nuits', night: 'nuit', clear: 'Effacer', done: 'Valider', dow: ['D','L','M','M','J','V','S'] },
+  it: { title: 'Scegli le date', pick_start: "Seleziona la data d'andata", pick_end: 'Seleziona la data di ritorno', nights: 'notti', night: 'notte', clear: 'Cancella', done: 'Conferma', dow: ['D','L','M','M','G','V','S'] }
+};
+var RC_LOCALE = { en: 'en-US', pt: 'pt-BR', es: 'es-ES', fr: 'fr-FR', it: 'it-IT' };
+var RangeCal = {
+  start: null, end: null, onPick: null, months: 15,
+  _t: function () { return RC_I18N[(typeof appLang !== 'undefined' && appLang) || 'en'] || RC_I18N.en; },
+  _iso: function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); },
+  _parse: function (s) { if (!s) return null; var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); },
+  open: function (opts) {
+    this.onPick = opts.onPick;
+    this.start = this._parse(opts.start);
+    this.end = this._parse(opts.end);
+    var t = this._t();
+    document.getElementById('rcTitle').textContent = t.title;
+    document.getElementById('rcClear').textContent = t.clear;
+    document.getElementById('rcDone').textContent = t.done;
+    document.getElementById('rcDow').innerHTML = t.dow.map(function (d) { return '<span>' + d + '</span>'; }).join('');
+    document.getElementById('rcOverlay').classList.add('on');
+    this._renderMonths();
+    this._paint();
+    // Scroll so the selected (or current) month is at the top.
+    var self = this;
+    setTimeout(function () {
+      var anchor = self.start || new Date();
+      var el = document.getElementById('rcM_' + anchor.getFullYear() + '_' + anchor.getMonth());
+      if (el) el.scrollIntoView({ block: 'start' });
+    }, 30);
+  },
+  close: function () { document.getElementById('rcOverlay').classList.remove('on'); },
+  clear: function () { this.start = null; this.end = null; this._paint(); },
+  _renderMonths: function () {
+    var loc = RC_LOCALE[(typeof appLang !== 'undefined' && appLang) || 'en'] || 'en-US';
+    var now = new Date(); now.setDate(1);
+    var todayIso = this._iso(new Date());
+    var html = '';
+    for (var m = 0; m < this.months; m++) {
+      var first = new Date(now.getFullYear(), now.getMonth() + m, 1);
+      var y = first.getFullYear(), mo = first.getMonth();
+      var monthName = first.toLocaleDateString(loc, { month: 'long', year: 'numeric' });
+      monthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+      html += '<div class="rc-month-name" id="rcM_' + y + '_' + mo + '">' + monthName + '</div><div class="rc-grid">';
+      var lead = first.getDay();
+      for (var e = 0; e < lead; e++) html += '<div class="rc-day empty"></div>';
+      var dim = new Date(y, mo + 1, 0).getDate();
+      for (var d = 1; d <= dim; d++) {
+        var iso = y + '-' + String(mo + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        var past = iso < todayIso;
+        html += '<div class="rc-day' + (past ? ' past' : '') + '" data-iso="' + iso + '"' + (past ? '' : ' onclick="RangeCal.pick(this.getAttribute(\'data-iso\'))"') + '>' + d + '</div>';
+      }
+      html += '</div>';
+    }
+    document.getElementById('rcScroll').innerHTML = html;
+  },
+  pick: function (iso) {
+    var d = this._parse(iso);
+    if (!this.start || (this.start && this.end)) { this.start = d; this.end = null; }
+    else if (d.getTime() === this.start.getTime()) { /* same day tapped: keep as single */ }
+    else if (d < this.start) { this.start = d; this.end = null; }
+    else { this.end = d; }
+    this._paint();
+  },
+  _paint: function () {
+    var s = this.start ? this._iso(this.start) : null, e = this.end ? this._iso(this.end) : null;
+    var st = this.start ? this.start.getTime() : 0, et = this.end ? this.end.getTime() : 0;
+    document.querySelectorAll('#rcScroll .rc-day').forEach(function (el) {
+      el.classList.remove('sel', 'inrange', 'range-start', 'range-end');
+      var iso = el.getAttribute('data-iso'); if (!iso) return;
+      if (iso === s || iso === e) { el.classList.add('sel'); if (s && e) el.classList.add(iso === s ? 'range-start' : 'range-end'); }
+      else if (st && et) { var t = RangeCal._parse(iso).getTime(); if (t > st && t < et) el.classList.add('inrange'); }
+    });
+    var t = this._t();
+    var sub = document.getElementById('rcSub');
+    if (this.start && this.end) {
+      var n = Math.round((this.end - this.start) / 86400000);
+      sub.textContent = n + ' ' + (n === 1 ? t.night : t.nights);
+    } else if (this.start) { sub.textContent = t.pick_end; }
+    else { sub.textContent = t.pick_start; }
+    document.getElementById('rcDone').disabled = !(this.start && this.end);
+  },
+  confirm: function () {
+    if (this.start && this.end && this.onPick) this.onPick(this._iso(this.start), this._iso(this.end));
+    this.close();
+  }
+};
+// Format an ISO date for the tappable trigger buttons, localized.
+function rcFmt(iso) {
+  if (!iso) return '';
+  var loc = RC_LOCALE[(typeof appLang !== 'undefined' && appLang) || 'en'] || 'en-US';
+  var p = iso.split('-');
+  return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(loc, { day: 'numeric', month: 'short' });
+}
+// Website planner: open the calendar and write back to the depDate/retDate inputs.
+function webOpenDates() {
+  RangeCal.open({
+    start: (document.getElementById('depDate') || {}).value,
+    end: (document.getElementById('retDate') || {}).value,
+    onPick: function (s, e) {
+      var dp = document.getElementById('depDate'), rt = document.getElementById('retDate');
+      if (dp) dp.value = s; if (rt) rt.value = e;
+      webSyncDateTrigger();
+    }
+  });
+}
+function webSyncDateTrigger() {
+  var trig = document.getElementById('webDateTrigger'); if (!trig) return;
+  var s = (document.getElementById('depDate') || {}).value, e = (document.getElementById('retDate') || {}).value;
+  var t = RC_I18N[(typeof appLang !== 'undefined' && appLang) || 'en'] || RC_I18N.en;
+  if (s && e) trig.innerHTML = '📅 <span>' + rcFmt(s) + ' — ' + rcFmt(e) + '</span>';
+  else trig.innerHTML = '📅 <span class="dt-ph">' + t.pick_start + '</span>';
+}
+
 appInitShell();
 
 </script>
 
+<!-- Shared Airbnb-style range date picker (used by both the website planner and the native wizard) -->
+<div class="rc-overlay" id="rcOverlay" onclick="if(event.target===this)RangeCal.close()">
+  <div class="rc-sheet" role="dialog" aria-modal="true" aria-label="Select dates">
+    <div class="rc-head">
+      <div class="rc-title" id="rcTitle">Dates</div>
+      <div class="rc-sub" id="rcSub"></div>
+    </div>
+    <div class="rc-dow" id="rcDow"></div>
+    <div class="rc-scroll" id="rcScroll"></div>
+    <div class="rc-foot">
+      <button type="button" class="rc-clear" id="rcClear" onclick="RangeCal.clear()">Clear</button>
+      <button type="button" class="rc-done" id="rcDone" onclick="RangeCal.confirm()" disabled>Done</button>
+    </div>
+  </div>
+</div>
 
 </body></html>
