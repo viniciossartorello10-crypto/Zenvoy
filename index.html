@@ -370,6 +370,30 @@ input::placeholder{color:#aaa}
 .agenda-date{font-size:12px;color:var(--muted)}
 .agenda-sub{font-size:11.5px;color:var(--body-text);font-weight:600;margin-top:1px}
 .agenda-arrow{flex-shrink:0;font-size:22px;color:var(--muted)}
+/* Expense tracker */
+.exp-body{overflow-y:auto;padding:16px 18px 20px;display:flex;flex-direction:column;gap:16px}
+.exp-summary{text-align:center}
+.exp-spent{font-size:30px;font-weight:800;color:var(--page-text)}
+.exp-of{font-size:18px;font-weight:600;color:var(--muted)}
+.exp-bar{height:9px;border-radius:6px;background:var(--border);overflow:hidden;margin:12px 0 6px}
+.exp-bar-fill{height:100%;background:var(--gold);border-radius:6px;transition:width .3s}
+.exp-bar-fill.over{background:#d9534f}
+.exp-rem{font-size:12.5px;font-weight:700;color:var(--gold-text)}
+.exp-rem.over{color:#d9534f}
+.exp-add{display:flex;flex-direction:column;gap:8px}
+.exp-in{padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:var(--page-bg);color:var(--page-text);font-family:'Inter',sans-serif}
+.exp-add-row{display:flex;gap:8px;align-items:stretch;position:relative}
+.exp-cur{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted);font-size:14px;pointer-events:none}
+.exp-amt{flex:1;min-width:0;padding-left:26px}
+.exp-cat{flex:1.2;min-width:0}
+.exp-add-btn{flex-shrink:0;padding:0 16px;border:none;border-radius:10px;background:var(--navy,#0b0f1a);color:#fff;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap}
+.exp-list{display:flex;flex-direction:column;gap:6px}
+.exp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--page-bg)}
+.exp-item-e{font-size:17px;flex-shrink:0}
+.exp-item-l{flex:1;min-width:0;font-size:14px;color:var(--page-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-item-a{font-weight:800;font-size:14px;color:var(--page-text);flex-shrink:0}
+.exp-del{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+.exp-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 0}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
@@ -2794,7 +2818,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
     flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
-    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', export_pdf: 'Save PDF', agenda_title: 'Trip agenda', agenda_btn: 'Agenda',
+    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', export_pdf: 'Save PDF', agenda_title: 'Trip agenda', agenda_btn: 'Agenda', exp_btn: 'Expenses', exp_title: 'Trip expenses', exp_add: 'Add', exp_label_ph: 'What was it?', exp_empty: 'No expenses yet.', exp_left: 'Left', exp_over: 'Over budget by',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
@@ -2857,7 +2881,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
-    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', export_pdf: 'Baixar PDF', agenda_title: 'Agenda da viagem', agenda_btn: 'Agenda',
+    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', export_pdf: 'Baixar PDF', agenda_title: 'Agenda da viagem', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos da viagem', exp_add: 'Adicionar', exp_label_ph: 'O que foi?', exp_empty: 'Nenhum gasto ainda.', exp_left: 'Restam', exp_over: 'Acima do orçamento em',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
@@ -2920,7 +2944,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
     flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
-    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', export_pdf: 'Guardar PDF', agenda_title: 'Agenda del viaje', agenda_btn: 'Agenda',
+    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', export_pdf: 'Guardar PDF', agenda_title: 'Agenda del viaje', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos del viaje', exp_add: 'Añadir', exp_label_ph: '¿Qué fue?', exp_empty: 'Sin gastos aún.', exp_left: 'Queda', exp_over: 'Sobre el presupuesto en',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
@@ -2983,7 +3007,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
     flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
-    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', export_pdf: 'Enregistrer PDF', agenda_title: 'Programme du voyage', agenda_btn: 'Programme',
+    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', export_pdf: 'Enregistrer PDF', agenda_title: 'Programme du voyage', agenda_btn: 'Programme', exp_btn: 'Dépenses', exp_title: 'Dépenses du voyage', exp_add: 'Ajouter', exp_label_ph: 'Quel achat ?', exp_empty: 'Aucune dépense.', exp_left: 'Reste', exp_over: 'Dépassement de',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
@@ -3046,7 +3070,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
     flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
-    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', export_pdf: 'Salva PDF', agenda_title: 'Agenda del viaggio', agenda_btn: 'Agenda',
+    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', export_pdf: 'Salva PDF', agenda_title: 'Agenda del viaggio', agenda_btn: 'Agenda', exp_btn: 'Spese', exp_title: 'Spese del viaggio', exp_add: 'Aggiungi', exp_label_ph: 'Cosa era?', exp_empty: 'Nessuna spesa.', exp_left: 'Restano', exp_over: 'Oltre il budget di',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
@@ -5382,6 +5406,7 @@ async function generatePlan() {
     planData = overview;
     planData.genCurrency = currentCurrencyCode;
     planData.genRate = currentRate;
+    planData.budgetTotalUSD = total;   // for the expense tracker's budget bar
     planData.days = [];
     planData.daysLoading = true;
     planData.checkIn = dep;
@@ -6276,6 +6301,7 @@ function renderCurrentDay() {
     html += '<div class="itin-btn-row">'
       + '<button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + slotDict.view_on_map + '</button>'
       + '<button class="itin-map-btn itin-gmaps-btn" onclick="openTripAgenda()">🗓️ ' + slotDict.agenda_btn + '</button>'
+      + '<button class="itin-map-btn itin-gmaps-btn" onclick="openExpenses()">💰 ' + slotDict.exp_btn + '</button>'
       + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + slotDict.open_gmaps + '</button>'
       + '<button class="itin-map-btn itin-gmaps-btn" onclick="exportItineraryPDF()">📄 ' + slotDict.export_pdf + '</button>'
       + '</div>';
@@ -6505,6 +6531,111 @@ function openTripAgenda() {
 }
 function closeTripAgenda() { var ov = document.getElementById('tripAgendaOverlay'); if (ov) ov.classList.remove('on'); }
 function agendaJump(i) { closeTripAgenda(); goToDayIndex(i); }
+
+// ── TRIP EXPENSE TRACKER (single-user, saved locally) ───────────────────────
+// A per-trip budget tracker. Amounts are stored in USD (divided by the rate at
+// entry time) so totals re-convert correctly if the traveler switches currency.
+var EXPENSE_CATS = [
+  { k: 'stay', e: '🏨' }, { k: 'flights', e: '✈️' }, { k: 'food', e: '🍽️' },
+  { k: 'activities', e: '🎟️' }, { k: 'transport', e: '🚗' }, { k: 'shopping', e: '🛍️' }, { k: 'other', e: '➕' }
+];
+function expenseCatLabel(k) {
+  var M = ({ pt: { stay: 'Hospedagem', flights: 'Voos', food: 'Comida', activities: 'Atividades', transport: 'Transporte', shopping: 'Compras', other: 'Outros' },
+             en: { stay: 'Stay', flights: 'Flights', food: 'Food', activities: 'Activities', transport: 'Transport', shopping: 'Shopping', other: 'Other' },
+             es: { stay: 'Alojamiento', flights: 'Vuelos', food: 'Comida', activities: 'Actividades', transport: 'Transporte', shopping: 'Compras', other: 'Otros' },
+             fr: { stay: 'Hébergement', flights: 'Vols', food: 'Repas', activities: 'Activités', transport: 'Transport', shopping: 'Achats', other: 'Autres' },
+             it: { stay: 'Alloggio', flights: 'Voli', food: 'Cibo', activities: 'Attività', transport: 'Trasporti', shopping: 'Shopping', other: 'Altro' } })[appLang] || null;
+  return (M && M[k]) || k;
+}
+function expenseKey() {
+  var p = window.planData || {};
+  var dest = window._dest || p.destination || 'trip';
+  return 'zenvoy_exp_' + encodeURIComponent(String(dest).toLowerCase().slice(0, 40)) + '_' + (p.checkIn || '');
+}
+function loadExpenses() { try { return JSON.parse(localStorage.getItem(expenseKey()) || '[]'); } catch (e) { return []; } }
+function saveExpenses(arr) { try { localStorage.setItem(expenseKey(), JSON.stringify(arr)); } catch (e) {} }
+function tripBudgetUSD() {
+  var b = parseInt((document.getElementById('budget') || {}).value) || 0;
+  if (!b && window.planData && window.planData.budgetTotalUSD) return window.planData.budgetTotalUSD;
+  var t = parseInt((document.getElementById('travelers') || {}).value) || 1;
+  return budgetType === 'person' ? b * t : b;
+}
+function expensesSummaryHtml() {
+  var arr = loadExpenses();
+  var spentUSD = arr.reduce(function (s, x) { return s + (x.usd || 0); }, 0);
+  var budgetUSD = tripBudgetUSD();
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var pct = budgetUSD > 0 ? Math.min(100, Math.round(spentUSD / budgetUSD * 100)) : 0;
+  var over = budgetUSD > 0 && spentUSD > budgetUSD;
+  var h = '<div class="exp-summary">';
+  h += '<div class="exp-spent">' + formatPrice(spentUSD) + '<span class="exp-of"> / ' + (budgetUSD > 0 ? formatPrice(budgetUSD) : '—') + '</span></div>';
+  if (budgetUSD > 0) {
+    h += '<div class="exp-bar"><div class="exp-bar-fill' + (over ? ' over' : '') + '" style="width:' + pct + '%"></div></div>';
+    var remUSD = budgetUSD - spentUSD;
+    h += '<div class="exp-rem' + (over ? ' over' : '') + '">' + (over ? (dict.exp_over || 'Over budget by') + ' ' + formatPrice(-remUSD) : (dict.exp_left || 'Left') + ': ' + formatPrice(remUSD)) + '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function expensesHtml() {
+  var arr = loadExpenses();
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var opts = EXPENSE_CATS.map(function (c) { return '<option value="' + c.k + '">' + c.e + ' ' + expenseCatLabel(c.k) + '</option>'; }).join('');
+  var list = arr.length ? arr.map(function (x) {
+    var cat = EXPENSE_CATS.filter(function (c) { return c.k === x.cat; })[0] || EXPENSE_CATS[6];
+    return '<div class="exp-item"><span class="exp-item-e">' + cat.e + '</span>'
+      + '<span class="exp-item-l">' + escapeHtml(x.label || expenseCatLabel(x.cat)) + '</span>'
+      + '<span class="exp-item-a">' + formatPrice(x.usd || 0) + '</span>'
+      + '<button class="exp-del" onclick="removeExpense(\'' + x.id + '\')" aria-label="Delete">✕</button></div>';
+  }).join('') : '<div class="exp-empty">' + (dict.exp_empty || 'No expenses yet.') + '</div>';
+  return '<div class="agenda-sheet exp-sheet"><div class="agenda-head"><div class="agenda-title">💰 ' + (dict.exp_title || 'Trip expenses') + '</div>'
+    + '<button class="agenda-close" onclick="closeExpenses()" aria-label="Close">✕</button></div>'
+    + '<div class="exp-body">'
+    + '<div id="expSummary">' + expensesSummaryHtml() + '</div>'
+    + '<div class="exp-add">'
+    + '<input id="expLabel" class="exp-in" placeholder="' + (dict.exp_label_ph || 'What was it?') + '">'
+    + '<div class="exp-add-row">'
+    + '<span class="exp-cur">' + curSym() + '</span><input id="expAmount" class="exp-in exp-amt" type="number" min="0" step="0.01" placeholder="0">'
+    + '<select id="expCat" class="exp-in exp-cat">' + opts + '</select>'
+    + '<button class="exp-add-btn" onclick="addExpense()">+ ' + (dict.exp_add || 'Add') + '</button>'
+    + '</div></div>'
+    + '<div id="expList" class="exp-list">' + list + '</div>'
+    + '</div></div>';
+}
+function openExpenses() {
+  var ov = document.getElementById('expensesOverlay');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'expensesOverlay'; ov.className = 'agenda-overlay'; ov.onclick = function (e) { if (e.target === ov) closeExpenses(); }; document.body.appendChild(ov); }
+  ov.innerHTML = expensesHtml();
+  ov.classList.add('on');
+}
+function closeExpenses() { var ov = document.getElementById('expensesOverlay'); if (ov) ov.classList.remove('on'); }
+function renderExpensesBody() {
+  var s = document.getElementById('expSummary'); if (s) s.innerHTML = expensesSummaryHtml();
+  var l = document.getElementById('expList'); if (!l) return;
+  var arr = loadExpenses();
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  l.innerHTML = arr.length ? arr.map(function (x) {
+    var cat = EXPENSE_CATS.filter(function (c) { return c.k === x.cat; })[0] || EXPENSE_CATS[6];
+    return '<div class="exp-item"><span class="exp-item-e">' + cat.e + '</span><span class="exp-item-l">' + escapeHtml(x.label || expenseCatLabel(x.cat)) + '</span><span class="exp-item-a">' + formatPrice(x.usd || 0) + '</span><button class="exp-del" onclick="removeExpense(\'' + x.id + '\')" aria-label="Delete">✕</button></div>';
+  }).join('') : '<div class="exp-empty">' + (dict.exp_empty || 'No expenses yet.') + '</div>';
+}
+function addExpense() {
+  var amtEl = document.getElementById('expAmount');
+  var amt = parseFloat(amtEl.value);
+  if (!amt || amt <= 0) { amtEl.focus(); return; }
+  var label = (document.getElementById('expLabel').value || '').trim();
+  var cat = document.getElementById('expCat').value || 'other';
+  var usd = currentRate ? amt / currentRate : amt;   // store currency-neutral
+  var arr = loadExpenses();
+  arr.push({ id: 'e' + Date.now() + Math.floor(Math.random() * 1000), label: label, usd: usd, cat: cat, ts: Date.now() });
+  saveExpenses(arr);
+  document.getElementById('expLabel').value = ''; amtEl.value = '';
+  renderExpensesBody();
+}
+function removeExpense(id) {
+  saveExpenses(loadExpenses().filter(function (x) { return x.id !== id; }));
+  renderExpensesBody();
+}
 
 function goToDay(delta) {
   var days = window._days || [];
@@ -7998,6 +8129,7 @@ function appRenderItinerary() {
     + (stopsIdx.ordered.length
       ? '<div class="itin-btn-row"><button class="itin-map-btn" onclick="openItinMap()">🗺️ ' + dict.view_on_map + '</button>'
         + '<button class="itin-map-btn itin-gmaps-btn" onclick="openTripAgenda()">🗓️ ' + dict.agenda_btn + '</button>'
+        + '<button class="itin-map-btn itin-gmaps-btn" onclick="openExpenses()">💰 ' + dict.exp_btn + '</button>'
         + '<button class="itin-map-btn itin-gmaps-btn" onclick="openDayInGoogleMaps()">🧭 ' + dict.open_gmaps + '</button>'
         + '<button class="itin-map-btn itin-gmaps-btn" onclick="exportItineraryPDF()">📄 ' + dict.export_pdf + '</button></div>'
       : '');
