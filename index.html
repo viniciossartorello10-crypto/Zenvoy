@@ -3277,7 +3277,13 @@ function localizePriceText(text) {
 }
 
 function formatPrice(usdAmount) {
-  var amount = Math.round((usdAmount || 0) * currentRate);
+  // Guard the rate: if the exchange-rate fetch failed or hasn't resolved,
+  // currentRate could be null/NaN/0 — never let that turn a real price into
+  // "$NaN" or a blank. Fall back to 1 (show the USD figure) so a price ALWAYS
+  // renders. Same guard for the amount itself.
+  var rate = (typeof currentRate === 'number' && isFinite(currentRate) && currentRate > 0) ? currentRate : 1;
+  var usd = (typeof usdAmount === 'number' && isFinite(usdAmount)) ? usdAmount : 0;
+  var amount = Math.round(usd * rate);
   var symbol = CURRENCY_SYMBOLS[currentCurrencyCode] || '$';
   return symbol + amount.toLocaleString();
 }
