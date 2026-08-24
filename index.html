@@ -210,6 +210,12 @@ h1 em{font-style:italic;color:var(--gold)}
 .im-pop-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1a1206;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
 .im-pop-name{font-size:14px;font-weight:700;color:#1a2235;line-height:1.25}
 .im-pop-slot{font-size:12px;color:#6b7280;margin-top:2px}
+.im-pop-price{font-size:14px;font-weight:800;color:#0b6b3a;margin-top:4px}
+.im-pop-price span{font-size:11px;font-weight:600;color:#6b7280}
+.im-hotelpin{background:#1A2235;color:#fff;border:2px solid var(--gold);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+/* "View hotels on map" button in the Stays tab */
+.hotels-map-btn{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;padding:11px 18px;border:none;background:var(--gold);color:#1a1206;border-radius:22px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 2px 8px rgba(201,169,110,.4);width:100%;justify-content:center}
+.hotels-map-btn:hover{filter:brightness(1.05)}
 .leaflet-popup-content{margin:10px 12px}
 .leaflet-popup-content-wrapper{border-radius:14px}
 /* Website premium / save-your-trip modal */
@@ -409,6 +415,18 @@ input::placeholder{color:#aaa}
 .exp-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 0}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
+/* Website itinerary: photo becomes a small square thumbnail on the LEFT of each
+   slot (matching the hotel-card thumbnail style), collapsing to zero until a
+   photo loads. Scoped to the website — the app has its own itinerary renderer. */
+body:not(.native-app) .slot-row{display:flex;gap:12px;align-items:flex-start}
+body:not(.native-app) .slot-row > .ts{flex:1;min-width:0}
+body:not(.native-app) .slot-row > .slot-photo{width:84px;height:84px;aspect-ratio:1;max-height:none;flex-shrink:0;margin:12px 0 0;border-radius:12px}
+body:not(.native-app) .slot-row > .slot-photo[style*="display: none"],
+body:not(.native-app) .slot-row > .slot-photo[style*="display:none"]{display:none}
+/* Website attraction cards: same small square thumbnail on the left. */
+body:not(.native-app) .app-attr-card{display:flex;gap:12px;align-items:flex-start;padding:12px !important}
+body:not(.native-app) .app-attr-card .app-attr-photo{width:84px;height:84px;flex-shrink:0;border-radius:12px;font-size:34px}
+body:not(.native-app) .app-attr-card .app-attr-body{flex:1;min-width:0}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
@@ -2845,7 +2863,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprise!', add_destination_btn: '+ Add another destination', leg_days_label: 'days', label_days_here: 'Days here:', leg_arrive_label: 'Arrive', leg_leave_label: 'Leave',
     flight_time_title: 'Flight time preference', ftime_any: 'Any', ftime_morning: '🌅 Morning', ftime_night: '🌙 Night', ftime_cheapest: '💰 Cheapest', swap_label: 'Try another',
     slot_breakfast: 'Breakfast', slot_morning: 'Morning', slot_lunch: 'Lunch', slot_afternoon: 'Afternoon', slot_dinner: 'Dinner', slot_night: 'Night',
-    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', export_pdf: 'Save PDF', agenda_title: 'Trip agenda', agenda_btn: 'Agenda', exp_btn: 'Expenses', exp_title: 'Trip expenses', exp_add: 'Add', exp_label_ph: 'What was it?', exp_empty: 'No expenses yet.', exp_left: 'Left', exp_over: 'Over budget by',
+    day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', hotels_map_btn: 'View hotels on the map', hotels_map_title: 'Hotels on the map', export_pdf: 'Save PDF', agenda_title: 'Trip agenda', agenda_btn: 'Agenda', exp_btn: 'Expenses', exp_title: 'Trip expenses', exp_add: 'Add', exp_label_ph: 'What was it?', exp_empty: 'No expenses yet.', exp_left: 'Left', exp_over: 'Over budget by',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
     label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
@@ -2908,7 +2926,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surpreenda-me!', add_destination_btn: '+ Adicionar outro destino', leg_days_label: 'dias', label_days_here: 'Dias aqui:', leg_arrive_label: 'Chegada', leg_leave_label: 'Saída',
     flight_time_title: 'Preferência de horário de voo', ftime_any: 'Tanto faz', ftime_morning: '🌅 Manhã', ftime_night: '🌙 Noite', ftime_cheapest: '💰 Mais barato', swap_label: 'Ver outra opção',
     slot_breakfast: 'Café da manhã', slot_morning: 'Manhã', slot_lunch: 'Almoço', slot_afternoon: 'Tarde', slot_dinner: 'Jantar', slot_night: 'Noite',
-    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', export_pdf: 'Baixar PDF', agenda_title: 'Agenda da viagem', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos da viagem', exp_add: 'Adicionar', exp_label_ph: 'O que foi?', exp_empty: 'Nenhum gasto ainda.', exp_left: 'Restam', exp_over: 'Acima do orçamento em',
+    day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', hotels_map_btn: 'Ver hotéis no mapa', hotels_map_title: 'Hotéis no mapa', export_pdf: 'Baixar PDF', agenda_title: 'Agenda da viagem', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos da viagem', exp_add: 'Adicionar', exp_label_ph: 'O que foi?', exp_empty: 'Nenhum gasto ainda.', exp_left: 'Restam', exp_over: 'Acima do orçamento em',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
     label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
@@ -2971,7 +2989,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ ¡Sorpréndeme!', add_destination_btn: '+ Añadir otro destino', leg_days_label: 'días', label_days_here: 'Días aquí:', leg_arrive_label: 'Llegada', leg_leave_label: 'Salida',
     flight_time_title: 'Preferencia de horario de vuelo', ftime_any: 'Cualquiera', ftime_morning: '🌅 Mañana', ftime_night: '🌙 Noche', ftime_cheapest: '💰 Más barato', swap_label: 'Ver otra opción',
     slot_breakfast: 'Desayuno', slot_morning: 'Mañana', slot_lunch: 'Almuerzo', slot_afternoon: 'Tarde', slot_dinner: 'Cena', slot_night: 'Noche',
-    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', export_pdf: 'Guardar PDF', agenda_title: 'Agenda del viaje', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos del viaje', exp_add: 'Añadir', exp_label_ph: '¿Qué fue?', exp_empty: 'Sin gastos aún.', exp_left: 'Queda', exp_over: 'Sobre el presupuesto en',
+    day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', hotels_map_btn: 'Ver hoteles en el mapa', hotels_map_title: 'Hoteles en el mapa', export_pdf: 'Guardar PDF', agenda_title: 'Agenda del viaje', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos del viaje', exp_add: 'Añadir', exp_label_ph: '¿Qué fue?', exp_empty: 'Sin gastos aún.', exp_left: 'Queda', exp_over: 'Sobre el presupuesto en',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
     label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
@@ -3034,7 +3052,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Surprenez-moi !', add_destination_btn: '+ Ajouter une autre destination', leg_days_label: 'jours', label_days_here: 'Jours ici:', leg_arrive_label: 'Arrivée', leg_leave_label: 'Départ',
     flight_time_title: 'Préférence horaire de vol', ftime_any: "N'importe", ftime_morning: '🌅 Matin', ftime_night: '🌙 Nuit', ftime_cheapest: '💰 Moins cher', swap_label: 'Voir une autre option',
     slot_breakfast: 'Petit-déjeuner', slot_morning: 'Matin', slot_lunch: 'Déjeuner', slot_afternoon: 'Après-midi', slot_dinner: 'Dîner', slot_night: 'Nuit',
-    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', export_pdf: 'Enregistrer PDF', agenda_title: 'Programme du voyage', agenda_btn: 'Programme', exp_btn: 'Dépenses', exp_title: 'Dépenses du voyage', exp_add: 'Ajouter', exp_label_ph: 'Quel achat ?', exp_empty: 'Aucune dépense.', exp_left: 'Reste', exp_over: 'Dépassement de',
+    day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', hotels_map_btn: 'Voir les hôtels sur la carte', hotels_map_title: 'Hôtels sur la carte', export_pdf: 'Enregistrer PDF', agenda_title: 'Programme du voyage', agenda_btn: 'Programme', exp_btn: 'Dépenses', exp_title: 'Dépenses du voyage', exp_add: 'Ajouter', exp_label_ph: 'Quel achat ?', exp_empty: 'Aucune dépense.', exp_left: 'Reste', exp_over: 'Dépassement de',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
     label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
@@ -3097,7 +3115,7 @@ var TRANSLATIONS = {
     surprise_btn: '✨ Sorprendimi!', add_destination_btn: '+ Aggiungi un\'altra destinazione', leg_days_label: 'giorni', label_days_here: 'Giorni qui:', leg_arrive_label: 'Arrivo', leg_leave_label: 'Partenza',
     flight_time_title: 'Preferenza orario di volo', ftime_any: 'Qualsiasi', ftime_morning: '🌅 Mattina', ftime_night: '🌙 Notte', ftime_cheapest: '💰 Più economico', swap_label: "Vedi un'altra opzione",
     slot_breakfast: 'Colazione', slot_morning: 'Mattina', slot_lunch: 'Pranzo', slot_afternoon: 'Pomeriggio', slot_dinner: 'Cena', slot_night: 'Notte',
-    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', export_pdf: 'Salva PDF', agenda_title: 'Agenda del viaggio', agenda_btn: 'Agenda', exp_btn: 'Spese', exp_title: 'Spese del viaggio', exp_add: 'Aggiungi', exp_label_ph: 'Cosa era?', exp_empty: 'Nessuna spesa.', exp_left: 'Restano', exp_over: 'Oltre il budget di',
+    day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', hotels_map_btn: 'Vedi hotel sulla mappa', hotels_map_title: 'Hotel sulla mappa', export_pdf: 'Salva PDF', agenda_title: 'Agenda del viaggio', agenda_btn: 'Agenda', exp_btn: 'Spese', exp_title: 'Spese del viaggio', exp_add: 'Aggiungi', exp_label_ph: 'Cosa era?', exp_empty: 'Nessuna spesa.', exp_left: 'Restano', exp_over: 'Oltre il budget di',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
     label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
@@ -4759,10 +4777,11 @@ async function generateMultiDestPlan(from) {
     var legIntel = await fetchDestinationIntel(leg.city, interests, style);
     var legOverviewPrompt = 'You are Zenvoy, a local travel expert for ' + leg.city + '. Return ONLY valid JSON, no markdown, no explanation.\n\n' + langInstruction + '\n\n' +
       'Give recommendations for a ' + leg.days + '-day stay in ' + leg.city + ' for ' + travelers + ' traveler(s). Style: ' + style + '. Interests: ' + interests + '. Budget level: ' + bl + '.\n\n' +
-      'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish2","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish3","desc":"desc","where":"where","price":"'+curSym()+'X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place2","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place3","dish":"dish","area":"area","price":"'+curSym()+'X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"'+curSym()+'X"},{"name":"item2","where":"where","price":"'+curSym()+'X"},{"name":"item3","where":"where","price":"'+curSym()+'X"}]},"accommodations":[{"name":"Chain Name + Property","type":"Luxury Hotel","stars":5,"area":"area","price_night":250,"highlights":["h1","h2","h3"],"why":"why"},{"name":"Chain Name + Property","type":"Resort","stars":5,"area":"area","price_night":300,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Aparthotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment/Airbnb","stars":4,"area":"area","price_night":85,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":60,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"gems":[{"title":"title","tip":"tip"},{"title":"title2","tip":"tip"},{"title":"title3","tip":"tip"},{"title":"title4","tip":"tip"},{"title":"title5","tip":"tip"}],"attractions":[{"name":"attraction name","type":"Museum","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 2","type":"Park","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 3","type":"Historic site","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 4","type":"Beach/Viewpoint","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 5","type":"Tour/Experience","desc":"one sentence","price":"XX","area":"neighborhood"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
+      'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish2","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish3","desc":"desc","where":"where","price":"'+curSym()+'X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place2","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place3","dish":"dish","area":"area","price":"'+curSym()+'X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"'+curSym()+'X"},{"name":"item2","where":"where","price":"'+curSym()+'X"},{"name":"item3","where":"where","price":"'+curSym()+'X"}]},"accommodations":[{"name":"Chain Name + Property","type":"Luxury Hotel","stars":5,"area":"area","lat":<approx latitude decimal>,"lng":<approx longitude decimal>,"price_night":250,"highlights":["h1","h2","h3"],"why":"why"},{"name":"Chain Name + Property","type":"Resort","stars":5,"area":"area","price_night":300,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Aparthotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment/Airbnb","stars":4,"area":"area","price_night":85,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":60,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"gems":[{"title":"title","tip":"tip"},{"title":"title2","tip":"tip"},{"title":"title3","tip":"tip"},{"title":"title4","tip":"tip"},{"title":"title5","tip":"tip"}],"attractions":[{"name":"attraction name","type":"Museum","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 2","type":"Park","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 3","type":"Historic site","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 4","type":"Beach/Viewpoint","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 5","type":"Tour/Experience","desc":"one sentence","price":"XX","area":"neighborhood"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
       'Provide AT LEAST 3 different options for each food_guide category (except street_food). "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop, distinct from lunch and dinner.\n\n' +
       'Use REAL, specifically named, currently-operating places only — never generic placeholders. Provide AT LEAST 5 different "gems" (insider tips) and all 8 accommodation types shown in the schema (Luxury Hotel, Resort, Business Hotel, Boutique Hotel, Aparthotel, Apartment/Airbnb, Bed & Breakfast, Hostel).\n\n' +
       '- accommodation prices (price_night) MUST reflect REAL current market rates for ' + leg.city + ' specifically, spanning a genuine range from budget to luxury with realistic gaps between tiers — not a narrow band of similar numbers.\n' +
+      '- Every accommodation MUST include numeric "lat" and "lng" fields with the approximate real-world coordinates of its "area" (neighborhood) in ' + leg.city + ', so hotels can be plotted on a map (beachfront hotels near the coast, downtown hotels near the center, etc.). Use your best geographic knowledge; plain decimals only.\n' +
       '- For the hotel-type slots, prefer a REAL, recognizable hotel chain that ACTUALLY OPERATES in ' + leg.city + ', choosing the chains a traveler in THAT country would recognize (in Brazil e.g. Rede Andrade, Bourbon, Nacional Inn, Transamerica, Blue Tree, Íbis/Accor; in the US e.g. Marriott, Hilton, Best Western, Holiday Inn; in Europe e.g. Accor/Novotel/Ibis, NH, Meliá, Radisson). Name the chain explicitly in the "name" field (e.g. "Ibis Florianópolis Centro", not "a mid-range hotel"). Put familiar, recognizable names FIRST in the array and independents after.\n\n' +
       JSON_FORMATTING_RULES + destIntelBlock(legIntel, leg.city);
 
@@ -5304,12 +5323,13 @@ async function generatePlan() {
     // CALL 1 — destination, tagline, food guide, stays, flights, budget, gems, practical info.
     // The day-by-day itinerary is deliberately NOT included here; it's generated
     // separately (below) so long trips never get cut off by the token limit.
-    var corePrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound","label":"Cheapest"},{"airline":"name2","from":"GRU","to":"NRT","dep":"22:10","arr":"06:30+2","dur":"16h","stops":"Nonstop","class":"Economy","price":1050,"type":"outbound","label":"Fastest"},{"airline":"name3","from":"GRU","to":"NRT","dep":"11:20","arr":"19:40+1","dur":"17h","stops":"1 stop","class":"Premium Economy","price":1380,"type":"outbound","label":"Best value"},{"airline":"name4","from":"GRU","to":"NRT","dep":"06:00","arr":"12:30+1","dur":"18h30","stops":"1 stop","class":"Economy","price":890,"type":"outbound","label":"Early morning"},{"airline":"name5","from":"GRU","to":"NRT","dep":"15:45","arr":"22:10+1","dur":"16h25","stops":"Nonstop","class":"Economy","price":1120,"type":"outbound","label":"Afternoon"},{"airline":"name6","from":"GRU","to":"NRT","dep":"23:55","arr":"09:20+2","dur":"17h25","stops":"2 stops","class":"Economy","price":710,"type":"outbound","label":"Budget"},{"airline":"name7","from":"GRU","to":"NRT","dep":"09:10","arr":"16:00+1","dur":"16h50","stops":"1 stop","class":"Business","price":3200,"type":"outbound","label":"Business class"},{"airline":"name8","from":"GRU","to":"NRT","dep":"13:30","arr":"20:15+1","dur":"16h45","stops":"Nonstop","class":"Economy","price":990,"type":"outbound","label":"Popular choice"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return","label":"Return"}],"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Resort","stars":5,"area":"area","price_night":320,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":70,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Aparthotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"},{"category":"Luxury","name":"e.g. Mercedes E-Class or similar","price_day":180,"why":"premium comfort"},{"category":"Van","name":"e.g. Chrysler Pacifica or similar","price_day":95,"why":"good for large groups"},{"category":"Convertible","name":"e.g. Mustang Convertible or similar","price_day":170,"why":"scenic coastal drives"},{"category":"Pickup Truck","name":"e.g. Toyota Hilux or similar","price_day":75,"why":"good for off-road/rural trips"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200}}\n\n'+
+    var corePrompt = 'You are Zenvoy, an elite local travel expert who actually lives in the destination — not a generic AI travel planner. Return ONLY valid JSON, no markdown, no explanation.\n\n'+langInstruction+'\n\nTrip: '+tripBrief+'\n\nReturn exactly this shape:\n{"destination":"City, Country","tagline":"poetic sentence","flights":[{"airline":"name","from":"GRU","to":"NRT","dep":"08:30","arr":"14:45+1","dur":"18h","stops":"1 stop","class":"Economy","price":820,"type":"outbound","label":"Cheapest"},{"airline":"name2","from":"GRU","to":"NRT","dep":"22:10","arr":"06:30+2","dur":"16h","stops":"Nonstop","class":"Economy","price":1050,"type":"outbound","label":"Fastest"},{"airline":"name3","from":"GRU","to":"NRT","dep":"11:20","arr":"19:40+1","dur":"17h","stops":"1 stop","class":"Premium Economy","price":1380,"type":"outbound","label":"Best value"},{"airline":"name4","from":"GRU","to":"NRT","dep":"06:00","arr":"12:30+1","dur":"18h30","stops":"1 stop","class":"Economy","price":890,"type":"outbound","label":"Early morning"},{"airline":"name5","from":"GRU","to":"NRT","dep":"15:45","arr":"22:10+1","dur":"16h25","stops":"Nonstop","class":"Economy","price":1120,"type":"outbound","label":"Afternoon"},{"airline":"name6","from":"GRU","to":"NRT","dep":"23:55","arr":"09:20+2","dur":"17h25","stops":"2 stops","class":"Economy","price":710,"type":"outbound","label":"Budget"},{"airline":"name7","from":"GRU","to":"NRT","dep":"09:10","arr":"16:00+1","dur":"16h50","stops":"1 stop","class":"Business","price":3200,"type":"outbound","label":"Business class"},{"airline":"name8","from":"GRU","to":"NRT","dep":"13:30","arr":"20:15+1","dur":"16h45","stops":"Nonstop","class":"Economy","price":990,"type":"outbound","label":"Popular choice"},{"airline":"name","from":"NRT","to":"GRU","dep":"11:00","arr":"19:00+1","dur":"21h","stops":"1 stop","class":"Economy","price":790,"type":"return","label":"Return"}],"accommodations":[{"name":"name","type":"Luxury Hotel","stars":5,"area":"neighborhood","lat":<approx latitude decimal>,"lng":<approx longitude decimal>,"price_night":280,"highlights":["h1","h2","h3"],"why":"one sentence"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":120,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment","stars":4,"area":"area","price_night":90,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Resort","stars":5,"area":"area","price_night":320,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":70,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Aparthotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"},{"category":"Luxury","name":"e.g. Mercedes E-Class or similar","price_day":180,"why":"premium comfort"},{"category":"Van","name":"e.g. Chrysler Pacifica or similar","price_day":95,"why":"good for large groups"},{"category":"Convertible","name":"e.g. Mustang Convertible or similar","price_day":170,"why":"scenic coastal drives"},{"category":"Pickup Truck","name":"e.g. Toyota Hilux or similar","price_day":75,"why":"good for off-road/rural trips"}],"budget":{"flights":1640,"accommodation":900,"food":400,"activities":300,"transport":150,"shopping":200}}\n\n'+
       'Quality bar:\n'+
       '- Use REAL, specifically named places — real airlines, real neighborhoods, real hotel names. Never generic ("a boutique hotel").\n'+
       '- "flights" MUST include exactly 8 different OUTBOUND options (varying airline, time of day, price/class, and number of stops — e.g. cheapest, fastest/nonstop, best value, early morning, afternoon, budget/more stops, business class, and a popular mid-range choice) PLUS exactly 1 return option, as shown in the schema. Never fewer than 8 outbound options — real travelers want a genuinely wide spread to compare, not 2-3 near-identical options.\n'+
       '- "cars" MUST include all 8 categories shown in the schema (Compact, SUV, Sports car, Economy, Luxury, Van, Convertible, Pickup Truck) — never omit any, even if some feel less common for the destination (note in "why" if a category is unusual there, but still include it).\n'+
       '- "accommodations" prices (price_night) MUST reflect REAL, current market rates for '+dest+' specifically — a hostel in an expensive city like Zurich or Tokyo costs more than one in Bangkok or Lisbon; a luxury hotel in a budget-friendly destination costs less than one in a famously expensive city. Do not anchor to generic example numbers — research typical local rates for each accommodation type in this specific destination. All 8 options must have a clear, consistent price hierarchy matching their tier (Resort and Luxury Hotel at the top; Boutique Hotel, Business Hotel and Aparthotel in the upper-middle; Apartment and Bed & Breakfast in the lower-middle; Hostel at the bottom), with realistic gaps between them (not arbitrarily close together, not wildly random).\n'+
+      '- Every accommodation MUST include numeric "lat" and "lng" fields with the approximate real-world coordinates of its "area" (neighborhood) in '+dest+', so hotels can be plotted on a map (beachfront hotels near the coast, downtown hotels near the center, near the airport, etc.). Use your best geographic knowledge; plain decimals only.\n'+
       '- For the "Hotel" (non-boutique, non-hostel, non-apartment) slots, prefer a REAL, recognizable hotel chain that ACTUALLY OPERATES in '+dest+'. Pick the chains a traveler in THAT country would recognize, not a generic global list: in the US that means names like Marriott, Hilton, Hyatt, Best Western, Holiday Inn; in Brazil it means the chains with a real domestic presence (e.g. Rede Andrade, Bourbon, Nacional Inn, Transamerica, Blue Tree, Íbis/Accor, Meliá); in Europe, Accor/Novotel/Ibis, NH, Meliá, Radisson; in Asia, Shangri-La, Okura, Nikko, Ascott, plus the global groups where they operate. Name the chain explicitly in the accommodation "name" field (e.g. "Ibis Florianópolis Centro", not "a mid-range hotel"). Familiar, trusted names should come FIRST in the array, with independents/boutiques after — travelers scan for names they recognize. Only use an independent name when no chain plausibly operates in that destination or price tier.\n'+
       (stay !== 'Any' ? '- The traveler specifically wants "'+stay+'" as their accommodation type. ALL 8 accommodations must be "'+stay+'" (varying only in price tier/quality/area — a range from budget-friendly to top-tier '+stay+' options), NOT a mix of hotel/hostel/apartment types. Ignore the example "type" labels shown in the schema above; use "'+stay+'" for all eight.\n' : '- The traveler selected "Any" stay type, so offer a genuine MIX as shown in the schema (Luxury Hotel, Boutique Hotel, Hostel, Apartment, Business Hotel, Resort, Bed & Breakfast, Aparthotel).\n') +
       '- Calibrate the ENTIRE accommodations price range to the traveler\'s selected budget level ('+bl+'): a "budget" level trip should show realistically affordable options even at the "luxury hotel" slot (a nice-but-attainable option, not an ultra-premium one), while a "luxury" level trip can show genuinely high-end properties throughout.\n'+
@@ -6128,7 +6148,12 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel, 
   var isFood = slotLabel === 'Breakfast' || slotLabel === 'Lunch' || slotLabel === 'Dinner';
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
 
-  var h = '<div class="slot-photo" id="slot-photo-' + key + '" style="display:none"></div>';
+  // Website layout: small square thumbnail on the LEFT of the slot (like the
+  // hotel cards), text on the right. The photo is a flex column that collapses
+  // to zero width until a photo actually loads (display:none). The app uses a
+  // different renderer (appRenderItinerary), so this only affects the website.
+  var h = '<div class="slot-row">';
+  h += '<div class="slot-photo" id="slot-photo-' + key + '" style="display:none"></div>';
   h += '<div class="ts"><div class="tt">' + escapeHtml(displayLabel || slotLabel) + '</div><div class="td">';
   h += '<div id="slot-content-' + key + '">' + escapeHtml(localizePriceText(text)) + ' <span id="ta-badge-' + key + '" class="ta-badge"></span>';
   h += '<div class="bls"><a href="https://www.google.com/maps/search/' + encodeURIComponent((text.split(' at ')[1] || text.split('—')[0] || text).split('.')[0].trim().slice(0,60) + ' ' + dest) + '" target="_blank" class="bl bl-gm">📍 ' + dict.bl_maps + '</a>';
@@ -6164,7 +6189,7 @@ function buildSlotHtml(day, slotLabel, text, idx, dest, dayTheme, displayLabel, 
     h += '</div>';
   }
 
-  h += '</div></div>';
+  h += '</div></div></div>'; // close .td, .ts, .slot-row
   return h;
 }
 
@@ -6771,6 +6796,10 @@ function renderStays(accs, dest) {
   h += '<option value="price_asc"'+(staySortOrder==='price_asc'?' selected':'')+'>'+(_sd.sort_price_asc||'Sort: Price low to high')+'</option>';
   h += '<option value="price_desc"'+(staySortOrder==='price_desc'?' selected':'')+'>'+(_sd.sort_price_desc||'Sort: Price high to low')+'</option>';
   h += '</select></div>';
+
+  // "View hotels on the map" — plot every recommended hotel as a pin so the
+  // traveler can compare locations (beach / centre / airport) before choosing.
+  h += '<button class="hotels-map-btn" onclick="openHotelsMap()">🗺️ ' + (_sd.hotels_map_btn || 'View hotels on the map') + '</button>';
 
   // Limited-time 2026 Getaway Deals promo (NA program, highest EPC) — a single
   // destination-aware badge above the list while the promo is live. bookingDealsUrl
@@ -8945,7 +8974,7 @@ function ovmRenderBody() {
 // ── Itinerary map (Part 3): Leaflet + OpenStreetMap, lazy-loaded on first open ─
 var LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-var _leafletLoading = null, _imMap = null, _imLayers = [];
+var _leafletLoading = null, _imMap = null, _imLayers = [], _imMode = 'days';
 function _loadLeaflet() {
   if (window.L) return Promise.resolve();
   if (_leafletLoading) return _leafletLoading;
@@ -8986,7 +9015,9 @@ function mapPinPopupHtml(s, i) {
 }
 function openItinMap() {
   var ov = document.getElementById('itinMapOverlay'); if (!ov) return;
+  _imMode = 'days';
   ov.classList.add('on');
+  var dnav = document.getElementById('imDayNav'); if (dnav) dnav.style.display = ''; // restore day paging
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   document.getElementById('imTitle').textContent = dict.map_title || 'Route map';
   _loadLeaflet().then(function () {
@@ -9002,6 +9033,62 @@ function openItinMap() {
   });
 }
 function closeItinMap() { var ov = document.getElementById('itinMapOverlay'); if (ov) ov.classList.remove('on'); }
+
+// ── HOTELS MAP ───────────────────────────────────────────────────────────────
+// Reuses the same Leaflet overlay to plot all recommended hotels as pins so the
+// traveler can compare locations (near beach / center / airport). Pins show the
+// hotel name, price/night and a photo thumbnail. Falls back to a tidy cluster
+// around the city centre for any hotel the AI didn't give coordinates for.
+function openHotelsMap() {
+  var ov = document.getElementById('itinMapOverlay'); if (!ov) return;
+  _imMode = 'hotels';
+  ov.classList.add('on');
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  document.getElementById('imTitle').textContent = dict.hotels_map_title || 'Hotels on the map';
+  var nav = document.getElementById('imDayNav'); if (nav) nav.style.display = 'none'; // no day paging for hotels
+  _loadLeaflet().then(function () {
+    if (!_imMap) {
+      _imMap = L.map('itinMapCanvas', { zoomControl: true, attributionControl: true });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(_imMap);
+    }
+    setTimeout(function () { _imMap.invalidateSize(); renderHotelsMap(); }, 60);
+  }).catch(function () {
+    document.getElementById('itinMapCanvas').innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Map unavailable offline.</div>';
+  });
+}
+function renderHotelsMap() {
+  if (!_imMap || !window.L) return;
+  var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var dest = window._staysDest || window._dest || (window.planData && window.planData.destination) || '';
+  var hotels = (window._stays || []).slice();
+  var center = (typeof cityToCoords === 'function' && cityToCoords(dest)) || [0, 0];
+  _imLayers.forEach(function (l) { _imMap.removeLayer(l); }); _imLayers = [];
+  var pts = [];
+  hotels.forEach(function (a, i) {
+    var lat = (typeof a.lat === 'number') ? a.lat : null, lng = (typeof a.lng === 'number') ? a.lng : null;
+    if (lat == null || lng == null) {
+      // No AI coordinate — fan the hotel out around the city centre so it still
+      // appears (deterministic offset by index, ~0.4–1.2km spiral).
+      var ang = i * 2.399, rad = 0.006 + (i % 4) * 0.004;
+      lat = center[0] + Math.cos(ang) * rad; lng = center[1] + Math.sin(ang) * rad;
+    }
+    var pt = [lat, lng];
+    var icon = L.divIcon({ className: '', html: '<div class="im-hotelpin">🏨</div>', iconSize: [30, 30], iconAnchor: [15, 15] });
+    var m = L.marker(pt, { icon: icon }).addTo(_imMap);
+    var photo = stopPhoto(a.name) || a.photoUrl || null;
+    var pop = '<div class="im-pop">'
+      + (photo ? '<div class="im-pop-photo" style="background-image:url(\'' + photo + '\')"></div>' : '')
+      + '<div class="im-pop-body"><div><div class="im-pop-name">' + escapeHtml(a.name || '') + '</div>'
+      + '<div class="im-pop-slot">' + escapeHtml(a.type || '') + (a.area ? ' · ' + escapeHtml(a.area) : '') + '</div>'
+      + '<div class="im-pop-price">' + formatPrice(a.price_night) + '<span>/' + (dict.per_night || 'night') + '</span></div>'
+      + '</div></div></div>';
+    m.bindPopup(pop, { minWidth: 180, maxWidth: 220 });
+    _imLayers.push(m); pts.push(pt);
+  });
+  if (pts.length) _imMap.fitBounds(pts, { padding: [50, 50], maxZoom: 15 });
+  var leg = document.getElementById('imLegend');
+  if (leg) leg.innerHTML = hotels.map(function (a) { return '<div class="im-legrow"><span>🏨</span><span>' + escapeHtml(a.name || '') + ' — ' + formatPrice(a.price_night) + '</span></div>'; }).join('');
+}
 function itinMapDay(delta) {
   var days = window._days || [];
   var n = currentDayIndex + delta;
@@ -9072,7 +9159,7 @@ appInitShell();
   <div class="im-head">
     <button class="im-close" onclick="closeItinMap()" aria-label="Close">✕</button>
     <div class="im-title" id="imTitle">Route map</div>
-    <div class="im-daynav">
+    <div class="im-daynav" id="imDayNav">
       <button id="imPrev" onclick="itinMapDay(-1)" aria-label="Previous day">←</button>
       <span id="imDayLbl">Day 1</span>
       <button id="imNext" onclick="itinMapDay(1)" aria-label="Next day">→</button>
