@@ -540,8 +540,10 @@ footer{background:var(--navy);padding:28px 40px;display:flex;justify-content:spa
      existing logic — the wizard, AI calls, cart and chat are all reused.
      ══════════════════════════════════════════════════════════════════ -->
 <style id="native-app-styles">
-/* ══ NATIVE APP SHELL — scoped under body.native-app (Capacitor only) ══ */
-body.native-app{
+/* ══ NATIVE APP SHELL — scoped under body.native-app (Capacitor only) ══
+   body.web-wizard reuses the same shell + variables on the website while the
+   Tinder wizard overlay is open, so it looks identical to the app. ══ */
+body.native-app, body.web-wizard{
   --app-bg:#FFFFFF; --app-surface:#FFFFFF; --app-surface-2:#F6F7F9;
   --app-text:#1A1D24; --app-text-soft:#6A7280; --app-line:rgba(0,0,0,.08);
   --app-navy:#0B0F1A; --app-gold:#C9A96E; --app-gold-deep:#7D6234;
@@ -550,7 +552,7 @@ body.native-app{
 }
 /* data-theme lives on <html>, so the app-var dark overrides key off the
    ancestor, not the body itself. */
-html[data-theme="dark"] body.native-app{
+html[data-theme="dark"] body.native-app, html[data-theme="dark"] body.web-wizard{
   --app-bg:#12161F; --app-surface:#1B2130; --app-surface-2:#232B3A;
   --app-text:#F0EDE6; --app-text-soft:#9AA5B8; --app-line:rgba(255,255,255,.14);
   --app-gold-deep:#E2C99A;
@@ -560,11 +562,21 @@ body.native-app .hero,
 body.native-app #capture,
 body.native-app footer,
 body.native-app #floatingCartBtn{display:none !important}
+/* While the reused app wizard overlay is open on the website, hide the site's
+   own top nav / floating cart so only the app shell shows (the opaque overlay
+   already covers hero/footer). */
+body.web-wizard > nav,
+body.web-wizard #floatingCartBtn{display:none !important}
 html,body{overflow-x:hidden;max-width:100%}
 *{-webkit-tap-highlight-color:transparent}
 
 body.native-app #appShell{position:fixed;inset:0;z-index:400;display:flex;flex-direction:column;background:var(--app-bg)}
 body.native-app #appScreens{flex:1;position:relative;overflow:hidden}
+/* Website reuses the app's Tinder wizard as a full-screen overlay (same code,
+   same look) while keeping the website's own tabbed/scrolling results. */
+body.web-wizard #appShell{position:fixed;inset:0;z-index:400;display:flex !important;flex-direction:column;background:var(--app-bg)}
+body.web-wizard #appScreens{flex:1;position:relative;overflow:hidden}
+body.web-wizard #appBottomNav,body.web-wizard #appCartBall{display:none !important}
 .app-screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
 .app-screen.on{display:flex}
 
@@ -5102,8 +5114,8 @@ function showPackageChooser(planData, travelers, total, days, from) {
   // The website chooser lives inside #planner, invisible in the native app —
   // so native gets its own full-screen chooser overlay (appShowChooser). Both
   // paths funnel into selectPackage(), which renders the results.
-  if (document.body.classList.contains('native-app')) {
-    appShowChooser();
+  if (document.body.classList.contains('native-app') || document.body.classList.contains('web-wizard')) {
+    appShowChooser(); // web-wizard reuses the app's full-screen tier chooser inside the overlay
     return;
   }
 
@@ -5199,6 +5211,10 @@ function startNewTrip() {
   window.planData = null;
   currentCityTab = null;
 
+  // Website reuses the app's Tinder wizard as a full-screen overlay (same code
+  // and look as the native app) instead of the inline step form. Native keeps
+  // its own home/wizard flow untouched.
+  if (!document.body.classList.contains('native-app')) { startWebWizard(); return; }
   showWizardStep(1);
   document.getElementById('planner').scrollIntoView({ behavior: 'smooth' });
 }
@@ -5878,6 +5894,9 @@ function renderResult(p, travelers, budget, days, from) {
   if (document.body.classList.contains('native-app')) {
     appOnResultReady();
   } else {
+    // If the trip was planned through the reused app-wizard overlay, close the
+    // overlay now so the website's own tabbed results are revealed underneath.
+    if (document.body.classList.contains('web-wizard') && typeof closeWebWizard === 'function') closeWebWizard();
     setTimeout(function(){ res.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
   }
 }
@@ -7509,9 +7528,34 @@ function appWizStart() {
 }
 
 function appWizBack() {
-  if (appWizIndex <= 0) { appGoScreen('home'); return; }
+  if (appWizIndex <= 0) {
+    // On the website the wizard is an overlay over the site (no app home screen),
+    // so backing out of step 1 closes the overlay instead of going "home".
+    if (document.body.classList.contains('web-wizard')) { closeWebWizard(); return; }
+    appGoScreen('home'); return;
+  }
   appWizIndex--;
   appWizRender('back');
+}
+
+// ── Website ↔ app: reuse the native Tinder wizard on the website ──────────────
+// Opens the app's real wizard (#appShell) as a full-screen overlay over the site
+// and runs the exact same appWizStart()/appWizFinish()/chooser flow the app uses.
+// Results still render in the website's own tabbed layout (see renderResult).
+function startWebWizard() {
+  if (document.body.classList.contains('native-app')) { appGoScreen('wizard'); return; } // real app: unchanged
+  document.body.classList.add('web-wizard');
+  var shell = document.getElementById('appShell'); if (shell) shell.style.display = 'flex';
+  var nav = document.getElementById('appBottomNav'); if (nav) nav.style.display = 'none';
+  var ball = document.getElementById('appCartBall'); if (ball) ball.style.display = 'none';
+  appGoScreen('wizard'); // toggles the wizard screen .on and calls appWizStart()
+}
+function closeWebWizard() {
+  document.body.classList.remove('web-wizard');
+  var shell = document.getElementById('appShell'); if (shell) shell.style.display = 'none';
+  clearInterval(_appBuildTimer);
+  var b = document.getElementById('appBuilding'); if (b) b.style.display = 'none';
+  var ch = document.getElementById('appChooser'); if (ch) ch.classList.remove('on');
 }
 function appWizAdvance() {
   if (appWizIndex >= APP_WIZ.length - 1) { appWizFinish(); return; }
