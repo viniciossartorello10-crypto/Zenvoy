@@ -3321,14 +3321,28 @@ function localizePriceText(text) {
   });
 }
 
+// Coerce a price to a plain number. The AI is inconsistent — a price_night /
+// flight price / car price_day may come back as a number (250) OR as a string
+// ("250", "R$ 3500", "$3,500", "1.200"). Everything downstream (formatPrice,
+// price sorting, budget math) needs a number, so normalize here. Returns 0 for
+// anything unparseable so a price never renders as "$0"-from-NaN or breaks a sort.
+function _priceNum(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : 0;
+  if (typeof v === 'string') {
+    var cleaned = v.replace(/[^\d.,]/g, '');
+    if (!cleaned) return 0;
+    var n = _parseAmount(cleaned);
+    return (typeof n === 'number' && isFinite(n)) ? n : 0;
+  }
+  return 0;
+}
 function formatPrice(usdAmount) {
   // Guard the rate: if the exchange-rate fetch failed or hasn't resolved,
   // currentRate could be null/NaN/0 — never let that turn a real price into
   // "$NaN" or a blank. Fall back to 1 (show the USD figure) so a price ALWAYS
-  // renders. Same guard for the amount itself.
+  // renders. The amount is coerced from number-or-string (see _priceNum).
   var rate = (typeof currentRate === 'number' && isFinite(currentRate) && currentRate > 0) ? currentRate : 1;
-  var usd = (typeof usdAmount === 'number' && isFinite(usdAmount)) ? usdAmount : 0;
-  var amount = Math.round(usd * rate);
+  var amount = Math.round(_priceNum(usdAmount) * rate);
   var symbol = CURRENCY_SYMBOLS[currentCurrencyCode] || '$';
   return symbol + amount.toLocaleString();
 }
@@ -5095,11 +5109,11 @@ function computeTripPackages(p, nights) {
   var accs = (p.accommodations || []).slice().sort(function(a, b) { return (a.price_night || 0) - (b.price_night || 0); });
   var cars = (p.cars || []).slice().sort(function(a, b) { return (a.price_day || 0) - (b.price_day || 0); });
   var b = p.budget || {};
-  var fixedTotal = (b.flights || 0) + (b.food || 0) + (b.activities || 0) + (b.transport || 0) + (b.shopping || 0);
+  var fixedTotal = _priceNum(b.flights) + _priceNum(b.food) + _priceNum(b.activities) + _priceNum(b.transport) + _priceNum(b.shopping);
 
   function makePkg(key, emoji, acc, car) {
-    var accCost = acc ? (acc.price_night || 0) * nights : 0;
-    var carCost = car ? (car.price_day || 0) * nights : 0;
+    var accCost = acc ? _priceNum(acc.price_night) * nights : 0;
+    var carCost = car ? _priceNum(car.price_day) * nights : 0;
     return { key: key, emoji: emoji, acc: acc, car: car, total: Math.round(fixedTotal + accCost + carCost) };
   }
 
@@ -6784,8 +6798,8 @@ function renderStays(accs, dest) {
   window._stays = accs; // keep original list so sort controls can re-render without regenerating
   window._staysDest = dest;
   var sorted = (accs||[]).slice();
-  if (staySortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price_night||0)-(b.price_night||0); });
-  else if (staySortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price_night||0)-(a.price_night||0); });
+  if (staySortOrder === 'price_asc') sorted.sort(function(a,b){ return _priceNum(a.price_night)-_priceNum(b.price_night); });
+  else if (staySortOrder === 'price_desc') sorted.sort(function(a,b){ return _priceNum(b.price_night)-_priceNum(a.price_night); });
 
   var hasReal = sorted.some(function(a){ return a.isReal; });
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
@@ -6977,8 +6991,8 @@ function renderFlights(flights, from, dest) {
   window._flightsFrom = from;
   window._flightsDest = dest;
   var sorted = (flights||[]).slice();
-  if (flightSortOrder === 'price_asc') sorted.sort(function(a,b){ return (a.price||0)-(b.price||0); });
-  else if (flightSortOrder === 'price_desc') sorted.sort(function(a,b){ return (b.price||0)-(a.price||0); });
+  if (flightSortOrder === 'price_asc') sorted.sort(function(a,b){ return _priceNum(a.price)-_priceNum(b.price); });
+  else if (flightSortOrder === 'price_desc') sorted.sort(function(a,b){ return _priceNum(b.price)-_priceNum(a.price); });
   else sorted.sort(function(a, b) {
     // Outbound legs stay above return legs whatever the carrier, then most
     // recognizable airline first, then cheapest as the tie-breaker.
@@ -7165,10 +7179,10 @@ function renderBudget(bb, total) {
     food:'🍽️ '+(_bd.bud_food||'Food'), activities:'🎭 '+(_bd.bud_activities||'Activities'),
     transport:'🚌 '+(_bd.bud_transport||'Transport'), shopping:'🛍️ '+(_bd.bud_shopping||'Shopping')
   };
-  var sum = Object.values(bb||{}).reduce(function(a,b){return a+b;},0) || total;
+  var sum = Object.values(bb||{}).reduce(function(a,b){return a+_priceNum(b);},0) || _priceNum(total);
   var h = '';
   Object.entries(bb||{}).forEach(function(e) {
-    var pct = Math.min(100, Math.round(e[1]/sum*100));
+    var pct = Math.min(100, Math.round(_priceNum(e[1])/sum*100));
     h += '<div class="bbi"><div class="bba">'+formatPrice(e[1])+'</div><div class="bbl">'+(labels[e[0]]||e[0])+'</div><div class="bbar" style="width:'+pct+'%"></div></div>';
   });
   document.getElementById('budgetBreak').innerHTML = h;
