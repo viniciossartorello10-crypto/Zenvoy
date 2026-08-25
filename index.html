@@ -198,7 +198,12 @@ body.native-app .im-head,body.web-wizard .im-head{padding-top:calc(28px + env(sa
 .im-daynav button{width:34px;height:34px;border:1px solid var(--border);background:var(--page-bg);border-radius:9px;font-size:15px;color:var(--page-text);cursor:pointer}
 .im-daynav button:disabled{opacity:.35;cursor:default}
 .im-daynav span{font-size:13px;font-weight:700;color:var(--page-text);min-width:56px;text-align:center}
-.im-canvas{flex:1;width:100%;background:#e8eef2;z-index:1}
+.im-canvas{flex:1;width:100%;background:#e8eef2;z-index:1;position:relative}
+/* Floating layer switcher inside the full-screen map (Roteiro/Hotéis/Atrações) */
+.im-layerseg{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:600;display:flex;background:var(--card-bg);border:1px solid var(--border);border-radius:26px;padding:4px;box-shadow:0 6px 20px rgba(0,0,0,.28);max-width:calc(100% - 24px)}
+.im-layerseg button{border:none;background:none;color:var(--body-text);font-size:12.5px;font-weight:700;padding:9px 14px;border-radius:22px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.im-layerseg button.on{background:var(--gold);color:#1a1206}
+.leaflet-control-zoom{margin-bottom:76px !important}
 .im-legend{flex-shrink:0;max-height:34vh;overflow-y:auto;padding:10px 14px 16px;border-top:1px solid var(--border);background:var(--card-bg)}
 .im-legrow{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:13.5px;color:var(--page-text)}
 .im-legnum{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#1a1206;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
@@ -453,18 +458,11 @@ input::placeholder{color:#aaa}
 .exp-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 0}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
-/* Website itinerary: photo becomes a small square thumbnail on the LEFT of each
-   slot (matching the hotel-card thumbnail style), collapsing to zero until a
-   photo loads. Scoped to the website — the app has its own itinerary renderer. */
-body:not(.native-app) .slot-row{display:flex;gap:12px;align-items:flex-start}
-body:not(.native-app) .slot-row > .ts{flex:1;min-width:0}
-body:not(.native-app) .slot-row > .slot-photo{width:84px;height:84px;aspect-ratio:1;max-height:none;flex-shrink:0;margin:12px 0 0;border-radius:12px}
-body:not(.native-app) .slot-row > .slot-photo[style*="display: none"],
-body:not(.native-app) .slot-row > .slot-photo[style*="display:none"]{display:none}
-/* Website attraction cards: same small square thumbnail on the left. */
-body:not(.native-app) .app-attr-card{display:flex;gap:12px;align-items:flex-start;padding:12px !important}
-body:not(.native-app) .app-attr-card .app-attr-photo{width:84px;height:84px;flex-shrink:0;border-radius:12px;font-size:34px}
-body:not(.native-app) .app-attr-card .app-attr-body{flex:1;min-width:0}
+/* Website itinerary: a large full-width photo on TOP of each activity card
+   (like the hotel cards). Scoped to the website — the app itinerary uses a
+   small left-hand thumbnail instead (see .app-slot-photo). */
+body:not(.native-app) .slot-row{display:flex;flex-direction:column}
+body:not(.native-app) .slot-row > .slot-photo{width:100%;aspect-ratio:16/9;max-height:230px;border-radius:14px;margin:14px 0 2px}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
@@ -998,12 +996,16 @@ body.native-app #tab-itin{padding:0 !important}
 .app-itin-cards{padding:16px}
 .app-itin-daytitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--app-text);margin:2px 2px 16px}
 .app-slot-card{background:var(--app-surface);border:1px solid var(--app-line);border-left:3px solid var(--app-gold);border-radius:16px;
-  box-shadow:var(--app-shadow);margin-bottom:16px;overflow:hidden}
-.app-slot-card .lb{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--app-gold-deep);padding:16px 16px 0}
-.app-slot-card .ph{position:relative;width:100%;aspect-ratio:16/9;display:block;margin-top:12px;
-  background-size:cover;background-position:center;overflow:hidden}
-.app-slot-card .bd{padding:14px 16px 16px}
+  box-shadow:var(--app-shadow);margin-bottom:14px;overflow:hidden;display:flex;gap:0;align-items:stretch;padding:12px}
+.app-slot-right{flex:1;min-width:0;display:flex;flex-direction:column}
+.app-slot-card .lb{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--app-gold-deep);padding:2px 0 0 12px}
+/* Small square thumbnail on the LEFT; shows an emoji icon until a photo loads. */
+.app-slot-card .ph{position:relative;width:84px;height:84px;flex-shrink:0;border-radius:12px;margin:0;
+  background-size:cover;background-position:center;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  font-size:32px;background-color:var(--app-surface-2)}
+.app-slot-card .ph.has-photo{font-size:0}
+.app-slot-card .bd{padding:6px 0 0 12px;flex:1}
 .app-slot-card .nm{font-size:18px;font-weight:800;color:var(--app-text);line-height:1.28}
 .app-slot-card .ds{font-size:14px;color:var(--app-text-soft);line-height:1.5;margin-top:5px}
 .app-slot-card .meta{font-size:13px;color:var(--app-text-soft);margin-top:8px;line-height:1.6}
@@ -8296,16 +8298,18 @@ function appRenderItinerary() {
     var _stop = stopsIdx.bySlot[s[0].toLowerCase()], _next = null;
     if (_stop) { var _oi = stopsIdx.ordered.indexOf(_stop); if (_oi > -1 && _oi < stopsIdx.ordered.length - 1) _next = stopsIdx.ordered[_oi + 1]; }
     window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false, chips: slotGeoChips(_stop, _next, hotelRef) };
+    // Left thumbnail (icon fallback until a real photo loads) + text on the right.
     cards += '<div class="app-slot-card" id="' + cid + '">'
+      + '<div class="ph" id="' + cid + '-ph">' + (isFood ? '🍽️' : '📍') + '</div>'
+      + '<div class="app-slot-right">'
       + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
-      + '<div class="ph" id="' + cid + '-ph" style="display:none"></div>'
       + '<div class="bd"><div id="' + cid + '-content"></div>'
       + (canAlt
         ? '<div class="app-slot-alt"><button class="app-slot-altbtn" id="' + cid + '-altbtn" onclick="appSlotCycle(\'' + cid + '\')">'
           + '<span id="' + cid + '-altlbl">🔄 ' + (appLang === 'pt' ? 'Ver outra sugestão' : 'See another option') + '</span></button>'
           + '<span class="app-slot-ind" id="' + cid + '-ind" style="display:none"></span></div>'
         : '')
-      + '</div></div>';
+      + '</div></div></div>';
   });
   cards += '</div>';
   itin.innerHTML = head + cards;
@@ -8351,7 +8355,9 @@ function appSlotFill(cid, doEnrich) {
     else ind.style.display = 'none';
   }
   if (doEnrich) {
-    var ph = document.getElementById(cid + '-ph'); if (ph) { ph.style.display = 'none'; ph.innerHTML = ''; ph.style.background = ''; }
+    // Reset the thumbnail to its emoji-icon fallback before re-fetching a photo.
+    var ph = document.getElementById(cid + '-ph');
+    if (ph) { ph.classList.remove('has-photo'); ph.style.background = ''; ph.innerHTML = st.isFood ? '🍽️' : '📍'; }
     appEnrichOne({ cid: cid, query: query, text: text, dest: dest, isFood: st.isFood });
   }
 }
@@ -8404,13 +8410,14 @@ function appEnrichOne(m) {
     // at all when there's no match (no broken image, no placeholder).
     if (info && appNameMatches(info.name, m.text) && phEl) {
       var photos = (info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info.photoUrl ? [info.photoUrl] : []);
-      if (photos.length > 1 && typeof appBuildGallery === 'function') {
-        appBuildGallery(phEl, photos);
-        phEl.style.display = 'block';
-      } else if (photos.length === 1) {
+      if (photos.length) {
+        // Small square thumbnail — a single photo (no gallery at this size);
+        // clear the emoji-icon fallback and fill the square.
         phEl.innerHTML = '';
+        phEl.classList.add('has-photo');
         phEl.style.background = "url('" + photos[0] + "') center/cover";
-        phEl.style.display = 'block';
+        phEl.style.display = 'flex';
+        if (typeof cacheStopPhoto === 'function') cacheStopPhoto(m.query, photos[0]); // reuse on the map
       }
       var metaEl = document.getElementById(m.cid + '-meta');
       if (metaEl) {
@@ -9081,6 +9088,21 @@ function openItinMap() {
   });
 }
 function closeItinMap() { var ov = document.getElementById('itinMapOverlay'); if (ov) ov.classList.remove('on'); }
+// Switch the pins shown on the OPEN full-screen map without closing it.
+function mapSetLayer(mode) {
+  if (!_imMap) { if (mode === 'hotels') return openHotelsMap(); if (mode === 'attractions') return openAttractionsMap(); return openItinMap(); }
+  _imMode = mode;
+  var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  var nav = document.getElementById('imDayNav'); if (nav) nav.style.display = (mode === 'days') ? '' : 'none';
+  var t = document.getElementById('imTitle');
+  if (t) t.textContent = mode === 'days' ? (d.map_title || 'Route map') : mode === 'hotels' ? (d.hotels_map_title || 'Hotels') : (d.layer_attractions || 'Attractions');
+  _imMap.invalidateSize();
+  if (mode === 'days') renderItinMap(); else if (mode === 'hotels') renderHotelsMap(); else renderAttractionsMap();
+}
+function _syncLayerSeg() {
+  var seg = document.getElementById('imLayerSeg'); if (!seg) return;
+  seg.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-layer') === _imMode); });
+}
 
 // ── HOTELS MAP ───────────────────────────────────────────────────────────────
 // Reuses the same Leaflet overlay to plot all recommended hotels as pins so the
@@ -9106,6 +9128,7 @@ function openHotelsMap() {
 }
 function renderHotelsMap() {
   if (!_imMap || !window.L) return;
+  _syncLayerSeg();
   var dict = TRANSLATIONS[appLang] || TRANSLATIONS.en;
   var dest = window._staysDest || window._dest || (window.planData && window.planData.destination) || '';
   var hotels = (window._stays || []).slice();
@@ -9216,6 +9239,7 @@ function openAttractionsMap() {
 }
 function renderAttractionsMap() {
   if (!_imMap || !window.L) return;
+  _syncLayerSeg();
   var dest = window._dest || (window.planData && window.planData.destination) || '';
   var attrs = (window.planData && window.planData.attractions) || [];
   var center = (typeof cityToCoords === 'function' && cityToCoords(dest)) || [0, 0];
@@ -9290,6 +9314,7 @@ function itinMapDay(delta) {
 }
 function renderItinMap() {
   if (!_imMap || !window.L) return;
+  _syncLayerSeg();
   var days = window._days || [];
   var d = days[currentDayIndex]; if (!d) return;
   var dest = window._dest || (window.planData && window.planData.destination) || '';
@@ -9354,7 +9379,13 @@ appInitShell();
       <button id="imNext" onclick="itinMapDay(1)" aria-label="Next day">→</button>
     </div>
   </div>
-  <div class="im-canvas" id="itinMapCanvas"></div>
+  <div class="im-canvas" id="itinMapCanvas">
+    <div class="im-layerseg" id="imLayerSeg">
+      <button data-layer="days" onclick="mapSetLayer('days')">📍 <span data-i18n="layer_route">Roteiro</span></button>
+      <button data-layer="hotels" onclick="mapSetLayer('hotels')">🏨 <span data-i18n="layer_hotels">Hotéis</span></button>
+      <button data-layer="attractions" onclick="mapSetLayer('attractions')">🎭 <span data-i18n="layer_attractions">Atrações</span></button>
+    </div>
+  </div>
   <div class="im-legend" id="imLegend"></div>
 </div>
 
