@@ -365,6 +365,11 @@ input::placeholder{color:#aaa}
 .itin-controls .itin-map-btn{margin:0}
 .itin-more-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);color:var(--body-text);font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .itin-more-btn:hover{border-color:var(--gold)}
+/* Tappable mini-map preview card (real map with pins) → opens the layer picker */
+.mini-map{position:relative;height:150px;border-radius:14px;overflow:hidden;cursor:pointer;margin:0 0 16px;border:1px solid var(--border);background:#e8eef2}
+.mini-map-canvas{position:absolute;inset:0}
+.mini-map-canvas .leaflet-control-container{display:none}
+.mini-map-cta{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:500;background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:800;color:var(--gold-text);box-shadow:0 3px 12px rgba(0,0,0,.25);pointer-events:none;white-space:nowrap}
 /* Generic bottom action-sheet (shared) */
 .zsheet-ov{position:fixed;inset:0;z-index:100050;background:rgba(11,15,26,.5);display:none;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s}
 .zsheet-ov.on{display:flex;opacity:1}
@@ -6441,6 +6446,7 @@ function renderCurrentDay() {
   html += '</div></div>';
   dc.innerHTML = html;
   enrichSlotsWithTripAdvisor(slotMeta);
+  if (typeof renderMiniMap === 'function') setTimeout(renderMiniMap, 40);
 
   if (label) label.textContent = 'Day '+(currentDayIndex+1)+' of '+days.length;
   if (prevBtn) { prevBtn.disabled = currentDayIndex === 0; prevBtn.style.opacity = currentDayIndex === 0 ? '.35' : '1'; prevBtn.style.cursor = currentDayIndex === 0 ? 'default' : 'pointer'; }
@@ -8261,10 +8267,7 @@ function appRenderItinerary() {
     + '<button onclick="appItinDay(-1)"' + (currentDayIndex === 0 ? ' disabled style="opacity:.35"' : '') + '>←</button>'
     + '<div class="lbl">' + (appLang === 'pt' ? 'Dia' : 'Day') + ' ' + (currentDayIndex + 1) + ' / ' + days.length + '</div>'
     + '<button onclick="appItinDay(1)"' + (currentDayIndex === days.length - 1 ? ' disabled style="opacity:.35"' : '') + '>→</button></div>'
-    + '<div class="app-itin-chips">'
-    + '<button onclick="appOpenSheet(\'food\')">🍽️ <span data-i18n="app_food_guide">Guia Gastronômico</span></button>'
-    + '<button onclick="appOpenSheet(\'tips\')">💡 <span data-i18n="app_tips_weather">Dicas &amp; Clima</span></button>'
-    + '</div></div>';
+    + '</div>'; // food/tips chips moved into the ⋯ more-options sheet (decluttered header)
 
   var slots = [['Breakfast', r.breakfast, dict.slot_breakfast], ['Morning', r.morning, dict.slot_morning],
     ['Lunch', r.lunch, dict.slot_lunch], ['Afternoon', r.afternoon, dict.slot_afternoon],
@@ -8313,6 +8316,7 @@ function appRenderItinerary() {
   });
   cards += '</div>';
   itin.innerHTML = head + cards;
+  if (typeof renderMiniMap === 'function') setTimeout(renderMiniMap, 40);
   if (typeof translatePage === 'function') translatePage();
   // Fill text content for each slot, then enrich photos/ratings (staggered).
   var enrichMeta = [];
@@ -9190,16 +9194,51 @@ function closeZSheet() { var ov = document.getElementById('zSheet'); if (ov) ov.
 // ── Unified itinerary controls: view toggle + one map button + "more" ────────
 var itinView = 'list'; // 'list' | 'calendar'
 function itinControlsHtml() {
+  var native = document.body.classList.contains('native-app');
   var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
-  return '<div class="itin-controls">'
-    + '<div class="itin-view-toggle">'
-    + '<button class="' + (itinView === 'list' ? 'on' : '') + '" onclick="setItinView(\'list\')">📋 ' + (d.view_list || 'List') + '</button>'
-    + '<button class="' + (itinView === 'calendar' ? 'on' : '') + '" onclick="setItinView(\'calendar\')">📅 ' + (d.view_agenda || 'Agenda') + '</button>'
-    + '</div>'
-    + '<div class="itin-actions">'
-    + '<button class="itin-map-btn itin-map-primary" onclick="openMapLayerSheet()">🗺️ ' + (d.view_on_map || 'Map') + '</button>'
-    + '<button class="itin-more-btn" aria-label="More" onclick="openItinMoreSheet()">⋯</button>'
-    + '</div></div>';
+  var h = '<div class="itin-controls">';
+  // Website keeps its List/Agenda toggle; the app moves Agenda into the ⋯ menu.
+  if (!native) {
+    h += '<div class="itin-view-toggle">'
+      + '<button class="' + (itinView === 'list' ? 'on' : '') + '" onclick="setItinView(\'list\')">📋 ' + (d.view_list || 'List') + '</button>'
+      + '<button class="' + (itinView === 'calendar' ? 'on' : '') + '" onclick="setItinView(\'calendar\')">📅 ' + (d.view_agenda || 'Agenda') + '</button>'
+      + '</div>';
+  } else { h += '<span></span>'; }
+  h += '<button class="itin-more-btn" aria-label="More" onclick="openItinMoreSheet()">⋯</button></div>';
+  // Mini-map preview card (tappable → layer picker), shown in list view only.
+  if (itinView !== 'calendar') h += miniMapHtml();
+  return h;
+}
+function miniMapHtml() {
+  var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  return '<div class="mini-map" onclick="openMapLayerSheet()" role="button" aria-label="' + (d.view_on_map || 'View on map') + '">'
+    + '<div class="mini-map-canvas" id="miniMapCanvas"></div>'
+    + '<div class="mini-map-cta">🗺️ ' + (d.view_on_map || 'View on map') + '</div></div>';
+}
+var _miniMap = null, _miniLayers = [];
+function renderMiniMap() {
+  var el = document.getElementById('miniMapCanvas'); if (!el || itinView === 'calendar') return;
+  var days = window._days || [], day = days[currentDayIndex]; if (!day) return;
+  var dest = window._dest || (window.planData && window.planData.destination) || '';
+  if (typeof _loadLeaflet !== 'function') return;
+  _loadLeaflet().then(function () {
+    if (_miniMap) { try { _miniMap.remove(); } catch (e) {} _miniMap = null; }
+    if (!document.getElementById('miniMapCanvas')) return; // itinerary re-rendered meanwhile
+    _miniMap = L.map('miniMapCanvas', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, tap: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(_miniMap);
+    var stops = dayStopsIndex(day).ordered, pts = [];
+    stops.forEach(function (s, i) {
+      if (s.lat == null) return;
+      var m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: '', html: '<div class="im-pin">' + (i + 1) + '</div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(_miniMap);
+      pts.push([s.lat, s.lng]);
+    });
+    var center = (typeof cityToCoords === 'function' && cityToCoords(dest)) || null;
+    setTimeout(function () {
+      if (!_miniMap) return; _miniMap.invalidateSize();
+      if (pts.length) _miniMap.fitBounds(pts, { padding: [24, 24], maxZoom: 14 });
+      else if (center) _miniMap.setView(center, 12);
+    }, 60);
+  }).catch(function () {});
 }
 function setItinView(mode) {
   if (itinView === mode) return;
@@ -9217,12 +9256,19 @@ function openMapLayerSheet() {
 }
 function openItinMoreSheet() {
   var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
-  zSheet(d.more_options || 'More options', [
-    { icon: '🧭', label: d.open_gmaps || 'Google Maps', onclick: openDayInGoogleMaps },
-    { icon: '💰', label: d.exp_btn || 'Expenses', onclick: openExpenses },
-    { icon: '📄', label: d.export_pdf || 'Save PDF', onclick: exportItineraryPDF },
-    { icon: '🗓️', label: d.day_addcal || 'Add to calendar', onclick: function () { dayAddToCalendar(); } }
-  ]);
+  var native = document.body.classList.contains('native-app');
+  var opts = [];
+  if (native) {
+    // App: the food guide, tips and Agenda live here (decluttered header).
+    opts.push({ icon: '🍽️', label: d.app_food_guide || 'Food guide', onclick: function () { appOpenSheet('food'); } });
+    opts.push({ icon: '💡', label: d.app_tips_weather || 'Tips & weather', onclick: function () { appOpenSheet('tips'); } });
+    opts.push({ icon: '📅', label: d.view_agenda || 'Agenda', onclick: function () { setItinView('calendar'); } });
+  }
+  opts.push({ icon: '🧭', label: d.open_gmaps || 'Google Maps', onclick: openDayInGoogleMaps });
+  opts.push({ icon: '💰', label: d.exp_btn || 'Expenses', onclick: openExpenses });
+  opts.push({ icon: '📄', label: d.export_pdf || 'Save PDF', onclick: exportItineraryPDF });
+  opts.push({ icon: '🗓️', label: d.day_addcal || 'Add to calendar', onclick: function () { dayAddToCalendar(); } });
+  zSheet(d.more_options || 'More options', opts);
 }
 
 // ── Attractions map layer (city-centre fallback if the AI gave no coords) ─────
