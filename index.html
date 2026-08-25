@@ -6927,9 +6927,9 @@ function renderStays(accs, dest) {
     // AI-estimated results get a colored type illustration as a placeholder;
     // TripAdvisor may replace it with a real photo once it loads below.
     if (a.isReal && a.photoUrl) {
-      h += '<div id="'+photoSlotId+'" style="width:180px;height:130px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\''+a.photoUrl+'\')"></div>';
+      h += '<div id="'+photoSlotId+'" style="width:210px;height:158px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\''+a.photoUrl+'\')"></div>';
     } else {
-      h += '<div id="'+photoSlotId+'" style="width:180px;height:130px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:'+stayStyle.gradient+'">'+stayStyle.emoji+'</div>';
+      h += '<div id="'+photoSlotId+'" style="width:210px;height:158px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:'+stayStyle.gradient+'">'+stayStyle.emoji+'</div>';
     }
     h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
     h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">'+escapeHtml(a.name)+'</strong>';
@@ -7186,8 +7186,8 @@ function renderCars(cars, dest) {
       var inCart = isCarInCart(c);
       h += '<div class="fc" style="padding:16px">';
       h += '<div class="car-card-row" style="display:flex;gap:18px;align-items:center">';
-      if (c.photoUrl) h += '<div style="width:180px;height:130px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
-      else h += '<div style="width:180px;height:130px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
+      if (c.photoUrl) h += '<div style="width:210px;height:158px;flex-shrink:0;background-size:cover;background-position:center;border-radius:10px;background-image:url(\'' + c.photoUrl + '\')"></div>';
+      else h += '<div style="width:210px;height:158px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px;background:' + (c.categoryGradient || 'linear-gradient(135deg,#a0c4ff,#4a6fa5)') + '">' + (c.categoryEmoji || '🚗') + '</div>';
       h += '<div style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center">';
       h += '<div style="display:flex;align-items:flex-start;gap:8px"><strong style="font-size:17px;line-height:1.3">' + escapeHtml(c.name) + '</strong>';
       if (c.isReal) h += '<span style="font-size:9px;font-weight:600;color:var(--live);background:var(--live-bg);padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0">● LIVE</span>';
@@ -8171,14 +8171,19 @@ function appEnrichAttractionPhotos(meta) {
   if (!meta || !meta.length) return;
   meta.forEach(function (m, i) {
     setTimeout(function () {
-      appFetchPlacePhoto(m.query, 'attractions').then(function (url) {
+      // Up to 5 TripAdvisor photos as a swipeable gallery (same as hotels).
+      getTripAdvisorInfo(m.query, 'attractions').then(function (info) {
         var el = document.getElementById(m.photoSlotId);
-        if (!el || !url) return;
+        if (!el || !info) return;
+        var photos = (info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info.photoUrl ? [info.photoUrl] : []);
+        if (!photos.length) return;
         el.textContent = '';
-        el.style.backgroundImage = "url('" + url + "')";
         el.classList.add('has-photo');
-      });
-    }, i * 250);
+        if (photos.length > 1 && typeof appBuildGallery === 'function') appBuildGallery(el, photos);
+        else el.style.backgroundImage = "url('" + photos[0] + "')";
+        if (typeof cacheStopPhoto === 'function') cacheStopPhoto(m.query, photos[0]);
+      }).catch(function () {});
+    }, i * 260);
   });
 }
 
