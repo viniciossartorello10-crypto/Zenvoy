@@ -3503,6 +3503,9 @@ var ICONIC_QUERY_OVERRIDES = {
   'queenstown': 'Queenstown New Zealand mountains lake',
   'napa valley': 'Napa Valley vineyard rolling hills',
   'aspen': 'Aspen Colorado ski mountains snow',
+  // Ambiguous city names whose Wikipedia page is a disambiguation (no photo).
+  'salvador': 'Salvador Bahia Brazil Pelourinho colorful colonial old town',
+  'banff': 'Banff National Park Canada Lake Louise turquoise mountains',
   // Iconic island/beach destinations — Wikipedia's lead image for these is
   // often an administrative MAP (Santorini, Mykonos) or a FLAG (Ibiza, Maldives),
   // not a photo, so go straight to a targeted, beautiful Unsplash search.
@@ -3571,9 +3574,12 @@ var ICONIC_QUERY_OVERRIDES = {
 // True when a Wikipedia lead-image URL is clearly NOT a travel photo — a flag,
 // an administrative/locator map, a coat of arms, or any vector (.svg) graphic.
 function _isBadCityImage(url) {
-  var u = (url || '').toLowerCase();
-  if (/\.svg(\?|$)/.test(u)) return true; // flags/coats of arms are SVGs
-  return /flag|coat[_ ]?of[_ ]?arms|locator|_map|\bmap[_.]|dimos|karte|mapa|orthographic|location|seal_of|blank\b/.test(u);
+  // Only inspect the file PATH, never the query string — Unsplash URLs carry a
+  // base64 "ixid" param that can coincidentally contain words like "map" or
+  // "location", which would otherwise falsely reject a perfectly good photo.
+  var u = (url || '').toLowerCase().split('?')[0];
+  if (/\.svg$/.test(u)) return true; // flags/coats of arms are SVGs
+  return /flag|coat[_-]?of[_-]?arms|locator|_map[_.]|\bmap[_.]|dimos|_karte|orthographic|coat[_-]arms|seal[_-]of/.test(u);
 }
 async function getCityImage(dest) {
   var city = (dest || '').split(',')[0].trim();
@@ -3625,19 +3631,28 @@ async function getCityImage(dest) {
   var beachQuery = ' turquoise beach paradise aerial';
   var isBeachDest = BEACH_DESTINATIONS.indexOf(city.toLowerCase()) !== -1;
   var iconicQuery = ICONIC_QUERY_OVERRIDES[city.toLowerCase()];
-  var searchQuery = iconicQuery || (city + (isBeachDest ? beachQuery : ' city skyline travel'));
-  try {
-    var unsplashRes = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: searchQuery })
-    });
-    if (unsplashRes.ok) {
-      var unsplashData = await unsplashRes.json();
-      if (unsplashData && unsplashData.imageUrl) { cityImgCache[key] = unsplashData.imageUrl; return unsplashData.imageUrl; }
+  // Include the COUNTRY in the query — vital for ambiguous city names (Salvador,
+  // Banff, Valencia, Córdoba, Santiago…) whose Wikipedia page is a disambiguation
+  // and whose bare-city Unsplash search returns the wrong place or nothing.
+  var country = (dest || '').split(',').slice(1).join(' ').replace(/\s+/g, ' ').trim();
+  var withCountry = city + (country ? ' ' + country : '');
+  var primary = iconicQuery || (withCountry + (isBeachDest ? beachQuery : ' cityscape skyline landmark travel'));
+  // Two attempts: the rich descriptive query, then a plainer "City Country" —
+  // Unsplash sometimes returns nothing for an over-specific phrase.
+  var attempts = [primary]; if (!iconicQuery) attempts.push(withCountry + ' travel');
+  for (var ai = 0; ai < attempts.length; ai++) {
+    try {
+      var unsplashRes = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: attempts[ai] })
+      });
+      if (unsplashRes.ok) {
+        var unsplashData = await unsplashRes.json();
+        if (unsplashData && unsplashData.imageUrl) { cityImgCache[key] = unsplashData.imageUrl; return unsplashData.imageUrl; }
+      }
+    } catch (e2) {
+      console.error('Unsplash city image fallback attempt failed:', e2);
     }
-  } catch (e2) {
-    console.error('Unsplash city image fallback also failed:', e2);
   }
   cityImgCache[key] = null;
   return null;
