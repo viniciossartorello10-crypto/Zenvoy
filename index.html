@@ -1007,16 +1007,16 @@ body.native-app #tab-itin{padding:0 !important}
 .app-itin-cards{padding:16px}
 .app-itin-daytitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--app-text);margin:2px 2px 16px}
 .app-slot-card{background:var(--app-surface);border:1px solid var(--app-line);border-left:3px solid var(--app-gold);border-radius:16px;
-  box-shadow:var(--app-shadow);margin-bottom:14px;overflow:hidden;display:flex;gap:0;align-items:stretch;padding:12px}
-.app-slot-right{flex:1;min-width:0;display:flex;flex-direction:column}
-.app-slot-card .lb{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--app-gold-deep);padding:2px 0 0 12px}
-/* Small square thumbnail on the LEFT; shows an emoji icon until a photo loads. */
-.app-slot-card .ph{position:relative;width:84px;height:84px;flex-shrink:0;border-radius:12px;margin:0;
+  box-shadow:var(--app-shadow);margin-bottom:16px;overflow:hidden}
+.app-slot-card .lb{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--app-gold-deep);padding:16px 16px 0}
+/* Full-width photo on top (matches the app hotel & attraction cards); shows an
+   emoji icon until a real photo loads. */
+.app-slot-card .ph{position:relative;width:100%;height:172px;margin-top:12px;
   background-size:cover;background-position:center;overflow:hidden;display:flex;align-items:center;justify-content:center;
-  font-size:32px;background-color:var(--app-surface-2)}
+  font-size:46px;background-color:var(--app-surface-2)}
 .app-slot-card .ph.has-photo{font-size:0}
-.app-slot-card .bd{padding:6px 0 0 12px;flex:1}
+.app-slot-card .bd{padding:14px 16px 16px}
 .app-slot-card .nm{font-size:18px;font-weight:800;color:var(--app-text);line-height:1.28}
 .app-slot-card .ds{font-size:14px;color:var(--app-text-soft);line-height:1.5;margin-top:5px}
 .app-slot-card .meta{font-size:13px;color:var(--app-text-soft);margin-top:8px;line-height:1.6}
@@ -8312,18 +8312,18 @@ function appRenderItinerary() {
     var _stop = stopsIdx.bySlot[s[0].toLowerCase()], _next = null;
     if (_stop) { var _oi = stopsIdx.ordered.indexOf(_stop); if (_oi > -1 && _oi < stopsIdx.ordered.length - 1) _next = stopsIdx.ordered[_oi + 1]; }
     window._appSlotAlt[cid] = { texts: [s[1]], index: 0, slotLabel: s[0], dest: dest, dayTheme: dayTheme, isFood: isFood, busy: false, chips: slotGeoChips(_stop, _next, hotelRef) };
-    // Left thumbnail (icon fallback until a real photo loads) + text on the right.
+    // Full-width photo on top (icon fallback until a real photo loads) — matches
+    // the app hotel & attraction cards for visual consistency.
     cards += '<div class="app-slot-card" id="' + cid + '">'
-      + '<div class="ph" id="' + cid + '-ph">' + (isFood ? '🍽️' : '📍') + '</div>'
-      + '<div class="app-slot-right">'
       + '<span class="lb">' + escapeHtml(s[2] || s[0]) + '</span>'
+      + '<div class="ph" id="' + cid + '-ph">' + (isFood ? '🍽️' : '📍') + '</div>'
       + '<div class="bd"><div id="' + cid + '-content"></div>'
       + (canAlt
         ? '<div class="app-slot-alt"><button class="app-slot-altbtn" id="' + cid + '-altbtn" onclick="appSlotCycle(\'' + cid + '\')">'
           + '<span id="' + cid + '-altlbl">🔄 ' + (appLang === 'pt' ? 'Ver outra sugestão' : 'See another option') + '</span></button>'
           + '<span class="app-slot-ind" id="' + cid + '-ind" style="display:none"></span></div>'
         : '')
-      + '</div></div></div>';
+      + '</div></div>';
   });
   cards += '</div>';
   itin.innerHTML = head + cards;
