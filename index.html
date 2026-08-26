@@ -463,11 +463,17 @@ input::placeholder{color:#aaa}
 .exp-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 0}
 .slot-photo{position:relative;width:100%;aspect-ratio:16/9;max-height:230px;border-radius:12px;overflow:hidden;
   margin:14px 0 2px;background-size:cover;background-position:center}
-/* Website itinerary: a large full-width photo on TOP of each activity card
-   (like the hotel cards). Scoped to the website — the app itinerary uses a
-   small left-hand thumbnail instead (see .app-slot-photo). */
-body:not(.native-app) .slot-row{display:flex;flex-direction:column}
-body:not(.native-app) .slot-row > .slot-photo{width:100%;aspect-ratio:16/9;max-height:230px;border-radius:14px;margin:14px 0 2px}
+/* Website itinerary & attraction photos match the HOTEL card exactly: a
+   210x158 rectangular thumbnail on the LEFT, 10px rounded, text on the right —
+   so hotels / itinerary / attractions all look visually consistent. The photo
+   collapses to zero width until a real photo loads. Scoped to the website;
+   the app itinerary keeps its own small left thumbnail. */
+body:not(.native-app) .slot-row{display:flex;gap:16px;align-items:flex-start}
+body:not(.native-app) .slot-row > .ts{flex:1;min-width:0}
+body:not(.native-app) .slot-row > .slot-photo{width:210px;height:158px;aspect-ratio:auto;max-height:none;flex-shrink:0;border-radius:10px;margin:14px 0 2px}
+body:not(.native-app) .app-attr-card{display:flex;gap:16px;align-items:flex-start;padding:16px !important}
+body:not(.native-app) .app-attr-card .app-attr-photo{width:210px;height:158px;flex-shrink:0;border-radius:10px;font-size:52px}
+body:not(.native-app) .app-attr-card .app-attr-body{flex:1;min-width:0}
 .ts{display:flex;gap:12px;padding:8px 0;border-bottom:.5px solid var(--hairline)}
 .ts:last-child{border-bottom:none}
 .tt{font-size:11px;font-weight:500;color:var(--muted);min-width:70px;padding-top:2px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
