@@ -7599,6 +7599,15 @@ translatePage();
 // P0-3: restore a previously-generated trip so a refresh / app relaunch keeps it.
 // Deferred so all render functions and currency state are ready first.
 setTimeout(function () { try { restoreGuestSession(); } catch (e) {} }, 300);
+// P1-1: initialize auth (no-op until Supabase is configured).
+setTimeout(function () { try { if (typeof authInit === 'function') authInit(); } catch (e) {} }, 400);
+// Re-render an open profile/premium sheet whenever auth state changes.
+function onAuthChanged() {
+  try {
+    if (document.getElementById('appSheetPremium') && document.getElementById('appSheetPremium').classList.contains('on') && typeof appRenderPremium === 'function') appRenderPremium();
+    if (document.getElementById('webPremiumOverlay') && getComputedStyle(document.getElementById('webPremiumOverlay')).display !== 'none' && typeof webRenderPremium === 'function') webRenderPremium();
+  } catch (e) {}
+}
 
 // P0-7: Android hardware back button. Without a handler, back exits the app even
 // when a sheet/map/overlay is open. Close the topmost thing first; then navigate
@@ -9206,6 +9215,131 @@ function ovmRenderBody() {
 // ── Itinerary map (Part 3): Leaflet + OpenStreetMap, lazy-loaded on first open ─
 var LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+// ══════════════════════════════════════════════════════════════════════════
+// P1-1 — AUTH (Supabase). Guest-first: login is a benefit, never a gate. All
+// planning/results/affiliate features work WITHOUT an account; auth only adds
+// "save trip" + "my trips" across devices.
+//
+// Fill these two in from Supabase → Project Settings → API. The anon key is a
+// PUBLIC client key (safe here) — real data is protected by Row-Level Security.
+// Until both are set, every auth entry point degrades gracefully to the guest
+// experience (the "Save trip" button still works via the local guest session).
+// ══════════════════════════════════════════════════════════════════════════
+var SUPABASE_CONFIG = { url: '', anonKey: '' };
+var _sbClient = null, _sbLoading = null, _authUser = null;
+function authIsConfigured() { return !!(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey); }
+function _loadSupabaseSDK() {
+  if (window.supabase && window.supabase.createClient) return Promise.resolve(window.supabase);
+  if (_sbLoading) return _sbLoading;
+  _sbLoading = new Promise(function (resolve, reject) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    s.onload = function () { (window.supabase && window.supabase.createClient) ? resolve(window.supabase) : reject(new Error('supabase_sdk_missing')); };
+    s.onerror = function () { reject(new Error('supabase_sdk_load_failed')); };
+    document.head.appendChild(s);
+  });
+  return _sbLoading;
+}
+function getSupabaseClient() {
+  if (_sbClient) return Promise.resolve(_sbClient);
+  if (!authIsConfigured()) return Promise.reject(new Error('auth_not_configured'));
+  return _loadSupabaseSDK().then(function (sb) {
+    _sbClient = sb.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
+    return _sbClient;
+  });
+}
+// Restore any existing session on load and keep _authUser in sync.
+function authInit() {
+  if (!authIsConfigured()) return;
+  getSupabaseClient().then(function (sb) {
+    sb.auth.getUser().then(function (r) { _authUser = (r && r.data && r.data.user) || null; if (typeof onAuthChanged === 'function') onAuthChanged(); });
+    sb.auth.onAuthStateChange(function (_evt, session) { _authUser = (session && session.user) || null; if (typeof onAuthChanged === 'function') onAuthChanged(); });
+  }).catch(function () {});
+}
+function isLoggedIn() { return !!_authUser; }
+function currentUserEmail() { return _authUser && _authUser.email; }
+// ── Auth actions (all return Promises; reject with a short code on failure) ──
+function authSignUp(email, password) {
+  return getSupabaseClient().then(function (sb) {
+    return sb.auth.signUp({ email: email, password: password }).then(function (r) {
+      if (r.error) throw r.error;
+      // Migrate the guest trip into the account the moment we have a session.
+      if (r.data && r.data.session) migrateGuestTripToAccount();
+      return r.data;
+    });
+  });
+}
+function authSignIn(email, password) {
+  return getSupabaseClient().then(function (sb) {
+    return sb.auth.signInWithPassword({ email: email, password: password }).then(function (r) {
+      if (r.error) throw r.error;
+      migrateGuestTripToAccount();
+      return r.data;
+    });
+  });
+}
+function authSignInGoogle() {
+  return getSupabaseClient().then(function (sb) {
+    return sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href.split('#')[0] } });
+  });
+}
+function authSignOut() {
+  return getSupabaseClient().then(function (sb) { return sb.auth.signOut(); }).then(function () { _authUser = null; if (typeof onAuthChanged === 'function') onAuthChanged(); });
+}
+
+// ── Saved trips (Supabase `trips` table, protected by RLS) ───────────────────
+function _tripNameFromSession(snap) {
+  var p = (snap && snap.planData) || {};
+  var city = (p.destination || 'Trip').split(',')[0].trim();
+  return city + (p.checkIn ? ' · ' + p.checkIn : '');
+}
+function saveTripToAccount(customName) {
+  if (!isLoggedIn()) return Promise.reject(new Error('not_logged_in'));
+  var raw; try { raw = localStorage.getItem(GUEST_SESSION_KEY); } catch (e) {}
+  if (!raw) return Promise.reject(new Error('no_trip'));
+  var snap; try { snap = JSON.parse(raw); } catch (e) { return Promise.reject(new Error('bad_trip')); }
+  var p = snap.planData || {};
+  var row = {
+    user_id: _authUser.id, name: customName || _tripNameFromSession(snap),
+    destination: p.destination || null, check_in: p.checkIn || null, check_out: p.checkOut || null,
+    travelers: snap.travelers || p.travelers || null, data: snap
+  };
+  return getSupabaseClient().then(function (sb) {
+    return sb.from('trips').insert(row).select().then(function (r) { if (r.error) throw r.error; return r.data && r.data[0]; });
+  });
+}
+// Auto-migrate the guest trip on login/signup — but only once per distinct trip
+// (guarded by its savedAt stamp) so repeated logins don't create duplicates.
+function migrateGuestTripToAccount() {
+  if (!isLoggedIn()) return;
+  var raw; try { raw = localStorage.getItem(GUEST_SESSION_KEY); } catch (e) { return; }
+  if (!raw) return;
+  var snap; try { snap = JSON.parse(raw); } catch (e) { return; }
+  var stamp = String(snap.savedAt || '');
+  var migrated; try { migrated = localStorage.getItem('zenvoy_migrated_at'); } catch (e) {}
+  if (migrated === stamp) return;
+  saveTripToAccount().then(function () { try { localStorage.setItem('zenvoy_migrated_at', stamp); } catch (e) {} }).catch(function () {});
+}
+function listMyTrips() {
+  return getSupabaseClient().then(function (sb) {
+    return sb.from('trips').select('id,name,destination,check_in,check_out,travelers,created_at').order('created_at', { ascending: false })
+      .then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  });
+}
+function openMyTrip(id) {
+  return getSupabaseClient().then(function (sb) {
+    return sb.from('trips').select('data').eq('id', id).single().then(function (r) { if (r.error) throw r.error; return r.data && r.data.data; });
+  }).then(function (snap) {
+    if (!snap) throw new Error('not_found');
+    try { localStorage.setItem(GUEST_SESSION_KEY, JSON.stringify(snap)); } catch (e) {}
+    return restoreGuestSession();
+  });
+}
+function deleteMyTrip(id) { return getSupabaseClient().then(function (sb) { return sb.from('trips').delete().eq('id', id); }); }
+function renameMyTrip(id, name) { return getSupabaseClient().then(function (sb) { return sb.from('trips').update({ name: name }).eq('id', id); }); }
+
 var _leafletLoading = null, _imMap = null, _imLayers = [], _imMode = 'days';
 function _loadLeaflet() {
   if (window.L) return Promise.resolve();
