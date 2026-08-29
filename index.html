@@ -7599,6 +7599,39 @@ translatePage();
 // P0-3: restore a previously-generated trip so a refresh / app relaunch keeps it.
 // Deferred so all render functions and currency state are ready first.
 setTimeout(function () { try { restoreGuestSession(); } catch (e) {} }, 300);
+
+// P0-7: Android hardware back button. Without a handler, back exits the app even
+// when a sheet/map/overlay is open. Close the topmost thing first; then navigate
+// back through the app's screens; only exit from the home screen.
+function _z_open(id) { var e = document.getElementById(id); return e && e.classList.contains('on'); }
+function _z_disp(id) { var e = document.getElementById(id); return e && getComputedStyle(e).display !== 'none'; }
+function handleAndroidBack() {
+  // 1) Close the topmost open overlay / sheet / modal.
+  if (_z_open('zSheet')) return closeZSheet();
+  if (_z_open('itinMapOverlay')) return closeItinMap();
+  if (_z_open('rcOverlay') && typeof RangeCal !== 'undefined' && RangeCal.close) return RangeCal.close();
+  if (_z_open('overviewMockup')) return closeOverviewMockup();
+  if (_z_open('tripAgendaOverlay') && typeof closeTripAgenda === 'function') return closeTripAgenda();
+  if (_z_open('expensesOverlay')) return closeExpenses();
+  if (document.querySelector('.app-sheet.on')) return appCloseSheet();
+  if (_z_disp('sideMenuOverlay')) return toggleSideMenu(false);
+  if (_z_disp('aboutModalOverlay')) return toggleAboutModal(false);
+  if (_z_disp('howModalOverlay')) return toggleHowModal(false);
+  if (_z_disp('faqModalOverlay')) return toggleFaqModal(false);
+  // 2) Navigate back through the native app's screens.
+  if (document.body.classList.contains('native-app')) {
+    if (_z_open('appChooser')) return; // mid-generation chooser — swallow back
+    if (_z_open('appResults')) { appGoScreen('home'); return; }
+    if (_z_open('appWizard')) { if (typeof appWizIndex !== 'undefined' && appWizIndex > 0) appWizBack(); else appGoScreen('home'); return; }
+    // 3) On the home screen with nothing open → exit the app.
+    try { if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App && window.Capacitor.Plugins.App.exitApp) window.Capacitor.Plugins.App.exitApp(); } catch (e) {}
+  }
+}
+try {
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App && window.Capacitor.Plugins.App.addListener) {
+    window.Capacitor.Plugins.App.addListener('backButton', handleAndroidBack);
+  }
+} catch (e) {}
 // Initialize the travelers-counter disabled states (−/+ affordances) to match
 // the default 2 adults / 0 children without changing the values.
 if (typeof webTrav === 'function') webTrav('adults', 0);
