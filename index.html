@@ -1154,6 +1154,35 @@ body.native-app #appBottomNav{
 .prem-sub{font-size:15px;color:var(--app-text-soft);text-align:center;margin:2px 0 18px;line-height:1.4}
 .prem-benefits{display:flex;flex-direction:column;gap:14px}
 .prem-b{display:flex;gap:13px;align-items:flex-start}
+/* ── P1-1 auth / profile panel (shared app sheet + web modal) ── */
+.auth-softgate{text-align:center;margin-bottom:18px}
+.auth-sg-t{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--page-text)}
+.auth-sg-d{font-size:14px;color:var(--muted);margin-top:6px}
+.auth-note{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.3);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--body-text);margin-bottom:14px}
+.auth-form{display:flex;flex-direction:column;gap:10px}
+.auth-tabs{display:flex;background:var(--page-bg);border:1px solid var(--border);border-radius:22px;padding:4px;margin-bottom:4px}
+.auth-tabs button{flex:1;border:none;background:none;color:var(--body-text);font-weight:700;font-size:14px;padding:9px;border-radius:18px;cursor:pointer;font-family:'Inter',sans-serif}
+.auth-tabs button.on{background:var(--gold);color:#1a1206}
+.auth-form input{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:var(--page-bg);color:var(--page-text);font-family:'Inter',sans-serif}
+.auth-err{color:#e0533d;font-size:13px;padding:2px 2px}
+.auth-submit{background:var(--gold);color:#1a1206;border:none;font-weight:800;font-size:15px;padding:14px;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif}
+.auth-google{display:flex;align-items:center;justify-content:center;gap:9px;background:var(--card-bg);color:var(--page-text);border:1px solid var(--border);font-weight:700;font-size:14px;padding:12px;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif}
+.auth-google span{width:20px;height:20px;border-radius:50%;background:#fff;color:#4285F4;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:13px;border:1px solid #ddd}
+.auth-later{background:none;border:none;color:var(--muted);font-size:14px;font-weight:600;padding:10px;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif}
+.auth-profile .auth-me{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.auth-avatar{width:46px;height:46px;border-radius:50%;background:var(--gold);color:#1a1206;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.auth-email{font-size:15px;font-weight:600;color:var(--page-text);word-break:break-all}
+.auth-mytrips-t{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.auth-mytrips{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.auth-trip{display:flex;align-items:stretch;gap:8px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.auth-trip-main{flex:1;text-align:left;border:none;background:var(--page-bg);padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;min-width:0}
+.auth-trip-name{font-size:15px;font-weight:700;color:var(--page-text)}
+.auth-trip-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.auth-trip-del{border:none;background:var(--page-bg);padding:0 14px;cursor:pointer;font-size:16px;border-left:1px solid var(--border)}
+.auth-empty,.auth-loading{color:var(--muted);font-size:14px;padding:14px;text-align:center}
+.auth-signout{width:100%;background:none;border:1px solid var(--border);color:var(--body-text);font-weight:700;font-size:14px;padding:12px;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif}
+.auth-toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);z-index:100060;background:#1a2235;color:#fff;font-size:14px;font-weight:600;padding:12px 20px;border-radius:24px;box-shadow:0 6px 20px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:88vw;text-align:center}
+.auth-toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .prem-b-ic{font-size:24px;line-height:1.2;flex-shrink:0;width:30px;text-align:center}
 .prem-b-t{font-size:16px;font-weight:800;color:var(--app-text)}
 .prem-b-d{font-size:13px;color:var(--app-text-soft);line-height:1.45;margin-top:2px}
@@ -2967,7 +2996,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Domestic', trip_international: '🌍 International',
     cat_local: 'Local specialty', cat_seafood: 'Seafood', cat_meat: 'Meat & steak', cat_burger: 'Burgers & casual', cat_veg: 'Vegetarian', cat_surprise: 'Surprise me',
     show_another: '🔄 Show another option', loading_option: 'Finding another option...',
-    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'Cart', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your cart is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Cart', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_food_guide: 'Food Guide', app_food_empty: 'No food guide for this trip yet.', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping', res_live: 'Live prices from Duffel:', res_stays_est: 'All prices estimated per night. Tap to find real-time availability.', res_flights_est: 'Prices are estimates. Compare real deals:', res_cars_est: 'Estimated car rental options — compare real deals:', res_cars_compare: 'Compare car rental deals for {c}:', sort_recommended: 'Sort: Recommended', sort_price_asc: 'Sort: Price low to high', sort_price_desc: 'Sort: Price high to low', info_need_to_know: 'Need to know', info_best_time: 'Best time', info_weather: 'Weather', info_currency: 'Currency', info_language: 'Language', info_transport: 'Getting around', info_safety: 'Safety', info_visa: 'Visa & entry', info_packing: 'What to pack', per_night: 'night', per_person: 'person', check_prices: 'Check prices', flight_outbound: 'Outbound', flight_return: 'Return'
+    bl_hotelscom_cta: 'Compare on Hotels.com', bl_maps: 'Maps', bl_search: 'Search', bl_reviews: 'Reviews', bl_book: 'Book', bl_viator_tours: 'Viator tours', deals_badge: 'Booking.com 2026 Getaway Deals — up to 30% off, limited time', offline_msg: 'No internet connection — some features are unavailable until you reconnect.', app_nav_explore: 'Explore', app_nav_trip: 'My Trip', app_nav_bag: 'Cart', app_nav_chat: 'Chat', app_home_hi: 'Welcome to Zenvoy', app_home_title: 'Where to <em>next?</em>', app_home_search_label: 'Plan a new trip', app_home_search_ph: 'Search a destination…', app_home_cta: 'Plan my trip', app_home_popular: 'Popular right now', app_trip_empty_t: 'No trip yet', app_trip_empty_d: "Plan a trip from the Explore tab and it'll appear here — flights, stays, cars and your day-by-day itinerary.", app_bag_empty_t: 'Your cart is empty', app_bag_empty_d: "Add flights, stays and cars from your trip and they'll collect here.", app_chat_empty_t: 'Travel assistant', app_chat_empty_d: "Ask me anything about your trip — I'm here to help.", app_nav_plan: 'Plan', app_nav_result: 'Results', app_nav_mala: 'Cart', app_chat_status: 'Online • here to help', app_cat_itin: 'Itinerary', app_cat_stays: 'Stays', app_cat_cars: 'Cars', app_cat_attractions: 'Attractions', app_cat_flights: 'Flights', app_tips_weather: 'Tips & Weather', app_home_sub: 'Complete trips designed by AI — flights, hotels, activities and local secrets.', app_traveler: 'traveler', app_travelers: 'travelers', app_food_guide: 'Food Guide', app_food_empty: 'No food guide for this trip yet.', app_share: 'Save & Share', bud_flights: 'Flights', bud_accommodation: 'Accommodation', bud_food: 'Food', bud_activities: 'Activities', bud_transport: 'Transport', bud_shopping: 'Shopping', res_live: 'Live prices from Duffel:', res_stays_est: 'All prices estimated per night. Tap to find real-time availability.', res_flights_est: 'Prices are estimates. Compare real deals:', res_cars_est: 'Estimated car rental options — compare real deals:', res_cars_compare: 'Compare car rental deals for {c}:', sort_recommended: 'Sort: Recommended', sort_price_asc: 'Sort: Price low to high', sort_price_desc: 'Sort: Price high to low', info_need_to_know: 'Need to know', info_best_time: 'Best time', info_weather: 'Weather', info_currency: 'Currency', info_language: 'Language', info_transport: 'Getting around', info_safety: 'Safety', info_visa: 'Visa & entry', info_packing: 'What to pack', per_night: 'night', per_person: 'person', check_prices: 'Check prices', save_trip: 'Save trip', flight_outbound: 'Outbound', flight_return: 'Return'
   },
   pt: {
     hero_title: 'Sua próxima<br><em>jornada</em>,<br>criada por IA',
@@ -3030,7 +3059,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidade local', cat_seafood: 'Frutos do mar', cat_meat: 'Carnes', cat_burger: 'Hambúrguer e casual', cat_veg: 'Vegetariano', cat_surprise: 'Me surpreenda',
     show_another: '🔄 Ver outra opção', loading_option: 'Buscando outra opção...',
-    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Carrinho', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Seu carrinho está vazio', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Carrinho', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_food_guide: 'Guia Gastronômico', app_food_empty: 'Ainda não há guia gastronômico para esta viagem.', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras', res_live: 'Preços ao vivo da Duffel:', res_stays_est: 'Preços estimados por noite. Toque para ver disponibilidade em tempo real.', res_flights_est: 'Preços estimados. Compare ofertas reais:', res_cars_est: 'Opções estimadas de aluguel — compare ofertas reais:', res_cars_compare: 'Compare aluguéis de carro em {c}:', sort_recommended: 'Ordenar: Recomendados', sort_price_asc: 'Ordenar: Menor preço', sort_price_desc: 'Ordenar: Maior preço', info_need_to_know: 'Precisa saber', info_best_time: 'Melhor época', info_weather: 'Clima', info_currency: 'Moeda', info_language: 'Idioma', info_transport: 'Como se locomover', info_safety: 'Segurança', info_visa: 'Visto e entrada', info_packing: 'O que levar', per_night: 'noite', per_person: 'pessoa', check_prices: 'Ver preços', flight_outbound: 'Ida', flight_return: 'Volta'
+    bl_hotelscom_cta: 'Comparar no Hotéis.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Avaliações', bl_book: 'Reservar', bl_viator_tours: 'Passeios Viator', deals_badge: 'Ofertas Getaway 2026 Booking.com — até 30% de desconto, por tempo limitado', offline_msg: 'Sem conexão com a internet — alguns recursos ficam indisponíveis até você reconectar.', app_nav_explore: 'Explorar', app_nav_trip: 'Minha Viagem', app_nav_bag: 'Carrinho', app_nav_chat: 'Chat', app_home_hi: 'Bem-vindo à Zenvoy', app_home_title: 'Para onde <em>agora?</em>', app_home_search_label: 'Planejar uma nova viagem', app_home_search_ph: 'Buscar um destino…', app_home_cta: 'Planejar minha viagem', app_home_popular: 'Populares agora', app_trip_empty_t: 'Nenhuma viagem ainda', app_trip_empty_d: 'Planeje uma viagem na aba Explorar e ela aparecerá aqui — voos, hospedagens, carros e seu roteiro dia a dia.', app_bag_empty_t: 'Seu carrinho está vazio', app_bag_empty_d: 'Adicione voos, hospedagens e carros da sua viagem e eles se juntam aqui.', app_chat_empty_t: 'Assistente de viagem', app_chat_empty_d: 'Pergunte qualquer coisa sobre sua viagem — estou aqui para ajudar.', app_nav_plan: 'Planejar', app_nav_result: 'Resultado', app_nav_mala: 'Carrinho', app_chat_status: 'Online • aqui para ajudar', app_cat_itin: 'Roteiro', app_cat_stays: 'Hotéis', app_cat_cars: 'Carros', app_cat_attractions: 'Atrações', app_cat_flights: 'Voos', app_tips_weather: 'Dicas & Clima', app_home_sub: 'Roteiros completos criados por IA — voos, hotéis, passeios e segredos locais.', app_traveler: 'viajante', app_travelers: 'viajantes', app_food_guide: 'Guia Gastronômico', app_food_empty: 'Ainda não há guia gastronômico para esta viagem.', app_share: 'Salvar & Compartilhar', bud_flights: 'Voos', bud_accommodation: 'Hospedagem', bud_food: 'Comida', bud_activities: 'Atividades', bud_transport: 'Transporte', bud_shopping: 'Compras', res_live: 'Preços ao vivo da Duffel:', res_stays_est: 'Preços estimados por noite. Toque para ver disponibilidade em tempo real.', res_flights_est: 'Preços estimados. Compare ofertas reais:', res_cars_est: 'Opções estimadas de aluguel — compare ofertas reais:', res_cars_compare: 'Compare aluguéis de carro em {c}:', sort_recommended: 'Ordenar: Recomendados', sort_price_asc: 'Ordenar: Menor preço', sort_price_desc: 'Ordenar: Maior preço', info_need_to_know: 'Precisa saber', info_best_time: 'Melhor época', info_weather: 'Clima', info_currency: 'Moeda', info_language: 'Idioma', info_transport: 'Como se locomover', info_safety: 'Segurança', info_visa: 'Visto e entrada', info_packing: 'O que levar', per_night: 'noite', per_person: 'pessoa', check_prices: 'Ver preços', save_trip: 'Salvar viagem', flight_outbound: 'Ida', flight_return: 'Volta'
   },
   es: {
     hero_title: 'Tu próximo<br><em>viaje</em>,<br>diseñado por IA',
@@ -3093,7 +3122,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nacional', trip_international: '🌍 Internacional',
     cat_local: 'Especialidad local', cat_seafood: 'Mariscos', cat_meat: 'Carnes', cat_burger: 'Hamburguesas y casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorpréndeme',
     show_another: '🔄 Ver otra opción', loading_option: 'Buscando otra opción...',
-    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator', deals_badge: 'Ofertas Getaway 2026 de Booking.com — hasta 30% de descuento, tiempo limitado', offline_msg: 'Sin conexión a internet — algunas funciones no están disponibles hasta que te reconectes.', app_nav_explore: 'Explorar', app_nav_trip: 'Mi viaje', app_nav_bag: 'Carrito', app_nav_chat: 'Chat', app_home_hi: 'Bienvenido a Zenvoy', app_home_title: '¿A dónde <em>ahora?</em>', app_home_search_label: 'Planear un nuevo viaje', app_home_search_ph: 'Busca un destino…', app_home_cta: 'Planear mi viaje', app_home_popular: 'Populares ahora', app_trip_empty_t: 'Aún no hay viaje', app_trip_empty_d: 'Planea un viaje desde la pestaña Explorar y aparecerá aquí — vuelos, alojamientos, autos y tu itinerario día a día.', app_bag_empty_t: 'Tu carrito está vacío', app_bag_empty_d: 'Agrega vuelos, alojamientos y autos de tu viaje y se reunirán aquí.', app_chat_empty_t: 'Asistente de viaje', app_chat_empty_d: 'Pregúntame lo que sea sobre tu viaje — estoy aquí para ayudar.', app_nav_plan: 'Planear', app_nav_result: 'Resultados', app_nav_mala: 'Carrito', app_chat_status: 'En línea • aquí para ayudar', app_cat_itin: 'Itinerario', app_cat_stays: 'Hoteles', app_cat_cars: 'Autos', app_cat_attractions: 'Atracciones', app_cat_flights: 'Vuelos', app_tips_weather: 'Consejos y clima', app_home_sub: 'Viajes completos diseñados por IA — vuelos, hoteles, actividades y secretos locales.', app_traveler: 'viajero', app_travelers: 'viajeros', app_food_guide: 'Guía gastronómica', app_food_empty: 'Aún no hay guía gastronómica para este viaje.', app_share: 'Guardar y compartir', bud_flights: 'Vuelos', bud_accommodation: 'Alojamiento', bud_food: 'Comida', bud_activities: 'Actividades', bud_transport: 'Transporte', bud_shopping: 'Compras', res_live: 'Precios en vivo de Duffel:', res_stays_est: 'Precios estimados por noche. Toca para ver disponibilidad en tiempo real.', res_flights_est: 'Precios estimados. Compara ofertas reales:', res_cars_est: 'Opciones estimadas de alquiler — compara ofertas reales:', res_cars_compare: 'Compara alquileres de autos en {c}:', sort_recommended: 'Ordenar: Recomendados', sort_price_asc: 'Ordenar: Menor precio', sort_price_desc: 'Ordenar: Mayor precio', info_need_to_know: 'Qué saber', info_best_time: 'Mejor época', info_weather: 'Clima', info_currency: 'Moneda', info_language: 'Idioma', info_transport: 'Cómo moverse', info_safety: 'Seguridad', info_visa: 'Visa y entrada', info_packing: 'Qué llevar', per_night: 'noche', per_person: 'persona', check_prices: 'Ver precios', flight_outbound: 'Ida', flight_return: 'Vuelta'
+    bl_hotelscom_cta: 'Comparar en Hoteles.com', bl_maps: 'Mapa', bl_search: 'Buscar', bl_reviews: 'Reseñas', bl_book: 'Reservar', bl_viator_tours: 'Tours Viator', deals_badge: 'Ofertas Getaway 2026 de Booking.com — hasta 30% de descuento, tiempo limitado', offline_msg: 'Sin conexión a internet — algunas funciones no están disponibles hasta que te reconectes.', app_nav_explore: 'Explorar', app_nav_trip: 'Mi viaje', app_nav_bag: 'Carrito', app_nav_chat: 'Chat', app_home_hi: 'Bienvenido a Zenvoy', app_home_title: '¿A dónde <em>ahora?</em>', app_home_search_label: 'Planear un nuevo viaje', app_home_search_ph: 'Busca un destino…', app_home_cta: 'Planear mi viaje', app_home_popular: 'Populares ahora', app_trip_empty_t: 'Aún no hay viaje', app_trip_empty_d: 'Planea un viaje desde la pestaña Explorar y aparecerá aquí — vuelos, alojamientos, autos y tu itinerario día a día.', app_bag_empty_t: 'Tu carrito está vacío', app_bag_empty_d: 'Agrega vuelos, alojamientos y autos de tu viaje y se reunirán aquí.', app_chat_empty_t: 'Asistente de viaje', app_chat_empty_d: 'Pregúntame lo que sea sobre tu viaje — estoy aquí para ayudar.', app_nav_plan: 'Planear', app_nav_result: 'Resultados', app_nav_mala: 'Carrito', app_chat_status: 'En línea • aquí para ayudar', app_cat_itin: 'Itinerario', app_cat_stays: 'Hoteles', app_cat_cars: 'Autos', app_cat_attractions: 'Atracciones', app_cat_flights: 'Vuelos', app_tips_weather: 'Consejos y clima', app_home_sub: 'Viajes completos diseñados por IA — vuelos, hoteles, actividades y secretos locales.', app_traveler: 'viajero', app_travelers: 'viajeros', app_food_guide: 'Guía gastronómica', app_food_empty: 'Aún no hay guía gastronómica para este viaje.', app_share: 'Guardar y compartir', bud_flights: 'Vuelos', bud_accommodation: 'Alojamiento', bud_food: 'Comida', bud_activities: 'Actividades', bud_transport: 'Transporte', bud_shopping: 'Compras', res_live: 'Precios en vivo de Duffel:', res_stays_est: 'Precios estimados por noche. Toca para ver disponibilidad en tiempo real.', res_flights_est: 'Precios estimados. Compara ofertas reales:', res_cars_est: 'Opciones estimadas de alquiler — compara ofertas reales:', res_cars_compare: 'Compara alquileres de autos en {c}:', sort_recommended: 'Ordenar: Recomendados', sort_price_asc: 'Ordenar: Menor precio', sort_price_desc: 'Ordenar: Mayor precio', info_need_to_know: 'Qué saber', info_best_time: 'Mejor época', info_weather: 'Clima', info_currency: 'Moneda', info_language: 'Idioma', info_transport: 'Cómo moverse', info_safety: 'Seguridad', info_visa: 'Visa y entrada', info_packing: 'Qué llevar', per_night: 'noche', per_person: 'persona', check_prices: 'Ver precios', save_trip: 'Guardar viaje', flight_outbound: 'Ida', flight_return: 'Vuelta'
   },
   fr: {
     hero_title: 'Votre prochain<br><em>voyage</em>,<br>conçu par IA',
@@ -3156,7 +3185,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 National', trip_international: '🌍 International',
     cat_local: 'Spécialité locale', cat_seafood: 'Fruits de mer', cat_meat: 'Viande', cat_burger: 'Burgers et décontracté', cat_veg: 'Végétarien', cat_surprise: 'Surprenez-moi',
     show_another: '🔄 Voir une autre option', loading_option: "Recherche d'une autre option...",
-    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator', deals_badge: 'Offres Getaway 2026 Booking.com — jusqu\'à 30% de réduction, durée limitée', offline_msg: 'Pas de connexion internet — certaines fonctions sont indisponibles jusqu\'à la reconnexion.', app_nav_explore: 'Explorer', app_nav_trip: 'Mon voyage', app_nav_bag: 'Panier', app_nav_chat: 'Chat', app_home_hi: 'Bienvenue sur Zenvoy', app_home_title: 'Où <em>maintenant ?</em>', app_home_search_label: 'Planifier un nouveau voyage', app_home_search_ph: 'Rechercher une destination…', app_home_cta: 'Planifier mon voyage', app_home_popular: 'Populaires en ce moment', app_trip_empty_t: 'Pas encore de voyage', app_trip_empty_d: 'Planifiez un voyage depuis l\'onglet Explorer et il apparaîtra ici — vols, hébergements, voitures et votre itinéraire jour par jour.', app_bag_empty_t: 'Votre panier est vide', app_bag_empty_d: 'Ajoutez des vols, hébergements et voitures de votre voyage et ils se regrouperont ici.', app_chat_empty_t: 'Assistant de voyage', app_chat_empty_d: 'Posez-moi n\'importe quelle question sur votre voyage — je suis là pour aider.', app_nav_plan: 'Planifier', app_nav_result: 'Résultats', app_nav_mala: 'Panier', app_chat_status: 'En ligne • là pour aider', app_cat_itin: 'Itinéraire', app_cat_stays: 'Hôtels', app_cat_cars: 'Voitures', app_cat_attractions: 'Attractions', app_cat_flights: 'Vols', app_tips_weather: 'Conseils et météo', app_home_sub: 'Des voyages complets conçus par IA — vols, hôtels, activités et secrets locaux.', app_traveler: 'voyageur', app_travelers: 'voyageurs', app_food_guide: 'Guide gastronomique', app_food_empty: 'Pas encore de guide gastronomique pour ce voyage.', app_share: 'Enregistrer et partager', bud_flights: 'Vols', bud_accommodation: 'Hébergement', bud_food: 'Nourriture', bud_activities: 'Activités', bud_transport: 'Transport', bud_shopping: 'Achats', res_live: 'Prix en direct de Duffel :', res_stays_est: 'Prix estimés par nuit. Touchez pour voir la disponibilité en temps réel.', res_flights_est: 'Prix estimés. Comparez les offres réelles :', res_cars_est: 'Options de location estimées — comparez les offres réelles :', res_cars_compare: 'Comparez les locations de voitures à {c} :', sort_recommended: 'Trier : Recommandés', sort_price_asc: 'Trier : Prix croissant', sort_price_desc: 'Trier : Prix décroissant', info_need_to_know: 'À savoir', info_best_time: 'Meilleure période', info_weather: 'Météo', info_currency: 'Monnaie', info_language: 'Langue', info_transport: 'Se déplacer', info_safety: 'Sécurité', info_visa: 'Visa et entrée', info_packing: 'Quoi emporter', per_night: 'nuit', per_person: 'personne', check_prices: 'Voir les prix', flight_outbound: 'Aller', flight_return: 'Retour'
+    bl_hotelscom_cta: 'Comparer sur Hotels.com', bl_maps: 'Carte', bl_search: 'Rechercher', bl_reviews: 'Avis', bl_book: 'Réserver', bl_viator_tours: 'Circuits Viator', deals_badge: 'Offres Getaway 2026 Booking.com — jusqu\'à 30% de réduction, durée limitée', offline_msg: 'Pas de connexion internet — certaines fonctions sont indisponibles jusqu\'à la reconnexion.', app_nav_explore: 'Explorer', app_nav_trip: 'Mon voyage', app_nav_bag: 'Panier', app_nav_chat: 'Chat', app_home_hi: 'Bienvenue sur Zenvoy', app_home_title: 'Où <em>maintenant ?</em>', app_home_search_label: 'Planifier un nouveau voyage', app_home_search_ph: 'Rechercher une destination…', app_home_cta: 'Planifier mon voyage', app_home_popular: 'Populaires en ce moment', app_trip_empty_t: 'Pas encore de voyage', app_trip_empty_d: 'Planifiez un voyage depuis l\'onglet Explorer et il apparaîtra ici — vols, hébergements, voitures et votre itinéraire jour par jour.', app_bag_empty_t: 'Votre panier est vide', app_bag_empty_d: 'Ajoutez des vols, hébergements et voitures de votre voyage et ils se regrouperont ici.', app_chat_empty_t: 'Assistant de voyage', app_chat_empty_d: 'Posez-moi n\'importe quelle question sur votre voyage — je suis là pour aider.', app_nav_plan: 'Planifier', app_nav_result: 'Résultats', app_nav_mala: 'Panier', app_chat_status: 'En ligne • là pour aider', app_cat_itin: 'Itinéraire', app_cat_stays: 'Hôtels', app_cat_cars: 'Voitures', app_cat_attractions: 'Attractions', app_cat_flights: 'Vols', app_tips_weather: 'Conseils et météo', app_home_sub: 'Des voyages complets conçus par IA — vols, hôtels, activités et secrets locaux.', app_traveler: 'voyageur', app_travelers: 'voyageurs', app_food_guide: 'Guide gastronomique', app_food_empty: 'Pas encore de guide gastronomique pour ce voyage.', app_share: 'Enregistrer et partager', bud_flights: 'Vols', bud_accommodation: 'Hébergement', bud_food: 'Nourriture', bud_activities: 'Activités', bud_transport: 'Transport', bud_shopping: 'Achats', res_live: 'Prix en direct de Duffel :', res_stays_est: 'Prix estimés par nuit. Touchez pour voir la disponibilité en temps réel.', res_flights_est: 'Prix estimés. Comparez les offres réelles :', res_cars_est: 'Options de location estimées — comparez les offres réelles :', res_cars_compare: 'Comparez les locations de voitures à {c} :', sort_recommended: 'Trier : Recommandés', sort_price_asc: 'Trier : Prix croissant', sort_price_desc: 'Trier : Prix décroissant', info_need_to_know: 'À savoir', info_best_time: 'Meilleure période', info_weather: 'Météo', info_currency: 'Monnaie', info_language: 'Langue', info_transport: 'Se déplacer', info_safety: 'Sécurité', info_visa: 'Visa et entrée', info_packing: 'Quoi emporter', per_night: 'nuit', per_person: 'personne', check_prices: 'Voir les prix', save_trip: 'Enregistrer le voyage', flight_outbound: 'Aller', flight_return: 'Retour'
   },
   it: {
     hero_title: 'Il tuo prossimo<br><em>viaggio</em>,<br>progettato dall\'IA',
@@ -3219,7 +3248,7 @@ var TRANSLATIONS = {
     trip_domestic: '🏠 Nazionale', trip_international: '🌍 Internazionale',
     cat_local: 'Specialità locale', cat_seafood: 'Pesce', cat_meat: 'Carne', cat_burger: 'Burger e casual', cat_veg: 'Vegetariano', cat_surprise: 'Sorprendimi',
     show_another: '🔄 Mostra un\'altra opzione', loading_option: 'Cercando un\'altra opzione...',
-    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator', deals_badge: 'Offerte Getaway 2026 Booking.com — fino al 30% di sconto, tempo limitato', offline_msg: 'Nessuna connessione internet — alcune funzioni non sono disponibili finché non ti riconnetti.', app_nav_explore: 'Esplora', app_nav_trip: 'Il mio viaggio', app_nav_bag: 'Carrello', app_nav_chat: 'Chat', app_home_hi: 'Benvenuto su Zenvoy', app_home_title: 'Dove <em>adesso?</em>', app_home_search_label: 'Pianifica un nuovo viaggio', app_home_search_ph: 'Cerca una destinazione…', app_home_cta: 'Pianifica il mio viaggio', app_home_popular: 'Popolari ora', app_trip_empty_t: 'Ancora nessun viaggio', app_trip_empty_d: 'Pianifica un viaggio dalla scheda Esplora e apparirà qui — voli, alloggi, auto e il tuo itinerario giorno per giorno.', app_bag_empty_t: 'Il tuo carrello è vuoto', app_bag_empty_d: 'Aggiungi voli, alloggi e auto dal tuo viaggio e si raccoglieranno qui.', app_chat_empty_t: 'Assistente di viaggio', app_chat_empty_d: 'Chiedimi qualsiasi cosa sul tuo viaggio — sono qui per aiutare.', app_nav_plan: 'Pianifica', app_nav_result: 'Risultati', app_nav_mala: 'Carrello', app_chat_status: 'Online • qui per aiutare', app_cat_itin: 'Itinerario', app_cat_stays: 'Hotel', app_cat_cars: 'Auto', app_cat_attractions: 'Attrazioni', app_cat_flights: 'Voli', app_tips_weather: 'Consigli e meteo', app_home_sub: 'Viaggi completi progettati dall\'IA — voli, hotel, attività e segreti locali.', app_traveler: 'viaggiatore', app_travelers: 'viaggiatori', app_food_guide: 'Guida gastronomica', app_food_empty: 'Ancora nessuna guida gastronomica per questo viaggio.', app_share: 'Salva e condividi', bud_flights: 'Voli', bud_accommodation: 'Alloggio', bud_food: 'Cibo', bud_activities: 'Attività', bud_transport: 'Trasporti', bud_shopping: 'Shopping', res_live: 'Prezzi in tempo reale da Duffel:', res_stays_est: 'Prezzi stimati a notte. Tocca per vedere la disponibilità in tempo reale.', res_flights_est: 'Prezzi stimati. Confronta le offerte reali:', res_cars_est: 'Opzioni di noleggio stimate — confronta le offerte reali:', res_cars_compare: 'Confronta i noleggi auto a {c}:', sort_recommended: 'Ordina: Consigliati', sort_price_asc: 'Ordina: Prezzo crescente', sort_price_desc: 'Ordina: Prezzo decrescente', info_need_to_know: 'Da sapere', info_best_time: 'Periodo migliore', info_weather: 'Meteo', info_currency: 'Valuta', info_language: 'Lingua', info_transport: 'Come spostarsi', info_safety: 'Sicurezza', info_visa: 'Visto e ingresso', info_packing: 'Cosa mettere in valigia', per_night: 'notte', per_person: 'persona', check_prices: 'Vedi prezzi', flight_outbound: 'Andata', flight_return: 'Ritorno'
+    bl_hotelscom_cta: 'Confronta su Hotels.com', bl_maps: 'Mappa', bl_search: 'Cerca', bl_reviews: 'Recensioni', bl_book: 'Prenota', bl_viator_tours: 'Tour Viator', deals_badge: 'Offerte Getaway 2026 Booking.com — fino al 30% di sconto, tempo limitato', offline_msg: 'Nessuna connessione internet — alcune funzioni non sono disponibili finché non ti riconnetti.', app_nav_explore: 'Esplora', app_nav_trip: 'Il mio viaggio', app_nav_bag: 'Carrello', app_nav_chat: 'Chat', app_home_hi: 'Benvenuto su Zenvoy', app_home_title: 'Dove <em>adesso?</em>', app_home_search_label: 'Pianifica un nuovo viaggio', app_home_search_ph: 'Cerca una destinazione…', app_home_cta: 'Pianifica il mio viaggio', app_home_popular: 'Popolari ora', app_trip_empty_t: 'Ancora nessun viaggio', app_trip_empty_d: 'Pianifica un viaggio dalla scheda Esplora e apparirà qui — voli, alloggi, auto e il tuo itinerario giorno per giorno.', app_bag_empty_t: 'Il tuo carrello è vuoto', app_bag_empty_d: 'Aggiungi voli, alloggi e auto dal tuo viaggio e si raccoglieranno qui.', app_chat_empty_t: 'Assistente di viaggio', app_chat_empty_d: 'Chiedimi qualsiasi cosa sul tuo viaggio — sono qui per aiutare.', app_nav_plan: 'Pianifica', app_nav_result: 'Risultati', app_nav_mala: 'Carrello', app_chat_status: 'Online • qui per aiutare', app_cat_itin: 'Itinerario', app_cat_stays: 'Hotel', app_cat_cars: 'Auto', app_cat_attractions: 'Attrazioni', app_cat_flights: 'Voli', app_tips_weather: 'Consigli e meteo', app_home_sub: 'Viaggi completi progettati dall\'IA — voli, hotel, attività e segreti locali.', app_traveler: 'viaggiatore', app_travelers: 'viaggiatori', app_food_guide: 'Guida gastronomica', app_food_empty: 'Ancora nessuna guida gastronomica per questo viaggio.', app_share: 'Salva e condividi', bud_flights: 'Voli', bud_accommodation: 'Alloggio', bud_food: 'Cibo', bud_activities: 'Attività', bud_transport: 'Trasporti', bud_shopping: 'Shopping', res_live: 'Prezzi in tempo reale da Duffel:', res_stays_est: 'Prezzi stimati a notte. Tocca per vedere la disponibilità in tempo reale.', res_flights_est: 'Prezzi stimati. Confronta le offerte reali:', res_cars_est: 'Opzioni di noleggio stimate — confronta le offerte reali:', res_cars_compare: 'Confronta i noleggi auto a {c}:', sort_recommended: 'Ordina: Consigliati', sort_price_asc: 'Ordina: Prezzo crescente', sort_price_desc: 'Ordina: Prezzo decrescente', info_need_to_know: 'Da sapere', info_best_time: 'Periodo migliore', info_weather: 'Meteo', info_currency: 'Valuta', info_language: 'Lingua', info_transport: 'Come spostarsi', info_safety: 'Sicurezza', info_visa: 'Visto e ingresso', info_packing: 'Cosa mettere in valigia', per_night: 'notte', per_person: 'persona', check_prices: 'Vedi prezzi', save_trip: 'Salva viaggio', flight_outbound: 'Andata', flight_return: 'Ritorno'
   }
 };
 
@@ -8680,6 +8709,8 @@ function appCloseSheet() {
 
 // ── Zenvoy Premium (lead-capture placeholder; no real auth yet) ──
 function appRenderPremium() {
+  // Delegates to the shared auth/profile panel (login/signup, My Trips, benefits).
+  if (typeof renderAuthPanel === 'function') { renderAuthPanel('appPremiumBody', false); return; }
   var host = document.getElementById('appPremiumBody'); if (!host) return;
   function t(o) { return o[appLang] || o.en; }
   var benefits = [
@@ -9129,9 +9160,11 @@ function webPremiumContent() {
 }
 function webOpenPremium() {
   var ov = document.getElementById('webPremiumOverlay'); if (!ov) return;
-  document.getElementById('webPremiumBody').innerHTML = webPremiumContent();
   ov.classList.add('on');
+  if (typeof renderAuthPanel === 'function') { renderAuthPanel('webPremiumBody', false); return; }
+  document.getElementById('webPremiumBody').innerHTML = webPremiumContent();
 }
+function webRenderPremium() { renderAuthPanel('webPremiumBody', false); }
 function webClosePremium() { var ov = document.getElementById('webPremiumOverlay'); if (ov) ov.classList.remove('on'); }
 function webPremiumNotify() {
   var inp = document.getElementById('webPremiumEmail'); var email = inp ? inp.value.trim() : '';
@@ -9339,6 +9372,132 @@ function openMyTrip(id) {
 }
 function deleteMyTrip(id) { return getSupabaseClient().then(function (sb) { return sb.from('trips').delete().eq('id', id); }); }
 function renameMyTrip(id, name) { return getSupabaseClient().then(function (sb) { return sb.from('trips').update({ name: name }).eq('id', id); }); }
+
+// ── Shared auth/profile panel (rendered into both the app sheet & web modal) ──
+var _authMode = 'signup';           // 'signup' | 'login'
+var _authHostId = null;             // element id to re-render after auth changes
+function _aT(o) { return o[appLang] || o.en; }
+function renderAuthPanel(hostId, softgate) {
+  var host = document.getElementById(hostId); if (!host) return;
+  _authHostId = hostId;
+  if (isLoggedIn()) { host.innerHTML = _authProfileHtml(); _fillMyTrips(); return; }
+  host.innerHTML = _authLoggedOutHtml(!!softgate);
+}
+function _authProfileHtml() {
+  var email = currentUserEmail() || '';
+  var initial = (email[0] || '?').toUpperCase();
+  return '<div class="auth-profile">'
+    + '<div class="auth-me"><div class="auth-avatar">' + escapeHtml(initial) + '</div><div class="auth-email">' + escapeHtml(email) + '</div></div>'
+    + '<div class="auth-mytrips-t">' + _aT({ pt: 'Minhas viagens', en: 'My trips', es: 'Mis viajes', fr: 'Mes voyages', it: 'I miei viaggi' }) + '</div>'
+    + '<div id="authMyTrips" class="auth-mytrips"><div class="auth-loading">…</div></div>'
+    + '<button class="auth-signout" onclick="authSignOutClick()">' + _aT({ pt: 'Sair', en: 'Sign out', es: 'Cerrar sesión', fr: 'Déconnexion', it: 'Esci' }) + '</button></div>';
+}
+function _authLoggedOutHtml(softgate) {
+  var h = '<div class="auth-panel">';
+  if (softgate) {
+    h += '<div class="auth-softgate"><div class="auth-sg-t">' + _aT({ pt: 'Sua viagem está pronta! ✈️', en: 'Your trip is ready! ✈️', es: '¡Tu viaje está listo! ✈️', fr: 'Votre voyage est prêt ! ✈️', it: 'Il tuo viaggio è pronto! ✈️' }) + '</div>'
+      + '<div class="auth-sg-d">' + _aT({ pt: 'Quer salvar e acessar de qualquer lugar?', en: 'Want to save it and access it from anywhere?', es: '¿Quieres guardarlo y acceder desde cualquier lugar?', fr: "Voulez-vous l'enregistrer et y accéder partout ?", it: 'Vuoi salvarlo e accedervi ovunque?' }) + '</div></div>';
+  }
+  if (!authIsConfigured()) {
+    // Not wired to Supabase yet — keep the honest waitlist placeholder + note
+    // that the local trip is already saved on this device (P0-3).
+    h += '<div class="auth-note">' + _aT({ pt: 'Contas em breve — sua viagem já fica salva neste dispositivo.', en: 'Accounts coming soon — your trip is already saved on this device.', es: 'Cuentas próximamente — tu viaje ya está guardado en este dispositivo.', fr: 'Comptes bientôt disponibles — votre voyage est déjà enregistré sur cet appareil.', it: 'Account in arrivo — il tuo viaggio è già salvato su questo dispositivo.' }) + '</div>';
+    h += _premiumBenefitsHtml();
+    if (softgate) h += '<button class="auth-later" onclick="authCloseAll()">' + _aT({ pt: 'Continuar sem conta', en: 'Continue without account', es: 'Continuar sin cuenta', fr: 'Continuer sans compte', it: 'Continua senza account' }) + '</button>';
+    h += '</div>'; return h;
+  }
+  var isSignup = _authMode === 'signup';
+  h += '<div class="auth-form">'
+    + '<div class="auth-tabs"><button class="' + (isSignup ? 'on' : '') + '" onclick="authSetMode(\'signup\')">' + _aT({ pt: 'Criar conta', en: 'Sign up', es: 'Crear cuenta', fr: 'Créer un compte', it: 'Registrati' }) + '</button>'
+    + '<button class="' + (!isSignup ? 'on' : '') + '" onclick="authSetMode(\'login\')">' + _aT({ pt: 'Entrar', en: 'Log in', es: 'Entrar', fr: 'Se connecter', it: 'Accedi' }) + '</button></div>'
+    + '<input id="authEmail" type="email" inputmode="email" autocomplete="email" placeholder="' + _aT({ pt: 'Seu email', en: 'Your email', es: 'Tu correo', fr: 'Votre e-mail', it: 'La tua email' }) + '">'
+    + '<input id="authPass" type="password" autocomplete="' + (isSignup ? 'new-password' : 'current-password') + '" placeholder="' + _aT({ pt: 'Senha (mín. 6)', en: 'Password (min 6)', es: 'Contraseña (mín. 6)', fr: 'Mot de passe (min 6)', it: 'Password (min 6)' }) + '" onkeydown="if(event.key===\'Enter\')authFormSubmit()">'
+    + '<div class="auth-err" id="authErr" style="display:none"></div>'
+    + '<button class="auth-submit" id="authSubmit" onclick="authFormSubmit()">' + (isSignup ? _aT({ pt: 'Criar conta grátis', en: 'Create free account', es: 'Crear cuenta gratis', fr: 'Créer un compte gratuit', it: 'Crea account gratuito' }) : _aT({ pt: 'Entrar', en: 'Log in', es: 'Entrar', fr: 'Se connecter', it: 'Accedi' })) + '</button>'
+    + '<button class="auth-google" onclick="authGoogleClick()"><span>G</span> ' + _aT({ pt: 'Continuar com Google', en: 'Continue with Google', es: 'Continuar con Google', fr: 'Continuer avec Google', it: 'Continua con Google' }) + '</button>';
+  if (softgate) h += '<button class="auth-later" onclick="authCloseAll()">' + _aT({ pt: 'Continuar sem conta', en: 'Continue without account', es: 'Continuar sin cuenta', fr: 'Continuer sans compte', it: 'Continua senza account' }) + '</button>';
+  h += '</div>';
+  h += _premiumBenefitsHtml();
+  h += '</div>';
+  return h;
+}
+function _premiumBenefitsHtml() {
+  var benefits = [
+    { ic: '☁️', ti: { pt: 'Salvar & sincronizar', en: 'Save & sync trips' } },
+    { ic: '📱', ti: { pt: 'Acessar em qualquer aparelho', en: 'Access on any device' } },
+    { ic: '🔔', ti: { pt: 'Alertas de preço', en: 'Price alerts' } },
+    { ic: '📴', ti: { pt: 'Acesso offline', en: 'Offline access' } }
+  ];
+  return '<div class="prem-benefits" style="margin-top:14px">' + benefits.map(function (b) {
+    return '<div class="prem-b"><span class="prem-b-ic">' + b.ic + '</span><div><div class="prem-b-t">' + escapeHtml(_aT(b.ti)) + '</div></div></div>';
+  }).join('') + '</div>'
+    + '<div class="prem-price"><div class="prem-price-main">R$ 9,90<span>/' + _aT({ pt: 'mês', en: 'mo' }) + '</span></div>'
+    + '<div class="prem-price-year">' + _aT({ pt: 'ou R$ 79,90/ano · Pagamento em breve', en: 'or R$ 79.90/yr · Payment coming soon' }) + '</div></div>';
+}
+function _fillMyTrips() {
+  var el = document.getElementById('authMyTrips'); if (!el) return;
+  listMyTrips().then(function (trips) {
+    if (!trips.length) { el.innerHTML = '<div class="auth-empty">' + _aT({ pt: 'Nenhuma viagem salva ainda.', en: 'No saved trips yet.', es: 'Aún no hay viajes guardados.', fr: 'Aucun voyage enregistré.', it: 'Nessun viaggio salvato.' }) + '</div>'; return; }
+    el.innerHTML = trips.map(function (t) {
+      var dates = (t.check_in ? t.check_in : '') + (t.check_out ? ' → ' + t.check_out : '');
+      return '<div class="auth-trip"><button class="auth-trip-main" onclick="authOpenSavedTrip(\'' + t.id + '\')">'
+        + '<div class="auth-trip-name">' + escapeHtml(t.name || t.destination || 'Trip') + '</div>'
+        + '<div class="auth-trip-sub">' + escapeHtml(dates) + '</div></button>'
+        + '<button class="auth-trip-del" aria-label="Delete" onclick="authDeleteSavedTrip(\'' + t.id + '\')">🗑️</button></div>';
+    }).join('');
+  }).catch(function () { el.innerHTML = '<div class="auth-empty">' + _aT({ pt: 'Não foi possível carregar suas viagens.', en: "Couldn't load your trips.", es: 'No se pudieron cargar tus viajes.', fr: 'Impossible de charger vos voyages.', it: 'Impossibile caricare i tuoi viaggi.' }) + '</div>'; });
+}
+// ── Auth panel actions ──
+function authSetMode(m) { _authMode = m; if (_authHostId) renderAuthPanel(_authHostId, false); }
+function _authShowErr(msg) { var e = document.getElementById('authErr'); if (e) { e.textContent = msg; e.style.display = 'block'; } }
+function authFormSubmit() {
+  var email = ((document.getElementById('authEmail') || {}).value || '').trim();
+  var pass = (document.getElementById('authPass') || {}).value || '';
+  if (!EMAIL_RE.test(email)) return _authShowErr(_aT({ pt: 'Digite um email válido.', en: 'Enter a valid email.' }));
+  if (pass.length < 6) return _authShowErr(_aT({ pt: 'Senha de pelo menos 6 caracteres.', en: 'Password must be at least 6 characters.' }));
+  var btn = document.getElementById('authSubmit'); if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  var fn = _authMode === 'signup' ? authSignUp : authSignIn;
+  fn(email, pass).then(function () {
+    if (_authHostId) renderAuthPanel(_authHostId, false); // now shows the profile
+  }).catch(function (err) {
+    if (btn) { btn.disabled = false; }
+    var code = (err && err.message) || '';
+    var msg = /already registered|exists/i.test(code) ? _aT({ pt: 'Este email já tem conta — entre.', en: 'That email already has an account — log in.' })
+      : /invalid login|credentials/i.test(code) ? _aT({ pt: 'Email ou senha incorretos.', en: 'Wrong email or password.' })
+      : /confirm/i.test(code) ? _aT({ pt: 'Confirme seu email pelo link que enviamos.', en: 'Please confirm your email via the link we sent.' })
+      : _aT({ pt: 'Algo deu errado — tente de novo.', en: 'Something went wrong — please try again.' });
+    _authShowErr(msg);
+    if (_authHostId) { var b = document.getElementById('authSubmit'); if (b) b.disabled = false; }
+  });
+}
+function authGoogleClick() { authSignInGoogle().catch(function () { _authShowErr(_aT({ pt: 'Login com Google indisponível.', en: 'Google sign-in unavailable.' })); }); }
+function authSignOutClick() { authSignOut().then(function () { if (_authHostId) renderAuthPanel(_authHostId, false); }); }
+function authOpenSavedTrip(id) { openMyTrip(id).then(function () { authCloseAll(); }).catch(function () {}); }
+function authDeleteSavedTrip(id) { deleteMyTrip(id).then(function () { _fillMyTrips(); }).catch(function () {}); }
+// Close whichever profile/auth surface is open (app sheet or web modal).
+function authCloseAll() {
+  if (typeof appCloseSheet === 'function') appCloseSheet();
+  if (typeof webClosePremium === 'function') webClosePremium();
+}
+// "Save trip" — logged in: save + confirm; logged out: open the soft-gate.
+function saveCurrentTrip() {
+  if (isLoggedIn()) {
+    saveTripToAccount().then(function () { authToast(_aT({ pt: 'Viagem salva na sua conta ✓', en: 'Trip saved to your account ✓' })); })
+      .catch(function () { authToast(_aT({ pt: 'Não foi possível salvar agora.', en: "Couldn't save right now." })); });
+    return;
+  }
+  openAuthPanel(true); // soft-gate
+}
+function openAuthPanel(softgate) {
+  if (document.body.classList.contains('native-app')) { appOpenSheet('premium'); setTimeout(function () { renderAuthPanel('appPremiumBody', softgate); }, 30); }
+  else { webOpenPremium(); setTimeout(function () { renderAuthPanel('webPremiumBody', softgate); }, 30); }
+}
+function authToast(msg) {
+  var t = document.getElementById('authToast');
+  if (!t) { t = document.createElement('div'); t.id = 'authToast'; t.className = 'auth-toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('on'); }, 2600);
+}
 
 var _leafletLoading = null, _imMap = null, _imLayers = [], _imMode = 'days';
 function _loadLeaflet() {
@@ -9571,6 +9730,7 @@ function openItinMoreSheet() {
     opts.push({ icon: '💡', label: d.app_tips_weather || 'Tips & weather', onclick: function () { appOpenSheet('tips'); } });
     opts.push({ icon: '📅', label: d.view_agenda || 'Agenda', onclick: function () { setItinView('calendar'); } });
   }
+  opts.push({ icon: '💾', label: d.save_trip || 'Save trip', onclick: saveCurrentTrip });
   opts.push({ icon: '🧭', label: d.open_gmaps || 'Google Maps', onclick: openDayInGoogleMaps });
   opts.push({ icon: '💰', label: d.exp_btn || 'Expenses', onclick: openExpenses });
   opts.push({ icon: '📄', label: d.export_pdf || 'Save PDF', onclick: exportItineraryPDF });
