@@ -5135,6 +5135,7 @@ async function generateMultiDestPlan(from) {
   } catch (e) {
     console.error(e);
     showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_multidest_failed.replace('{e}', (e && e.message ? e.message : 'unknown error')));
+    trackEvent('trip_failed', { destination: (window.planData && window.planData.destination) || (typeof dest !== 'undefined' ? dest : null) });
     restoreWizardAfterError();
   } finally {
     btn.disabled = false;
@@ -5286,6 +5287,7 @@ function renderPackageChooser(packages, currencyCode) {
 function showPackageChooser(planData, travelers, total, days, from) {
   pendingPlanArgs = { planData: planData, travelers: travelers, total: total, days: days, from: from };
   currentPackages = computeTripPackages(planData, days);
+  trackEvent('trip_generated', { destination: planData && planData.destination }); // P1-3 success
 
   // The website chooser lives inside #planner, invisible in the native app —
   // so native gets its own full-screen chooser overlay (appShowChooser). Both
@@ -5350,6 +5352,7 @@ function selectPackage(idx) {
   enrichCarsWithUnsplashImages(args.planData.cars, args.planData.destination);
   hideBuildingScreen();
   if (typeof gtag === 'function') gtag('event', 'trip_generated', { destination: args.planData.destination, package: pkg.key });
+  trackEvent('package_chosen', { category: pkg.key, destination: args.planData.destination }); // P1-3
 }
 
 // Resets the view back to a fresh wizard (step 1), hiding the finished trip
@@ -5455,6 +5458,7 @@ async function generatePlan() {
   setStatus((TRANSLATIONS[appLang]||TRANSLATIONS.en).status_choosing_dest);
   hideErrorBanner();
   showBuildingScreen();
+  trackEvent('destination_search', { destination: to || 'surprise', category: getStyle() }); // P1-3
 
   var _ch = window._children || 0;
   var travDesc = _ch > 0 ? ((window._adults || (travelers - _ch)) + ' adults + ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' (family trip — favor family-friendly options)') : travelers;
@@ -5693,6 +5697,7 @@ async function generatePlan() {
   } catch (e) {
     console.error(e);
     showErrorBanner((TRANSLATIONS[appLang]||TRANSLATIONS.en).err_generation_failed.replace('{e}', (e && e.message ? e.message : 'unknown error')));
+    trackEvent('trip_failed', { destination: (typeof dest !== 'undefined' ? dest : null) });
     restoreWizardAfterError();
   } finally {
     btn.disabled = false;
@@ -9375,6 +9380,68 @@ function openMyTrip(id) {
 }
 function deleteMyTrip(id) { return getSupabaseClient().then(function (sb) { return sb.from('trips').delete().eq('id', id); }); }
 function renameMyTrip(id, name) { return getSupabaseClient().then(function (sb) { return sb.from('trips').update({ name: name }).eq('id', id); }); }
+
+// ══════════════════════════════════════════════════════════════════════════
+// P1-3 — ANONYMOUS AFFILIATE / USAGE ANALYTICS. Insert-only, no PII (no email,
+// no user_id, no IP). Fire-and-forget via a direct REST call (no SDK load),
+// fully fail-silent — analytics must NEVER block the UI or surface an error.
+// ══════════════════════════════════════════════════════════════════════════
+function trackEvent(eventType, opts) {
+  try {
+    if (!authIsConfigured() || !eventType) return;
+    opts = opts || {};
+    var body = {
+      event_type: String(eventType).slice(0, 40),
+      provider: opts.provider ? String(opts.provider).slice(0, 40) : null,
+      destination: opts.destination ? String(opts.destination).slice(0, 80) : null,
+      category: opts.category ? String(opts.category).slice(0, 40) : null
+    };
+    fetch(SUPABASE_CONFIG.url + '/rest/v1/analytics_events', {
+      method: 'POST', keepalive: true,
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_CONFIG.anonKey, 'Authorization': 'Bearer ' + SUPABASE_CONFIG.anonKey, 'Prefer': 'return=minimal' },
+      body: JSON.stringify(body)
+    }).catch(function () {});
+  } catch (e) { /* analytics never throws into the UI */ }
+}
+function _curDest() { return (window.planData && window.planData.destination) || null; }
+// Identify the partner behind a link (unwrapping CJ redirect links via their
+// embedded url= param so booking vs hotels.com is disambiguated correctly).
+function _affProvider(href) {
+  var h = href || '';
+  var m = /[?&]url=([^&]+)/.exec(h); if (m) { try { h = decodeURIComponent(m[1]); } catch (e) {} }
+  if (/hotels\.com/i.test(h)) return 'hotels';
+  if (/booking\.com/i.test(h)) return 'booking';
+  if (/skyscanner/i.test(h)) return 'skyscanner';
+  if (/getyourguide/i.test(h)) return 'getyourguide';
+  if (/viator/i.test(h)) return 'viator';
+  if (/airbnb/i.test(h)) return 'airbnb';
+  if (/hostelworld/i.test(h)) return 'hostelworld';
+  if (/kayak\.com/i.test(h)) return 'kayak';
+  if (/flights\.google/i.test(h)) return 'google_flights';
+  return null; // Google Maps / non-partner links → not tracked
+}
+function _affType(href, a) {
+  var dec = href; try { dec = decodeURIComponent(href); } catch (e) {}
+  var lbl = /label=zenvoy_(hotel|flight|car|attraction)/.exec(dec); if (lbl) return lbl[1];
+  var el = a; while (el && el !== document.body) {
+    var id = (el.id || '') + ' ' + (el.className || '');
+    if (/stays|hotel/i.test(id)) return 'hotel';
+    if (/flight/i.test(id)) return 'flight';
+    if (/\bcars?\b|car-card/i.test(id)) return 'car';
+    if (/attraction/i.test(id)) return 'attraction';
+    if (/itin|slot|day-|foodContent/i.test(id)) return 'attraction';
+    el = el.parentElement;
+  }
+  return 'other';
+}
+// One delegated listener catches every affiliate click — no per-link wiring.
+document.addEventListener('click', function (e) {
+  try {
+    var a = e.target && e.target.closest && e.target.closest('a[href]'); if (!a) return;
+    var provider = _affProvider(a.href); if (!provider) return;
+    trackEvent('affiliate_click', { provider: provider, category: _affType(a.href, a), destination: _curDest() });
+  } catch (err) {}
+}, true);
 
 // ── Shared auth/profile panel (rendered into both the app sheet & web modal) ──
 var _authMode = 'signup';           // 'signup' | 'login'
