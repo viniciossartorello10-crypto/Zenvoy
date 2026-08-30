@@ -231,6 +231,22 @@ body.native-app .im-head,body.web-wizard .im-head{padding-top:calc(28px + env(sa
 /* Website premium / save-your-trip modal */
 .prem-overlay{position:fixed;inset:0;z-index:100001;background:rgba(11,15,26,.6);display:none;align-items:center;justify-content:center;padding:20px}
 .prem-overlay.on{display:flex}
+/* P1-2 Travel Personality card */
+.pers-overlay{position:fixed;inset:0;z-index:100055;background:rgba(11,15,26,.66);display:none;align-items:center;justify-content:center;padding:20px}
+.pers-overlay.on{display:flex}
+.pers-card{position:relative;width:100%;max-width:400px;background:linear-gradient(160deg,#12203a,#0b0f1a);border:1px solid rgba(201,169,110,.35);border-radius:24px;padding:34px 26px 26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:persIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes persIn{from{opacity:0;transform:scale(.9) translateY(10px)}to{opacity:1;transform:none}}
+.pers-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border:none;background:rgba(255,255,255,.08);color:#fff;border-radius:50%;font-size:15px;cursor:pointer}
+.pers-emoji{font-size:70px;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+.pers-kicker{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-top:16px}
+.pers-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:#fff;margin-top:4px;line-height:1.1}
+.pers-desc{font-size:15px;color:#C7CEDA;line-height:1.6;margin-top:14px}
+.pers-actions{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.pers-share{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-weight:800;font-size:15px;padding:13px;border-radius:14px;cursor:pointer;font-family:'Inter',sans-serif}
+.pers-go{background:var(--gold);border:none;color:#1a1206;font-weight:800;font-size:15px;padding:14px;border-radius:14px;cursor:pointer;font-family:'Inter',sans-serif}
+/* "Meu perfil de viajante" entry in the profile panel */
+.auth-personality{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--border);background:var(--page-bg);border-radius:12px;padding:13px 14px;font-size:14px;font-weight:700;color:var(--page-text);cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:14px;text-align:left}
+.auth-personality .ap-emoji{font-size:22px}
 .prem-modal{position:relative;background:var(--card-bg);color:var(--page-text);width:100%;max-width:440px;max-height:90vh;overflow-y:auto;border-radius:22px;padding:34px 28px 28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .prem-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:1px solid var(--border);background:var(--page-bg);border-radius:9px;font-size:15px;color:var(--page-text);cursor:pointer}
 .prem-hero{font-size:46px;text-align:center;line-height:1}
@@ -5353,6 +5369,7 @@ function selectPackage(idx) {
   hideBuildingScreen();
   if (typeof gtag === 'function') gtag('event', 'trip_generated', { destination: args.planData.destination, package: pkg.key });
   trackEvent('package_chosen', { category: pkg.key, destination: args.planData.destination }); // P1-3
+  if (typeof maybeShowPersonality === 'function') maybeShowPersonality(); // P1-2 — once, after the chooser
 }
 
 // Resets the view back to a fresh wizard (step 1), hiding the finished trip
@@ -5459,6 +5476,7 @@ async function generatePlan() {
   hideErrorBanner();
   showBuildingScreen();
   trackEvent('destination_search', { destination: to || 'surprise', category: getStyle() }); // P1-3
+  _personalityShown = false; window._personalityKey = null; // P1-2 — fresh personality per trip
 
   var _ch = window._children || 0;
   var travDesc = _ch > 0 ? ((window._adults || (travelers - _ch)) + ' adults + ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' (family trip — favor family-friendly options)') : travelers;
@@ -9443,6 +9461,71 @@ document.addEventListener('click', function (e) {
   } catch (err) {}
 }, true);
 
+// ══════════════════════════════════════════════════════════════════════════
+// P1-2 — TRAVEL PERSONALITY. A fun, shareable profile derived from the wizard
+// inputs (style, interests, rhythm, budget). Shown once after the chooser, and
+// re-openable from the profile ("Meu perfil de viajante").
+// ══════════════════════════════════════════════════════════════════════════
+var PERSONALITIES = {
+  beach: { emoji: '🌊', kw: ['beach', 'praia', 'relax', 'sun', 'sea', 'coast', 'playa', 'plage', 'spiagg'], name: { pt: 'O Buscador de Praias', en: 'The Beach Seeker', es: 'El Buscador de Playas', fr: 'Le Chercheur de Plages', it: 'Il Cercatore di Spiagge' }, desc: { pt: 'Sua bússola aponta sempre para o mar. Areia, sol e o som das ondas são sua definição de férias perfeitas.', en: 'Your compass always points to the sea. Sand, sun and the sound of waves are your definition of a perfect trip.' } },
+  food: { emoji: '🍜', kw: ['food', 'comida', 'cuisine', 'gastro', 'wine', 'vinho', 'restaurant', 'eat', 'foodie', 'culinár'], name: { pt: 'O Explorador Gastronômico', en: 'The Food Explorer', es: 'El Explorador Gastronómico', fr: "L'Explorateur Gourmand", it: "L'Esploratore Gastronomico" }, desc: { pt: 'Você viaja com o estômago. O melhor souvenir é a memória de um prato que só existe naquele lugar.', en: 'You travel with your stomach. The best souvenir is the memory of a dish that only exists in that one place.' } },
+  culture: { emoji: '🏛️', kw: ['culture', 'cultura', 'museum', 'museu', 'history', 'históri', 'art', 'arte', 'architec', 'arquitet'], name: { pt: 'O Devorador de Cultura', en: 'The Culture Vulture', es: 'El Devorador de Cultura', fr: 'Le Passionné de Culture', it: "L'Amante della Cultura" }, desc: { pt: 'Museus, história e arquitetura são seu playground. Você lê cada placa e sai sabendo mais do que entrou.', en: 'Museums, history and architecture are your playground. You read every plaque and leave knowing more than when you arrived.' } },
+  party: { emoji: '🎉', kw: ['nightlife', 'noite', 'party', 'festa', 'club', 'bar', 'balada'], name: { pt: 'O Animal de Festa', en: 'The Party Animal', es: 'El Animal de Fiesta', fr: 'Le Fêtard', it: "L'Animale da Festa" }, desc: { pt: 'Seu dia começa quando o sol se põe. Você conhece uma cidade pelas suas noites.', en: 'Your day starts when the sun goes down. You get to know a city by its nights.' } },
+  nature: { emoji: '🌿', kw: ['nature', 'natureza', 'hiking', 'trilha', 'outdoor', 'eco', 'forest', 'floresta', 'mountain', 'montanha', 'trek'], name: { pt: 'O Amante da Natureza', en: 'The Nature Lover', es: 'El Amante de la Naturaleza', fr: 'L\'Amoureux de la Nature', it: "L'Amante della Natura" }, desc: { pt: 'Trilhas, cachoeiras e ar puro te chamam. Sua ideia de luxo é uma vista sem prédios.', en: 'Trails, waterfalls and fresh air call to you. Your idea of luxury is a view with no buildings in it.' } },
+  adventure: { emoji: '🏔️', kw: ['adventure', 'aventura', 'extreme', 'surf', 'dive', 'mergulh', 'climb', 'escalad'], name: { pt: 'O Aventureiro', en: 'The Adventure Seeker', es: 'El Aventurero', fr: "L'Aventurier", it: "L'Avventuriero" }, desc: { pt: 'Zona de conforto? Nunca ouvi falar. Você quer voltar com histórias, não só fotos.', en: 'Comfort zone? Never heard of it. You want to come back with stories, not just photos.' } },
+  luxury: { emoji: '💎', kw: [], name: { pt: 'O Viajante de Luxo', en: 'The Luxury Traveler', es: 'El Viajero de Lujo', fr: 'Le Voyageur de Luxe', it: 'Il Viaggiatore di Lusso' }, desc: { pt: 'Você viaja para se sentir bem cuidado. Do lençol ao pôr do sol, tudo é premium.', en: 'You travel to feel well looked after. From the sheets to the sunset, everything is premium.' } },
+  smart: { emoji: '💼', kw: [], name: { pt: 'O Viajante Inteligente', en: 'The Smart Traveler', es: 'El Viajero Inteligente', fr: 'Le Voyageur Malin', it: 'Il Viaggiatore Intelligente' }, desc: { pt: 'Você extrai o máximo de cada real. Achar a joia escondida barata é sua vitória.', en: 'You squeeze the most out of every dollar. Finding the cheap hidden gem is your victory.' } }
+};
+function computePersonality() {
+  var style = ((typeof getStyle === 'function' ? getStyle() : '') || '').toLowerCase();
+  var interests = ((typeof getInterests === 'function' ? getInterests() : '') || '').toLowerCase();
+  var budgetLevel = ((document.getElementById('budgetLevel') || {}).value || '').toLowerCase();
+  var rhythm = (window._rk || '').toLowerCase();
+  var text = style + ' ' + interests + ' ' + rhythm;
+  var scores = {}; Object.keys(PERSONALITIES).forEach(function (k) { scores[k] = 0; PERSONALITIES[k].kw.forEach(function (w) { if (text.indexOf(w) > -1) scores[k] += 1; }); });
+  if (/adventure/.test(style)) scores.adventure += 2;
+  if (/party|night/.test(style)) scores.party += 2;
+  if (/relax|beach/.test(style)) scores.beach += 1;
+  if (rhythm === 'night_owl') scores.party += 1;
+  if (/luxury|premium/.test(budgetLevel) || /luxury/.test(style)) scores.luxury += 3;
+  if (/budget/.test(budgetLevel)) scores.smart += 2;
+  var priority = ['adventure', 'party', 'beach', 'food', 'culture', 'nature', 'luxury', 'smart'];
+  var best = 'culture', bestScore = -1;
+  priority.forEach(function (k) { if (scores[k] > bestScore) { bestScore = scores[k]; best = k; } });
+  if (bestScore <= 0) best = /budget/.test(budgetLevel) ? 'smart' : /luxury|premium/.test(budgetLevel) ? 'luxury' : 'culture';
+  return best;
+}
+var _personalityShown = false; // reset per generation so the card shows once
+function showPersonalityCard(fromProfile) {
+  var key = (window._personalityKey = window._personalityKey || computePersonality());
+  var p = PERSONALITIES[key]; if (!p) return;
+  var ov = document.getElementById('personalityOverlay'); if (!ov) return;
+  var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  document.getElementById('personalityBody').innerHTML =
+    '<div class="pers-emoji">' + p.emoji + '</div>'
+    + '<div class="pers-kicker">' + _aT({ pt: 'Seu perfil de viajante', en: 'Your travel personality', es: 'Tu perfil de viajero', fr: 'Votre profil de voyageur', it: 'Il tuo profilo di viaggiatore' }) + '</div>'
+    + '<div class="pers-name">' + _aT(p.name) + '</div>'
+    + '<div class="pers-desc">' + escapeHtml(_aT(p.desc)) + '</div>'
+    + '<div class="pers-actions">'
+    + '<button class="pers-share" onclick="sharePersonality()">' + _aT({ pt: 'Compartilhar', en: 'Share', es: 'Compartir', fr: 'Partager', it: 'Condividi' }) + '</button>'
+    + '<button class="pers-go" onclick="closePersonalityCard()">' + (fromProfile ? _aT({ pt: 'Fechar', en: 'Close', es: 'Cerrar', fr: 'Fermer', it: 'Chiudi' }) : _aT({ pt: 'Ver minha viagem →', en: 'See my trip →', es: 'Ver mi viaje →', fr: 'Voir mon voyage →', it: 'Vedi il mio viaggio →' })) + '</button>'
+    + '</div>';
+  ov.classList.add('on');
+}
+function closePersonalityCard() { var ov = document.getElementById('personalityOverlay'); if (ov) ov.classList.remove('on'); }
+function maybeShowPersonality() {
+  if (_personalityShown) return; _personalityShown = true;
+  window._personalityKey = computePersonality();
+  setTimeout(function () { showPersonalityCard(false); }, 500); // let results settle first
+}
+function sharePersonality() {
+  var key = window._personalityKey || computePersonality(); var p = PERSONALITIES[key]; if (!p) return;
+  var dest = (window.planData && window.planData.destination) ? (' — ' + window.planData.destination.split(',')[0]) : '';
+  var text = p.emoji + ' ' + _aT(p.name) + dest + '\n' + _aT(p.desc) + '\n\nZenvoy · zenvoytravel.netlify.app';
+  if (navigator.share) { navigator.share({ title: 'Zenvoy — ' + _aT(p.name), text: text }).catch(function () {}); return; }
+  try { navigator.clipboard.writeText(text); if (typeof authToast === 'function') authToast(_aT({ pt: 'Copiado! Cole onde quiser 📋', en: 'Copied! Paste anywhere 📋' })); } catch (e) {}
+}
+
 // ── Shared auth/profile panel (rendered into both the app sheet & web modal) ──
 var _authMode = 'signup';           // 'signup' | 'login'
 var _authHostId = null;             // element id to re-render after auth changes
@@ -9450,8 +9533,16 @@ function _aT(o) { return o[appLang] || o.en; }
 function renderAuthPanel(hostId, softgate) {
   var host = document.getElementById(hostId); if (!host) return;
   _authHostId = hostId;
-  if (isLoggedIn()) { host.innerHTML = _authProfileHtml(); _fillMyTrips(); return; }
-  host.innerHTML = _authLoggedOutHtml(!!softgate);
+  if (isLoggedIn()) { host.innerHTML = _personalityBtnHtml() + _authProfileHtml(); _fillMyTrips(); return; }
+  host.innerHTML = _personalityBtnHtml() + _authLoggedOutHtml(!!softgate);
+}
+// "Meu perfil de viajante" — only once a trip exists to base it on.
+function _personalityBtnHtml() {
+  if (!window.planData || typeof computePersonality !== 'function') return '';
+  var key = window._personalityKey || (window._personalityKey = computePersonality());
+  var p = PERSONALITIES[key]; if (!p) return '';
+  return '<button class="auth-personality" onclick="showPersonalityCard(true)"><span class="ap-emoji">' + p.emoji + '</span><span>'
+    + _aT({ pt: 'Meu perfil de viajante', en: 'My travel personality', es: 'Mi perfil de viajero', fr: 'Mon profil de voyageur', it: 'Il mio profilo di viaggiatore' }) + '</span></button>';
 }
 function _authProfileHtml() {
   var email = currentUserEmail() || '';
@@ -9991,6 +10082,14 @@ appInitShell();
   <div class="prem-modal" role="dialog" aria-modal="true">
     <button class="prem-x" onclick="webClosePremium()" aria-label="Close">✕</button>
     <div class="prem-modal-body" id="webPremiumBody"></div>
+  </div>
+</div>
+
+<!-- P1-2 Travel Personality card (shared website + app) -->
+<div class="pers-overlay" id="personalityOverlay" onclick="if(event.target===this)closePersonalityCard()">
+  <div class="pers-card" role="dialog" aria-modal="true">
+    <button class="pers-x" onclick="closePersonalityCard()" aria-label="Close">✕</button>
+    <div id="personalityBody"></div>
   </div>
 </div>
 
