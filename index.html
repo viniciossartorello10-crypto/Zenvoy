@@ -9258,7 +9258,10 @@ var LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
 // Until both are set, every auth entry point degrades gracefully to the guest
 // experience (the "Save trip" button still works via the local guest session).
 // ══════════════════════════════════════════════════════════════════════════
-var SUPABASE_CONFIG = { url: '', anonKey: '' };
+var SUPABASE_CONFIG = {
+  url: 'https://rcrytfvpfiqodimhdziv.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjcnl0ZnZwZmlxb2RpbWhkeml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzY1NTgsImV4cCI6MjEwMzYxMjU1OH0.NDrAT6-t2HiWfClCA7apTKdxa-2eVaQ3bbRE6DR9elw'
+};
 var _sbClient = null, _sbLoading = null, _authUser = null;
 function authIsConfigured() { return !!(SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey); }
 function _loadSupabaseSDK() {
