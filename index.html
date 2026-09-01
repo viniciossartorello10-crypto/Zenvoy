@@ -2377,9 +2377,15 @@ var CITY_NAME_ALIASES = {
   'pequim': 'beijing', 'pekin': 'beijing', 'pechino': 'beijing', 'xangai': 'shanghai', 'shanghai': 'shanghai',
   'toquio': 'tokyo', 'tokio': 'tokyo', 'seul': 'seoul', 'seoul': 'seoul', 'bangcoc': 'bangkok', 'singapura': 'singapore', 'singapur': 'singapore', 'singapour': 'singapore',
   'nova delhi': 'new delhi', 'nueva delhi': 'new delhi', 'bombaim': 'mumbai', 'montreal': 'montreal', 'havana': 'havana', 'la habana': 'havana',
-  'genova': 'genoa', 'genes': 'genoa', 'antuerpia': 'antwerp', 'amberes': 'antwerp'
+  'genova': 'genoa', 'genes': 'genoa', 'antuerpia': 'antwerp', 'amberes': 'antwerp',
+  'amsterda': 'amsterdam', 'amsterdam': 'amsterdam', 'joanesburgo': 'johannesburg', 'johannesbourg': 'johannesburg',
+  'cingapura': 'singapore', 'machu picchu': 'cusco', 'machupicchu': 'cusco', 'cuzco': 'cusco',
+  'moscou': 'moscow', 'moscu': 'moscow', 'mosca': 'moscow'
 };
 function _canonCity(key) { return CITY_NAME_ALIASES[key] || key; }
+// Popular destinations whose gateway airport isn't in the CITIES autocomplete
+// table — a direct IATA fallback so flight/car links still pre-fill.
+var CITY_IATA_EXTRA = { 'moscow': 'SVO', 'saint petersburg': 'LED', 'sao petersburgo': 'LED' };
 
 // Resolves a destination string to { city, country, iso }.
 //
@@ -2429,6 +2435,7 @@ function destIata(dest) {
   for (var i = 0; i < CITIES.length; i++) {
     if (_plainLower(CITIES[i].city) === key) return CITIES[i].iata;
   }
+  if (CITY_IATA_EXTRA[key]) return CITY_IATA_EXTRA[key]; // gateway airports not in CITIES
   return '';
 }
 
