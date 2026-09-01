@@ -6194,12 +6194,17 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
         // misses lesser-known/AI-estimated properties, which used to leave the
         // card blank. Fall back to an Unsplash photo — same safety net the
         // itinerary cards already have — so a hotel is never left without one.
-        if (meta.photoOnly && !gotPhoto && photoEl && typeof appUnsplash === 'function') {
-          appUnsplash(meta.placeName + ' hotel ' + (meta.dest || '')).then(function(url) {
-            if (url && photoEl) {
+        // Unsplash fallback for ANY slot with a photo area that TripAdvisor
+        // couldn't fill (hotels AND itinerary places) — so far more cards show a
+        // real image instead of an empty box / emoji placeholder.
+        if (!gotPhoto && photoEl && typeof appUnsplash === 'function') {
+          var _uq = meta.photoOnly ? (meta.placeName + ' hotel ' + (meta.dest || '')) : (meta.placeName + ' ' + (meta.dest || ''));
+          appUnsplash(_uq).then(function(url) {
+            if (url && photoEl && !photoEl.classList.contains('has-photo')) {
               photoEl.innerHTML = '';
               photoEl.style.background = "url('" + url + "') center/cover";
               photoEl.style.display = 'block';
+              if (typeof cacheStopPhoto === 'function') cacheStopPhoto(meta.placeName, url);
             }
           });
         }
@@ -8653,12 +8658,16 @@ function appEnrichOne(m) {
     if (info && appNameMatches(info.name, m.text) && phEl) {
       var photos = (info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info.photoUrl ? [info.photoUrl] : []);
       if (photos.length) {
-        // Small square thumbnail — a single photo (no gallery at this size);
-        // clear the emoji-icon fallback and fill the square.
+        // Full-width photo area → up to 5 photos as a swipeable gallery (like
+        // the hotel & attraction cards); a single static image when only one.
         phEl.innerHTML = '';
         phEl.classList.add('has-photo');
-        phEl.style.background = "url('" + photos[0] + "') center/cover";
-        phEl.style.display = 'flex';
+        if (photos.length > 1 && typeof appBuildGallery === 'function') {
+          appBuildGallery(phEl, photos);
+        } else {
+          phEl.style.background = "url('" + photos[0] + "') center/cover";
+        }
+        phEl.style.display = 'block';
         if (typeof cacheStopPhoto === 'function') cacheStopPhoto(m.query, photos[0]); // reuse on the map
       }
       var metaEl = document.getElementById(m.cid + '-meta');
@@ -8669,6 +8678,16 @@ function appEnrichOne(m) {
         metaEl.innerHTML = parts;
       }
       var taEl = document.getElementById(m.cid + '-ta'); if (taEl && info.webUrl) taEl.href = taAffUrl(info.webUrl);
+    } else if (phEl && !phEl.classList.contains('has-photo') && typeof appFetchPlacePhoto === 'function') {
+      // No TripAdvisor match — fall back to an Unsplash photo so far more stops
+      // show a real image instead of just the emoji-icon placeholder.
+      appFetchPlacePhoto(m.query, m.isFood ? 'restaurants' : 'attractions').then(function (url) {
+        if (url && phEl && !phEl.classList.contains('has-photo')) {
+          phEl.innerHTML = ''; phEl.classList.add('has-photo');
+          phEl.style.background = "url('" + url + "') center/cover"; phEl.style.display = 'block';
+          if (typeof cacheStopPhoto === 'function') cacheStopPhoto(m.query, url);
+        }
+      }).catch(function () {});
     }
   });
 }
