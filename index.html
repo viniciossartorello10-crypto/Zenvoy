@@ -2521,19 +2521,23 @@ function bookingDealsUrl(dest) {
 // (ss + pickup/dropoff datetimes) are required, the rest are dropped if they
 // would push it over.
 function bookingCarUrl(dest) {
+  // Booking.com's own /cars page (Rentalcars backend) ignores pickup_airport/ss
+  // in the URL and lands on a blank search — verified in a real browser. Its
+  // backend, Rentalcars.com, DOES pre-fill the location via `locationName` (and
+  // the pickup/drop-off dates), so we deep-link straight there. Rentalcars is
+  // owned by Booking Holdings, so this stays in the same family.
   var t = _tripCtx();
   var iata = destIata(dest);
-  var q = destQuery(dest);
-  var pickup  = t.checkIn  ? t.checkIn  + 'T10:00:00' : '';
-  var dropoff = t.checkOut ? t.checkOut + 'T10:00:00' : '';
-  // Pre-filter to the destination AIRPORT when we have its IATA code; otherwise
-  // fall back to a free-text city search so the link always resolves.
-  var primary = iata
-    ? [['aid', bookingAid()], ['pickup_airport', iata], ['pickup_date', pickup], ['dropoff_date', dropoff]]
-    : [['aid', bookingAid()], ['ss', q], ['pickup_date', pickup], ['dropoff_date', dropoff]];
-  var destUrl = _qsBudgeted('https://www.booking.com/cars/index.html', primary,
-    [['label', 'zenvoy_car_' + (_sid(iata || q, 20) || 'search')]]);
-  return bookingDeepLink('cars', destUrl, iata || q);
+  var city = ((destQuery(dest) || dest || '').split(',')[0] || '').trim();
+  if (!city && !iata) return 'https://www.rentalcars.com/';
+  var loc = iata ? (city ? city + ' (' + iata + ')' : iata) : city;
+  var params = [['locationName', loc]];
+  function _dp(iso, pre) { if (!iso) return; var p = iso.split('-'); params.push([pre + 'Year', p[0]], [pre + 'Month', String(parseInt(p[1], 10))], [pre + 'Day', String(parseInt(p[2], 10))], [pre + 'Hour', '10'], [pre + 'Minute', '0']); }
+  _dp(t.checkIn, 'pu'); _dp(t.checkOut, 'do');
+  var qs = params.map(function (p) { return encodeURIComponent(p[0]) + '=' + encodeURIComponent(p[1]); }).join('&');
+  var url = 'https://www.rentalcars.com/SearchResults.do?' + qs;
+  // Attach a Rentalcars/DiscoverCars affiliate id if one is configured (no-op otherwise).
+  return AFFILIATE_IDS.discovercars ? withAffiliateParam(url, 'affiliateCode', AFFILIATE_IDS.discovercars) : url;
 }
 
 // Flights: IATA pair + date. Falls back to the flights landing page only when
@@ -5875,7 +5879,7 @@ function renderCart() {
         var carUrl = 'https://www.rentalcars.com/SearchResults.do?locationName=' + encodeURIComponent(carDest);
         h += '<div class="fc"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>🚗 ' + escapeHtml(c.name) + '</strong><div style="font-size:12px;color:var(--muted);margin-top:2px">' + escapeHtml(c.supplier||'') + '</div></div>';
         h += '<div style="text-align:right"><div style="font-family:\'Cormorant Garamond\',serif;font-size:20px">' + formatPrice(c.price) + '</div><button onclick="removeCartItem(\'car\',\'' + escapeJsAttr(cityKey) + '\')" style="border:none;background:none;color:#c33;font-size:11px;cursor:pointer;text-decoration:underline">' + dict.cart_remove + '</button></div></div>';
-        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingCarUrl(carDest) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a></div></div>';
+        h += '<div class="bls" style="margin-top:10px"><a href="' + bookingCarUrl(carDest) + '" target="_blank" class="bl bl-featured">Rentalcars</a></div></div>';
       });
     }
 
@@ -7325,7 +7329,7 @@ function renderCars(cars, dest) {
   var container = document.getElementById('carsContent');
   var destShort = (dest || '').split(',')[0];
   var fallbackLinks = '<div class="bls" style="margin-bottom:16px">'
-    + '<a href="' + bookingCarUrl(destShort) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a>'
+    + '<a href="' + bookingCarUrl(destShort) + '" target="_blank" class="bl bl-featured">Rentalcars</a>'
     + '</div>';
 
   if (!cars || !cars.length) {
@@ -7378,7 +7382,7 @@ function renderCars(cars, dest) {
       h += '</div>';
       // Booking.com Cars link INSIDE each card (pre-filled to the destination
       // airport + dates), so it sits with the car it books, not below the list.
-      h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)"><a href="' + bookingCarUrl(dest) + '" target="_blank" class="bl bl-featured">Booking.com Cars</a></div>';
+      h += '<div class="bls" style="margin-top:12px;padding-top:12px;border-top:.5px solid var(--hairline)"><a href="' + bookingCarUrl(dest) + '" target="_blank" class="bl bl-featured">Rentalcars</a></div>';
       h += '</div>';
     });
   });
