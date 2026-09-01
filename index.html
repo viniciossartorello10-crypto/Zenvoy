@@ -2357,6 +2357,29 @@ var COUNTRY_ISO = {
 function _plainLower(s) {
   return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 }
+// Localized (PT/ES/FR/IT) → English city names. In non-English languages the AI
+// returns the destination in that language ("Lisboa", "Roma", "Nova York"),
+// which the English-keyed CITIES table couldn't match — so IATA lookups failed
+// and flight/car links stopped pre-filling. Canonicalize before every lookup.
+var CITY_NAME_ALIASES = {
+  'lisboa': 'lisbon', 'roma': 'rome', 'veneza': 'venice', 'venecia': 'venice', 'venise': 'venice', 'venezia': 'venice',
+  'florenca': 'florence', 'florencia': 'florence', 'firenze': 'florence', 'napoles': 'naples', 'napoli': 'naples',
+  'milao': 'milan', 'milan': 'milan', 'milano': 'milan', 'turim': 'turin', 'torino': 'turin',
+  'munique': 'munich', 'munich': 'munich', 'munchen': 'munich', 'colonia': 'cologne', 'koln': 'cologne',
+  'nova york': 'new york', 'nova iorque': 'new york', 'nueva york': 'new york',
+  'cidade do mexico': 'mexico city', 'ciudad de mexico': 'mexico city',
+  'praga': 'prague', 'praha': 'prague', 'viena': 'vienna', 'vienne': 'vienna', 'atenas': 'athens', 'athenes': 'athens', 'atene': 'athens',
+  'estocolmo': 'stockholm', 'copenhague': 'copenhagen', 'copenaghen': 'copenhagen', 'varsovia': 'warsaw', 'varsavia': 'warsaw',
+  'moscou': 'moscow', 'moscu': 'moscow', 'mosca': 'moscow', 'genebra': 'geneva', 'ginebra': 'geneva', 'geneve': 'geneva', 'ginevra': 'geneva',
+  'zurique': 'zurich', 'zurigo': 'zurich', 'bruxelas': 'brussels', 'bruselas': 'brussels', 'bruxelles': 'brussels',
+  'edimburgo': 'edinburgh', 'edimbourg': 'edinburgh', 'dublim': 'dublin', 'sevilha': 'seville', 'sevilla': 'seville', 'seville': 'seville', 'siviglia': 'seville',
+  'marraquexe': 'marrakech', 'marrakesh': 'marrakech', 'cidade do cabo': 'cape town', 'ciudad del cabo': 'cape town', 'le cap': 'cape town',
+  'pequim': 'beijing', 'pekin': 'beijing', 'pechino': 'beijing', 'xangai': 'shanghai', 'shanghai': 'shanghai',
+  'toquio': 'tokyo', 'tokio': 'tokyo', 'seul': 'seoul', 'seoul': 'seoul', 'bangcoc': 'bangkok', 'singapura': 'singapore', 'singapur': 'singapore', 'singapour': 'singapore',
+  'nova delhi': 'new delhi', 'nueva delhi': 'new delhi', 'bombaim': 'mumbai', 'montreal': 'montreal', 'havana': 'havana', 'la habana': 'havana',
+  'genova': 'genoa', 'genes': 'genoa', 'antuerpia': 'antwerp', 'amberes': 'antwerp'
+};
+function _canonCity(key) { return CITY_NAME_ALIASES[key] || key; }
 
 // Resolves a destination string to { city, country, iso }.
 //
@@ -2373,7 +2396,7 @@ function resolveDest(dest) {
   var raw = (dest || '').toString().split('→')[0].trim();
   var parts = raw.split(',');
   var cityPart = (parts[0] || '').trim();
-  var cityKey = _plainLower(cityPart);
+  var cityKey = _canonCity(_plainLower(cityPart));
 
   var match = null;
   for (var i = 0; i < CITIES.length; i++) {
@@ -2402,7 +2425,7 @@ function resolveDest(dest) {
 function destIata(dest) {
   var raw = (dest || '').toString().split('→')[0].split(',')[0].trim();
   if (/^[A-Z]{3}$/.test(raw)) return raw;      // already an IATA code
-  var key = _plainLower(raw);
+  var key = _canonCity(_plainLower(raw));
   for (var i = 0; i < CITIES.length; i++) {
     if (_plainLower(CITIES[i].city) === key) return CITIES[i].iata;
   }
@@ -2528,7 +2551,10 @@ function bookingCarUrl(dest) {
   // owned by Booking Holdings, so this stays in the same family.
   var t = _tripCtx();
   var iata = destIata(dest);
-  var city = ((destQuery(dest) || dest || '').split(',')[0] || '').trim();
+  // Use the canonical English city name (CITIES table) — Rentalcars resolves
+  // "Lisbon", not the Portuguese "Lisboa".
+  var rd = (typeof resolveDest === 'function') ? resolveDest(dest) : null;
+  var city = (rd && rd.city) || ((destQuery(dest) || dest || '').split(',')[0] || '').trim();
   if (!city && !iata) return 'https://www.rentalcars.com/';
   var loc = iata ? (city ? city + ' (' + iata + ')' : iata) : city;
   var params = [['locationName', loc]];
