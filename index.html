@@ -151,6 +151,17 @@ h1 em{font-style:italic;color:var(--gold)}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--body-text);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .web-counters{display:flex;flex-direction:column;gap:10px}
+/* Per-child age selectors (shown when children > 0) */
+.web-child-ages{display:flex;flex-direction:column;gap:8px}
+.web-child-ages:not(:empty){margin-top:2px}
+.web-child-age{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border:1px solid var(--border);border-radius:12px;background:var(--page-bg)}
+.web-child-age label{font-size:14px;font-weight:600;color:var(--page-text)}
+.web-child-age select{width:auto;min-width:90px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:var(--card-bg);color:var(--page-text);font-family:'Inter',sans-serif}
+.tin-child-ages{display:flex;flex-direction:column;gap:8px}
+.tin-child-ages:not(:empty){margin-top:4px}
+.tin-child-age{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border:1px solid var(--app-line);border-radius:12px;background:var(--app-surface-2)}
+.tin-child-age label{font-size:14px;font-weight:700;color:var(--app-text)}
+.tin-child-age select{width:auto;min-width:96px;padding:10px 12px;border:1px solid var(--app-line);border-radius:10px;font-size:15px;background:var(--app-surface);color:var(--app-text);font-family:'Inter',sans-serif}
 .web-counter{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--page-bg)}
 .web-counter-l{font-size:15px;font-weight:600;color:var(--page-text)}
 .web-stepper{display:flex;align-items:center;gap:14px}
@@ -1738,6 +1749,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
             <button type="button" onclick="webTrav('children',1)" aria-label="More children">+</button>
           </div>
         </div>
+        <div id="webChildAges" class="web-child-ages"></div>
       </div>
     </div>
     <div class="grid2" style="margin-bottom:16px">
@@ -3002,7 +3014,7 @@ var TRANSLATIONS = {
     day_rename: 'Rename day', day_changedate: 'Change date', day_addcal: 'Add to calendar', view_on_map: 'View on map', map_title: 'Route map', open_gmaps: 'Google Maps', hotels_map_btn: 'View hotels on the map', hotel_details: 'View details', hotels_map_title: 'Hotels on the map', export_pdf: 'Save PDF', view_list: 'List', view_agenda: 'Agenda', map_layer_title: 'View on map', layer_route: 'Itinerary', layer_hotels: 'Hotels', layer_attractions: 'Attractions', more_options: 'More options', cal_empty: 'No schedule yet.', agenda_title: 'Trip agenda', agenda_btn: 'Agenda', exp_btn: 'Expenses', exp_title: 'Trip expenses', exp_add: 'Add', exp_label_ph: 'What was it?', exp_empty: 'No expenses yet.', exp_left: 'Left', exp_over: 'Over budget by',
     food_musttry_title: '🍜 Must-try regional dishes', food_breakfast_title: '☕ Best breakfast spots', food_lunch_title: '🌞 Best lunch spots', food_snack_title: '🥐 Afternoon coffee & snack', food_dinner_title: '🌙 Best dinner spots', food_streetfood_title: '🛺 Street food',
     airport_any: 'Any airport (recommend the best)', airport_main: 'main', airport_intl: 'international', airport_domestic: 'domestic', airport_downtown: 'closer to downtown', airport_budget: 'budget airlines', which_airport: 'Which airport?',
-    label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children',
+    label_departure: 'Departure', label_return: 'Return', label_dates: 'Dates', label_travelers: 'Travelers', trav_adults: '👨 Adults', trav_children: '👶 Children', child_label: 'Child', child_age_ph: 'Age',
     label_staytype: 'Stay type', stay_any: 'Any', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Total trip', budget_person: 'Per person', ph_budget: 'e.g. 3000',
     label_budgetlevel: 'Budget level',
@@ -3065,7 +3077,7 @@ var TRANSLATIONS = {
     day_rename: 'Renomear dia', day_changedate: 'Alterar data', day_addcal: 'Adicionar à agenda', view_on_map: 'Ver no mapa', map_title: 'Mapa do roteiro', open_gmaps: 'Abrir no Maps', hotels_map_btn: 'Ver hotéis no mapa', hotel_details: 'Ver detalhes', hotels_map_title: 'Hotéis no mapa', export_pdf: 'Baixar PDF', view_list: 'Lista', view_agenda: 'Agenda', map_layer_title: 'Ver no mapa', layer_route: 'Roteiro', layer_hotels: 'Hotéis', layer_attractions: 'Atrações', more_options: 'Mais opções', cal_empty: 'Sem programação ainda.', agenda_title: 'Agenda da viagem', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos da viagem', exp_add: 'Adicionar', exp_label_ph: 'O que foi?', exp_empty: 'Nenhum gasto ainda.', exp_left: 'Restam', exp_over: 'Acima do orçamento em',
     food_musttry_title: '🍜 Pratos regionais imperdíveis', food_breakfast_title: '☕ Melhores cafés da manhã', food_lunch_title: '🌞 Melhores almoços', food_snack_title: '🥐 Café da tarde e lanche', food_dinner_title: '🌙 Melhores jantares', food_street_title: '🛺 Comida de rua', food_streetfood_title: '🛺 Comida de rua',
     airport_any: 'Qualquer aeroporto (recomendar o melhor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'mais perto do centro', airport_budget: 'companhias low-cost', which_airport: 'Qual aeroporto?',
-    label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças',
+    label_departure: 'Ida', label_return: 'Volta', label_dates: 'Datas', label_travelers: 'Viajantes', trav_adults: '👨 Adultos', trav_children: '👶 Crianças', child_label: 'Criança', child_age_ph: 'Idade',
     label_staytype: 'Tipo de hospedagem', stay_any: 'Qualquer', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostel', stay_resort: 'Resort', stay_villa: 'Vila',
     label_budget: 'Orçamento', budget_total: 'Viagem total', budget_person: 'Por pessoa', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Nível de orçamento',
@@ -3128,7 +3140,7 @@ var TRANSLATIONS = {
     day_rename: 'Renombrar día', day_changedate: 'Cambiar fecha', day_addcal: 'Añadir al calendario', view_on_map: 'Ver en el mapa', map_title: 'Mapa de la ruta', open_gmaps: 'Abrir en Maps', hotels_map_btn: 'Ver hoteles en el mapa', hotel_details: 'Ver detalles', hotels_map_title: 'Hoteles en el mapa', export_pdf: 'Guardar PDF', view_list: 'Lista', view_agenda: 'Agenda', map_layer_title: 'Ver en el mapa', layer_route: 'Itinerario', layer_hotels: 'Hoteles', layer_attractions: 'Atracciones', more_options: 'Más opciones', cal_empty: 'Sin programación aún.', agenda_title: 'Agenda del viaje', agenda_btn: 'Agenda', exp_btn: 'Gastos', exp_title: 'Gastos del viaje', exp_add: 'Añadir', exp_label_ph: '¿Qué fue?', exp_empty: 'Sin gastos aún.', exp_left: 'Queda', exp_over: 'Sobre el presupuesto en',
     food_musttry_title: '🍜 Platos regionales imperdibles', food_breakfast_title: '☕ Mejores desayunos', food_lunch_title: '🌞 Mejores almuerzos', food_snack_title: '🥐 Café y merienda', food_dinner_title: '🌙 Mejores cenas', food_streetfood_title: '🛺 Comida callejera',
     airport_any: 'Cualquier aeropuerto (recomendar el mejor)', airport_main: 'principal', airport_intl: 'internacional', airport_domestic: 'doméstico', airport_downtown: 'más cerca del centro', airport_budget: 'aerolíneas económicas', which_airport: '¿Qué aeropuerto?',
-    label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños',
+    label_departure: 'Ida', label_return: 'Vuelta', label_dates: 'Fechas', label_travelers: 'Viajeros', trav_adults: '👨 Adultos', trav_children: '👶 Niños', child_label: 'Niño', child_age_ph: 'Edad',
     label_staytype: 'Tipo de alojamiento', stay_any: 'Cualquiera', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Hostal', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Presupuesto', budget_total: 'Viaje total', budget_person: 'Por persona', ph_budget: 'ej: 3000',
     label_budgetlevel: 'Nivel de presupuesto',
@@ -3191,7 +3203,7 @@ var TRANSLATIONS = {
     day_rename: 'Renommer le jour', day_changedate: 'Changer la date', day_addcal: 'Ajouter au calendrier', view_on_map: 'Voir sur la carte', map_title: 'Carte de l itinéraire', open_gmaps: 'Ouvrir dans Maps', hotels_map_btn: 'Voir les hôtels sur la carte', hotel_details: 'Voir détails', hotels_map_title: 'Hôtels sur la carte', export_pdf: 'Enregistrer PDF', view_list: 'Liste', view_agenda: 'Agenda', map_layer_title: 'Voir sur la carte', layer_route: 'Itinéraire', layer_hotels: 'Hôtels', layer_attractions: 'Attractions', more_options: 'Plus d options', cal_empty: 'Aucun programme.', agenda_title: 'Programme du voyage', agenda_btn: 'Programme', exp_btn: 'Dépenses', exp_title: 'Dépenses du voyage', exp_add: 'Ajouter', exp_label_ph: 'Quel achat ?', exp_empty: 'Aucune dépense.', exp_left: 'Reste', exp_over: 'Dépassement de',
     food_musttry_title: '🍜 Plats régionaux incontournables', food_breakfast_title: '☕ Meilleurs petits-déjeuners', food_lunch_title: '🌞 Meilleurs déjeuners', food_snack_title: '🥐 Café et collation', food_dinner_title: '🌙 Meilleurs dîners', food_streetfood_title: '🛺 Street food',
     airport_any: "N'importe quel aéroport (recommander le meilleur)", airport_main: 'principal', airport_intl: 'international', airport_domestic: 'domestique', airport_downtown: 'plus proche du centre', airport_budget: 'compagnies low-cost', which_airport: 'Quel aéroport ?',
-    label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants',
+    label_departure: 'Départ', label_return: 'Retour', label_dates: 'Dates', label_travelers: 'Voyageurs', trav_adults: '👨 Adultes', trav_children: '👶 Enfants', child_label: 'Enfant', child_age_ph: 'Âge',
     label_staytype: "Type d'hébergement", stay_any: "N'importe", stay_hotel: 'Hôtel', stay_airbnb: 'Airbnb', stay_hostel: 'Auberge', stay_resort: 'Complexe', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Voyage total', budget_person: 'Par personne', ph_budget: 'ex: 3000',
     label_budgetlevel: 'Niveau de budget',
@@ -3254,7 +3266,7 @@ var TRANSLATIONS = {
     day_rename: 'Rinomina giorno', day_changedate: 'Cambia data', day_addcal: 'Aggiungi al calendario', view_on_map: 'Vedi sulla mappa', map_title: 'Mappa del percorso', open_gmaps: 'Apri in Maps', hotels_map_btn: 'Vedi hotel sulla mappa', hotel_details: 'Vedi dettagli', hotels_map_title: 'Hotel sulla mappa', export_pdf: 'Salva PDF', view_list: 'Lista', view_agenda: 'Agenda', map_layer_title: 'Vedi sulla mappa', layer_route: 'Itinerario', layer_hotels: 'Hotel', layer_attractions: 'Attrazioni', more_options: 'Altre opzioni', cal_empty: 'Nessun programma.', agenda_title: 'Agenda del viaggio', agenda_btn: 'Agenda', exp_btn: 'Spese', exp_title: 'Spese del viaggio', exp_add: 'Aggiungi', exp_label_ph: 'Cosa era?', exp_empty: 'Nessuna spesa.', exp_left: 'Restano', exp_over: 'Oltre il budget di',
     food_musttry_title: '🍜 Piatti regionali da provare', food_breakfast_title: '☕ Migliori colazioni', food_lunch_title: '🌞 Migliori pranzi', food_snack_title: '🥐 Caffè e merenda', food_dinner_title: '🌙 Migliori cene', food_streetfood_title: '🛺 Street food',
     airport_any: 'Qualsiasi aeroporto (consiglia il migliore)', airport_main: 'principale', airport_intl: 'internazionale', airport_domestic: 'nazionale', airport_downtown: 'più vicino al centro', airport_budget: 'compagnie low-cost', which_airport: 'Quale aeroporto?',
-    label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini',
+    label_departure: 'Partenza', label_return: 'Ritorno', label_dates: 'Date', label_travelers: 'Viaggiatori', trav_adults: '👨 Adulti', trav_children: '👶 Bambini', child_label: 'Bambino', child_age_ph: 'Età',
     label_staytype: 'Tipo di alloggio', stay_any: 'Qualsiasi', stay_hotel: 'Hotel', stay_airbnb: 'Airbnb', stay_hostel: 'Ostello', stay_resort: 'Resort', stay_villa: 'Villa',
     label_budget: 'Budget', budget_total: 'Viaggio totale', budget_person: 'A persona', ph_budget: 'es: 3000',
     label_budgetlevel: 'Livello di budget',
@@ -4927,6 +4939,7 @@ function webTrav(kind, delta) {
   if (cEl) cEl.textContent = ch;
   var t = document.getElementById('travelers'); if (t) t.value = String(ad + ch);
   window._adults = ad; window._children = ch;
+  webRenderChildAges(ch);
   // Disable steppers at their limits for clear affordance.
   var full = ad + ch >= 12;
   var btns = document.querySelectorAll('.web-stepper button');
@@ -4934,6 +4947,29 @@ function webTrav(kind, delta) {
   if (btns[1]) btns[1].disabled = full;      // more adults
   if (btns[2]) btns[2].disabled = ch <= 0;   // fewer children
   if (btns[3]) btns[3].disabled = full;      // more children
+}
+// Per-child age dropdowns (0–17), shown only when children > 0. Existing picks
+// are preserved when the count changes; ages feed the AI prompt (webChildAges()).
+function webRenderChildAges(ch) {
+  var host = document.getElementById('webChildAges'); if (!host) return;
+  var prev = webChildAges();
+  var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  if (!ch) { host.innerHTML = ''; return; }
+  var h = '';
+  for (var i = 0; i < ch; i++) {
+    var sel = prev[i] != null ? prev[i] : '';
+    var opts = '<option value="">' + (d.child_age_ph || 'Age') + '</option>';
+    for (var a = 0; a <= 17; a++) opts += '<option value="' + a + '"' + (String(sel) === String(a) ? ' selected' : '') + '>' + a + (a === 0 ? ' <1' : '') + '</option>';
+    h += '<div class="web-child-age"><label>' + (d.child_label || 'Child') + ' ' + (i + 1) + '</label>'
+      + '<select id="webChildAge' + i + '" onchange="window._childAges=webChildAges()">' + opts + '</select></div>';
+  }
+  host.innerHTML = h;
+  window._childAges = webChildAges();
+}
+function webChildAges() {
+  var out = []; var ch = parseInt((document.getElementById('webChildren') || {}).textContent) || 0;
+  for (var i = 0; i < ch; i++) { var el = document.getElementById('webChildAge' + i); out.push(el && el.value !== '' ? parseInt(el.value) : null); }
+  return out;
 }
 
 // Handles trips spanning multiple destinations (e.g. a European backpacking
@@ -5516,7 +5552,9 @@ async function generatePlan() {
   _personalityShown = false; window._personalityKey = null; // P1-2 — fresh personality per trip
 
   var _ch = window._children || 0;
-  var travDesc = _ch > 0 ? ((window._adults || (travelers - _ch)) + ' adults + ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' (family trip — favor family-friendly options)') : travelers;
+  var _ages = (window._childAges || []).filter(function (a) { return a != null; });
+  var _agesTxt = _ages.length ? (' — children aged ' + _ages.join(', ') + ' years') : '';
+  var travDesc = _ch > 0 ? ((window._adults || (travelers - _ch)) + ' adults + ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + _agesTxt + ' (FAMILY TRIP: strongly favor family-friendly hotels with family rooms/suites, kid-appropriate activities and attractions, and restaurants that welcome children; account for the specific ages given)') : travelers;
   var tripBrief = 'From '+from+', To: '+dest+', Days: '+days+', Travelers: '+travDesc+', Budget: $'+total+' USD, Level: '+bl+', Stay: '+stay+', Style: '+style+', Interests: '+interests+', Rhythm: '+(rMap[rhythm]||'Balanced');
   var extraNotesVal = (document.getElementById('extraNotes') || {}).value;
   // Wrapped in explicit delimiters + a data-not-instructions warning — this
@@ -7953,7 +7991,7 @@ function appWizRender(dir) {
         + '<span id="tin' + (kind === 'adults' ? 'Adults' : 'Children') + '">' + val + '</span>'
         + '<button type="button" onclick="appWizTrav(\'' + kind + '\',1)">+</button></div></div>';
     }
-    var travTiles = _travRow('adults') + _travRow('children');
+    var travTiles = _travRow('adults') + _travRow('children') + '<div id="tinChildAges" class="tin-child-ages"></div>';
     body = '<div class="tin-trip">'
       + '<div class="tin-field"><label>' + L.from + '</label>'
       + '<div class="tin-search"><input id="tinFrom" type="text" autocomplete="off" placeholder="' + L.search + '" value="' + escapeHtml(appWizState.from || '') + '" oninput="appWizTripSearch(\'from\')"></div>'
@@ -8004,7 +8042,7 @@ function appWizRender(dir) {
     + '<div class="tin-q">' + escapeHtml(_wl(step.q)) + '</div>'
     + '<div class="tin-body">' + body + '</div></div></div>';
   stage.innerHTML = html;
-  if (step.type === 'trip') appWizRenderLegs();
+  if (step.type === 'trip') { appWizRenderLegs(); appWizRenderChildAges(); }
 }
 
 function appWizPick(key, val, advance) {
@@ -8101,6 +8139,29 @@ function appWizTrav(kind, delta) {
   appWizState.travelers = String(a + c);
   var ae = document.getElementById('tinAdults'); if (ae) ae.textContent = a;
   var ce = document.getElementById('tinChildren'); if (ce) ce.textContent = c;
+  appWizRenderChildAges();
+}
+// Per-child age dropdowns (0–17) in the native wizard; ages persist in
+// appWizState.childAges and feed the AI prompt via appWizFinish.
+function appWizRenderChildAges() {
+  var host = document.getElementById('tinChildAges'); if (!host) return;
+  var c = appWizState.children || 0;
+  var ages = appWizState.childAges || [];
+  var d = TRANSLATIONS[appLang] || TRANSLATIONS.en;
+  if (!c) { host.innerHTML = ''; appWizState.childAges = []; return; }
+  var h = '';
+  for (var i = 0; i < c; i++) {
+    var sel = ages[i] != null ? ages[i] : '';
+    var opts = '<option value="">' + (d.child_age_ph || 'Age') + '</option>';
+    for (var a = 0; a <= 17; a++) opts += '<option value="' + a + '"' + (String(sel) === String(a) ? ' selected' : '') + '>' + a + (a === 0 ? ' <1' : '') + '</option>';
+    h += '<div class="tin-child-age"><label>' + (d.child_label || 'Child') + ' ' + (i + 1) + '</label>'
+      + '<select onchange="appWizSetChildAge(' + i + ',this.value)">' + opts + '</select></div>';
+  }
+  host.innerHTML = h;
+}
+function appWizSetChildAge(i, v) {
+  appWizState.childAges = appWizState.childAges || [];
+  appWizState.childAges[i] = (v === '' ? null : parseInt(v));
 }
 
 // ── Multi-destination legs on the trip screen ──
@@ -8184,8 +8245,9 @@ function appWizFinish() {
   var _ad = s.adults || 2, _ch = s.children || 0;
   setVal('travelers', String(_ad + _ch));
   window._adults = _ad; window._children = _ch;
+  window._childAges = (s.childAges || []).filter(function (a) { return a != null; }); // feeds generatePlan's family brief
   // Give the AI family context so the itinerary suits kids when present.
-  if (_ch > 0) s.notes = (s.notes ? s.notes + '. ' : '') + 'Traveling with ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + ' — include family-friendly options.';
+  if (_ch > 0) { var _agesN = (window._childAges || []); s.notes = (s.notes ? s.notes + '. ' : '') + 'Traveling with ' + _ch + ' child' + (_ch > 1 ? 'ren' : '') + (_agesN.length ? ' aged ' + _agesN.join(', ') : '') + ' — include family-friendly hotels, activities and restaurants suited to those ages.'; }
   // Multi-destination: any extra legs with a city routes generatePlan() to the
   // multi-city generator (it reads the global extraLegs array, city-first).
   extraLegs = (s.legs || []).filter(function (l) { return l.city && l.city.trim(); })
