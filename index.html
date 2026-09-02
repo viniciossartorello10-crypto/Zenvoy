@@ -6230,13 +6230,15 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
         // Unsplash fallback for ANY slot with a photo area that TripAdvisor
         // couldn't fill (hotels AND itinerary places) — so far more cards show a
         // real image instead of an empty box / emoji placeholder.
-        if (!gotPhoto && photoEl && typeof appUnsplash === 'function') {
-          var _uq = meta.photoOnly ? (meta.placeName + ' hotel ' + (meta.dest || '')) : (meta.placeName + ' ' + (meta.dest || ''));
-          appUnsplash(_uq).then(function(url) {
+        if (!gotPhoto && photoEl && typeof _unsplashPhoto === 'function') {
+          var _uq = (meta.placeName || '') + ' ' + (meta.dest || '');
+          var _ucat = meta.photoOnly ? 'hotels' : (meta.category || 'attractions');
+          _unsplashPhoto(_uq, _ucat).then(function(url) {
             if (url && photoEl && !photoEl.classList.contains('has-photo')) {
               photoEl.innerHTML = '';
               photoEl.style.background = "url('" + url + "') center/cover";
               photoEl.style.display = 'block';
+              photoEl.classList.add('has-photo');
               if (typeof cacheStopPhoto === 'function') cacheStopPhoto(meta.placeName, url);
             }
           });
@@ -8383,6 +8385,31 @@ function appFixItineraryLinks() {
 // Shared photo lookup for itinerary slots and attraction cards: TripAdvisor
 // first (real place photo), Unsplash as fallback, null if neither has one.
 var _appPhotoCache = {};
+// Robust Unsplash photo lookup used as a fallback when TripAdvisor has no match
+// (or is unavailable). Strips accents/cedillas — Unsplash matches "Iguacu" but
+// not "Iguaçu" — and, if the specific place phrase finds nothing, retries with a
+// broader query (the destination + a landmark/food term) so a relevant photo
+// almost always comes back rather than a blank card.
+function _stripAccents(s) { return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+async function _unsplashPhoto(query, category) {
+  var isFood = category === 'restaurants';
+  var isHotel = category === 'hotels' || /\bhotel\b/i.test(query);
+  var clean = _stripAccents(query).replace(/\s+/g, ' ').trim();
+  var words = clean.split(' ');
+  var ctx = isFood ? ' restaurant food' : isHotel ? ' hotel building' : ' landmark travel';
+  var broad = words.slice(-3).join(' ') + ctx;
+  var attempts = [clean, broad, words.slice(-2).join(' ') + (isHotel ? ' hotel' : ' travel')];
+  for (var i = 0; i < attempts.length; i++) {
+    if (!attempts[i] || attempts[i].length < 3) continue;
+    try {
+      var res = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: attempts[i] })
+      });
+      if (res.ok) { var d = await res.json(); if (d && d.imageUrl) return d.imageUrl; }
+    } catch (e) {}
+  }
+  return null;
+}
 async function appFetchPlacePhoto(query, category) {
   if (!query) return null;
   var key = (category || '') + ':' + query.toLowerCase();
@@ -8392,14 +8419,7 @@ async function appFetchPlacePhoto(query, category) {
     var info = await getTripAdvisorInfo(query, category || 'attractions');
     if (info && info.photoUrl) url = info.photoUrl;
   } catch (e) {}
-  if (!url) {
-    try {
-      var res = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query })
-      });
-      if (res.ok) { var d = await res.json(); if (d && d.imageUrl) url = d.imageUrl; }
-    } catch (e) {}
-  }
+  if (!url) url = await _unsplashPhoto(query, category);
   _appPhotoCache[key] = url;
   return url;
 }
