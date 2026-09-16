@@ -9654,7 +9654,8 @@ function closePersonalityCard() { var ov = document.getElementById('personalityO
 function maybeShowPersonality() {
   if (_personalityShown) return; _personalityShown = true;
   window._personalityKey = computePersonality();
-  setTimeout(function () { showPersonalityCard(false); }, 500); // let results settle first
+  // Auto pop-up disabled by user request — the card is still reachable from
+  // the profile panel via the "Meu perfil de viajante" button (showPersonalityCard(true)).
 }
 function sharePersonality() {
   var key = window._personalityKey || computePersonality(); var p = PERSONALITIES[key]; if (!p) return;
