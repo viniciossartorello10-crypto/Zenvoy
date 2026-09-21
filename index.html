@@ -2034,7 +2034,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
 <footer>
   <div class="flogo" style="display:flex;align-items:center;justify-content:center;gap:4px">Zen<svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(45deg)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2.5 1.5V22l4-1 4 1v-1.5L13 19v-5.5l8 2.5z"/></svg><span>Voy</span></div>
   <div class="fcopy">© 2025 Zenvoy. All rights reserved.</div>
-  <div class="fcopy" style="margin-top:8px"><a href="/privacy" style="color:var(--gold);text-decoration:none">Política de Privacidade · Privacy Policy</a></div>
+  <div class="fcopy" style="margin-top:8px"><a href="/roteiro/" style="color:var(--gold);text-decoration:none">Roteiros de viagem prontos</a> · <a href="/privacy" style="color:var(--gold);text-decoration:none">Política de Privacidade · Privacy Policy</a></div>
 </footer>
 
 <div id="printArea"></div>
@@ -10510,5 +10510,25 @@ appInitShell();
     <div id="personalityBody"></div>
   </div>
 </div>
+
+<!-- SEO landing pages (/roteiro/<dest>) link here with ?dest=<City> to pre-fill
+     the wizard destination and open it straight away. -->
+<script>
+(function () {
+  function go() {
+    try {
+      var d = new URLSearchParams(location.search).get('dest');
+      if (!d) return;
+      d = d.slice(0, 80);
+      if (typeof startNewTrip !== 'function') { setTimeout(go, 300); return; }
+      window.appWizPrefillTo = d;
+      startNewTrip();
+      if (typeof trackEvent === 'function') trackEvent('roteiro_cta', { dest: d });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', function () { setTimeout(go, 450); });
+  else setTimeout(go, 450);
+})();
+</script>
 
 </body></html>

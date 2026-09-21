@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zenvoytravel.netlify.app/sitemap.xml
