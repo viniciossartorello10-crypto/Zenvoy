@@ -6395,14 +6395,22 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
         if (!gotPhoto && photoEl && typeof _unsplashPhoto === 'function') {
           var _uq = (meta.placeName || '') + ' ' + (meta.dest || '');
           var _ucat = meta.photoOnly ? 'hotels' : (meta.category || 'attractions');
-          _unsplashPhoto(_uq, _ucat).then(function(url) {
-            if (url && photoEl && !photoEl.classList.contains('has-photo')) {
-              photoEl.innerHTML = '';
-              photoEl.style.background = "url('" + url + "') center/cover";
-              photoEl.style.display = 'block';
-              photoEl.classList.add('has-photo');
-              if (typeof cacheStopPhoto === 'function') cacheStopPhoto(meta.placeName, url);
-            }
+          // Hotel cards fall back to a MULTI-photo Unsplash gallery so the
+          // swipeable gallery still works when TripAdvisor is down. Itinerary
+          // slots (meta.validate) keep a SINGLE fallback photo — there are many
+          // per trip and fanning each out would exhaust the Unsplash quota
+          // mid-trip (they still get full TripAdvisor galleries when the key is
+          // restored). Attraction cards use their own path (appEnrichAttractionPhotos).
+          var _wantGallery = (meta.photoOnly || (meta.gallery && !meta.validate)) && typeof _unsplashPhotosMulti === 'function' && typeof appBuildGallery === 'function';
+          var _max = 6;
+          var _p = _wantGallery ? _unsplashPhotosMulti(_uq, _ucat, _max) : _unsplashPhoto(_uq, _ucat).then(function (u) { return u ? [u] : []; });
+          _p.then(function (urls) {
+            if (!urls || !urls.length || !photoEl || photoEl.classList.contains('has-photo')) return;
+            photoEl.innerHTML = '';
+            if (urls.length > 1 && _wantGallery) appBuildGallery(photoEl, urls);
+            else { photoEl.style.background = "url('" + urls[0] + "') center/cover"; photoEl.style.display = 'block'; }
+            photoEl.classList.add('has-photo');
+            if (typeof cacheStopPhoto === 'function') cacheStopPhoto(meta.placeName, urls[0]);
           });
         }
 
@@ -8744,6 +8752,53 @@ async function _unsplashPhoto(query, category) {
   }
   return null;
 }
+// Like _unsplashPhoto but returns several DISTINCT photos for a swipeable
+// gallery — the fallback when TripAdvisor has no photos (or is unavailable).
+// Varies the query by facet (room/pool/exterior for hotels; dish/interior for
+// restaurants; landmark/viewpoint for places) so the images actually differ.
+async function _unsplashPhotosMulti(query, category, max) {
+  max = Math.min(max || 5, 6);
+  var clean = _stripAccents(query || '').replace(/\s+/g, ' ').trim();
+  if (clean.length < 3) return [];
+  var words = clean.split(' ');
+  var tail2 = words.slice(-2).join(' ');
+  var tail3 = words.slice(-3).join(' ');
+  var facets;
+  if (category === 'hotels' || /\bhotel\b/i.test(query)) {
+    // First try the specific property name; the rest are distinct FACET-led
+    // concepts (Unsplash returns the same image for near-identical long
+    // queries, so varying the concept — room/pool/lobby — is what yields a
+    // real multi-photo gallery when TripAdvisor has no photos of this hotel).
+    facets = [clean, 'luxury hotel room interior', 'resort swimming pool', 'hotel lobby interior', 'hotel suite bedroom'];
+  } else if (category === 'restaurants') {
+    facets = [clean + ' restaurant', clean + ' food', tail2 + ' cuisine'];
+  } else {
+    facets = [clean, clean + ' landmark', tail3 + ' travel', tail2 + ' viewpoint'];
+  }
+  // Sequential (NOT parallel): Unsplash rate-limits bursts, so a Promise.all
+  // fan-out returns 429s and an empty gallery. Fetch one at a time and bail
+  // after two consecutive misses (quota likely exhausted) — the gallery just
+  // shows fewer photos rather than hammering the API.
+  var out = [], misses = 0;
+  for (var i = 0; i < facets.length && out.length < max; i++) {
+    try {
+      var res = await fetch(apiUrl('/.netlify/functions/unsplash-car-image'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: facets[i] }) });
+      if (res.ok) { var d = await res.json(); if (d && d.imageUrl) { if (out.indexOf(d.imageUrl) === -1) out.push(d.imageUrl); misses = 0; continue; } }
+      if (++misses >= 2) break;
+    } catch (e) { if (++misses >= 2) break; }
+  }
+  return out;
+}
+// Applies a photo list to an attraction photo box (gallery if >1, single
+// background otherwise), guarding against double-application.
+function _applyAttrPhotos(el, photos, q) {
+  if (!el || !photos || !photos.length || el.classList.contains('has-photo')) return;
+  el.textContent = '';
+  el.classList.add('has-photo');
+  if (photos.length > 1 && typeof appBuildGallery === 'function') appBuildGallery(el, photos);
+  else el.style.backgroundImage = "url('" + photos[0] + "')";
+  if (typeof cacheStopPhoto === 'function') cacheStopPhoto(q, photos[0]);
+}
 async function appFetchPlacePhoto(query, category) {
   if (!query) return null;
   var key = (category || '') + ':' + query.toLowerCase();
@@ -8799,15 +8854,18 @@ function appEnrichAttractionPhotos(meta) {
       // Up to 5 TripAdvisor photos as a swipeable gallery (same as hotels).
       getTripAdvisorInfo(m.query, 'attractions').then(function (info) {
         var el = document.getElementById(m.photoSlotId);
-        if (!el || !info) return;
-        var photos = (info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info.photoUrl ? [info.photoUrl] : []);
-        if (!photos.length) return;
-        el.textContent = '';
-        el.classList.add('has-photo');
-        if (photos.length > 1 && typeof appBuildGallery === 'function') appBuildGallery(el, photos);
-        else el.style.backgroundImage = "url('" + photos[0] + "')";
-        if (typeof cacheStopPhoto === 'function') cacheStopPhoto(m.query, photos[0]);
-      }).catch(function () {});
+        if (!el) return;
+        var photos = (info && info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info && info.photoUrl ? [info.photoUrl] : []);
+        if (photos.length) { _applyAttrPhotos(el, photos, m.query); return; }
+        // Fallback: a multi-photo Unsplash gallery when TripAdvisor has nothing
+        // (or is unavailable) — so attraction cards still show real images.
+        if (typeof _unsplashPhotosMulti === 'function') {
+          _unsplashPhotosMulti(m.query, 'attractions', 5).then(function (us) { _applyAttrPhotos(document.getElementById(m.photoSlotId), us, m.query); });
+        }
+      }).catch(function () {
+        var el = document.getElementById(m.photoSlotId);
+        if (el && typeof _unsplashPhotosMulti === 'function') _unsplashPhotosMulti(m.query, 'attractions', 5).then(function (us) { _applyAttrPhotos(el, us, m.query); });
+      });
     }, i * 260);
   });
 }
