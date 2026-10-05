@@ -1559,7 +1559,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
   <div class="app-sheet" id="appSheetChat">
     <div class="app-sheet-grip"></div>
     <div class="app-sheet-head">
-      <span style="display:flex;align-items:center;gap:8px"><img src="assets/mascot.png" alt="" style="width:28px;height:28px;border-radius:50%" onerror="this.style.display='none'"><span data-i18n="app_chat_empty_t">Voya</span></span>
+      <span style="display:flex;align-items:center;gap:8px"><img src="assets/voya-mascot.svg" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:50% 6%;background:#eef1f6" onerror="this.style.display='none'"><span data-i18n="app_chat_empty_t">Voya</span></span>
       <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
     <div class="app-sheet-body" id="appChatBody"><!-- chat messages + input moved here at runtime --></div>
   </div>
@@ -4601,21 +4601,20 @@ function mascotAvatar(size) {
   return appMascot(size, 'mini');
 }
 
-// Builds the animated mascot markup: breathing/floating body, blinking eyes, an
-// orbiting gold-plane "crown", and floating sparkles. All animation is CSS. Pass
-// cls 'mini' for a lightweight breathing-only avatar (chat/result header).
-function appMascot(size, cls) {
+// Voya the travel girl — the mascot character (girl + rolling suitcase), an
+// SVG illustration that self-animates (gentle float, suitcase bounce, blink,
+// wave). cls 'mini' returns a round head-crop avatar (chat / result header);
+// otherwise the full standing figure (home, hero, loading). appMascot keeps its
+// old name/signature so every existing caller now shows Voya automatically.
+function voyaMascot(size, cls) {
   var sz = size || 140;
-  var path = (typeof _APP_PLANE_PATH !== 'undefined') ? _APP_PLANE_PATH : '';
-  var plane = '<svg viewBox="-18 -14 36 28" xmlns="http://www.w3.org/2000/svg"><path fill="#C9A96E" d="' + path + '"/></svg>';
-  return '<div class="mx ' + (cls || '') + '" style="--mx-sz:' + sz + 'px" aria-hidden="true">'
-    + '<div class="mx-halo"><div class="mx-plane">' + plane + '</div></div>'
-    + '<div class="mx-body"><img class="mx-img" src="assets/mascot.png" alt="" onerror="this.style.opacity=0">'
-    + '<span class="mx-eye mx-eye-l"></span><span class="mx-eye mx-eye-r"></span></div>'
-    + '<span class="mx-spark mx-spark-1">✦</span><span class="mx-spark mx-spark-2">✦</span>'
-    + '<span class="mx-spark mx-spark-3">✦</span><span class="mx-spark mx-spark-4">✦</span>'
-    + '</div>';
+  if (cls === 'mini') {
+    return '<span class="voya-av" style="width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;overflow:hidden;display:inline-flex;flex-shrink:0;background:#eef1f6;vertical-align:middle">'
+      + '<img src="assets/voya-mascot.svg" alt="Voya" style="width:100%;height:100%;object-fit:cover;object-position:50% 6%" onerror="this.style.opacity=0"></span>';
+  }
+  return '<img class="voya-mx" src="assets/voya-mascot.svg" alt="Voya" style="width:' + sz + 'px;height:auto;display:block;margin:0 auto" onerror="this.style.opacity=0">';
 }
+function appMascot(size, cls) { return voyaMascot(size, cls); }
 
 function renderChatMessages() {
   var el = document.getElementById('chatMessages');
@@ -8547,7 +8546,7 @@ function appWizFinish() {
   (s.interests && s.interests.length ? s.interests : ['Food']).forEach(function (v) { appWizInjectPill('interestPills', v, false); });
 
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
-  var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) mw.innerHTML = '<img src="assets/mascot.png" alt="" onerror="this.style.opacity=0">';
+  var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) { mw.style.borderRadius = '0'; mw.style.overflow = 'visible'; mw.style.background = 'none'; mw.innerHTML = '<img src="assets/voya-mascot.svg" alt="Voya" style="width:148px;height:auto;object-fit:contain;transform:none" onerror="this.style.opacity=0">'; }
   var bg = document.getElementById('appBuildBg');
   if (bg && !bg.firstChild) { var wm = document.querySelector('.hero-worldmap-full svg'); if (wm) bg.appendChild(wm.cloneNode(true)); }
   var st0 = document.getElementById('appBuildStatus'); if (st0) st0.textContent = (TRANSLATIONS[appLang] || TRANSLATIONS.en).building_title || 'Building your trip...';
