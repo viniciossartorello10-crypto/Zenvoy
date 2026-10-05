@@ -1028,7 +1028,15 @@ body.web-wizard #appBottomNav,body.web-wizard #appCartBall{display:none !importa
 .mx.mini{--mx-sz:var(--mx-mini,40px)}
 .mx.mini .mx-halo,.mx.mini .mx-spark,.mx.mini .mx-eye{display:none}
 .mx.mini .mx-img{filter:none;border-radius:50%;background:var(--app-surface-2)}
-@media(prefers-reduced-motion:reduce){.mx-body,.mx-plane,.mx-spark,.mx-eye{animation:none !important}.mx-eye{opacity:0}}
+/* Gold rolling suitcase beside the robot */
+.mx-case{position:absolute;right:0;bottom:0;width:38%;height:auto;z-index:2;transform-origin:center bottom;animation:mx-case-bob 3s ease-in-out infinite}
+.mx-case svg{width:100%;height:auto;display:block;filter:drop-shadow(0 5px 10px rgba(0,0,0,.3))}
+@keyframes mx-case-bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(-2.5deg)}}
+.mx.mini .mx-case{display:none}
+/* The loading-head container crops a bare PNG; when it holds the full .mx
+   mascot instead, don't let that crop/zoom rule distort the robot body. */
+.app-build-mascot-head .mx-img{width:100%;height:100%;object-fit:contain;object-position:center;transform:none}
+@media(prefers-reduced-motion:reduce){.mx-body,.mx-plane,.mx-spark,.mx-eye,.mx-case{animation:none !important}.mx-eye{opacity:0}}
 /* Animated origin→destination route on the loading screen. */
 .app-build-route{width:min(320px,82vw)}
 .app-build-route svg{width:100%;height:auto;display:block;overflow:visible}
@@ -1585,7 +1593,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
   <div class="app-sheet" id="appSheetChat">
     <div class="app-sheet-grip"></div>
     <div class="app-sheet-head">
-      <span style="display:flex;align-items:center;gap:8px"><img src="assets/voya-mascot.svg" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;object-position:50% 6%;background:#eef1f6" onerror="this.style.display='none'"><span data-i18n="app_chat_empty_t">Voya</span></span>
+      <span style="display:flex;align-items:center;gap:8px"><img src="assets/mascot.png" alt="" style="width:28px;height:28px;border-radius:50%" onerror="this.style.display='none'"><span data-i18n="app_chat_empty_t">Voya</span></span>
       <button class="app-icon-btn" onclick="appCloseSheet()" aria-label="Close">✕</button></div>
     <div class="app-sheet-body" id="appChatBody"><!-- chat messages + input moved here at runtime --></div>
   </div>
@@ -4632,15 +4640,41 @@ function mascotAvatar(size) {
 // wave). cls 'mini' returns a round head-crop avatar (chat / result header);
 // otherwise the full standing figure (home, hero, loading). appMascot keeps its
 // old name/signature so every existing caller now shows Voya automatically.
-function voyaMascot(size, cls) {
+// A small gold rolling suitcase drawn beside the robot (handle, wheels, a little
+// sticker). Gold #C9A96E with darker-gold trim; sits at the mascot's lower right
+// so the robot looks like it's standing next to / holding its luggage.
+var MX_CASE_SVG = '<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg">'
+  + '<rect x="33" y="8" width="6" height="44" rx="3" fill="#8a7038"/>'
+  + '<rect x="61" y="8" width="6" height="44" rx="3" fill="#8a7038"/>'
+  + '<rect x="33" y="8" width="34" height="7" rx="3.5" fill="#8a7038"/>'
+  + '<rect x="40" y="34" width="20" height="10" rx="5" fill="#8a7038"/>'
+  + '<rect x="14" y="40" width="72" height="78" rx="13" fill="#C9A96E" stroke="#8a7038" stroke-width="3.5"/>'
+  + '<rect x="33" y="41" width="5" height="76" fill="#b2913f"/>'
+  + '<rect x="62" y="41" width="5" height="76" fill="#b2913f"/>'
+  + '<circle cx="50" cy="70" r="13" fill="#16213c"/>'
+  + '<path d="M50 60 Q52 68 60 70 Q52 72 50 80 Q48 72 40 70 Q48 68 50 60 Z" fill="#e3cc92"/>'
+  + '<circle cx="28" cy="122" r="7.5" fill="#20242e"/>'
+  + '<circle cx="72" cy="122" r="7.5" fill="#20242e"/>'
+  + '</svg>';
+
+// The mascot: the original animated robot (breathing/floating body, blinking
+// eyes, orbiting gold-plane crown, floating sparkles) — now standing next to a
+// small gold rolling suitcase. cls 'mini' is the lightweight breathing-only
+// avatar (chat/result header; no suitcase at that tiny size).
+function appMascot(size, cls) {
   var sz = size || 140;
-  if (cls === 'mini') {
-    return '<span class="voya-av" style="width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;overflow:hidden;display:inline-flex;flex-shrink:0;background:#eef1f6;vertical-align:middle">'
-      + '<img src="assets/voya-mascot.svg" alt="Voya" style="width:100%;height:100%;object-fit:cover;object-position:50% 6%" onerror="this.style.opacity=0"></span>';
-  }
-  return '<img class="voya-mx" src="assets/voya-mascot.svg" alt="Voya" style="width:' + sz + 'px;height:auto;display:block;margin:0 auto" onerror="this.style.opacity=0">';
+  var path = (typeof _APP_PLANE_PATH !== 'undefined') ? _APP_PLANE_PATH : '';
+  var plane = '<svg viewBox="-18 -14 36 28" xmlns="http://www.w3.org/2000/svg"><path fill="#C9A96E" d="' + path + '"/></svg>';
+  return '<div class="mx ' + (cls || '') + '" style="--mx-sz:' + sz + 'px" aria-hidden="true">'
+    + '<div class="mx-halo"><div class="mx-plane">' + plane + '</div></div>'
+    + '<div class="mx-body"><img class="mx-img" src="assets/mascot.png" alt="" onerror="this.style.opacity=0">'
+    + '<span class="mx-eye mx-eye-l"></span><span class="mx-eye mx-eye-r"></span></div>'
+    + '<div class="mx-case">' + MX_CASE_SVG + '</div>'
+    + '<span class="mx-spark mx-spark-1">✦</span><span class="mx-spark mx-spark-2">✦</span>'
+    + '<span class="mx-spark mx-spark-3">✦</span><span class="mx-spark mx-spark-4">✦</span>'
+    + '</div>';
 }
-function appMascot(size, cls) { return voyaMascot(size, cls); }
+function voyaMascot(size, cls) { return appMascot(size, cls); }
 
 function renderChatMessages() {
   var el = document.getElementById('chatMessages');
@@ -8581,7 +8615,7 @@ function appWizFinish() {
 // Split out of appWizFinish so the swipe-to-choose step can run in between.
 function beginGeneration() {
   var b = document.getElementById('appBuilding'); if (b) b.style.display = 'flex';
-  var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) { mw.style.borderRadius = '0'; mw.style.overflow = 'visible'; mw.style.background = 'none'; mw.innerHTML = '<img src="assets/voya-mascot.svg" alt="Voya" style="width:148px;height:auto;object-fit:contain;transform:none" onerror="this.style.opacity=0">'; }
+  var mw = document.getElementById('appBuildMascot'); if (mw && !mw.firstChild) { mw.style.borderRadius = '0'; mw.style.overflow = 'visible'; mw.style.background = 'none'; mw.innerHTML = appMascot(148); }
   var bg = document.getElementById('appBuildBg');
   if (bg && !bg.firstChild) { var wm = document.querySelector('.hero-worldmap-full svg'); if (wm) bg.appendChild(wm.cloneNode(true)); }
   var st0 = document.getElementById('appBuildStatus'); if (st0) st0.textContent = (TRANSLATIONS[appLang] || TRANSLATIONS.en).building_title || 'Building your trip...';
