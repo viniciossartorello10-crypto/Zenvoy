@@ -1469,11 +1469,10 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
           <option value="pt">🇧🇷 PT</option><option value="en">🇺🇸 EN</option>
           <option value="es">🇪🇸 ES</option><option value="fr">🇫🇷 FR</option><option value="it">🇮🇹 IT</option>
         </select>
-        <button class="app-theme-btn" id="appThemeBtn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
         <button class="app-icon-btn" onclick="appOpenSheet('premium')" aria-label="Premium">👤</button>
       </div>
       <div class="app-home-center">
-        <div class="app-logo lg">Zen <span>✈</span> Voy</div>
+        <div class="app-logo lg">Voya <span>✈</span></div>
         <div class="app-home-globe" id="appHomeGlobe" aria-hidden="true"></div>
         <div class="app-home-greet" data-i18n="mascot_greet">Oi, eu sou a Voya 👋</div>
         <div class="app-home-tag" data-i18n="app_home_title">Para onde <em>agora?</em></div>
@@ -1486,7 +1485,6 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
         <div class="app-home-cta-wrap">
           <button class="app-cta" onclick="appGoScreen('wizard')"><span data-i18n="app_home_cta">Planejar minha viagem</span> →</button>
           <button class="app-cta-alt" onclick="openTripChat()">💬 <span data-i18n="conv_cta">Me conta sua viagem</span></button>
-          <button class="app-resume" id="appResume" onclick="resumeGuestTrip()" style="display:none">↩︎ <span data-i18n="resume_trip">Retomar viagem anterior</span><span class="resume-dest"></span></button>
         </div>
       </div>
     </section>
@@ -1537,7 +1535,7 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
     <section class="app-screen" id="appResults" data-screen="results">
       <div class="app-topbar">
         <button class="app-icon-btn" onclick="appGoScreen('home')" aria-label="Home">🏠</button>
-        <div class="app-logo sm">Zen <span>✈</span> Voy</div>
+        <div class="app-logo sm">Voya <span>✈</span></div>
         <button class="app-icon-btn" onclick="appOpenSheet('chat')" aria-label="Chat">💬</button>
         <button class="app-theme-btn" onclick="appToggleTheme()" aria-label="Theme">🌙</button>
       </div>
@@ -1625,7 +1623,6 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
   </div>
   <div style="display:flex;align-items:center;gap:8px;justify-self:end;flex-shrink:0">
     <button id="profileBtn" onclick="webOpenPremium()" aria-label="Account" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;line-height:1">👤</button>
-    <button id="themeToggleBtn" onclick="toggleThemeMode()" aria-label="Toggle dark mode" style="background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;line-height:1">🌙</button>
     <select id="langSelect" onchange="setLang(this.value)" style="width:auto;max-width:140px;background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);font-size:11px;padding:6px 10px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;outline:none;flex-shrink:0">
       <option value="en" style="color:#000">🇺🇸 English</option>
       <option value="pt" style="color:#000">🇧🇷 Português</option>
@@ -1748,7 +1745,6 @@ body.native-app #appWizardBody .field{margin-bottom:18px}
   </div>
   <button class="hero-btn" data-i18n="hero_cta" onclick="startNewTrip()">Plan my trip →</button>
   <button class="hero-btn-alt" onclick="openTripChat()">💬 <span data-i18n="conv_cta">Me conta sua viagem</span></button>
-  <button class="hero-resume" id="heroResume" onclick="resumeGuestTrip()" style="display:none">↩︎ <span data-i18n="resume_trip">Retomar viagem anterior</span><span class="resume-dest"></span></button>
   <div class="hero-ticker" aria-hidden="true">
     <div class="hero-ticker-track">
       <span>Barcelona</span><span>·</span><span>London</span><span>·</span><span>Chicago</span><span>·</span><span>Tokyo</span><span>·</span><span>Rome</span><span>·</span><span>Bali</span><span>·</span><span>Paris</span><span>·</span><span>New York</span><span>·</span><span>Lisbon</span><span>·</span><span>Cancún</span><span>·</span><span>Dubai</span><span>·</span><span>Cape Town</span><span>·</span>
@@ -5193,6 +5189,7 @@ async function generateMultiDestPlan(from) {
       'Return exactly this shape:\n{"destination":"City, Country","food_guide":{"must_try":[{"name":"dish","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish2","desc":"desc","where":"where","price":"'+curSym()+'X"},{"name":"dish3","desc":"desc","where":"where","price":"'+curSym()+'X"}],"breakfast":[{"name":"place","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"lunch":[{"name":"place","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place2","dish":"dish","area":"area","price":"'+curSym()+'X"},{"name":"place3","dish":"dish","area":"area","price":"'+curSym()+'X"}],"afternoon_snack":[{"name":"place","specialty":"coffee/pastry item","area":"area","price":"'+curSym()+'X"},{"name":"place2","specialty":"item","area":"area","price":"'+curSym()+'X"},{"name":"place3","specialty":"item","area":"area","price":"'+curSym()+'X"}],"dinner":[{"name":"place","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place2","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"},{"name":"place3","cuisine":"type","dish":"dish","area":"area","price":"'+curSym()+'XX pp","tip":"tip"}],"street_food":[{"name":"item","where":"where","price":"'+curSym()+'X"},{"name":"item2","where":"where","price":"'+curSym()+'X"},{"name":"item3","where":"where","price":"'+curSym()+'X"}]},"accommodations":[{"name":"Chain Name + Property","type":"Luxury Hotel","stars":5,"area":"area","lat":<approx latitude decimal>,"lng":<approx longitude decimal>,"price_night":250,"highlights":["h1","h2","h3"],"why":"why"},{"name":"Chain Name + Property","type":"Resort","stars":5,"area":"area","price_night":300,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Business Hotel","stars":4,"area":"area","price_night":150,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Boutique Hotel","stars":4,"area":"area","price_night":110,"highlights":["h1","h2"],"why":"why"},{"name":"Chain Name + Property","type":"Aparthotel","stars":4,"area":"area","price_night":100,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Apartment/Airbnb","stars":4,"area":"area","price_night":85,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Bed & Breakfast","stars":3,"area":"area","price_night":60,"highlights":["h1","h2"],"why":"why"},{"name":"name","type":"Hostel","stars":3,"area":"area","price_night":25,"highlights":["h1","h2"],"why":"why"}],"cars":[{"category":"Compact","name":"e.g. VW Golf or similar","price_day":35,"why":"good for city parking"},{"category":"SUV","name":"e.g. Jeep Compass or similar","price_day":65,"why":"good for families/luggage"},{"category":"Sports car","name":"e.g. Ford Mustang or similar","price_day":150,"why":"for a special day"},{"category":"Economy","name":"e.g. Fiat Panda or similar","price_day":25,"why":"cheapest option"}],"gems":[{"title":"title","tip":"tip"},{"title":"title2","tip":"tip"},{"title":"title3","tip":"tip"},{"title":"title4","tip":"tip"},{"title":"title5","tip":"tip"}],"attractions":[{"name":"attraction name","type":"Museum","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 2","type":"Park","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 3","type":"Historic site","desc":"one sentence","price":"XX","area":"neighborhood"},{"name":"attraction name 4","type":"Beach/Viewpoint","desc":"one sentence","price":"free","area":"neighborhood"},{"name":"attraction name 5","type":"Tour/Experience","desc":"one sentence","price":"XX","area":"neighborhood"}],"practical":{"best_time":"info","weather":"info","currency":"info","language":"info","transport":"info","safety":"info","visa":"info","packing":"info"}}\n\n' +
       'Provide AT LEAST 3 different options for each food_guide category (except street_food). "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop, distinct from lunch and dinner.\n\n' +
       'Use REAL, specifically named, currently-operating places only — never generic placeholders. Provide AT LEAST 5 different "gems" (insider tips) and all 8 accommodation types shown in the schema (Luxury Hotel, Resort, Business Hotel, Boutique Hotel, Aparthotel, Apartment/Airbnb, Bed & Breakfast, Hostel).\n\n' +
+      '"attractions" MUST list 10-15 REAL, specific, well-known attractions that tourists ACTUALLY visit in ' + leg.city + ', spanning the FULL range (theme parks, museums, landmarks & monuments, parks & nature, viewpoints, zoos/aquariums, tours & experiences, markets, entertainment) — NOT just the single most famous one and NOT only one category. Use real proper names (for a theme-park city like Orlando that means Walt Disney World, Universal Studios, SeaWorld, LEGOLAND, Kennedy Space Center, Disney Springs, Discovery Cove, Gatorland, ICON Park, etc. — not only Disney). Minimum 10, ideally 12-15, most-iconic first.\n\n' +
       '- accommodation prices (price_night) MUST reflect REAL current market rates for ' + leg.city + ' specifically, spanning a genuine range from budget to luxury with realistic gaps between tiers — not a narrow band of similar numbers.\n' +
       '- CRITICAL: EACH AND EVERY one of the accommodations (all of them, not just the first) MUST include its own numeric "lat" and "lng" fields — the approximate real-world coordinates of its "area" (neighborhood) in ' + leg.city + ', so hotels can be plotted on a map (beachfront hotels near the coast, downtown hotels near the center, etc.). Use your best geographic knowledge; plain decimals only.\n' +
       '- For the hotel-type slots, prefer a REAL, recognizable hotel chain that ACTUALLY OPERATES in ' + leg.city + ', choosing the chains a traveler in THAT country would recognize (in Brazil e.g. Rede Andrade, Bourbon, Nacional Inn, Transamerica, Blue Tree, Íbis/Accor; in the US e.g. Marriott, Hilton, Best Western, Holiday Inn; in Europe e.g. Accor/Novotel/Ibis, NH, Meliá, Radisson). Name the chain explicitly in the "name" field (e.g. "Ibis Florianópolis Centro", not "a mid-range hotel"). Put familiar, recognizable names FIRST in the array and independents after.\n\n' +
@@ -5769,6 +5766,7 @@ async function generatePlan() {
       '- Provide AT LEAST 3 different options for each food_guide category (must_try, breakfast, lunch, afternoon_snack, dinner) — never just one. Travelers want real choices, not a single dictated recommendation per meal.\n'+
       '- "afternoon_snack" is a mid-afternoon coffee/pastry/light-bite stop (like a European café culture break) — distinct from lunch and dinner, at a real named café or bakery.\n'+
       '- Provide AT LEAST 5 different "gems" — travelers want a rich set of insider tips, not just one or two. Each "gems" entry should be the kind of specific, non-obvious tip a knowledgeable local friend would give (a timing trick, a less crowded alternative, a dish to order at a specific named place) — not generic travel advice like "eat where locals eat".\n'+
+      '- "attractions" MUST list 10-15 REAL, specific, well-known attractions that tourists ACTUALLY visit in '+dest+', spanning the FULL range of what the destination offers (theme parks, museums, landmarks & monuments, parks & gardens, nature & viewpoints, zoos/aquariums, tours & experiences, markets, shows/entertainment) — NOT just the single most famous one and NOT only one category. Use real proper names: e.g. for Orlando that means Walt Disney World, Universal Studios, SeaWorld, LEGOLAND, Kennedy Space Center, Disney Springs, Universal CityWalk, Discovery Cove, Gatorland, ICON Park, Crayola Experience — not only Disney. Minimum 10, ideally 12-15, ordered most-iconic first. Set "type" to the real category and "price" to a realistic entry cost ("free" when applicable).\n'+
       (interests.toLowerCase().indexOf('theme park') !== -1 ? '- If the destination is genuinely famous for theme parks (e.g. Orlando, Anaheim, Tokyo, Paris, Osaka), mention the relevant park(s) in the gems as a headline tip.\n' : '')+
       'JSON formatting rules (critical): use straight double quotes only, use a plain hyphen "-" instead of em-dashes or smart quotes anywhere in the text, and do not include literal line breaks inside any string value.';
 
@@ -6470,7 +6468,16 @@ function enrichSlotsWithTripAdvisor(slotMeta) {
           // restored). Attraction cards use their own path (appEnrichAttractionPhotos).
           var _wantGallery = (meta.photoOnly || (meta.gallery && !meta.validate)) && typeof _unsplashPhotosMulti === 'function' && typeof appBuildGallery === 'function';
           var _max = 6;
-          var _p = _wantGallery ? _unsplashPhotosMulti(_uq, _ucat, _max) : _unsplashPhoto(_uq, _ucat).then(function (u) { return u ? [u] : []; });
+          var _p = _wantGallery
+            ? _unsplashPhotosMulti(_uq, _ucat, _max)
+            : (async function () {
+                // Itinerary place (single photo): try a specific Wikipedia landmark
+                // photo first (not for food/hotels), then fall back to Unsplash.
+                if (_ucat !== 'restaurants' && _ucat !== 'hotels' && typeof _wikiPhoto === 'function') {
+                  try { var w = await _wikiPhoto(meta.placeName); if (w) return [w]; } catch (e) {}
+                }
+                var u = await _unsplashPhoto(_uq, _ucat); return u ? [u] : [];
+              })();
           _p.then(function (urls) {
             if (!urls || !urls.length || !photoEl || photoEl.classList.contains('has-photo')) return;
             photoEl.innerHTML = '';
@@ -7728,7 +7735,7 @@ function renderAttractions(attractions, dest) {
       if (metaLine) h += '<div style="font-size:12px;color:var(--muted);margin-top:3px">' + metaLine + '</div>';
       if (desc) h += '<p style="font-size:14px;color:var(--body-text);margin-top:8px;margin-bottom:0">' + escapeHtml(desc) + '</p>';
       h += linksHtml + '</div></div>';
-      _attrMeta.push({ photoSlotId: pid, query: name + ' ' + dest });
+      _attrMeta.push({ photoSlotId: pid, query: name + ' ' + dest, name: name });
     });
   }
 
@@ -9034,6 +9041,36 @@ async function _unsplashPhotosMulti(query, category, max) {
   }
   return out;
 }
+// Wikipedia/Wikimedia photo for a NAMED place (real landmark photo, far more
+// accurate than generic Unsplash stock). Used ahead of Unsplash for attractions
+// and itinerary activities — it is free, keyless, and specific to the place.
+// Returns null for restaurants/hotels and anything without a real page image.
+var _wikiPhotoCache = {};
+async function _wikiPhoto(title) {
+  var name = (title || '').split(',')[0].trim();
+  if (name.length < 3) return null;
+  if (name in _wikiPhotoCache) return _wikiPhotoCache[name];
+  // Try the user's-language Wikipedia first (the AI returns place names in that
+  // language, e.g. "Cristo Redentor" on pt.wikipedia), then English as fallback.
+  var langs = []; var al = (typeof appLang !== 'undefined' ? appLang : 'en');
+  if (al && al !== 'en') langs.push(al);
+  langs.push('en');
+  var out = null;
+  for (var i = 0; i < langs.length && !out; i++) {
+    try {
+      var res = await fetch('https://' + langs[i] + '.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(name), { headers: { accept: 'application/json' } });
+      if (!res.ok) continue;
+      var d = await res.json();
+      if (d && d.type !== 'disambiguation') {
+        var u = (d.originalimage && d.originalimage.source) || (d.thumbnail && d.thumbnail.source) || null;
+        // Skip logos/flags/icons (usually SVG) — we want a real photo.
+        if (u && !/\.svg(\?|$)/i.test(u)) out = u;
+      }
+    } catch (e) {}
+  }
+  _wikiPhotoCache[name] = out;
+  return out;
+}
 // Applies a photo list to an attraction photo box (gallery if >1, single
 // background otherwise), guarding against double-application.
 function _applyAttrPhotos(el, photos, q) {
@@ -9043,6 +9080,19 @@ function _applyAttrPhotos(el, photos, q) {
   if (photos.length > 1 && typeof appBuildGallery === 'function') appBuildGallery(el, photos);
   else el.style.backgroundImage = "url('" + photos[0] + "')";
   if (typeof cacheStopPhoto === 'function') cacheStopPhoto(q, photos[0]);
+}
+// Attraction photo fallback when TripAdvisor has nothing: Wikipedia first (a
+// real, specific landmark photo — accurate even with TripAdvisor down), then a
+// multi-photo Unsplash gallery as the last resort.
+async function _attrPhotoFallback(m) {
+  if (!document.getElementById(m.photoSlotId)) return;
+  if (typeof _wikiPhoto === 'function') {
+    try { var w = await _wikiPhoto(m.name || m.query); if (w) { _applyAttrPhotos(document.getElementById(m.photoSlotId), [w], m.query); return; } } catch (e) {}
+  }
+  if (typeof _unsplashPhotosMulti === 'function') {
+    var us = await _unsplashPhotosMulti(m.query, 'attractions', 5);
+    _applyAttrPhotos(document.getElementById(m.photoSlotId), us, m.query);
+  }
 }
 async function appFetchPlacePhoto(query, category) {
   if (!query) return null;
@@ -9102,15 +9152,8 @@ function appEnrichAttractionPhotos(meta) {
         if (!el) return;
         var photos = (info && info.photos && info.photos.length) ? info.photos.slice(0, 5) : (info && info.photoUrl ? [info.photoUrl] : []);
         if (photos.length) { _applyAttrPhotos(el, photos, m.query); return; }
-        // Fallback: a multi-photo Unsplash gallery when TripAdvisor has nothing
-        // (or is unavailable) — so attraction cards still show real images.
-        if (typeof _unsplashPhotosMulti === 'function') {
-          _unsplashPhotosMulti(m.query, 'attractions', 5).then(function (us) { _applyAttrPhotos(document.getElementById(m.photoSlotId), us, m.query); });
-        }
-      }).catch(function () {
-        var el = document.getElementById(m.photoSlotId);
-        if (el && typeof _unsplashPhotosMulti === 'function') _unsplashPhotosMulti(m.query, 'attractions', 5).then(function (us) { _applyAttrPhotos(el, us, m.query); });
-      });
+        _attrPhotoFallback(m);
+      }).catch(function () { _attrPhotoFallback(m); });
     }, i * 260);
   });
 }
