@@ -97,19 +97,19 @@ PAGE = u"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Roteiro de 3 dias em {name}: o que fazer | Zenvoy</title>
-<meta name="description" content="Roteiro pronto de 3 dias em {name} ({country}): o que fazer de manhã, tarde e noite. Monte sua viagem completa com voos, hotéis e itinerário no Zenvoy.">
+<title>Roteiro de 3 dias em {name}: o que fazer | Voya</title>
+<meta name="description" content="Roteiro pronto de 3 dias em {name} ({country}): o que fazer de manhã, tarde e noite. Monte sua viagem completa com voos, hotéis e itinerário na Voya.">
 <link rel="canonical" href="{base}/roteiro/{slug}/">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Roteiro de 3 dias em {name} | Zenvoy">
-<meta property="og:description" content="O que fazer em {name} em 3 dias — roteiro pronto e grátis. Planeje a viagem completa no Zenvoy.">
+<meta property="og:title" content="Roteiro de 3 dias em {name} | Voya">
+<meta property="og:description" content="O que fazer em {name} em 3 dias — roteiro pronto e grátis. Planeje a viagem completa na Voya.">
 <meta property="og:url" content="{base}/roteiro/{slug}/">
-<meta property="og:site_name" content="Zenvoy">
+<meta property="og:site_name" content="Voya">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"TouristTrip","name":"Roteiro de 3 dias em {name}","description":"Roteiro de 3 dias em {name}, {country}.","touristType":"Leisure","provider":{{"@type":"Organization","name":"Zenvoy","url":"{base}/"}}}}
+{{"@context":"https://schema.org","@type":"TouristTrip","name":"Roteiro de 3 dias em {name}","description":"Roteiro de 3 dias em {name}, {country}.","touristType":"Leisure","provider":{{"@type":"Organization","name":"Voya","url":"{base}/"}}}}
 </script>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
@@ -146,7 +146,7 @@ h1{{font-family:Georgia,'Cormorant Garamond',serif;font-size:40px;line-height:1.
 </style>
 </head>
 <body>
-<a class="brand" href="/">Zen<em>voy</em></a>
+<a class="brand" href="/">Voya ✈</a>
 <header class="hero" id="hero" data-dest="{name}">
   <div class="hero-in">
     <div class="kick">Roteiro de 3 dias {emoji}</div>
@@ -163,7 +163,7 @@ h1{{font-family:Georgia,'Cormorant Garamond',serif;font-size:40px;line-height:1.
     <div class="chips">{others}</div>
   </div>
   <div class="foot">
-    <p>Roteiro sugerido pelo <a href="/?dest={q}">Zenvoy</a> — planejador de viagens com IA. Voos, hotéis, carros, roteiro dia a dia e dicas locais em segundos.</p>
+    <p>Roteiro sugerido pela <a href="/?dest={q}">Voya</a> — planejador de viagens com IA. Voos, hotéis, carros, roteiro dia a dia e dicas locais em segundos.</p>
     <p style="margin-top:8px"><a href="/roteiro/">← Ver todos os roteiros</a></p>
   </div>
 </main>
@@ -208,13 +208,13 @@ def build():
     for d in DESTS:
         cards += u'<a href="/roteiro/%s/" style="display:block;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px;text-decoration:none;color:#e8ecf4"><div style="font-size:26px">%s</div><div style="font-family:Georgia,serif;font-size:20px;margin-top:4px">%s</div><div style="font-size:13px;color:#8a93a6">%s &middot; Roteiro de 3 dias</div></a>' % (d["slug"], d["emoji"], html.escape(d["name"]), html.escape(d["country"]))
     index = u"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Roteiros de viagem prontos (3 dias) | Zenvoy</title>
-<meta name="description" content="Roteiros de 3 dias prontos para os destinos mais buscados: Paris, Bali, Cancun, Lisboa, Rio e mais. Planeje a viagem completa com IA no Zenvoy.">
+<title>Roteiros de viagem prontos (3 dias) | Voya</title>
+<meta name="description" content="Roteiros de 3 dias prontos para os destinos mais buscados: Paris, Bali, Cancun, Lisboa, Rio e mais. Planeje a viagem completa com IA na Voya.">
 <link rel="canonical" href="{base}/roteiro/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <style>*{{box-sizing:border-box;margin:0;padding:0}}body{{font-family:'Inter',system-ui,sans-serif;background:#0f1629;color:#e8ecf4;line-height:1.6}}.wrap{{max-width:900px;margin:0 auto;padding:40px 22px 60px}}h1{{font-family:Georgia,serif;font-size:36px;margin-bottom:6px}}.sub{{color:#c3cad8;margin-bottom:28px}}.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}}a.brand{{font-family:Georgia,serif;font-size:22px;font-weight:700;text-decoration:none;color:#e8ecf4}}a.brand em{{color:#c9a96e;font-style:normal}}</style>
-</head><body><div class="wrap"><a class="brand" href="/">Zen<em>voy</em></a>
-<h1 style="margin-top:22px">Roteiros de viagem prontos</h1><p class="sub">Escolha um destino e veja um roteiro de 3 dias — depois monte a viagem completa com voos, hotéis e itinerário no Zenvoy.</p>
+</head><body><div class="wrap"><a class="brand" href="/">Voya ✈</a>
+<h1 style="margin-top:22px">Roteiros de viagem prontos</h1><p class="sub">Escolha um destino e veja um roteiro de 3 dias — depois monte a viagem completa com voos, hotéis e itinerário na Voya.</p>
 <div class="grid">{cards}</div></div></body></html>""".format(base=BASE_URL, cards=cards)
     io.open(os.path.join(ROOT, "roteiro", "index.html"), "w", encoding="utf-8").write(index)
 

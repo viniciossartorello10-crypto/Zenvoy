@@ -1,6 +1,6 @@
 {
   "appId": "com.zenvoy.app",
-  "appName": "Zenvoy",
+  "appName": "Voya",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
